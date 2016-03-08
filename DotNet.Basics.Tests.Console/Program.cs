@@ -1,5 +1,6 @@
 ﻿using System;
-using DotNet.Basics.ConsoleApp;
+using System.Linq;
+
 
 namespace DotNet.Basics.Tests.Console
 {
@@ -7,26 +8,10 @@ namespace DotNet.Basics.Tests.Console
     {
         static void Main(string[] args)
         {
-            var cmdLine = new CmdLine();
-            cmdLine.RegisterParameter(_exitCodeParameter);
-            cmdLine.RegisterParameter(_writeErrorParameter);
-            cmdLine.Parse(args);
+            System.Console.WriteLine("Executing DotNet.Basics.Tests.Console...");
 
-            int exitCode = 0;
-
-            if (cmdLine[_exitCodeParameter].Exists)
-                exitCode = int.Parse(cmdLine[_exitCodeParameter].Value);
-
-            if (cmdLine[_writeErrorParameter].Exists)
-                System.Console.Error.Write("Some error happened");
-
-            System.Console.WriteLine("Executing CSharp.Basics.Tests.Console...");
-
-            Environment.ExitCode = exitCode;
-            Environment.Exit(exitCode);
+            Environment.ExitCode = Int32.Parse(args.Single());
+            Environment.Exit(Environment.ExitCode);
         }
-
-        private static readonly CmdLineParameter _exitCodeParameter = new CmdLineParameter("ExitCode", "ExitCode") { Required = false };
-        private static readonly CmdLineParameter _writeErrorParameter = new CmdLineParameter("WriteError", "WriteError") { Required = false, AllowEmptyValue = true };
     }
 }

@@ -34,4 +34,4 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("2.62.0.0")]
 [assembly: AssemblyFileVersion("2.62.0.0")]
-[assembly: InternalsVisibleTo("CSharp.Basics.Tests")]
+[assembly: InternalsVisibleTo("DotNet.Basics.Tests")]

@@ -12,11 +12,7 @@ namespace DotNet.Basics.Tests.Sys
         [TestCase(0)]
         public void Run_ExitCode_ExitCodeIsReturned(int exitCode)
         {
-            var exitCodeString = "";
-            if (exitCode != 0)
-                exitCodeString = "-ExitCode " + exitCode;
-
-            var observedExitCode = CommandPrompt.Run(@".\CSharp.Basics.Tests.Console.exe " + exitCodeString);
+            var observedExitCode = CommandPrompt.Run($".\\DotNet.Basics.Tests.Console.exe {exitCode}");
             observedExitCode.Should().Be(exitCode);
         }
     }
