@@ -167,7 +167,7 @@ namespace DotNet.Basics.Tests.IO
             rootTestdir.GetDirectories(testDirName).Count().Should().Be(0);//the identical named subfolder should be gone
         }
 
-        [Test, Ignore]
+        [Test, Ignore("depends on rogue folder")]
         public void ConsolidateIdenticalSubfolders()
         {
             //arrange
