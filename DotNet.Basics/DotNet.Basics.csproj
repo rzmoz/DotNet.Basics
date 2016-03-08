@@ -139,7 +139,7 @@
     <Compile Include="Web\UriExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="CSharp.Basics.nuspec" />
+    <None Include="DotNet.Basics.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
