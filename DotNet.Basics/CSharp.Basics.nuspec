@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+    <metadata>
+        <id>$id$</id>
+        <version>$version$-preview</version>
+        <title>$title$</title>
+        <authors>rzmoz</authors>
+        <owners>rzmoz</owners>
+        <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+        <projectUrl>https://bitbucket.org/rzmoz/csharp.basics/src</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Syntactical sugar and commonly used functionality</description>
+    </metadata>
+    <files>
+    </files>
+</package>

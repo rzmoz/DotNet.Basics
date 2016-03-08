@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A0144B4E-EE9C-4914-82F1-DCC0D9D5196F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DotNet.Basics</RootNamespace>
+    <AssemblyName>DotNet.Basics</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\System.Management.Automation.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Diagnostics\DiagnosticsEntry.cs" />
+    <Compile Include="Diagnostics\DiagnosticsType.cs" />
+    <Compile Include="Diagnostics\DurationFormattingUnit.cs" />
+    <Compile Include="Diagnostics\EventDiagnostics.cs" />
+    <Compile Include="Diagnostics\IDiagnostics.cs" />
+    <Compile Include="Diagnostics\InMemDiagnostics.cs" />
+    <Compile Include="Diagnostics\MetricEntry.cs" />
+    <Compile Include="Diagnostics\ProfileEntry.cs" />
+    <Compile Include="Diagnostics\LogEntry.cs" />
+    <Compile Include="Diagnostics\LogLevel.cs" />
+    <Compile Include="Diagnostics\VoidDiagnostics.cs" />
+    <Compile Include="Ioc\ICsbRegistrations.cs" />
+    <Compile Include="Ioc\RegistrationsCollection.cs" />
+    <Compile Include="Ioc\RegistrationsCollectionItem.cs" />
+    <Compile Include="IO\Cmd.cs" />
+    <Compile Include="IO\DirCopyOptions.cs" />
+    <Compile Include="IO\DirCreateOptions.cs" />
+    <Compile Include="IO\DirExtensions.cs" />
+    <Compile Include="IO\FileCopyOptions.cs" />
+    <Compile Include="IO\FileExtensions.cs" />
+    <Compile Include="IO\FileSystemInfoFactory.cs" />
+    <Compile Include="IO\FileType.cs" />
+    <Compile Include="IO\FileTypeCollection.cs" />
+    <Compile Include="IO\IoDir.cs" />
+    <Compile Include="IO\IoFile.cs" />
+    <Compile Include="IO\IoPath.cs" />
+    <Compile Include="IO\Robocopy.cs" />
+    <Compile Include="IO\StringExtensions.cs" />
+    <Compile Include="Sys\CommandPrompt.cs" />
+    <Compile Include="Ioc\CtorArgsExtensions.cs" />
+    <Compile Include="Ioc\EagerCtorArg.cs" />
+    <Compile Include="Ioc\ICtorArg.cs" />
+    <Compile Include="Ioc\IocMode.cs" />
+    <Compile Include="Ioc\ICsbContainer.cs" />
+    <Compile Include="Ioc\CsbContainer.cs" />
+    <Compile Include="Ioc\IocModeCollection.cs" />
+    <Compile Include="Ioc\IocException.cs" />
+    <Compile Include="Ioc\LazyCtorArg.cs" />
+    <Compile Include="Pipelines\EagerBindStep.cs" />
+    <Compile Include="Pipelines\LazyBindStep.cs" />
+    <Compile Include="Diagnostics\Profile.cs" />
+    <Compile Include="Pipelines\StepBlock.cs" />
+    <Compile Include="Pipelines\StepBlockProfile.cs" />
+    <Compile Include="Pipelines\TaskPipeline.cs" />
+    <Compile Include="Pipelines\TaskPipelineProfile.cs" />
+    <Compile Include="Pipelines\TaskPipelineResult.cs" />
+    <Compile Include="Pipelines\TaskPipelineRunner.cs" />
+    <Compile Include="Pipelines\TaskStep.cs" />
+    <Compile Include="Sys\KeyMode.cs" />
+    <Compile Include="Sys\KeyValue.cs" />
+    <Compile Include="Sys\KeyValueCollection.cs" />
+    <Compile Include="Sys\PowerShellConsole.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tasks\AsyncTask.cs" />
+    <Compile Include="Tasks\Concurrent\IConcurrentTaskRunner.cs" />
+    <Compile Include="Tasks\Concurrent\TaskSyncProvider.cs" />
+    <Compile Include="Tasks\Concurrent\StartResult.cs" />
+    <Compile Include="Tasks\ITaskId.cs" />
+    <Compile Include="Tasks\Concurrent\TaskState.cs" />
+    <Compile Include="Tasks\Concurrent\TaskStatus.cs" />
+    <Compile Include="Tasks\Concurrent\IConcurrentTaskInfoReader.cs" />
+    <Compile Include="Tasks\Concurrent\InProcConcurrentTaskRunner.cs" />
+    <Compile Include="Tasks\TaskId.cs" />
+    <Compile Include="Tasks\TaskInfo.cs" />
+    <Compile Include="Tasks\IAsyncTask.cs" />
+    <Compile Include="Tasks\ITaskInfo.cs" />
+    <Compile Include="Tasks\Repeating\CountLoopBreakPredicate.cs" />
+    <Compile Include="Sys\EnumClass.cs" />
+    <Compile Include="Sys\EnumExtensions.cs" />
+    <Compile Include="Tasks\Scheduling\StartOptions.cs" />
+    <Compile Include="Tasks\Scheduling\ScheduledTaskRunner.cs" />
+    <Compile Include="Tasks\ISyncTask.cs" />
+    <Compile Include="Tasks\SyncTask.cs" />
+    <Compile Include="Sys\TEventArgs.cs" />
+    <Compile Include="Tasks\Repeating\NoStopConditionIsSetException.cs" />
+    <Compile Include="Tasks\Repeating\OnceOnlyAction.cs" />
+    <Compile Include="Tasks\Repeating\Repeat.cs" />
+    <Compile Include="Sys\Observable.cs" />
+    <Compile Include="Sys\StringExtensions.cs" />
+    <Compile Include="Tasks\Repeating\RepeaterAsyncTask.cs" />
+    <Compile Include="Tasks\Repeating\RepeaterSyncTask.cs" />
+    <Compile Include="Tasks\Repeating\RepeaterTask.cs" />
+    <Compile Include="Tasks\Repeating\RepeaterTaskExtensions.cs" />
+    <Compile Include="Tasks\Repeating\TimeoutLoopBreakPredicate.cs" />
+    <Compile Include="Sys\TimeSpanExtensions.cs" />
+    <Compile Include="Sys\TypeExtensions.cs" />
+    <Compile Include="Web\UriExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CSharp.Basics.nuspec" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
