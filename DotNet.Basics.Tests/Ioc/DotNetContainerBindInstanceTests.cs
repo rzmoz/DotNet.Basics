@@ -12,7 +12,7 @@ using NUnit.Framework;
 namespace DotNet.Basics.Tests.Ioc
 {
     [TestFixture]
-    public class CsbContainerBindInstanceTests
+    public class DotNetContainerBindInstanceTests
     {
         private const string _bindingNameAlpha = "MyBindingAlpha";
         private const string _bindingNameBeta = "MyBindingBeta";

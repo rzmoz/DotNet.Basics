@@ -67,7 +67,7 @@
   <ItemGroup>
     <Compile Include="Diagnostics\MetricEntryTests.cs" />
     <Compile Include="Diagnostics\ProfileEntryTests.cs" />
-    <Compile Include="Ioc\CsbContainerRegistrationsTests.cs" />
+    <Compile Include="Ioc\DotNetContainerRegistrationsTests.cs" />
     <Compile Include="Ioc\RegistrationsCollectionTests.cs" />
     <Compile Include="Ioc\TestHelpers\MyDotNetContainer.cs" />
     <Compile Include="Ioc\TestHelpers\MyDotNetContainerRegistrations.cs" />
@@ -78,10 +78,10 @@
     <Compile Include="IO\RobocopyTests.cs" />
     <Compile Include="Sys\CommandPromptTests.cs" />
     <Compile Include="Diagnostics\InMemoryTraceListener.cs" />
-    <Compile Include="Ioc\CsbContainerBindInstanceTests.cs" />
-    <Compile Include="Ioc\CsbContainerBindTypeTests.cs" />
-    <Compile Include="Ioc\CsbContainerBindTypeWithCtorArgsTests.cs" />
-    <Compile Include="Ioc\CsbContainerGetTests.cs" />
+    <Compile Include="Ioc\DotNetContainerBindInstanceTests.cs" />
+    <Compile Include="Ioc\DotNetContainerBindTypeTests.cs" />
+    <Compile Include="Ioc\DotNetContainerBindTypeWithCtorArgsTests.cs" />
+    <Compile Include="Ioc\DotNetContainerGetTests.cs" />
     <Compile Include="Ioc\ITypeWithStringParameterInConstructor.cs" />
     <Compile Include="Ioc\TestHelpers\DependsOnIMyType.cs" />
     <Compile Include="Ioc\TestHelpers\IMyType.cs" />
