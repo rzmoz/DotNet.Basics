@@ -100,7 +100,7 @@ namespace DotNet.Basics.Tests.Pipelines
         public async Task Ctor_CustomBlockAndStepNames_StepsAreNamed()
         {
 
-            var container = new CsbContainer();
+            var container = new DotNetContainer();
             container.BindType<ClassThatIncrementArgsDependOn>();
             var pipeline = new TaskPipeline<TEventArgs<int>>();
 

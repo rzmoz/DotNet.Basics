@@ -5,29 +5,29 @@ using System.Linq;
 
 namespace DotNet.Basics.Ioc
 {
-    public class RegistrationsCollection : IReadOnlyCollection<ICsbRegistrations>
+    public class RegistrationsCollection : IReadOnlyCollection<IDotNetRegistrations>
     {
-        private readonly ICsbContainer _container;
+        private readonly IDotNetContainer _container;
         private readonly IList<RegistrationsCollectionItem> _registrations;
 
-        public RegistrationsCollection(ICsbContainer container
+        public RegistrationsCollection(IDotNetContainer container
             )
         {
             _container = container;
             _registrations = new List<RegistrationsCollectionItem>();
         }
 
-        public void Add<T>() where T : ICsbRegistrations, new()
+        public void Add<T>() where T : IDotNetRegistrations, new()
         {
             Add(new T());
         }
 
-        public void Add(ICsbRegistrations registrations)
+        public void Add(IDotNetRegistrations registrations)
         {
             Add(new[] { registrations });
         }
 
-        public void Add(params ICsbRegistrations[] registrations)
+        public void Add(params IDotNetRegistrations[] registrations)
         {
             if (registrations == null) throw new ArgumentNullException(nameof(registrations));
 
@@ -51,7 +51,7 @@ namespace DotNet.Basics.Ioc
             _registrations.Clear();
         }
 
-        public IEnumerator<ICsbRegistrations> GetEnumerator()
+        public IEnumerator<IDotNetRegistrations> GetEnumerator()
         {
             return _registrations.Select(regItem => regItem.Registration).GetEnumerator();
         }

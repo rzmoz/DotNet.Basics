@@ -20,7 +20,6 @@ namespace DotNet.Basics.Pipelines
 
         public string DisplayName { get; protected set; }
 
-        internal ICsbContainer Container { get; set; }
-        internal IocMode Mode { get; set; }
+        internal IDotNetContainer Container { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace DotNet.Basics.Pipelines
     public class TaskPipelineRunner
     {
         private readonly object _syncRoot = new object();
-        private readonly ICsbContainer _container;
+        private readonly IDotNetContainer _container;
 
         public event ProfileEventHandler PipelineStarting;
         public event ProfileEventHandler PipelineEnded;
@@ -20,32 +20,32 @@ namespace DotNet.Basics.Pipelines
 
         public delegate void ProfileEventHandler(Profile profile);
 
-        public TaskPipelineRunner(ICsbContainer container = null)
+        public TaskPipelineRunner(IDotNetContainer container = null)
         {
-            _container = container ?? new CsbContainer();
+            _container = container ?? new DotNetContainer();
         }
 
         public bool IsRunning { get; private set; }
 
-        public static async Task<TaskPipelineResult<T>> RunAsync<T>(Action<TaskPipeline<T>> pipelineActions, T args = null, IDiagnostics logger = null, ICsbContainer container = null, IocMode mode = IocMode.Live) where T : EventArgs, new()
+        public static async Task<TaskPipelineResult<T>> RunAsync<T>(Action<TaskPipeline<T>> pipelineActions, T args = null, IDiagnostics logger = null, IDotNetContainer container = null) where T : EventArgs, new()
         {
             var validatePipeline = new TaskPipeline<T>();
             pipelineActions(validatePipeline);
 
             var runner = new TaskPipelineRunner(container);
-            var result = await runner.RunAsync(validatePipeline, args, logger, mode).ConfigureAwait(false);
+            var result = await runner.RunAsync(validatePipeline, args, logger).ConfigureAwait(false);
             return result;
         }
 
-        public async Task<TaskPipelineResult<T>> RunAsync<TTaskPipeline, T>(T args = null, IDiagnostics logger = null, IocMode mode = IocMode.Live)
+        public async Task<TaskPipelineResult<T>> RunAsync<TTaskPipeline, T>(T args = null, IDiagnostics logger = null)
             where TTaskPipeline : TaskPipeline<T>, new()
             where T : EventArgs, new()
         {
             var pipeline = new TTaskPipeline();
-            return await RunAsync<T>(pipeline, args, logger, mode);
+            return await RunAsync<T>(pipeline, args, logger);
         }
 
-        public async Task<TaskPipelineResult<T>> RunAsync<T>(TaskPipeline<T> pipeline, T args = null, IDiagnostics logger = null, IocMode mode = IocMode.Live)
+        public async Task<TaskPipelineResult<T>> RunAsync<T>(TaskPipeline<T> pipeline, T args = null, IDiagnostics logger = null)
             where T : EventArgs, new()
         {
             if (args == null)
@@ -79,7 +79,6 @@ namespace DotNet.Basics.Pipelines
 
                     await Task.WhenAll(block.Select(async step =>
                     {
-                        step.Mode = mode;
                         step.Container = _container;
                         step.Init();
 

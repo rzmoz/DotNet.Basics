@@ -2,7 +2,7 @@
 
 namespace DotNet.Basics.Tests.Ioc.TestHelpers
 {
-    public class MyCsbContainer : CsbContainer
+    public class MyDotNetContainer : DotNetContainer
     {
     }
 }

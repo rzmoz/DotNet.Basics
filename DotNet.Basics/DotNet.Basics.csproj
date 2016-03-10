@@ -36,6 +36,15 @@
       <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Framework.DependencyInjection, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Framework.DependencyInjection.1.0.0-beta8\lib\net45\Microsoft.Framework.DependencyInjection.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Framework.DependencyInjection.Abstractions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Framework.DependencyInjection.Abstractions.1.0.0-beta8\lib\net45\Microsoft.Framework.DependencyInjection.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -61,7 +70,7 @@
     <Compile Include="Diagnostics\LogEntry.cs" />
     <Compile Include="Diagnostics\LogLevel.cs" />
     <Compile Include="Diagnostics\VoidDiagnostics.cs" />
-    <Compile Include="Ioc\ICsbRegistrations.cs" />
+    <Compile Include="Ioc\IDotNetRegistrations.cs" />
     <Compile Include="Ioc\RegistrationsCollection.cs" />
     <Compile Include="Ioc\RegistrationsCollectionItem.cs" />
     <Compile Include="IO\Cmd.cs" />
@@ -82,10 +91,8 @@
     <Compile Include="Ioc\CtorArgsExtensions.cs" />
     <Compile Include="Ioc\EagerCtorArg.cs" />
     <Compile Include="Ioc\ICtorArg.cs" />
-    <Compile Include="Ioc\IocMode.cs" />
-    <Compile Include="Ioc\ICsbContainer.cs" />
-    <Compile Include="Ioc\CsbContainer.cs" />
-    <Compile Include="Ioc\IocModeCollection.cs" />
+    <Compile Include="Ioc\IDotNetContainer.cs" />
+    <Compile Include="Ioc\DotNetContainer.cs" />
     <Compile Include="Ioc\IocException.cs" />
     <Compile Include="Ioc\LazyCtorArg.cs" />
     <Compile Include="Pipelines\EagerBindStep.cs" />

@@ -11,19 +11,19 @@ namespace DotNet.Basics.Tests.Ioc
     [TestFixture]
     public class CsbContainerRegistrationsTests
     {
-        private CsbContainer _container;
+        private DotNetContainer _container;
 
         [SetUp]
         public void SetUp()
         {
-            _container = new CsbContainer();
+            _container = new DotNetContainer();
         }
 
         [Test]
         public void _AddRegistration_DerivedCsbContainerType_RegistrationsAreAdded()
         {
-            var myCsbRegistrations = new MyCsbContainerRegistrations();
-            MyCsbContainer container = new MyCsbContainer();
+            var myCsbRegistrations = new MyDotNetContainerRegistrations();
+            MyDotNetContainer container = new MyDotNetContainer();
 
             container.Registrations.Count().Should().Be(0);
 
@@ -70,7 +70,7 @@ namespace DotNet.Basics.Tests.Ioc
             RegistrationsAreOnlyAddedOnceAssert(_container);
         }
 
-        private void RegistrationsAreOnlyAddedOnceAssert(CsbContainer container)
+        private void RegistrationsAreOnlyAddedOnceAssert(DotNetContainer container)
         {
             container.Registrations.Count().Should().Be(1);//MyTypeRegistrations contain two registrations
         }

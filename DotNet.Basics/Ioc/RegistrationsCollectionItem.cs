@@ -4,7 +4,7 @@ namespace DotNet.Basics.Ioc
 {
     public class RegistrationsCollectionItem
     {
-        public RegistrationsCollectionItem(ICsbRegistrations registration)
+        public RegistrationsCollectionItem(IDotNetRegistrations registration)
         {
             if (registration == null) throw new ArgumentNullException(nameof(registration));
             Registration = registration;
@@ -12,7 +12,7 @@ namespace DotNet.Basics.Ioc
         }
 
         public Type Type { get; }
-        public ICsbRegistrations Registration { get; }
+        public IDotNetRegistrations Registration { get; }
         
         protected bool Equals(RegistrationsCollectionItem other)
         {

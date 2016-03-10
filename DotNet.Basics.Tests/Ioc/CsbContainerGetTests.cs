@@ -15,7 +15,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Get_ReferenceChainInMultipleRegistrationTypes_ConstructorDependenciesAreResolved()
         {
-            using (ICsbContainer container = new CsbContainer())
+            using (IDotNetContainer container = new DotNetContainer())
             {
                 container.BindType<IInterfaceUsedInConstructor, ClassImplementingInterfaceUsedInConstructor>();
                 container.BindType<IInterfaceForClassDependentOnInterfaceUsedInConstructor, ClassDependentOnInterfaceUsedInConstructor>();
@@ -33,7 +33,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Get_InterfaceIsntRegistered_ExceptionIsThrown()
         {
-            using (ICsbContainer container = new CsbContainer())
+            using (IDotNetContainer container = new DotNetContainer())
             {
                 //act
                 Action act = () => container.Get<IMyType>(); //not registered
@@ -45,7 +45,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Get_NamedTypeIsntRegistered_ExceptionIsThrown()
         {
-            using (ICsbContainer container = new CsbContainer())
+            using (IDotNetContainer container = new DotNetContainer())
             {
                 //act
                 Action act = () => container.Get<IMyType>("named"); //not registered
@@ -57,7 +57,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Get_TypeIsntRegistered_TypeIsResolved()
         {
-            using (ICsbContainer container = new CsbContainer())
+            using (IDotNetContainer container = new DotNetContainer())
             {
                 //act
                 var type = container.Get<MyType1>(); //not registered
@@ -68,13 +68,13 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Get_NestedNamedResolving_DependencyIsResolvedBasedOnNamedParameter()
         {
-            using (ICsbContainer container = new CsbContainer())
+            using (IDotNetContainer container = new DotNetContainer())
             {
                 //act
                 container.BindInstance<IMyType>(new MyType1(), _bindingNameAlpha);
                 container.BindInstance<IMyType>(new MyType2(), _bindingNameBeta);
-                var type1 = container.Get<IMyType>(_bindingNameAlpha, IocMode.Synthetic);
-                var type2 = container.Get<IMyType>(_bindingNameBeta, IocMode.Live);
+                var type1 = container.Get<IMyType>(_bindingNameAlpha);
+                var type2 = container.Get<IMyType>(_bindingNameBeta);
                 //assert
                 type1.GetType().Should().Be<MyType1>();
                 type2.GetType().Should().Be<MyType2>();
@@ -84,7 +84,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Get_WithNoNameWhenNamedTypeIsRegistered_FirstRegistrationIsReturnEvenIfNamed()
         {
-            using (ICsbContainer container = new CsbContainer())
+            using (IDotNetContainer container = new DotNetContainer())
             {
                 //act
                 container.BindType<IMyType, MyType1>(_bindingNameAlpha);
@@ -97,7 +97,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Get_WithNoNameWhenNamedInstanceIsRegistered_FirstRegistrationIsReturnEvenIfName()
         {
-            using (ICsbContainer container = new CsbContainer())
+            using (IDotNetContainer container = new DotNetContainer())
             {
                 //arrange
                 var instance = new MyType1();
@@ -112,7 +112,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Get_WithNotRegisteredNameWhenNamedTypeIsRegistered_ExceptionIsThrown()
         {
-            using (ICsbContainer container = new CsbContainer())
+            using (IDotNetContainer container = new DotNetContainer())
             {
                 //act
                 container.BindType<IMyType, MyType1>(_bindingNameAlpha);
@@ -125,39 +125,13 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Get_WithNotRegisteredNameWhenNamedInstanceIsRegistered_ExceptionIsThrown()
         {
-            using (ICsbContainer container = new CsbContainer())
+            using (IDotNetContainer container = new DotNetContainer())
             {
                 //act
                 container.BindInstance<IMyType>(new MyType1(), _bindingNameAlpha);
                 Action action = () => container.Get<IMyType>("SomethingThatIsNotRegistered"); //we get default
                 //assert
                 action.ShouldThrow<IocException>();
-            }
-        }
-
-        [Test]
-        public void Get_ResolveNamedTypeInOtherCOntainer_NamedInstanceIsResolved()
-        {
-            using (ICsbContainer container = new CsbContainer())
-            {
-                //act
-                container.BindType<IMyType, MyType1>(_bindingNameAlpha, IocMode.Live);
-                var type = container.Get<IMyType>(_bindingNameAlpha, IocMode.Synthetic);
-                //assert
-                type.GetType().Should().Be<MyType1>();
-            }
-        }
-
-        [Test]
-        public void Get_ResolveNamedInstanceInOtherCOntainer_NamedInstanceIsResolved()
-        {
-            using (ICsbContainer container = new CsbContainer())
-            {
-                //act
-                container.BindInstance<IMyType>(new MyType1(), _bindingNameAlpha, IocMode.Live);
-                var type = container.Get<IMyType>(_bindingNameAlpha, IocMode.Synthetic);
-                //assert
-                type.GetType().Should().Be<MyType1>();
             }
         }
     }

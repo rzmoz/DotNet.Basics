@@ -69,8 +69,8 @@
     <Compile Include="Diagnostics\ProfileEntryTests.cs" />
     <Compile Include="Ioc\CsbContainerRegistrationsTests.cs" />
     <Compile Include="Ioc\RegistrationsCollectionTests.cs" />
-    <Compile Include="Ioc\TestHelpers\MyCsbContainer.cs" />
-    <Compile Include="Ioc\TestHelpers\MyCsbContainerRegistrations.cs" />
+    <Compile Include="Ioc\TestHelpers\MyDotNetContainer.cs" />
+    <Compile Include="Ioc\TestHelpers\MyDotNetContainerRegistrations.cs" />
     <Compile Include="Ioc\TestHelpers\MyTypeRegistrations.cs" />
     <Compile Include="IO\FileTypeTests.cs" />
     <Compile Include="IO\IoDirTests.cs" />
@@ -90,11 +90,6 @@
     <Compile Include="Ioc\TestHelpers\MyType2.cs" />
     <Compile Include="Ioc\TestHelpers\TypeWithStringParameterInConstructor.cs" />
     <Compile Include="Pipelines\ClassThatIncrementArgsDependOn.cs" />
-    <Compile Include="Pipelines\ContainerModeHelpers\ContainerModeArgs.cs" />
-    <Compile Include="Pipelines\ContainerModeHelpers\DebugModeStep.cs" />
-    <Compile Include="Pipelines\ContainerModeHelpers\LiveModeStep.cs" />
-    <Compile Include="Pipelines\ContainerModeHelpers\ModeStep.cs" />
-    <Compile Include="Pipelines\ContainerModeHelpers\SyntheticModeStep.cs" />
     <Compile Include="Pipelines\IncrementArgsStep.cs" />
     <Compile Include="Pipelines\SimplePipeline.cs" />
     <Compile Include="Pipelines\StepBlockTests.cs" />

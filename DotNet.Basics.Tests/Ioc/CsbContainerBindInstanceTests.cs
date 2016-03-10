@@ -20,7 +20,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void BindInstance_GetByInterface_InstanceIsReturnedFromInterface()
         {
-            using (ICsbContainer container = new CsbContainer())
+            using (IDotNetContainer container = new DotNetContainer())
             {
                 var instance = new MyType1();
 
@@ -35,7 +35,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void BindInstance_OverrideExistingRegistrationsInstance_NewInstanceIsResolved()
         {
-            using (ICsbContainer container = new CsbContainer())
+            using (IDotNetContainer container = new DotNetContainer())
             {
                 //arrange 
                 const int result1 = 1;
@@ -46,9 +46,9 @@ namespace DotNet.Basics.Tests.Ioc
                 instance2.GetValue().Returns(result2);
                 //act
                 container.BindInstance<IMyType>(instance1);
-                var instance1Result = container.Get<IMyType>(IocMode.Synthetic).GetValue();
+                var instance1Result = container.Get<IMyType>().GetValue();
                 container.BindInstance<IMyType>(instance2);
-                var instance2Result = container.Get<IMyType>(IocMode.Synthetic).GetValue();
+                var instance2Result = container.Get<IMyType>().GetValue();
                 //assert
                 instance1Result.Should().Be(result1);
                 instance2Result.Should().Be(result2);
@@ -58,7 +58,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void BindInstance_NamedInstanceOverride_DifferentNamesDontOverride()
         {
-            using (ICsbContainer container = new CsbContainer())
+            using (IDotNetContainer container = new DotNetContainer())
             {
                 //arrange 
                 const int result1 = 1;
@@ -69,55 +69,14 @@ namespace DotNet.Basics.Tests.Ioc
                 instance2.GetValue().Returns(result2);
                 //act
                 container.BindInstance<IMyType>(instance1);
-                var resolvedInstance1 = container.Get<IMyType>(IocMode.Synthetic);
+                var resolvedInstance1 = container.Get<IMyType>();
                 container.BindInstance<IMyType>(instance2, _bindingNameAlpha);
-                var resolvedInstance2 = container.Get<IMyType>(IocMode.Synthetic);
+                var resolvedInstance2 = container.Get<IMyType>();
                 //assert
                 resolvedInstance1.GetValue().Should().Be(result1);
                 resolvedInstance2.GetValue().Should().Be(result1);
             }
         }
 
-
-        [Test]
-        public void BindInstance_OverrideExistingTypeWithInstanceFromLiveInSynthetic_NewInstanceIsResolved()
-        {
-            using (ICsbContainer container = new CsbContainer())
-            {
-                //arrange 
-                const int expectedResult = 100;
-                var instance = Substitute.For<IMyType>();
-                instance.GetValue().Returns(expectedResult);
-                //act
-                container.BindType<IMyType, MyType1>(mode: IocMode.Live); //from default live registration
-                container.BindInstance<IMyType>(instance, mode: IocMode.Synthetic);
-                //we want to add an override in synthetic
-                var liveResult = container.Get<IMyType>(IocMode.Live).GetValue(); //
-                var testResult = container.Get<IMyType>(IocMode.Synthetic).GetValue(); //
-                //assert
-                liveResult.Should().Be(1);
-                testResult.Should().Be(expectedResult);
-            }
         }
-
-        [Test]
-        public void BindInstance_OverrideExistingReferencedTypeFromLiveInSynthetic_InstanceIsResolvedWithOverridenInstance()
-        {
-            using (ICsbContainer container = new CsbContainer())
-            {
-                //arrange 
-                const int expectedResult = 100;
-                var instance = Substitute.For<IMyType>();
-                instance.GetValue().Returns(expectedResult);
-                //act
-                container.BindType<DependsOnIMyType, DependsOnIMyType>();
-                container.BindType<IMyType, MyType1>(mode: IocMode.Live); //from default live registration
-                container.BindInstance<IMyType>(instance, mode: IocMode.Synthetic);
-                //we want to add an override in test
-                var result = container.Get<DependsOnIMyType>(IocMode.Synthetic).GetValueFromIMyType(); //
-                //assert
-                result.Should().Be(expectedResult); //result from live container
-            }
-        }
-    }
 }

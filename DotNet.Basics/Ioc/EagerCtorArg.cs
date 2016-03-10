@@ -13,6 +13,6 @@ namespace DotNet.Basics.Ioc
         }
 
         public string ParameterName { get; }
-        public Func<ICsbContainer, object> GetValue { get; }
+        public Func<IDotNetContainer, object> GetValue { get; }
     }
 }

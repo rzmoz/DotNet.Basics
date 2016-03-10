@@ -6,7 +6,6 @@ using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Ioc;
 using DotNet.Basics.Pipelines;
 using DotNet.Basics.Sys;
-using DotNet.Basics.Tests.Pipelines.ContainerModeHelpers;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -15,12 +14,12 @@ namespace DotNet.Basics.Tests.Pipelines
     [TestFixture]
     public class TaskPipelineRunnerTests
     {
-        private ICsbContainer _container;
+        private IDotNetContainer _container;
 
         [SetUp]
         public void SetUp()
         {
-            _container = new CsbContainer();
+            _container = new DotNetContainer();
             _container.BindType<ClassThatIncrementArgsDependOn>();
         }
 
@@ -225,27 +224,7 @@ namespace DotNet.Basics.Tests.Pipelines
             var result = await new TaskPipelineRunner(_container).RunAsync(pipeline).ConfigureAwait(false);
             result.Args.Value.Should().Be(5);
         }
-
-        [Test]
-        [TestCase(IocMode.Live)]
-        [TestCase(IocMode.Synthetic)]
-        [TestCase(IocMode.Debug)]
-        public async Task RunAsync_ContainerMode_StepsAreRunAccordingToContainerMode(IocMode mode)
-        {
-            var container = new CsbContainer();
-            container.BindType<ModeStep, LiveModeStep>(mode: IocMode.Live);
-            container.BindType<ModeStep, SyntheticModeStep>(mode: IocMode.Synthetic);
-            container.BindType<ModeStep, DebugModeStep>(mode: IocMode.Debug);
-
-            var pipeline = new TaskPipeline<ContainerModeArgs>();
-
-            pipeline.AddBlock().AddStep<ModeStep>();
-
-            var result = await new TaskPipelineRunner(container).RunAsync(pipeline, mode: mode).ConfigureAwait(false);
-            result.Args.Mode.Should().Be(mode);
-        }
-
-
+        
         [Test]
         public async Task RunAsync_Events_StartAndEndEventsAreRaised()
         {

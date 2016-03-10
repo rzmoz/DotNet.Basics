@@ -11,13 +11,13 @@ namespace DotNet.Basics.Pipelines
     {
         public override void Init()
         {
-            var step = Container.Get<TStep>(Mode);
+            var step = Container.Get<TStep>();
             DisplayName = step.DisplayName;
         }
 
         public override async Task RunAsync(T args, IDiagnostics logger)
         {
-            var step = Container.Get<TStep>(Mode);
+            var step = Container.Get<TStep>();
             DisplayName = step.DisplayName;
             await step.RunAsync(args, logger).ConfigureAwait(false);
         }

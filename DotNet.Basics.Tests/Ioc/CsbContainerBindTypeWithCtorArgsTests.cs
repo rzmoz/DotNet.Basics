@@ -8,12 +8,12 @@ namespace DotNet.Basics.Tests.Ioc
     [TestFixture]
     public class CsbContainerBindTypeWithCtorArgsTests
     {
-        private ICsbContainer _container;
+        private IDotNetContainer _container;
 
         [SetUp]
         public void SetUp()
         {
-            _container = new CsbContainer();
+            _container = new DotNetContainer();
         }
 
         [Test]
