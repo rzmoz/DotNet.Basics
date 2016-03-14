@@ -59,6 +59,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleApp\CmdLine.cs" />
+    <Compile Include="ConsoleApp\CmdLineParam.cs" />
     <Compile Include="Diagnostics\DiagnosticsEntry.cs" />
     <Compile Include="Diagnostics\DiagnosticsType.cs" />
     <Compile Include="Diagnostics\DurationFormattingUnit.cs" />
