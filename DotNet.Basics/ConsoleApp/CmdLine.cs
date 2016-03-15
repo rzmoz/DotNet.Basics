@@ -29,7 +29,7 @@ namespace DotNet.Basics.ConsoleApp
         /// <param name="allowEmpty"></param>
         /// <param name="readAction">action where you can access the parsed argument - it's run on Parse()</param>
         /// <returns></returns>
-        public CmdLine Register(string paramName, bool required, bool allowEmpty, Action<CmdLineParam> readAction)
+        public CmdLine Register(string paramName, Required required, AllowEmpty allowEmpty, Action<CmdLineParam> readAction)
         {
             return Register(new CmdLineParam(paramName) { Required = required, AllowEmptyValue = allowEmpty }, readAction);
         }
@@ -138,7 +138,7 @@ namespace DotNet.Basics.ConsoleApp
         {
             foreach (var cmdLineParameter in _parameters.Values)
             {
-                if (cmdLineParameter.AllowEmptyValue || !cmdLineParameter.Exists)
+                if (cmdLineParameter.AllowEmptyValue == AllowEmpty.Yes || !cmdLineParameter.Exists)
                     continue;
                 if (string.IsNullOrEmpty(cmdLineParameter.Value))
                     throw new ArgumentException("Value is empty.", cmdLineParameter.Name);
@@ -149,7 +149,7 @@ namespace DotNet.Basics.ConsoleApp
         {
             foreach (string key in _parameters.Keys)
             {
-                if (_parameters[key].Required && !_parameters[key].Exists)
+                if (_parameters[key].Required == Required.Yes && !_parameters[key].Exists)
                     throw new ArgumentException("Required parameter is not found.", key);
             }
         }
@@ -169,7 +169,7 @@ namespace DotNet.Basics.ConsoleApp
                 string s = "-" + parameter.Name;
                 while (s.Length < len + 3)
                     s += " ";
-                if (parameter.Required)
+                if (parameter.Required == Required.Yes)
                     s += "<Required> ";
                 s += parameter.Help + Environment.NewLine;
                 help += s;

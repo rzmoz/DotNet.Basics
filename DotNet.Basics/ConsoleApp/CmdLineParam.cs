@@ -8,8 +8,8 @@ namespace DotNet.Basics.ConsoleApp
         {
             Name = name;
             Help = string.Empty;
-            Required = true;
-            AllowEmptyValue = false;
+            Required = Required.Yes;
+            AllowEmptyValue = AllowEmpty.No;
             Value = string.Empty;
             Exists = false;
             ReadAction = param => { };
@@ -24,8 +24,8 @@ namespace DotNet.Basics.ConsoleApp
         public string Value { get; private set; }
         public string Help { get; set; }
         public bool Exists { get; private set; }
-        public bool Required { get; set; }
-        public bool AllowEmptyValue { get; set; }
+        public Required Required { get; set; }
+        public AllowEmpty AllowEmptyValue { get; set; }
         public string Name { get; private set; }
         internal Action<CmdLineParam> ReadAction { get; set; }
     }
