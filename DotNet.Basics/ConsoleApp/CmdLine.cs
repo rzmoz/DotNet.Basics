@@ -156,7 +156,7 @@ namespace DotNet.Basics.ConsoleApp
 
         private bool IsParameter(string s)
         {
-            return s.Length > 0 && s[0] == '-';
+            return s.Length > 0 && (s[0] == '-' || s[0] == '/');
         }
 
         public string HelpScreen()
