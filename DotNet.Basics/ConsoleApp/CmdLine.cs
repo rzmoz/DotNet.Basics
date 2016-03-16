@@ -9,6 +9,8 @@ namespace DotNet.Basics.ConsoleApp
         private const char _quoteChar = '\"'; //quote
         private readonly Dictionary<string, CmdLineParam> _parameters = new Dictionary<string, CmdLineParam>();
 
+        private readonly char[] _paramFlags = { '-', '/' };
+
         public string this[string key]
         {
             get
@@ -58,7 +60,7 @@ namespace DotNet.Basics.ConsoleApp
             _parameters.Clear();
         }
 
-        public bool Parse(string[] args)
+        public bool Parse(params string[] args)
         {
             string error = string.Empty;
             try
@@ -86,7 +88,7 @@ namespace DotNet.Basics.ConsoleApp
             return true;
         }
 
-        private void ParseArgs(string[] args)
+        private void ParseArgs(params string[] args)
         {
             int argsPointer = 0;
 
@@ -96,7 +98,9 @@ namespace DotNet.Basics.ConsoleApp
 
                 if (IsParameter(arg))
                 {
-                    string key = arg.TrimStart('-').ToLower();
+                    string key = arg.ToLower();
+                    key = _paramFlags.Aggregate(key, (current, paramFlag) => current.TrimStart(paramFlag));
+
                     string value = string.Empty;
                     argsPointer++;
 
@@ -156,7 +160,7 @@ namespace DotNet.Basics.ConsoleApp
 
         private bool IsParameter(string s)
         {
-            return s.Length > 0 && (s[0] == '-' || s[0] == '/');
+            return s.Length > 0 && _paramFlags.Contains(s[0]);
         }
 
         public string HelpScreen()
