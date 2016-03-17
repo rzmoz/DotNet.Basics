@@ -47,6 +47,18 @@ namespace DotNet.Basics.ConsoleApp
             return this;
         }
 
+        public CmdLine RegisterDebug()
+        {
+            return Register("debug", Required.No, AllowEmpty.Yes, param =>
+            {
+                if (param.Exists == false)
+                    return;
+                Console.WriteLine("In debug mode - attach debugger and press a key to continue");
+                Console.ReadKey();
+                Console.WriteLine("Continuing..");
+            });
+        }
+
         public bool Remove(string name)
         {
             var key = name.ToLower();
