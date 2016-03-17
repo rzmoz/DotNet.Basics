@@ -47,6 +47,11 @@ namespace DotNet.Basics.ConsoleApp
             return this;
         }
 
+        /// <summary>
+        /// Adds a parameter named "debug". Not required and allows empty value. Makes the program wait for input from user so you can attach debugger to console app.
+        /// usage [console.exe] -debug
+        /// </summary>
+        /// <returns></returns>
         public CmdLine RegisterDebug()
         {
             return Register("debug", Required.No, AllowEmpty.Yes, param =>
