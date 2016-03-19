@@ -7,7 +7,7 @@
         <authors>rzmoz</authors>
         <owners>rzmoz</owners>
         <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
-        <projectUrl>https://bitbucket.org/rzmoz/dotnet.basics/src</projectUrl>
+        <projectUrl>https://github.com/rzmoz/dotnet.basics</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Syntactical sugar and commonly used functionality</description>
     </metadata>
