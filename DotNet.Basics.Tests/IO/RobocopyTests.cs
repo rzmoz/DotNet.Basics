@@ -29,7 +29,8 @@ namespace DotNet.Basics.Tests.IO
             var targetFile = "IO\\TestTargets".ToDir().ToFile($"{sourcefile.Name}");
             targetFile.DeleteIfExists();
             targetFile.Exists().Should().BeFalse("target file should not exist before copy");
-            Robocopy.Copy(sourcefile, targetFile);
+            var result = Robocopy.Copy(sourcefile, targetFile.Directory);
+            result.Should().BeLessThan(8); //http://ss64.com/nt/robocopy-exit.html
             targetFile.Exists().Should().BeTrue("target file is copied");
         }
 

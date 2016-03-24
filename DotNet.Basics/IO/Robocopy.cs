@@ -21,9 +21,9 @@ namespace DotNet.Basics.IO
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static int Copy(IoFile source, IoFile target)
+        public static int Copy(IoFile source, IoDir target)
         {
-            return Run(source.Directory.FullName, target.Directory.FullName, source.Name);
+            return Run(source.Directory.FullName, target.FullName, source.Name);
         }
 
         /// <summary>
