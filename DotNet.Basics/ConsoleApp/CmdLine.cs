@@ -30,10 +30,11 @@ namespace DotNet.Basics.ConsoleApp
         /// <param name="required"></param>
         /// <param name="allowEmpty"></param>
         /// <param name="readAction">action where you can access the parsed argument - it's run on Parse()</param>
+        /// <param name="help"></param>
         /// <returns></returns>
-        public CmdLine Register(string paramName, Required required, AllowEmpty allowEmpty, Action<CmdLineParam> readAction)
+        public CmdLine Register(string paramName, Required required, AllowEmpty allowEmpty, Action<CmdLineParam> readAction, string help = null)
         {
-            return Register(new CmdLineParam(paramName) { Required = required, AllowEmptyValue = allowEmpty }, readAction);
+            return Register(new CmdLineParam(paramName) { Required = required, AllowEmptyValue = allowEmpty, Help = help ?? string.Empty }, readAction);
         }
 
         public CmdLine Register(CmdLineParam parameter, Action<CmdLineParam> readAction)
