@@ -21,9 +21,11 @@ namespace DotNet.Basics.IO
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static int CopyFile(string sourceDir, string targetDir, string file = null)
+        public static int CopyFile(string sourceDir, string targetDir, string file)
         {
-            return Run(sourceDir, targetDir, file ?? string.Empty);
+            if (string.IsNullOrEmpty(file))
+                throw new ArgumentException(nameof(file));
+            return Run(sourceDir, targetDir, file);
         }
 
         /// <summary>
