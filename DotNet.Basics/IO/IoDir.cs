@@ -62,7 +62,7 @@ namespace DotNet.Basics.IO
                 var target = Parent.ToDir(source.Name);
                 if (target.FullName.Equals(FullName, StringComparison.InvariantCultureIgnoreCase))
                     subDirIsIdenticalToParentDir = true;
-                Robocopy.MoveDir(source, target);
+                Robocopy.Move(source.FullName, target.FullName);
             }
 
             if (subDirIsIdenticalToParentDir == false)
@@ -73,7 +73,7 @@ namespace DotNet.Basics.IO
                     var target = Parent;
                     var moveExitCode = Cmd.Move(source.FullName, target.FullName);
                     if (moveExitCode != 0)
-                        Robocopy.MoveFile(source, target);
+                        Robocopy.Move(source.Directory.FullName, target.FullName,source.Name);
                 }
             }
 
@@ -129,7 +129,7 @@ namespace DotNet.Basics.IO
             catch (Exception e)
             {
                 Debug.WriteLine("Fast copy failed - falling back to use robocopy\r\n{0}", e);
-                Robocopy.Copy(this, target, dirCopyOptions);
+                Robocopy.CopyDir(FullName, target.FullName, dirCopyOptions);
             }
         }
 

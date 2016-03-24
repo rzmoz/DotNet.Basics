@@ -21,41 +21,32 @@ namespace DotNet.Basics.IO
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static int Copy(IoFile source, IoDir target)
+        public static int CopyFile(string sourceDir, string targetDir, string file = null)
         {
-            return Run(source.Directory.FullName, target.FullName, source.Name);
+            return Run(sourceDir, targetDir, file ?? string.Empty);
         }
 
         /// <summary>
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static int Copy(IoDir source, IoDir target, DirCopyOptions dirCopyOptions = DirCopyOptions.IncludeSubDirectories)
+        public static int CopyDir(string sourceDir, string targetDir, DirCopyOptions dirCopyOptions = DirCopyOptions.IncludeSubDirectories)
         {
             var switches = string.Empty;
             if (dirCopyOptions == DirCopyOptions.IncludeSubDirectories)
                 switches = _includeSubfoldersSwitch;
-            return Run(source.FullName, target.FullName, switches);
+            return Run(sourceDir, targetDir, switches);
         }
 
         /// <summary>
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static int MoveDir(IoDir source, IoDir target)
+        public static int Move(string sourceDir, string targetDir, string file = null)
         {
-            var exitCode = Run(source.FullName, target.FullName, _includeSubfoldersSwitch + _moveSwitch);
-            source.DeleteIfExists();
-            return exitCode;
-        }
-
-        /// <summary>
-        /// http://ss64.com/nt/robocopy-exit.html
-        /// </summary>
-        /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static int MoveFile(IoFile source, IoDir target)
-        {
-            return Run(source.Directory.FullName, target.FullName, source.Name + _moveSwitch);
+            if (string.IsNullOrEmpty(file))
+                return Run(sourceDir, targetDir, _includeSubfoldersSwitch + _moveSwitch);//move dir
+            return Run(sourceDir, targetDir, file + _moveSwitch);
         }
 
         private static void Init()
