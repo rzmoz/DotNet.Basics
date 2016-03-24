@@ -11,8 +11,18 @@ namespace DotNet.Basics.IO
         private const string _sourceDestinationFormat = @" ""{0}"" ""{1}"" /NP ";
         private const string _includeSubfoldersSwitch = " /e ";
         private const string _moveSwitch = " /move ";
+        private const string _overwriteIfExistsSwitch = "  ";
         private static string _fullPath = null;
         private static readonly object _syncRoot = new Object();
+
+        public static int Copy(IoFile source, IoFile target,
+            FileCopyOptions fileCopyOptions = FileCopyOptions.AbortIfExists)
+        {
+            var switches = string.Empty;
+            if (fileCopyOptions == FileCopyOptions.OverwriteIfExists)
+                switches = _overwriteIfExistsSwitch;
+            return Run(source.Directory.FullName, target.Directory.FullName, source.Name + switches);
+        }
 
         public static int Copy(IoDir source, IoDir target, DirCopyOptions dirCopyOptions = DirCopyOptions.IncludeSubDirectories)
         {
