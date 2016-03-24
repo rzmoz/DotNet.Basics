@@ -19,7 +19,7 @@ namespace DotNet.Basics.Tests.ConsoleApp
                 param.Exists.Should().BeTrue();
             });
 
-            var parseResult = cmdLine.Parse($"{paramIndicator}{paramName}");
+            var parseResult = cmdLine.Parse(new[] { $"{paramIndicator}{paramName}" });
             parseResult.Should().BeTrue();
         }
     }

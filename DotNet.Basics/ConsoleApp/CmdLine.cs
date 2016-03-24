@@ -76,8 +76,7 @@ namespace DotNet.Basics.ConsoleApp
         {
             _parameters.Clear();
         }
-
-        public bool Parse(params string[] args)
+        public bool Parse(string[] args, WriteErrorMessagesToConsole writeErrorMessagesToConsole = WriteErrorMessagesToConsole.True)
         {
             string error = string.Empty;
             try
@@ -91,8 +90,12 @@ namespace DotNet.Basics.ConsoleApp
 
             if (error != string.Empty)
             {
-                Console.WriteLine(Environment.NewLine + error);
-                Console.WriteLine(HelpScreen());
+                if (writeErrorMessagesToConsole == WriteErrorMessagesToConsole.True)
+                {
+                    Console.WriteLine(Environment.NewLine + error);
+                    Console.WriteLine(HelpScreen());
+                }
+
                 return false;
             }
 
@@ -192,6 +195,8 @@ namespace DotNet.Basics.ConsoleApp
                     s += " ";
                 if (parameter.Required == Required.Yes)
                     s += "<Required> ";
+                if (parameter.AllowEmptyValue == AllowEmpty.Yes)
+                    s += "<EmptyValueAllowed> ";
                 s += parameter.Help + Environment.NewLine;
                 help += s;
             }

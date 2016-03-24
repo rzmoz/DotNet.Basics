@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using DotNet.Basics.ConsoleApp;
 
 
 namespace DotNet.Basics.Tests.Console
@@ -8,10 +9,10 @@ namespace DotNet.Basics.Tests.Console
     {
         static void Main(string[] args)
         {
-            System.Console.WriteLine("Executing DotNet.Basics.Tests.Console...");
+            var cmd = new CmdLine()
+                .Register("RequiredTrueAllowEmptyTrue", Required.Yes, AllowEmpty.Yes, param => { });
 
-            Environment.ExitCode = Int32.Parse(args.Single());
-            Environment.Exit(Environment.ExitCode);
+            cmd.Parse(args);
         }
     }
 }
