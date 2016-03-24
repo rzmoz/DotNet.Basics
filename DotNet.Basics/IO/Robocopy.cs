@@ -5,6 +5,9 @@ using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {
+    /// <summary>
+    /// http://ss64.com/nt/robocopy-exit.html
+    /// </summary>
     public static class Robocopy
     {
         private const string _fileName = @"Robocopy";
