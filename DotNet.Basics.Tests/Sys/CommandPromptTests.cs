@@ -8,12 +8,10 @@ namespace DotNet.Basics.Tests.Sys
     public class CommandPromptTests
     {
         [Test]
-        [TestCase(1)]
-        [TestCase(0)]
-        public void Run_ExitCode_ExitCodeIsReturned(int exitCode)
+        public void Run_ExitCode_ExitCodeIsReturned()
         {
-            var observedExitCode = CommandPrompt.Run($".\\DotNet.Basics.Tests.Console.exe {exitCode}");
-            observedExitCode.Should().Be(exitCode);
+            var observedExitCode = CommandPrompt.Run($".\\DotNet.Basics.Tests.Console.exe -RequiredTrueAllowEmptyTrue");
+            observedExitCode.Should().Be(0);
         }
     }
 }
