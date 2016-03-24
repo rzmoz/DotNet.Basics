@@ -194,9 +194,9 @@ namespace DotNet.Basics.ConsoleApp
                 while (s.Length < len + 3)
                     s += " ";
                 if (parameter.Required == Required.Yes)
-                    s += "<Required> ";
+                    s += "[Required] ";
                 if (parameter.AllowEmptyValue == AllowEmpty.Yes)
-                    s += "<EmptyValueAllowed> ";
+                    s += "[EmptyValueAllowed] ";
                 s += parameter.Help + Environment.NewLine;
                 help += s;
             }
