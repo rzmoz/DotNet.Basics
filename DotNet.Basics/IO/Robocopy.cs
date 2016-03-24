@@ -28,9 +28,9 @@ namespace DotNet.Basics.IO
             if (target == null) { throw new ArgumentNullException(nameof(target)); }
 
             Init();
-            var command = $"{_fullPath} \"{source}\" \"{target}\"";
+            var command = $"{_fullPath} \"{source}\" \"{target}\" ";
             if (string.IsNullOrWhiteSpace(filesToCopy) == false)
-                command += $" \"{filesToCopy}\"";
+                command += $"\"{filesToCopy}\" ";
             command += options ?? string.Empty;
             return CommandPrompt.Run(command);
         }
