@@ -17,11 +17,19 @@ namespace DotNet.Basics.IO
         private static string _fullPath = null;
         private static readonly object _syncRoot = new Object();
 
+        /// <summary>
+        /// http://ss64.com/nt/robocopy-exit.html
+        /// </summary>
+        /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
         public static int Copy(IoFile source, IoFile target)
         {
             return Run(source.Directory.FullName, target.Directory.FullName, source.Name);
         }
 
+        /// <summary>
+        /// http://ss64.com/nt/robocopy-exit.html
+        /// </summary>
+        /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
         public static int Copy(IoDir source, IoDir target, DirCopyOptions dirCopyOptions = DirCopyOptions.IncludeSubDirectories)
         {
             var switches = string.Empty;
@@ -30,6 +38,10 @@ namespace DotNet.Basics.IO
             return Run(source.FullName, target.FullName, switches);
         }
 
+        /// <summary>
+        /// http://ss64.com/nt/robocopy-exit.html
+        /// </summary>
+        /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
         public static int MoveDir(IoDir source, IoDir target)
         {
             var exitCode = Run(source.FullName, target.FullName, _includeSubfoldersSwitch + _moveSwitch);
@@ -37,6 +49,10 @@ namespace DotNet.Basics.IO
             return exitCode;
         }
 
+        /// <summary>
+        /// http://ss64.com/nt/robocopy-exit.html
+        /// </summary>
+        /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
         public static int MoveFile(IoFile source, IoDir target)
         {
             return Run(source.Directory.FullName, target.FullName, source.Name + _moveSwitch);
