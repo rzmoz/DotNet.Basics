@@ -11,9 +11,9 @@ namespace DotNet.Basics.IO
     public static class Robocopy
     {
         private const string _fileName = @"Robocopy";
-        private const string _sourceDestinationFormat = @" ""{0}"" ""{1}"" /NP ";
         private const string _includeSubfoldersSwitch = " /e ";
         private const string _moveSwitch = " /move ";
+        private const string _progressMutedSwitch = " /NP ";
         private static string _fullPath = null;
         private static readonly object _syncRoot = new Object();
 
@@ -37,7 +37,7 @@ namespace DotNet.Basics.IO
             var switches = string.Empty;
             if (dirCopyOptions == DirCopyOptions.IncludeSubDirectories)
                 switches = _includeSubfoldersSwitch;
-            return Run(sourceDir, targetDir, switches);
+            return Run(sourceDir, targetDir, null, switches);
         }
 
         /// <summary>
@@ -47,8 +47,8 @@ namespace DotNet.Basics.IO
         public static int Move(string sourceDir, string targetDir, string file = null)
         {
             if (string.IsNullOrEmpty(file))
-                return Run(sourceDir, targetDir, _includeSubfoldersSwitch + _moveSwitch);//move dir
-            return Run(sourceDir, targetDir, file + _moveSwitch);
+                return Run(sourceDir, targetDir, null, _includeSubfoldersSwitch + _moveSwitch);//move dir
+            return Run(sourceDir, targetDir, file, _moveSwitch);
         }
 
         private static void Init()
@@ -58,7 +58,7 @@ namespace DotNet.Basics.IO
 
             lock (_syncRoot)
             {
-                var lookforPaths = new string[]
+                var lookforPaths = new[]
                 {
                     $@"\Windows\SysWOW64\{_fileName}.exe",
                     $@"\Windows\System32\{_fileName}.exe"
@@ -93,14 +93,17 @@ namespace DotNet.Basics.IO
             throw new IOException("Robocopy not found");
         }
 
-        private static int Run(string source, string target, string switches)
+        private static int Run(string source, string target, string file = null, string switches = null)
         {
             if (source == null) { throw new ArgumentNullException(nameof(source)); }
             if (target == null) { throw new ArgumentNullException(nameof(target)); }
 
             Init();
-            var command = string.Format(_fullPath + _sourceDestinationFormat, source, target);
-            command += switches;
+            var command = $"{_fullPath} \"{source}\" \"{target}\"";
+            if (string.IsNullOrWhiteSpace(file) == false)
+                command += $" \"{file}\"";
+            command += switches ?? string.Empty;
+            command += _progressMutedSwitch;
             return CommandPrompt.Run(command);
         }
     }
