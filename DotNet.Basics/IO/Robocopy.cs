@@ -6,49 +6,72 @@ using DotNet.Basics.Sys;
 namespace DotNet.Basics.IO
 {
     /// <summary>
+    /// http://ss64.com/nt/robocopy.html
     /// http://ss64.com/nt/robocopy-exit.html
     /// </summary>
     public static class Robocopy
     {
         private const string _fileName = @"Robocopy";
-        private const string _includeSubfoldersSwitch = " /e ";
-        private const string _moveSwitch = " /move ";
-        private const string _progressMutedSwitch = " /NP ";
+        private const string _includeSubfoldersOption = " /e ";
+        private const string _moveOption = " /move ";
         private static string _fullPath = null;
         private static readonly object _syncRoot = new Object();
 
         /// <summary>
+        /// http://ss64.com/nt/robocopy.html
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static int CopyFile(string sourceDir, string targetDir, string file)
+        public static int Run(string source, string target, string filesToCopy = null, string options = null)
+        {
+            if (source == null) { throw new ArgumentNullException(nameof(source)); }
+            if (target == null) { throw new ArgumentNullException(nameof(target)); }
+
+            Init();
+            var command = $"{_fullPath} \"{source}\" \"{target}\"";
+            if (string.IsNullOrWhiteSpace(filesToCopy) == false)
+                command += $" \"{filesToCopy}\"";
+            command += options ?? string.Empty;
+            return CommandPrompt.Run(command);
+        }
+
+        /// <summary>
+        /// http://ss64.com/nt/robocopy.html
+        /// http://ss64.com/nt/robocopy-exit.html
+        /// </summary>
+        /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
+        public static int CopyFile(string sourceDir, string targetDir, string file, string extraOptions = null)
         {
             if (string.IsNullOrEmpty(file))
                 throw new ArgumentException(nameof(file));
-            return Run(sourceDir, targetDir, file);
+            return Run(sourceDir, targetDir, file, extraOptions);
         }
 
         /// <summary>
+        /// http://ss64.com/nt/robocopy.html
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static int CopyDir(string sourceDir, string targetDir, DirCopyOptions dirCopyOptions = DirCopyOptions.IncludeSubDirectories)
+        public static int CopyDir(string sourceDir, string targetDir, DirCopyOptions dirCopyOptions = DirCopyOptions.IncludeSubDirectories, string extraOptions = null)
         {
-            var switches = string.Empty;
+            var options = string.Empty;
             if (dirCopyOptions == DirCopyOptions.IncludeSubDirectories)
-                switches = _includeSubfoldersSwitch;
-            return Run(sourceDir, targetDir, null, switches);
+                options = _includeSubfoldersOption;
+            if (string.IsNullOrWhiteSpace(extraOptions) == false)
+                options += " " + extraOptions;
+            return Run(sourceDir, targetDir, null, options);
         }
 
         /// <summary>
+        /// http://ss64.com/nt/robocopy.html
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static int Move(string sourceDir, string targetDir, string file = null)
+        public static int Move(string sourceDir, string targetDir, string file = null, string extraOptions = null)
         {
             if (string.IsNullOrEmpty(file))
-                return Run(sourceDir, targetDir, null, _includeSubfoldersSwitch + _moveSwitch);//move dir
-            return Run(sourceDir, targetDir, file, _moveSwitch);
+                return Run(sourceDir, targetDir, file, $"{_includeSubfoldersOption} {_moveOption} {extraOptions}");//move dir
+            return Run(sourceDir, targetDir, file, _moveOption);
         }
 
         private static void Init()
@@ -91,20 +114,6 @@ namespace DotNet.Basics.IO
             }
 
             throw new IOException("Robocopy not found");
-        }
-
-        private static int Run(string source, string target, string file = null, string switches = null)
-        {
-            if (source == null) { throw new ArgumentNullException(nameof(source)); }
-            if (target == null) { throw new ArgumentNullException(nameof(target)); }
-
-            Init();
-            var command = $"{_fullPath} \"{source}\" \"{target}\"";
-            if (string.IsNullOrWhiteSpace(file) == false)
-                command += $" \"{file}\"";
-            command += switches ?? string.Empty;
-            command += _progressMutedSwitch;
-            return CommandPrompt.Run(command);
         }
     }
 }
