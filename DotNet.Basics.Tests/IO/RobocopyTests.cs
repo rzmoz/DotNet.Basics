@@ -25,12 +25,11 @@ namespace DotNet.Basics.Tests.IO
         {
             var sourcefile = "IO\\TestSources".ToDir().ToFile("TextFile1.txt");
             sourcefile.Exists().Should().BeTrue("source file should exist");
-
-
+            
             var targetFile = "IO\\TestTargets".ToDir().ToFile($"{sourcefile.Name}");
             targetFile.DeleteIfExists();
             targetFile.Exists().Should().BeFalse("target file should not exist before copy");
-            Robocopy.Copy(sourcefile, targetFile, FileCopyOptions.OverwriteIfExists);
+            Robocopy.Copy(sourcefile, targetFile);
             targetFile.Exists().Should().BeTrue("target file is copied");
         }
 
