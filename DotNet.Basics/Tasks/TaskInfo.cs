@@ -8,7 +8,7 @@ namespace DotNet.Basics.Tasks
         public TaskInfo(string name = null, params StringKeyValue[] metadata)
             : base(name)
         {
-            Metadata = new StringDictionary(metadata);
+            Metadata = new StringDictionary(metadata, KeyNotFoundMode.ReturnNull);
         }
 
         public StringDictionary Metadata { get; }

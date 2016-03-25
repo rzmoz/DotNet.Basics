@@ -64,13 +64,15 @@ namespace DotNet.Basics.Tests.Collections
         }
 
         [Test]
-        public void Ctor_WithEnumerableAsArgument_NullIsReturned()
+        public void Ctor_WithEnumerableAsArgument_ThrowsException()
         {
             var args = new[] { new StringKeyValue(_myKey, _myValue) };
 
             var kvCollection = new StringDictionary(args);
 
-            kvCollection[_myKeyThatDoesntExist].Should().BeNull();
+            Action action = () => { var @value = kvCollection[_myKeyThatDoesntExist]; };
+
+            action.ShouldThrow<KeyNotFoundException>();
         }
 
         [Test]

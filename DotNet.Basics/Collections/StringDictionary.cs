@@ -14,11 +14,11 @@ namespace DotNet.Basics.Collections
         private readonly Func<string, string> _getvalueMethod;
 
         public StringDictionary()
-            : this(KeyNotFoundMode.ReturnNull, KeyMode.CaseInsensitive)
+            : this(KeyNotFoundMode.ThroweyNotFoundException, KeyMode.CaseSensitive)
         {
         }
 
-        public StringDictionary(KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ReturnNull, KeyMode keyMode = KeyMode.CaseInsensitive)
+        public StringDictionary(KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ThroweyNotFoundException, KeyMode keyMode = KeyMode.CaseSensitive)
         {
             KeyNotFoundMode = keyNotFoundMode;
             KeyMode = keyMode;
@@ -33,7 +33,7 @@ namespace DotNet.Basics.Collections
                 _dic = new StringKeyDictionary<string>();
         }
 
-        public StringDictionary(IEnumerable<StringKeyValue> keyValues, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ReturnNull, KeyMode keyMode = KeyMode.CaseInsensitive)
+        public StringDictionary(IEnumerable<StringKeyValue> keyValues, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ThroweyNotFoundException, KeyMode keyMode = KeyMode.CaseSensitive)
             : this(keyNotFoundMode, keyMode)
         {
             if (keyValues == null)
@@ -41,7 +41,7 @@ namespace DotNet.Basics.Collections
             foreach (var keyValue in keyValues)
                 _dic.Add(keyValue);
         }
-        public StringDictionary(IEnumerable<KeyValuePair<string, string>> keyValues, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ReturnNull, KeyMode keyMode = KeyMode.CaseInsensitive)
+        public StringDictionary(IEnumerable<KeyValuePair<string, string>> keyValues, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ThroweyNotFoundException, KeyMode keyMode = KeyMode.CaseSensitive)
             : this(keyValues.Select(kv => new StringKeyValue(kv.Key, kv.Value)), keyNotFoundMode, keyMode)
         {
         }
