@@ -1,27 +1,39 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace DotNet.Basics.ConsoleApp
 {
-    public class CmdLine
+    public class CmdLine : IReadOnlyCollection<CmdLineParam>
     {
+        private const string _debugParamName = "debug";
+
         private const char _quoteChar = '\"'; //quote
         private readonly Dictionary<string, CmdLineParam> _parameters = new Dictionary<string, CmdLineParam>();
 
         private readonly char[] _paramFlags = { '-', '/' };
 
+        public CmdLine()
+        {
+            RegisterDebug();
+        }
+
         public string this[string key]
         {
             get
             {
-                if (!_parameters.ContainsKey(key))
-                    throw new KeyNotFoundException(key);
-                return _parameters[key]?.Value?.Trim(_quoteChar);
+                var loweredKey = key.ToLower();
+                try
+                {
+                    return _parameters[loweredKey]?.Value?.Trim(_quoteChar);
+                }
+                catch (KeyNotFoundException)
+                {
+                    return null;
+                }
             }
         }
-
-        public bool Exists(string key) => _parameters[key].Exists;
 
         /// <summary>
         /// 
@@ -48,25 +60,10 @@ namespace DotNet.Basics.ConsoleApp
             return this;
         }
 
-        /// <summary>
-        /// Adds a parameter named "debug". Not required and allows empty value. Makes the program wait for input from user so you can attach debugger to console app.
-        /// usage [console.exe] -debug
-        /// </summary>
-        /// <returns></returns>
-        public CmdLine RegisterDebug()
-        {
-            return Register("debug", Required.No, AllowEmpty.Yes, param =>
-            {
-                if (param.Exists == false)
-                    return;
-                Console.WriteLine("In debug mode - attach debugger and press a key to continue");
-                Console.ReadKey();
-                Console.WriteLine("Continuing..");
-            });
-        }
-
         public bool Remove(string name)
         {
+            if (name.Equals(_debugParamName, StringComparison.CurrentCultureIgnoreCase))
+                return false;//we don't remove the debug param
             var key = name.ToLower();
             if (_parameters.ContainsKey(key))
                 return _parameters.Remove(key);
@@ -76,6 +73,7 @@ namespace DotNet.Basics.ConsoleApp
         public void ClearParameters()
         {
             _parameters.Clear();
+            RegisterDebug();
         }
         public bool Parse(string[] args, WriteErrorMessagesToConsole writeErrorMessagesToConsole = WriteErrorMessagesToConsole.True)
         {
@@ -96,7 +94,6 @@ namespace DotNet.Basics.ConsoleApp
                     Console.WriteLine(Environment.NewLine + error);
                     Console.WriteLine(HelpScreen());
                 }
-
                 return false;
             }
 
@@ -108,6 +105,46 @@ namespace DotNet.Basics.ConsoleApp
 
             return true;
         }
+
+
+        public string HelpScreen()
+        {
+            int len = _parameters.Keys.Select(key => key.Length).Concat(new[] { 0 }).Max();
+
+            string help = "\nParameters:\r\n\r\n";
+            foreach (var parameter in _parameters.Values)
+            {
+                if (parameter.Name == _debugParamName)
+                    continue;//we never show debug since its for internal dev only
+
+                string s = "-" + parameter.Name;
+                while (s.Length < len + 3)
+                    s += " ";
+                if (parameter.Required == Required.Yes)
+                    s += "[Required] ";
+                else
+                    s += "[Optional] ";
+                if (parameter.AllowEmptyValue == AllowEmpty.Yes)
+                    s += "[EmptyValueAllowed] ";
+                s += parameter.Help + Environment.NewLine;
+                help += s;
+            }
+            return help;
+        }
+
+        public IEnumerator<CmdLineParam> GetEnumerator()
+        {
+            return _parameters.Values.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public int Count => _parameters.Count;
+
+
 
         private void ParseArgs(params string[] args)
         {
@@ -184,27 +221,21 @@ namespace DotNet.Basics.ConsoleApp
             return s.Length > 0 && _paramFlags.Contains(s[0]);
         }
 
-        public string HelpScreen()
+        /// <summary>
+        /// Adds a parameter named "debug". Not required and allows empty value. Makes the program wait for input from user so you can attach debugger to console app.
+        /// usage [console.exe] -debug
+        /// </summary>
+        /// <returns></returns>
+        private void RegisterDebug()
         {
-            int len = _parameters.Keys.Select(key => key.Length).Concat(new[] { 0 }).Max();
-
-            string help = "\nParameters:\r\n\r\n";
-            foreach (var parameter in _parameters.Values)
+            Register("debug", Required.No, AllowEmpty.Yes, param =>
             {
-                string s = "-" + parameter.Name;
-                while (s.Length < len + 3)
-                    s += " ";
-                if (parameter.Required == Required.Yes)
-                    s += "[Required] ";
-                else
-                    s += "[Optional] ";
-                if (parameter.AllowEmptyValue == AllowEmpty.Yes)
-                    s += "[EmptyValueAllowed] ";
-                s += parameter.Help + Environment.NewLine;
-                help += s;
-            }
-            return help;
+                if (param.Exists == false)
+                    return;
+                Console.WriteLine("In debug mode - attach debugger and press a key to continue");
+                Console.ReadKey();
+                Console.WriteLine("Continuing..");
+            });
         }
-
     }
 }
