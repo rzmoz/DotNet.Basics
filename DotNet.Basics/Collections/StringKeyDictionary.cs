@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace DotNet.Basics.Sys
+namespace DotNet.Basics.Collections
 {
+    [Serializable]
     public class StringKeyDictionary<TValue> : Dictionary<string, TValue>
     {
         public StringKeyDictionary()

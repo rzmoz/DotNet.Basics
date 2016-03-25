@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DotNet.Basics.Sys
+namespace DotNet.Basics.Collections
 {
+    [Serializable]
     public class StringKeyCaseInsensitiveDictionary<TValue> : IDictionary<string, TValue>
     {
         private readonly StringKeyDictionary<KeyValuePair<string, TValue>> _dic;
@@ -108,8 +109,8 @@ namespace DotNet.Basics.Sys
 
         public TValue this[string key]
         {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
+            get { return _dic[key.ToLower()].Value; }
+            set { _dic[key.ToLower()] = new KeyValuePair<string, TValue>(key, value); }
         }
 
         public ICollection<string> Keys => _dic.Values.Select(value => value.Key).ToList();

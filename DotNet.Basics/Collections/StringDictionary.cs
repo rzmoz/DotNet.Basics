@@ -9,7 +9,8 @@ namespace DotNet.Basics.Collections
 {
     public class StringDictionary : IReadOnlyCollection<StringKeyValue>
     {
-        private readonly IDictionary<string, string> _keyValues;
+        private readonly IDictionary<string, string> _dic;
+
         private readonly Func<string, string> _getvalueMethod;
 
         public StringDictionary()
@@ -17,16 +18,19 @@ namespace DotNet.Basics.Collections
         {
         }
 
-        public StringDictionary(KeyNotFoundMode keyNotFoundMode=KeyNotFoundMode.ReturnNull, KeyMode keyMode=KeyMode.CaseInsensitive)
+        public StringDictionary(KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ReturnNull, KeyMode keyMode = KeyMode.CaseInsensitive)
         {
             KeyNotFoundMode = keyNotFoundMode;
             KeyMode = keyMode;
             if (keyNotFoundMode == KeyNotFoundMode.ReturnNull)
-                _getvalueMethod = GetNullIfNotFoundCaseSensitive;
+                _getvalueMethod = GetNullIfNotFound;
             else
-                _getvalueMethod = GetKeyNotFoundExceptionIfNotFoundCaseSensistive;
+                _getvalueMethod = GetKeyNotFoundExceptionIfNotFound;
 
-            _keyValues = new Dictionary<string, string>();
+            if (keyMode == KeyMode.CaseInsensitive)
+                _dic = new StringKeyCaseInsensitiveDictionary<string>();
+            else
+                _dic = new StringKeyDictionary<string>();
         }
 
         public StringDictionary(IEnumerable<StringKeyValue> keyValues, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ReturnNull, KeyMode keyMode = KeyMode.CaseInsensitive)
@@ -35,30 +39,17 @@ namespace DotNet.Basics.Collections
             if (keyValues == null)
                 return;
             foreach (var keyValue in keyValues)
-                _keyValues.Add(keyValue);
+                _dic.Add(keyValue);
         }
-
-        public StringDictionary(IDictionary<string, string> keyValues, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ReturnNull, KeyMode keyMode = KeyMode.CaseInsensitive)
-            : this(keyNotFoundMode, keyMode)
+        public StringDictionary(IEnumerable<KeyValuePair<string, string>> keyValues, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ReturnNull, KeyMode keyMode = KeyMode.CaseInsensitive)
+            : this(keyValues.Select(kv => new StringKeyValue(kv.Key, kv.Value)), keyNotFoundMode, keyMode)
         {
-            if (keyValues == null)
-                return;
-            _keyValues = keyValues;
-        }
-
-        public static implicit operator StringDictionary(Dictionary<string, string> kvd)
-        {
-            return new StringDictionary(kvd);
-        }
-        public static implicit operator Dictionary<string, string>(StringDictionary kvc)
-        {
-            return new Dictionary<string, string>(kvc._keyValues);
         }
 
         public string this[string key]
         {
             get { return _getvalueMethod(key); }
-            set { _keyValues[key] = value; }
+            set { _dic[key] = value; }
         }
 
         public KeyNotFoundMode KeyNotFoundMode { get; }
@@ -66,20 +57,20 @@ namespace DotNet.Basics.Collections
 
         public void Add(string key, string value)
         {
-            _keyValues.Add(key, value);
+            _dic.Add(key, value);
         }
         public void Add(StringKeyValue item)
         {
-            _keyValues.Add(item.Key, item.Value);
+            _dic.Add(item.Key, item.Value);
         }
         public bool Remove(StringKeyValue item)
         {
-            return _keyValues.Remove(item.Key);
+            return _dic.Remove(item.Key);
         }
 
         public IEnumerator<StringKeyValue> GetEnumerator()
         {
-            return _keyValues.Select(kv => new StringKeyValue(kv.Key, kv.Value)).GetEnumerator();
+            return _dic.Select(kv => new StringKeyValue(kv.Key, kv.Value)).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -87,43 +78,31 @@ namespace DotNet.Basics.Collections
             return GetEnumerator();
         }
 
-        public int Count => _keyValues.Count;
+        public int Count => _dic.Count;
 
         public override string ToString()
         {
             using (MemoryStream stream1 = new MemoryStream())
             {
                 DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(IDictionary<string, string>));
-                ser.WriteObject(stream1, _keyValues);
+                ser.WriteObject(stream1, _dic);
                 stream1.Position = 0;
                 StreamReader sr = new StreamReader(stream1);
                 return sr.ReadToEnd();
             }
         }
 
-        private string GetNullIfNotFoundCaseSensitive(string key)
+        private string GetNullIfNotFound(string key)
         {
             string @value;
-            if (_keyValues.TryGetValue(key, out @value))
-                return @value;
-            return null;
-        }
-        private string GetNullIfNotFoundCaseInsensitive(string key)
-        {
-            string @value;
-            if (_keyValues.TryGetValue(key, out @value))
+            if (_dic.TryGetValue(key, out @value))
                 return @value;
             return null;
         }
 
-
-        private string GetKeyNotFoundExceptionIfNotFoundCaseSensistive(string key)
+        private string GetKeyNotFoundExceptionIfNotFound(string key)
         {
-            return _keyValues[key];
-        }
-        private string GetKeyNotFoundExceptionIfNotFoundCaseInsensistive(string key)
-        {
-            return _keyValues[key];
+            return _dic[key];
         }
     }
 }

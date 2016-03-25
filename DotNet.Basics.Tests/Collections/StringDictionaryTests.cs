@@ -135,15 +135,6 @@ namespace DotNet.Basics.Tests.Collections
         }
 
         [Test]
-        public void CastOperator_CastToDictionary_Equals()
-        {
-            var kvc = new StringDictionary { new StringKeyValue(_myKey, _myValue) };
-            var dic = new Dictionary<string, string> { { _myKey, _myValue } };
-
-            kvc.Should().BeEquivalentTo((StringDictionary)dic);
-        }
-
-        [Test]
         public void ToString_Formatting_StringIsJson()
         {
             var kvc = new StringDictionary { new StringKeyValue(_myKey, _myValue) };
