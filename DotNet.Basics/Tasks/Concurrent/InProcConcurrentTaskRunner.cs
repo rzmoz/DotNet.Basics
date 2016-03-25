@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNet.Basics.Collections;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Tasks.Concurrent
@@ -29,13 +30,13 @@ namespace DotNet.Basics.Tasks.Concurrent
             return _taskSyncProvider.IsLocked(taskName);
         }
         
-        public StartResult RunAtMostOnceInBackground(string taskName, Action<KeyValueCollection> action)
+        public StartResult RunAtMostOnceInBackground(string taskName, Action<StringDictionary> action)
         {
             var task = new AsyncTask(taskName, action);
             return RunAtMostOnceInBackground(task);
         }
 
-        public StartResult RunAtMostOnceInBackground(string taskName, Func<KeyValueCollection, Task> action)
+        public StartResult RunAtMostOnceInBackground(string taskName, Func<StringDictionary, Task> action)
         {
             var task = new AsyncTask(taskName, action);
             return RunAtMostOnceInBackground(task);

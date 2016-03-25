@@ -1,15 +1,16 @@
-﻿using DotNet.Basics.Sys;
+﻿using DotNet.Basics.Collections;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Tasks
 {
     public class TaskInfo : TaskId, ITaskInfo
     {
-        public TaskInfo(string name = null, params KeyValue[] metadata)
+        public TaskInfo(string name = null, params StringKeyValue[] metadata)
             : base(name)
         {
-            Metadata = new KeyValueCollection(metadata);
+            Metadata = new StringDictionary(metadata);
         }
 
-        public KeyValueCollection Metadata { get; }
+        public StringDictionary Metadata { get; }
     }
 }

@@ -5,58 +5,52 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
 
-namespace DotNet.Basics.Sys
+namespace DotNet.Basics.Collections
 {
-    public class KeyValueCollection : IReadOnlyCollection<KeyValue>
+    public class StringDictionary : IReadOnlyCollection<StringKeyValue>
     {
         private readonly IDictionary<string, string> _keyValues;
         private readonly Func<string, string> _getvalueMethod;
 
-        public KeyValueCollection()
-            : this(KeyMode.NullIfNotFound)
+        public StringDictionary()
+            : this(KeyNotFoundMode.ReturnNull, KeyMode.CaseInsensitive)
         {
         }
 
-        public KeyValueCollection(KeyMode keyMode)
+        public StringDictionary(KeyNotFoundMode keyNotFoundMode=KeyNotFoundMode.ReturnNull, KeyMode keyMode=KeyMode.CaseInsensitive)
         {
+            KeyNotFoundMode = keyNotFoundMode;
             KeyMode = keyMode;
-            if (keyMode == KeyMode.NullIfNotFound)
-                _getvalueMethod = GetNullIfNotFound;
+            if (keyNotFoundMode == KeyNotFoundMode.ReturnNull)
+                _getvalueMethod = GetNullIfNotFoundCaseSensitive;
             else
-                _getvalueMethod = GetNotFoundExceptionIfNotFound;
+                _getvalueMethod = GetKeyNotFoundExceptionIfNotFoundCaseSensistive;
 
             _keyValues = new Dictionary<string, string>();
         }
 
-        public KeyValueCollection(IEnumerable<KeyValue> keyValues, KeyMode keyMode = KeyMode.NullIfNotFound)
-            : this(keyMode)
+        public StringDictionary(IEnumerable<StringKeyValue> keyValues, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ReturnNull, KeyMode keyMode = KeyMode.CaseInsensitive)
+            : this(keyNotFoundMode, keyMode)
         {
             if (keyValues == null)
                 return;
             foreach (var keyValue in keyValues)
-            {
                 _keyValues.Add(keyValue);
-            }
         }
 
-        public KeyValueCollection(IDictionary<string, string> keyValues, KeyMode keyMode = KeyMode.NullIfNotFound)
-            : this(keyMode)
+        public StringDictionary(IDictionary<string, string> keyValues, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ReturnNull, KeyMode keyMode = KeyMode.CaseInsensitive)
+            : this(keyNotFoundMode, keyMode)
         {
             if (keyValues == null)
                 return;
             _keyValues = keyValues;
         }
 
-        public KeyValueCollection(params KeyValue[] keyValues)
-            : this(keyValues, KeyMode.NullIfNotFound)
+        public static implicit operator StringDictionary(Dictionary<string, string> kvd)
         {
+            return new StringDictionary(kvd);
         }
-
-        public static implicit operator KeyValueCollection(Dictionary<string, string> kvd)
-        {
-            return new KeyValueCollection(kvd);
-        }
-        public static implicit operator Dictionary<string, string>(KeyValueCollection kvc)
+        public static implicit operator Dictionary<string, string>(StringDictionary kvc)
         {
             return new Dictionary<string, string>(kvc._keyValues);
         }
@@ -67,24 +61,25 @@ namespace DotNet.Basics.Sys
             set { _keyValues[key] = value; }
         }
 
+        public KeyNotFoundMode KeyNotFoundMode { get; }
         public KeyMode KeyMode { get; }
 
         public void Add(string key, string value)
         {
             _keyValues.Add(key, value);
         }
-        public void Add(KeyValue item)
+        public void Add(StringKeyValue item)
         {
             _keyValues.Add(item.Key, item.Value);
         }
-        public bool Remove(KeyValue item)
+        public bool Remove(StringKeyValue item)
         {
             return _keyValues.Remove(item.Key);
         }
 
-        public IEnumerator<KeyValue> GetEnumerator()
+        public IEnumerator<StringKeyValue> GetEnumerator()
         {
-            return _keyValues.Select(kv => new KeyValue(kv.Key, kv.Value)).GetEnumerator();
+            return _keyValues.Select(kv => new StringKeyValue(kv.Key, kv.Value)).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -106,7 +101,14 @@ namespace DotNet.Basics.Sys
             }
         }
 
-        private string GetNullIfNotFound(string key)
+        private string GetNullIfNotFoundCaseSensitive(string key)
+        {
+            string @value;
+            if (_keyValues.TryGetValue(key, out @value))
+                return @value;
+            return null;
+        }
+        private string GetNullIfNotFoundCaseInsensitive(string key)
         {
             string @value;
             if (_keyValues.TryGetValue(key, out @value))
@@ -114,7 +116,12 @@ namespace DotNet.Basics.Sys
             return null;
         }
 
-        private string GetNotFoundExceptionIfNotFound(string key)
+
+        private string GetKeyNotFoundExceptionIfNotFoundCaseSensistive(string key)
+        {
+            return _keyValues[key];
+        }
+        private string GetKeyNotFoundExceptionIfNotFoundCaseInsensistive(string key)
         {
             return _keyValues[key];
         }

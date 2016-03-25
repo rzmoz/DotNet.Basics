@@ -1,13 +1,14 @@
 ﻿using System;
+using DotNet.Basics.Collections;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Tasks
 {
     public class SyncTask : TaskInfo, ISyncTask
     {
-        private readonly Action<KeyValueCollection> _action;
+        private readonly Action<StringDictionary> _action;
         
-        public SyncTask(string name, Action<KeyValueCollection> action, params KeyValue[] metadata) : base(name, metadata)
+        public SyncTask(string name, Action<StringDictionary> action, params StringKeyValue[] metadata) : base(name, metadata)
         {
             if (action == null) throw new ArgumentNullException(nameof(action));
             _action = action;

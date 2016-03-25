@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Json;
-using DotNet.Basics.Sys;
+using DotNet.Basics.Collections;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace DotNet.Basics.Tests.Sys
+namespace DotNet.Basics.Tests.Collections
 {
     [TestFixture]
-    public class KeyValueCollectionTests
+    public class StringDictionaryTests
     {
         const string _myKey = "myKey";
         const string _myValue = "myValue";
@@ -20,11 +20,11 @@ namespace DotNet.Basics.Tests.Sys
         public void Json_Serialization_ProperJson()
         {
             //arrange 
-            var kvc = new KeyValueCollection(new KeyValue(_myKey, _myValue));
+            var kvc = new StringDictionary(new[] { new StringKeyValue(_myKey, _myValue) });
 
             //serialize
             MemoryStream stream1 = new MemoryStream();
-            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(KeyValueCollection));
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(StringDictionary));
             ser.WriteObject(stream1, kvc);
             stream1.Position = 0;
             StreamReader sr = new StreamReader(stream1);
@@ -35,7 +35,7 @@ namespace DotNet.Basics.Tests.Sys
 
             //deserialize
             stream1.Position = 0;
-            var newKvc = (KeyValueCollection)ser.ReadObject(stream1);
+            var newKvc = (StringDictionary)ser.ReadObject(stream1);
 
             //assert
             newKvc.Count.Should().Be(kvc.Count);
@@ -48,7 +48,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             var args = new Dictionary<string, string> { { _myKey, _myValue } };
 
-            var kvCollection = new KeyValueCollection(args);
+            var kvCollection = new StringDictionary(args);
 
             kvCollection[_myKey].Should().Be(_myValue);
         }
@@ -58,7 +58,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             var args = new Dictionary<string, string> { { _myKey, _myValue } };
 
-            var kvCollection = new KeyValueCollection(args);
+            var kvCollection = new StringDictionary(args);
 
             kvCollection.Single().Value.Should().Be(_myValue);
         }
@@ -66,9 +66,9 @@ namespace DotNet.Basics.Tests.Sys
         [Test]
         public void Ctor_WithEnumerableAsArgument_NullIsReturned()
         {
-            var args = new[] { new KeyValue(_myKey, _myValue) };
+            var args = new[] { new StringKeyValue(_myKey, _myValue) };
 
-            var kvCollection = new KeyValueCollection(args);
+            var kvCollection = new StringDictionary(args);
 
             kvCollection[_myKeyThatDoesntExist].Should().BeNull();
         }
@@ -76,7 +76,7 @@ namespace DotNet.Basics.Tests.Sys
         [Test]
         public void Ctor_KeyModeNullIfNotFound_NullIsReturned()
         {
-            var kvCollection = new KeyValueCollection(KeyMode.NullIfNotFound) { [_myKey] = _myValue };
+            var kvCollection = new StringDictionary(KeyNotFoundMode.ReturnNull) { [_myKey] = _myValue };
 
             kvCollection[_myKeyThatDoesntExist].Should().BeNull();
         }
@@ -84,7 +84,7 @@ namespace DotNet.Basics.Tests.Sys
         [Test]
         public void Ctor_KeyModeNotFoundExceptionfNotFound_ExceptionIsThrown()
         {
-            var kvCollection = new KeyValueCollection(KeyMode.KeyNotFoundExceptionIfNotFound) { [_myKey] = _myValue };
+            var kvCollection = new StringDictionary(KeyNotFoundMode.ThroweyNotFoundException) { [_myKey] = _myValue };
 
             Action action = () => { var @value = kvCollection[_myKeyThatDoesntExist]; };
 
@@ -95,14 +95,14 @@ namespace DotNet.Basics.Tests.Sys
         [Test]
         public void SetIndexer_KeyDoesNotExist_ValueIsAdded()
         {
-            var kvCollection = new KeyValueCollection { [_myKey] = _myValue };
+            var kvCollection = new StringDictionary { [_myKey] = _myValue };
 
             kvCollection[_myKey].Should().Be(_myValue);
         }
         [Test]
         public void SetIndexer_KeyAlreadyExists_ValueIsUpdated()
         {
-            var kvCollection = new KeyValueCollection { [_myKey] = _myValue };
+            var kvCollection = new StringDictionary { [_myKey] = _myValue };
 
             var newValue = _myValue + "asd";
             kvCollection[_myKey] = newValue;
@@ -113,7 +113,7 @@ namespace DotNet.Basics.Tests.Sys
         [Test]
         public void Add_KeyDoesNotExist_ValueIsAdded()
         {
-            var kvCollection = new KeyValueCollection();
+            var kvCollection = new StringDictionary();
 
             kvCollection.Add(_myKey, _myValue);
 
@@ -123,7 +123,7 @@ namespace DotNet.Basics.Tests.Sys
         [Test]
         public void Count_Count_ItemsAreCounted()
         {
-            var kvCollection = new KeyValueCollection();
+            var kvCollection = new StringDictionary();
 
             const int count = 10;
 
@@ -137,16 +137,16 @@ namespace DotNet.Basics.Tests.Sys
         [Test]
         public void CastOperator_CastToDictionary_Equals()
         {
-            var kvc = new KeyValueCollection { new KeyValue(_myKey, _myValue) };
+            var kvc = new StringDictionary { new StringKeyValue(_myKey, _myValue) };
             var dic = new Dictionary<string, string> { { _myKey, _myValue } };
 
-            kvc.Should().BeEquivalentTo((KeyValueCollection)dic);
+            kvc.Should().BeEquivalentTo((StringDictionary)dic);
         }
 
         [Test]
         public void ToString_Formatting_StringIsJson()
         {
-            var kvc = new KeyValueCollection { new KeyValue(_myKey, _myValue) };
+            var kvc = new StringDictionary { new StringKeyValue(_myKey, _myValue) };
             var json = kvc.ToString();
 
             json.Should().Be("[{\"Key\":\"myKey\",\"Value\":\"myValue\"}]");
