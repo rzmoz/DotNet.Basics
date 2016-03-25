@@ -54,7 +54,12 @@ namespace DotNet.Basics.Tests.ConsoleApp
             cmd.Single().Name.Should().Be("debug");
             cmd["Debug"].Should().NotBeNull();
         }
-
+        [Test]
+        public void HelpScreen_Debug_DebugIsNotShownInHelpscreen()
+        {
+            var cmd = new CmdLine();
+            cmd.HelpScreen().Trim('\n','\r').Should().Be("Parameters:");
+        }
         [Test]
         public void Index_GetUnregisteredParam_ParamNotFound()
         {
