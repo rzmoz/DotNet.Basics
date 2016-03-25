@@ -196,6 +196,8 @@ namespace DotNet.Basics.ConsoleApp
                     s += " ";
                 if (parameter.Required == Required.Yes)
                     s += "[Required] ";
+                else
+                    s += "[Optional] ";
                 if (parameter.AllowEmptyValue == AllowEmpty.Yes)
                     s += "[EmptyValueAllowed] ";
                 s += parameter.Help + Environment.NewLine;
