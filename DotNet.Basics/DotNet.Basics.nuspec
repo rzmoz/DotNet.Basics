@@ -9,7 +9,7 @@
         <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
         <projectUrl>https://github.com/rzmoz/dotnet.basics</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Syntactical sugar and commonly used functionality</description>
+        <description>Syntactical sugar for .NET</description>
     </metadata>
     <files>
     </files>
