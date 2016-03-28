@@ -1,14 +1,13 @@
 ﻿using DotNet.Basics.Collections;
-using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Tasks
 {
     public class TaskInfo : TaskId, ITaskInfo
     {
-        public TaskInfo(string name = null, params StringKeyValue[] metadata)
+        public TaskInfo(string name = null, params StringPair[] metadata)
             : base(name)
         {
-            Metadata = new StringDictionary(metadata, KeyNotFoundMode.ReturnNull);
+            Metadata = new StringDictionary(metadata, KeyMode.CaseInsensitive, KeyNotFoundMode.ReturnDefault);
         }
 
         public StringDictionary Metadata { get; }

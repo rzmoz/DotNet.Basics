@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Management.Automation;
+using System.Reflection;
+using DotNet.Basics.Collections;
 
 namespace DotNet.Basics.ConsoleApp
 {
@@ -10,30 +11,34 @@ namespace DotNet.Basics.ConsoleApp
     {
         private const string _debugParamName = "debug";
 
-        private const char _quoteChar = '\"'; //quote
-        private readonly Dictionary<string, CmdLineParam> _parameters = new Dictionary<string, CmdLineParam>();
+        private readonly StringKeyDictionary<CmdLineParam> _parameters = new StringKeyDictionary<CmdLineParam>(KeyMode.CaseInsensitive, KeyNotFoundMode.ReturnDefault);
 
         private readonly char[] _paramFlags = { '-', '/' };
 
-        public CmdLine()
+        public CmdLine(ValueMode valueMode = ValueMode.Raw)
         {
+            ValueMode = valueMode;
             RegisterDebug();
         }
 
-        public string this[string key]
+        public CmdLineParam this[string key] => _parameters[key];
+
+        /// <summary>
+        /// Registers all public string properties with same settings. Change restrictions using GetParam(string paramName)
+        /// </summary>
+        public T Register<T>(Required required = Required.Yes, AllowEmpty allowEmpty = AllowEmpty.No) where T : new()
         {
-            get
+            var publicPropertiesWithSetter = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Public).Where(prop => prop.GetSetMethod() != null).Where(prop => prop.PropertyType == typeof(string));
+
+            var t = new T();
+            foreach (var propertyInfo in publicPropertiesWithSetter)
             {
-                var loweredKey = key.ToLower();
-                try
-                {
-                    return _parameters[loweredKey]?.Value?.Trim(_quoteChar);
-                }
-                catch (KeyNotFoundException)
-                {
-                    return null;
-                }
+                Register(propertyInfo.Name, required, allowEmpty, p =>
+                 {
+                     propertyInfo.SetValue(t, p.Value);
+                 });
             }
+            return t;
         }
 
         /// <summary>
@@ -52,12 +57,11 @@ namespace DotNet.Basics.ConsoleApp
 
         public CmdLine Register(CmdLineParam parameter, Action<CmdLineParam> readAction)
         {
-            var key = parameter.Name.ToLower();
-            if (_parameters.ContainsKey(key))
-                throw new ArgumentException($"Parameter '{key}' is already registered.", key);
+            if (_parameters.ContainsKey(parameter.Name))
+                throw new ArgumentException($"Parameter '{parameter.Name}' is already registered.", parameter.Name);
 
             parameter.ReadAction = readAction;
-            _parameters.Add(key, parameter);
+            _parameters.Add(parameter.Name, parameter);
             return this;
         }
 
@@ -65,9 +69,7 @@ namespace DotNet.Basics.ConsoleApp
         {
             if (name.Equals(_debugParamName, StringComparison.CurrentCultureIgnoreCase))
                 return this;//we don't remove the debug param
-            var key = name.ToLower();
-            if (_parameters.ContainsKey(key))
-                _parameters.Remove(key);
+            _parameters.Remove(name);
             return this;
         }
 
@@ -144,7 +146,7 @@ namespace DotNet.Basics.ConsoleApp
         }
 
         public int Count => _parameters.Count;
-
+        public ValueMode ValueMode { get; }
 
 
         private void ParseArgs(params string[] args)
@@ -185,7 +187,7 @@ namespace DotNet.Basics.ConsoleApp
                     if (_parameters[key].Exists)
                         throw new ArgumentException("Parameter is specified more than once.", key);
 
-                    _parameters[key].SetValue(value.Trim('|'));
+                    _parameters[key].SetValue(value.Trim('|'), ValueMode);
                 }
                 else
                 {

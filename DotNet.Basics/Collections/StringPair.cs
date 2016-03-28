@@ -4,14 +4,14 @@ using System.Runtime.Serialization;
 namespace DotNet.Basics.Collections
 {
     [DataContract]
-    public sealed class StringKeyValue
+    public sealed class StringPair
     {
-        public StringKeyValue() { }
-        public StringKeyValue(KeyValuePair<string, string> kvp)
+        public StringPair() { }
+        public StringPair(KeyValuePair<string, string> kvp)
             : this(kvp.Key, kvp.Value)
         {
         }
-        public StringKeyValue(string key = null, string value = null)
+        public StringPair(string key = null, string value = null)
         {
             Key = key;
             Value = value;
@@ -22,17 +22,17 @@ namespace DotNet.Basics.Collections
         [DataMember]
         public string Value { get; set; }
 
-        public static implicit operator StringKeyValue(KeyValuePair<string, string> kvp)
+        public static implicit operator StringPair(KeyValuePair<string, string> kvp)
         {
-            var kv = new StringKeyValue(kvp.Key, kvp.Value);
+            var kv = new StringPair(kvp.Key, kvp.Value);
             return kv;
         }
-        public static implicit operator KeyValuePair<string, string>(StringKeyValue kv)
+        public static implicit operator KeyValuePair<string, string>(StringPair kv)
         {
             return new KeyValuePair<string, string>(kv.Key, kv.Value);
         }
 
-        private bool Equals(StringKeyValue other)
+        private bool Equals(StringPair other)
         {
             return string.Equals(Key, other.Key) && string.Equals(Value, other.Value);
         }
@@ -43,7 +43,7 @@ namespace DotNet.Basics.Collections
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((StringKeyValue)obj);
+            return Equals((StringPair)obj);
         }
 
         public override int GetHashCode()
@@ -54,12 +54,12 @@ namespace DotNet.Basics.Collections
             }
         }
 
-        public static bool operator ==(StringKeyValue left, StringKeyValue right)
+        public static bool operator ==(StringPair left, StringPair right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(StringKeyValue left, StringKeyValue right)
+        public static bool operator !=(StringPair left, StringPair right)
         {
             return !Equals(left, right);
         }

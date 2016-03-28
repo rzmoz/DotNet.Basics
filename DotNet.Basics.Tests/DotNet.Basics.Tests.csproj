@@ -65,7 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Collections\StringKeyCaseInsensitiveDictionaryTests.cs" />
+    <Compile Include="Collections\StringKeyDictionaryTests.cs" />
     <Compile Include="ConsoleApp\CmdLineTests.cs" />
     <Compile Include="Diagnostics\MetricEntryTests.cs" />
     <Compile Include="Diagnostics\ProfileEntryTests.cs" />
@@ -120,6 +120,7 @@
     <Compile Include="Tasks\SyncTaskTests.cs" />
     <Compile Include="Sys\TimeSpanExtensionsTests.cs" />
     <Compile Include="Sys\TypeExtensionsTests.cs" />
+    <Compile Include="ConsoleApp\TestCmdArgs.cs" />
     <Compile Include="Web\UriExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>

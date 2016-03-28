@@ -2,7 +2,7 @@
 {
     public enum KeyNotFoundMode
     {
-        ReturnNull,
-        ThroweyNotFoundException
+        ReturnDefault,
+        ThrowKeyNotFoundException
     }
 }

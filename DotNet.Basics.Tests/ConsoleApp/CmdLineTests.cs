@@ -16,8 +16,6 @@ namespace DotNet.Basics.Tests.ConsoleApp
         [TestCase("/")]//slash
         public void Parse_ParamNoValue_ParamExists(string paramIndicator)
         {
-
-
             var cmdLine = new CmdLine().Register(_paramName, Required.Yes, AllowEmpty.Yes, param =>
             {
                 param.Exists.Should().BeTrue();
@@ -26,6 +24,53 @@ namespace DotNet.Basics.Tests.ConsoleApp
             var parseResult = cmdLine.Parse(new[] { $"{paramIndicator}{_paramName}" });
             parseResult.Should().BeTrue();
         }
+
+        [Test]
+        public void Update_UpdateParamAfterRegister()
+        {
+            var cmd = new CmdLine();
+            cmd.Register<TestCmdArgs>();
+
+            cmd[nameof(TestCmdArgs.Prop1)].Required.Should().Be(Required.No);
+            cmd[nameof(TestCmdArgs.Prop1)].Required = Required.Yes;
+            cmd[nameof(TestCmdArgs.Prop1)].Required.Should().Be(Required.Yes);
+        }
+
+        [Test]
+        [TestCase(ValueMode.Raw, "\"withQuotes\"", "\"withQuotes\"")]
+        [TestCase(ValueMode.TrimForDoubleQuote, "\"withQuotes\"", "withQuotes")]
+        public void ValueMode_SetValue_ValueModeIsConfigurable(ValueMode mode, string input, string expected)
+        {
+            string outValue = null;
+
+            var cmd = new CmdLine(mode).
+                Register(_paramName, Required.Yes, AllowEmpty.No, p => { outValue = p.Value; });
+
+            outValue.Should().BeNull();
+
+            cmd.Parse(new[] {$"-{_paramName}", input});
+
+            outValue.Should().Be(expected);
+        }
+
+
+        [Test]
+        public void Register_SimpleRegistration_ParamIsRegsitered()
+        {
+            var expectedValue = "MyExpectedValue";
+
+            var cmd = new CmdLine();
+            var args = cmd.Register<TestCmdArgs>();
+
+            args.Prop1.Should().BeNull();
+
+            var arg0 = $"-{nameof(TestCmdArgs.Prop1)}";
+            cmd.Parse(new[] { arg0, expectedValue });
+
+            args.Prop1.Should().Be(expectedValue);
+        }
+
+
 
         [Test]
         public void Ctor_RegisterDebug_DebugIsAlreadyRegistered()

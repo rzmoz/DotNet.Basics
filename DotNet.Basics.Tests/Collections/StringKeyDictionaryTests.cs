@@ -4,22 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DotNet.Basics.Collections;
-using DotNet.Basics.Sys;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace DotNet.Basics.Tests.Collections
 {
     [TestFixture]
-    public class StringKeyCaseInsensitiveDictionaryTests
+   public class StringKeyDictionaryTests
     {
         private const string _myKey = "MyKey";
         private const string _myValue = "MyValue";
 
         [Test]
-        public void Add_AddItem_ItemIsAdded()
+        public void Add_AddItemCaseInsensitive_ItemIsAdded()
         {
-            var dic = new StringKeyCaseInsensitiveDictionary<string>();
+            var dic = new StringKeyDictionary<string>(KeyMode.CaseInsensitive, KeyNotFoundMode.ReturnDefault);
             dic.Count.Should().Be(0);
             dic.Add(_myKey, _myValue);
             dic.Count.Should().Be(1);
@@ -28,7 +27,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Get_GetValue_ValueIsRetrived()
         {
-            var dic = new StringKeyCaseInsensitiveDictionary<string>();
+            var dic = new StringKeyDictionary<string>(KeyMode.CaseInsensitive, KeyNotFoundMode.ReturnDefault);
             dic.Count.Should().Be(0);
             dic.Add(_myKey, _myValue);
             dic[_myKey].Should().Be(_myValue);
@@ -39,7 +38,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Get_KeyDoesntExist_ExceptionIsThrown()
         {
-            var dic = new StringKeyCaseInsensitiveDictionary<string>();
+            var dic = new StringKeyDictionary<string>();
             Action action = () => { var temp = dic[_myKey]; };
 
             action.ShouldThrow<KeyNotFoundException>();
@@ -49,7 +48,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Set_SetValue_ValueIsSet()
         {
-            var dic = new StringKeyCaseInsensitiveDictionary<string>();
+            var dic = new StringKeyDictionary<string>(KeyMode.CaseInsensitive, KeyNotFoundMode.ReturnDefault);
             dic.Count.Should().Be(0);
             dic.Add(_myKey, _myValue);
             dic[_myKey].Should().Be(_myValue);
@@ -63,5 +62,6 @@ namespace DotNet.Basics.Tests.Collections
             dic[_myKey.ToLower()].Should().Be(myNewValue);
             dic[_myKey.ToUpper()].Should().Be(myNewValue);
         }
+
     }
 }

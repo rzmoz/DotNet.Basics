@@ -15,9 +15,10 @@ namespace DotNet.Basics.ConsoleApp
             ReadAction = param => { };
         }
 
-        public void SetValue(string value)
+        public void SetValue(string value, ValueMode valueMode = ValueMode.Raw)
         {
-            Value = value;
+            if (value == null) throw new ArgumentNullException(nameof(value));
+            Value = valueMode == ValueMode.Raw ? value : value?.Trim('\"');
             Exists = true;
         }
 

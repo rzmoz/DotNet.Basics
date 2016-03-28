@@ -20,7 +20,7 @@ namespace DotNet.Basics.Tests.Collections
         public void Json_Serialization_ProperJson()
         {
             //arrange 
-            var kvc = new StringDictionary(new[] { new StringKeyValue(_myKey, _myValue) });
+            var kvc = new StringDictionary(new[] { new StringPair(_myKey, _myValue) });
 
             //serialize
             MemoryStream stream1 = new MemoryStream();
@@ -66,7 +66,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Ctor_WithEnumerableAsArgument_ThrowsException()
         {
-            var args = new[] { new StringKeyValue(_myKey, _myValue) };
+            var args = new[] { new StringPair(_myKey, _myValue) };
 
             var kvCollection = new StringDictionary(args);
 
@@ -78,7 +78,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Ctor_KeyModeNullIfNotFound_NullIsReturned()
         {
-            var kvCollection = new StringDictionary(KeyNotFoundMode.ReturnNull) { [_myKey] = _myValue };
+            var kvCollection = new StringDictionary(KeyMode.CaseSensitive, KeyNotFoundMode.ReturnDefault) { [_myKey] = _myValue };
 
             kvCollection[_myKeyThatDoesntExist].Should().BeNull();
         }
@@ -86,7 +86,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Ctor_KeyModeNotFoundExceptionfNotFound_ExceptionIsThrown()
         {
-            var kvCollection = new StringDictionary(KeyNotFoundMode.ThroweyNotFoundException) { [_myKey] = _myValue };
+            var kvCollection = new StringDictionary(KeyMode.CaseSensitive, KeyNotFoundMode.ThrowKeyNotFoundException) { [_myKey] = _myValue };
 
             Action action = () => { var @value = kvCollection[_myKeyThatDoesntExist]; };
 
@@ -139,7 +139,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void ToString_Formatting_StringIsJson()
         {
-            var kvc = new StringDictionary { new StringKeyValue(_myKey, _myValue) };
+            var kvc = new StringDictionary { new StringPair(_myKey, _myValue) };
             var json = kvc.ToString();
 
             json.Should().Be("[{\"Key\":\"myKey\",\"Value\":\"myValue\"}]");

@@ -18,11 +18,11 @@ namespace DotNet.Basics.Tests.Collections
         public void Json_Serialization_ProperJson()
         {
             //arrange 
-            var kv = new StringKeyValue(_myKey, _myValue);
+            var kv = new StringPair(_myKey, _myValue);
 
             //serialize
             MemoryStream stream1 = new MemoryStream();
-            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(StringKeyValue));
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(StringPair));
             ser.WriteObject(stream1, kv);
             stream1.Position = 0;
             StreamReader sr = new StreamReader(stream1);
@@ -33,7 +33,7 @@ namespace DotNet.Basics.Tests.Collections
 
             //deserialize
             stream1.Position = 0;
-            var newKv = (StringKeyValue)ser.ReadObject(stream1);
+            var newKv = (StringPair)ser.ReadObject(stream1);
 
             //assert
             newKv.Key.Should().Be(kv.Key);
@@ -43,7 +43,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Ctor_Default_AllIsNull()
         {
-            var kv = new StringKeyValue();
+            var kv = new StringPair();
             kv.Key.Should().BeNull();
             kv.Value.Should().BeNull();
         }
@@ -51,15 +51,15 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Ctor_Values_ValuesAreSet()
         {
-            var kv = new StringKeyValue(_myKey, _myValue);
+            var kv = new StringPair(_myKey, _myValue);
             kv.Key.Should().Be(_myKey);
             kv.Value.Should().Be(_myValue);
         }
         [Test]
         public void Equality_RefAndEquals_AreEquals()
         {
-            var kv1 = new StringKeyValue(_myKey, _myValue);
-            var kv2 = new StringKeyValue(_myKey, _myValue);
+            var kv1 = new StringPair(_myKey, _myValue);
+            var kv2 = new StringPair(_myKey, _myValue);
             (kv1 == kv2).Should().BeTrue();
             (kv2 == kv1).Should().BeTrue();
             kv1.Equals(kv2).Should().BeTrue();
@@ -69,7 +69,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void ToString_DebugInfo_KeyAndValueIsOutput()
         {
-            var kv1 = new StringKeyValue(_myKey, _myValue);
+            var kv1 = new StringPair(_myKey, _myValue);
 
             kv1.ToString().Should().Be($"{{\"{_myKey}\":\"{_myValue}\"}}");
         }
@@ -77,10 +77,10 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void CastOperator_CastToKeyValuePair_Equals()
         {
-            var kv = new StringKeyValue(_myKey, _myValue);
+            var kv = new StringPair(_myKey, _myValue);
             var kvp = new KeyValuePair<string, string>(_myKey, _myValue);
 
-            kv.Should().Be((StringKeyValue)kvp);
+            kv.Should().Be((StringPair)kvp);
         }
     }
 }

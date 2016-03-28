@@ -8,7 +8,7 @@ namespace DotNet.Basics.Tasks
     {
         private readonly Action<StringDictionary> _action;
         
-        public SyncTask(string name, Action<StringDictionary> action, params StringKeyValue[] metadata) : base(name, metadata)
+        public SyncTask(string name, Action<StringDictionary> action, params StringPair[] metadata) : base(name, metadata)
         {
             if (action == null) throw new ArgumentNullException(nameof(action));
             _action = action;
