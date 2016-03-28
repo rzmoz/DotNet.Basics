@@ -23,22 +23,20 @@ namespace DotNet.Basics.ConsoleApp
 
         public CmdLineParam this[string key] => _parameters[key];
 
-        /// <summary>
-        /// Registers all public string properties with same settings. Change restrictions using GetParam(string paramName)
-        /// </summary>
-        public T Register<T>(Required required = Required.Yes, AllowEmpty allowEmpty = AllowEmpty.No) where T : new()
+        public CmdLine Register<T>(ref T args, Required required = Required.Yes, AllowEmpty allowEmpty = AllowEmpty.No) where T : new()
         {
             var publicPropertiesWithSetter = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Public).Where(prop => prop.GetSetMethod() != null).Where(prop => prop.PropertyType == typeof(string));
 
-            var t = new T();
+            var cmd = new CmdLine();
             foreach (var propertyInfo in publicPropertiesWithSetter)
-            {
-                Register(propertyInfo.Name, required, allowEmpty, p =>
-                 {
-                     propertyInfo.SetValue(t, p.Value);
-                 });
-            }
-            return t;
+                cmd = Register<T>(args, propertyInfo, required, allowEmpty);
+
+            return cmd;
+        }
+
+        private CmdLine Register<T>(T args, PropertyInfo property, Required required, AllowEmpty allowEmpty, string help = null)
+        {
+            return Register(property.Name, required, allowEmpty, p => { property.SetValue(args, p.Value); }, help);
         }
 
         /// <summary>

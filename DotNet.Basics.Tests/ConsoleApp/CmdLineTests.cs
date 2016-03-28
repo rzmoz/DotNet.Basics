@@ -28,8 +28,9 @@ namespace DotNet.Basics.Tests.ConsoleApp
         [Test]
         public void Update_UpdateParamAfterRegister()
         {
-            var cmd = new CmdLine();
-            cmd.Register<TestCmdArgs>(Required.No);
+            var args = new TestCmdArgs();
+            var cmd = new CmdLine()
+                .Register<TestCmdArgs>(ref args,Required.No);
 
             cmd[nameof(TestCmdArgs.AncestorProp)].Required.Should().Be(Required.No);
             cmd[nameof(TestCmdArgs.AncestorProp)].Required = Required.Yes;
@@ -52,22 +53,23 @@ namespace DotNet.Basics.Tests.ConsoleApp
 
             outValue.Should().Be(expected);
         }
-
-
+        
         [Test]
         public void Register_SimpleRegistration_ParamIsRegsitered()
         {
             var expectedValue = "MyExpectedValue";
 
-            var cmd = new CmdLine();
-            var args = cmd.Register<TestCmdArgs>();
+            var args = new TestCmdArgs();
+            var cmd = new CmdLine()
+                .Register<TestCmdArgs>(ref args);
+            cmd[nameof(TestCmdArgs.Prop1)].Required=Required.No;
 
-            args.Prop1.Should().BeNull();
+            args.AncestorProp.Should().BeNull();
 
-            var arg0 = $"-{nameof(TestCmdArgs.Prop1)}";
+            var arg0 = $"-{nameof(TestCmdArgs.AncestorProp)}";
             cmd.Parse(new[] { arg0, expectedValue });
 
-            args.Prop1.Should().Be(expectedValue);
+            args.AncestorProp.Should().Be(expectedValue);
         }
 
 
