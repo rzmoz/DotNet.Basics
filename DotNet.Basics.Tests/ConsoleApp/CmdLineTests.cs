@@ -29,7 +29,7 @@ namespace DotNet.Basics.Tests.ConsoleApp
         public void Update_UpdateParamAfterRegister()
         {
             var cmd = new CmdLine();
-            cmd.Register<TestCmdArgs>();
+            cmd.Register<TestCmdArgs>(Required.No);
 
             cmd[nameof(TestCmdArgs.Prop1)].Required.Should().Be(Required.No);
             cmd[nameof(TestCmdArgs.Prop1)].Required = Required.Yes;
