@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management.Automation;
 
 namespace DotNet.Basics.ConsoleApp
 {
@@ -60,14 +61,14 @@ namespace DotNet.Basics.ConsoleApp
             return this;
         }
 
-        public bool Remove(string name)
+        public CmdLine Remove(string name)
         {
             if (name.Equals(_debugParamName, StringComparison.CurrentCultureIgnoreCase))
-                return false;//we don't remove the debug param
+                return this;//we don't remove the debug param
             var key = name.ToLower();
             if (_parameters.ContainsKey(key))
-                return _parameters.Remove(key);
-            return false;
+                _parameters.Remove(key);
+            return this;
         }
 
         public void ClearParameters()
