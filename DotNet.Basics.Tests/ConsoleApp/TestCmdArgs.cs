@@ -1,6 +1,6 @@
 ﻿namespace DotNet.Basics.Tests.ConsoleApp
 {
-    public class TestCmdArgs
+    public class TestCmdArgs: TestCmdAncestorArgs
     {
         //public getter and setter
         public string Prop1 { get; set; }

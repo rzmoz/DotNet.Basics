@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="Collections\StringKeyDictionaryTests.cs" />
     <Compile Include="ConsoleApp\CmdLineTests.cs" />
+    <Compile Include="ConsoleApp\TestCmdAncestorArgs.cs" />
     <Compile Include="Diagnostics\MetricEntryTests.cs" />
     <Compile Include="Diagnostics\ProfileEntryTests.cs" />
     <Compile Include="Ioc\DotNetContainerRegistrationsTests.cs" />

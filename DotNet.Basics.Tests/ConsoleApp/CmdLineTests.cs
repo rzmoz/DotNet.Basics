@@ -31,9 +31,9 @@ namespace DotNet.Basics.Tests.ConsoleApp
             var cmd = new CmdLine();
             cmd.Register<TestCmdArgs>(Required.No);
 
-            cmd[nameof(TestCmdArgs.Prop1)].Required.Should().Be(Required.No);
-            cmd[nameof(TestCmdArgs.Prop1)].Required = Required.Yes;
-            cmd[nameof(TestCmdArgs.Prop1)].Required.Should().Be(Required.Yes);
+            cmd[nameof(TestCmdArgs.AncestorProp)].Required.Should().Be(Required.No);
+            cmd[nameof(TestCmdArgs.AncestorProp)].Required = Required.Yes;
+            cmd[nameof(TestCmdArgs.AncestorProp)].Required.Should().Be(Required.Yes);
         }
 
         [Test]
