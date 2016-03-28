@@ -56,9 +56,9 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Enumerator_Enumerate_ItemsAreRetrived()
         {
-            var args = new Dictionary<string, string> { { _myKey, _myValue } };
+            IEnumerable<StringPair> args = new[] { new StringPair(_myKey, _myValue) };
 
-            var kvCollection = new StringDictionary(args);
+            var kvCollection = new StringDictionary(args,KeyMode.CaseSensitive,KeyNotFoundMode.ThrowKeyNotFoundException);
 
             kvCollection.Single().Value.Should().Be(_myValue);
         }
