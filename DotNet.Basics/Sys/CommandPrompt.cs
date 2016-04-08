@@ -6,9 +6,9 @@ namespace DotNet.Basics.Sys
     {
         public static int Run(string commandString)
         {
-            System.Console.WriteLine("Command prompt invoked: {0}", commandString);
+            System.Console.WriteLine($"Command prompt invoked: {commandString}");
 
-            var si = new ProcessStartInfo("cmd.exe", "/c " + commandString)
+            var si = new ProcessStartInfo("cmd.exe", $"/c {commandString}")
             {
                 RedirectStandardInput = false,
                 RedirectStandardOutput = true,
@@ -25,9 +25,9 @@ namespace DotNet.Basics.Sys
                 System.Console.WriteLine(console.StandardOutput.ReadToEnd());
                 var error = console.StandardError.ReadToEnd();
                 if (error.Length > 0)
-                    System.Console.WriteLine(error);
+                    System.Console.Write(error);
                 var exitCode = console.ExitCode;
-                System.Console.WriteLine("ExitCode:" + exitCode);
+                System.Console.WriteLine($"ExitCode:{exitCode}");
                 console.Close();
                 return exitCode;
             }

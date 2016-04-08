@@ -5,7 +5,7 @@ namespace DotNet.Basics.Sys
 {
     public static class EnumExtensions
     {
-        private static readonly int[] _properFlagsValueSequence = new[] { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048 };
+        private static readonly int[] _properFlagsValueSequence = new[] { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768 };
 
         public static T ToEnum<T>(this string enumValue, bool ignoreCase = true) where T : struct
         {
