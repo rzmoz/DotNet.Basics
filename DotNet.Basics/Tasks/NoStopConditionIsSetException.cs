@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace DotNet.Basics.Tasks.Repeating
+namespace DotNet.Basics.Tasks
 {
     public class NoStopConditionIsSetException : Exception
     {

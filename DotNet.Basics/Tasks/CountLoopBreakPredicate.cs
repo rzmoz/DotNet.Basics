@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace DotNet.Basics.Tasks.Repeating
+namespace DotNet.Basics.Tasks
 {
     public class CountLoopBreakPredicate
     {

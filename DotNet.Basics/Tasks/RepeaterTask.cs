@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using DotNet.Basics.Sys;
 
-namespace DotNet.Basics.Tasks.Repeating
+namespace DotNet.Basics.Tasks
 {
     public class RepeaterTask
     {

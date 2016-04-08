@@ -1,9 +1,9 @@
 ﻿using System;
-using DotNet.Basics.Tasks.Repeating;
+using DotNet.Basics.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace DotNet.Basics.Tests.Tasks.Repeating
+namespace DotNet.Basics.Tests.Tasks
 {
     [TestFixture]
     public class OnceOnlyActionTests

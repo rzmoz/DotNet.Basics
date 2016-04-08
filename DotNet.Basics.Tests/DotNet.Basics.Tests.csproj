@@ -107,14 +107,9 @@
     <Compile Include="Sys\EnumExtensionsTests.cs" />
     <Compile Include="Sys\ObservableTests.cs" />
     <Compile Include="Sys\StringExtensionsTests.cs" />
-    <Compile Include="Tasks\Concurrent\InProcConcurrentTaskRunnerTests.cs" />
-    <Compile Include="Tasks\Concurrent\ConcurrentTaskInfoReaderTests.cs" />
-    <Compile Include="Tasks\BaseTaskTests.cs" />
-    <Compile Include="Tasks\Repeating\OnceOnlyActionTests.cs" />
-    <Compile Include="Tasks\Repeating\ThrowExceptionUntilXTriesDummeTask.cs" />
-    <Compile Include="Tasks\Repeating\RepeaterTaskTests.cs" />
-    <Compile Include="Tasks\AsyncTaskTests.cs" />
-    <Compile Include="Tasks\SyncTaskTests.cs" />
+    <Compile Include="Tasks\OnceOnlyActionTests.cs" />
+    <Compile Include="Tasks\ThrowExceptionUntilXTriesDummeTask.cs" />
+    <Compile Include="Tasks\RepeaterTaskTests.cs" />
     <Compile Include="Sys\TimeSpanExtensionsTests.cs" />
     <Compile Include="Sys\TypeExtensionsTests.cs" />
     <Compile Include="Web\UriExtensionsTests.cs" />

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DotNet.Basics.Tests.Tasks.Repeating
+namespace DotNet.Basics.Tests.Tasks
 {
     public class ThrowExceptionUntilXTriesDummeTask<T> where T : Exception, new()
     {
