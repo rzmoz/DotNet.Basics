@@ -120,8 +120,6 @@
     <Compile Include="Tasks\Repeating\CountLoopBreakPredicate.cs" />
     <Compile Include="Sys\EnumClass.cs" />
     <Compile Include="Sys\EnumExtensions.cs" />
-    <Compile Include="Tasks\Scheduling\StartOptions.cs" />
-    <Compile Include="Tasks\Scheduling\ScheduledTaskRunner.cs" />
     <Compile Include="Tasks\ISyncTask.cs" />
     <Compile Include="Tasks\SyncTask.cs" />
     <Compile Include="Sys\TEventArgs.cs" />

@@ -111,8 +111,6 @@
     <Compile Include="Tasks\Concurrent\ConcurrentTaskInfoReaderTests.cs" />
     <Compile Include="Tasks\BaseTaskTests.cs" />
     <Compile Include="Tasks\Repeating\OnceOnlyActionTests.cs" />
-    <Compile Include="Tasks\Scheduled\VoidTaskRunnerTests.cs" />
-    <Compile Include="Tasks\Scheduled\ScheduledTaskRunnerTests.cs" />
     <Compile Include="Tasks\Repeating\ThrowExceptionUntilXTriesDummeTask.cs" />
     <Compile Include="Tasks\Repeating\RepeaterTaskTests.cs" />
     <Compile Include="Tasks\AsyncTaskTests.cs" />
