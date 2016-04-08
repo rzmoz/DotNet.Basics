@@ -8,7 +8,7 @@ namespace DotNet.Basics.Sys
         private const string _timeSpanPattern = @"^(\d+)([s|m|h|d|t]|ms)$";
         private static readonly Regex _timeSpanRegex = new Regex(_timeSpanPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        private const string _formatExceptionText = @"Input must be in format {time}{unit} where time is an integer and unit is ms|s|m|h|t. Was: ";
+        private const string _formatExceptionText = @"Input must be in format {time}{unit} where time is an integer and unit is ms|s|m|h|d|t. Was: ";
 
         /// <summary>
         /// input must be in format [time][unit] where time is an integer and unit is 

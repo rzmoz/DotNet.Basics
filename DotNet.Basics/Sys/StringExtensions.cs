@@ -19,9 +19,7 @@ namespace DotNet.Basics.Sys
         public static string ToSha256(this string text)
         {
             using (SHA256 sha256 = new SHA256Managed())
-            {
                 return text.ToHash(sha256);
-            }
         }
 
         public static string Replace(this string originalString, string oldValue, string newValue, StringComparison comparisonType)
@@ -91,7 +89,7 @@ namespace DotNet.Basics.Sys
             return Encoding.UTF8.GetString(encodedDataAsBytes);
         }
 
-        public static string Compress(this string str)
+        public static string GZipCompress(this string str)
         {
             var bytes = Encoding.UTF8.GetBytes(str);
             using (var msi = new MemoryStream(bytes))
@@ -105,7 +103,7 @@ namespace DotNet.Basics.Sys
             }
         }
 
-        public static string Decompress(this string compressedString)
+        public static string GZipDecompress(this string compressedString)
         {
             var bytes = Convert.FromBase64String(compressedString);
             using (var msi = new MemoryStream(bytes))

@@ -25,8 +25,8 @@ namespace DotNet.Basics.Tests.Sys
             _primitiveObservable.Value = newValue;
 
             //assert
-            _primitiveObservable.ShouldRaise("Updating");
-            _primitiveObservable.ShouldRaise("Updated");
+            _primitiveObservable.ShouldRaise(nameof(Observable<string>.Updating));
+            _primitiveObservable.ShouldRaise(nameof(Observable<string>.Updated));
             _primitiveObservable.Value.Should().Be(newValue);
         }
     }
