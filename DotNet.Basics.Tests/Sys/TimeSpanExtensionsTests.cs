@@ -76,7 +76,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             Action act = () => input.ToTimeSpan();
 
-            act.ShouldThrow<FormatException>().WithMessage("Input must be in format {time}{unit} where time is an integer and unit is ms|s|m|h|t. Was: " + input);
+            act.ShouldThrow<FormatException>().WithMessage("Input must be in format {time}{unit} where time is an integer and unit is ms|s|m|h|d|t. Was: " + input);
         }
     }
 }
