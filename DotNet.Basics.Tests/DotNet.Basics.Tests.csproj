@@ -130,6 +130,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DotNet.Basics.Tests.Console\DotNet.Basics.Tests.Console.csproj">
+      <Project>{391cf41a-e1c9-4670-b1b5-c92fddc0fb3d}</Project>
+      <Name>DotNet.Basics.Tests.Console</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj">
       <Project>{A0144B4E-EE9C-4914-82F1-DCC0D9D5196F}</Project>
       <Name>DotNet.Basics</Name>

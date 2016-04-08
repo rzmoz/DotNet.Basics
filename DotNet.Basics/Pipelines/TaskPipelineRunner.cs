@@ -8,7 +8,6 @@ namespace DotNet.Basics.Pipelines
 {
     public class TaskPipelineRunner
     {
-        private readonly object _syncRoot = new object();
         private readonly IDotNetContainer _container;
 
         public event ProfileEventHandler PipelineStarting;
@@ -54,14 +53,6 @@ namespace DotNet.Basics.Pipelines
             if (IsRunning)
                 return null;
 
-            lock (_syncRoot)
-            {
-                //check again after acquiring lock
-                if (IsRunning)
-                    return null;
-                IsRunning = true;
-            }
-
             var pipelineProfile = new TaskPipelineProfile(pipeline.GetType().Name);
             if (logger == null)
                 logger = new VoidDiagnostics();
@@ -104,9 +95,6 @@ namespace DotNet.Basics.Pipelines
             finally
             {
                 StopProfile(pipelineProfile, logger, PipelineEnded);
-
-                lock (_syncRoot)
-                    IsRunning = false;
             }
 
             return new TaskPipelineResult<T>(args, pipelineProfile);
