@@ -81,7 +81,7 @@ build_script:
 
 test:
   assemblies:
-    - '*.tests.dll'
+    - '**\*.Tests.dll'
 
 artifacts:
   - path: '*.nupkg'
