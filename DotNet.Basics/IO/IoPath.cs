@@ -10,44 +10,73 @@ namespace DotNet.Basics.IO
 {
     public abstract class IoPath
     {
+        private readonly Func<DirectoryInfo> GetDir;
+        private readonly Action Delete;
+
         protected IoPath(FileSystemInfo fsi)
         {
             if (fsi == null) throw new ArgumentNullException(nameof(fsi));
             FileSystemInfo = fsi;
+
+            var fi = fsi as FileInfo;
+            if (fi != null)
+            {
+                GetDir = () => fi.Directory;
+                Delete = () =>
+                {
+                    try
+                    {
+                        File.Delete(FileSystemInfo.FullName);
+                    }
+                    finally
+                    {
+                        FileSystemInfo.Refresh();
+                    }
+                };
+            }
+
+
+            var di = fsi as DirectoryInfo;
+            if (di != null)
+            {
+                GetDir = () => di;
+                Delete = () =>
+                {
+                    try
+                    {
+                        Directory.Delete(FileSystemInfo.FullName, true);
+                    }
+                    finally
+                    {
+                        FileSystemInfo.Refresh();
+                    }
+                };
+            }
         }
 
         public bool Exists()
         {
             FileSystemInfo.Refresh();
-            var exists = FileSystemInfo.Exists;
-            Debug.WriteLine("{0} exists:{1}", FullName, exists);
-            return exists;
+            Debug.WriteLine($"{FullName} exists:{FileSystemInfo.Exists}");
+            return FileSystemInfo.Exists;
         }
 
         public bool DeleteIfExists()
         {
-
-            Repeat.Task(() =>
-            {
-                if (FileSystemInfo is DirectoryInfo)
-                    Directory.Delete(FileSystemInfo.FullName, true);
-                else if (FileSystemInfo is FileInfo)
-                    File.Delete(FileSystemInfo.FullName);
-
-                FileSystemInfo.Refresh();
-            })
-                .WithTimeout(1.Minutes())
-                .WithRetryDelay(1.Seconds())
-                .Until(() => FileSystemInfo.Exists == false)
+            Repeat.Task(() => Delete())
+                .WithTimeout(30.Seconds())
+                .WithRetryDelay(3.Seconds())
+                .Until(() => Exists() == false)
                 .Now();
 
-            return FileSystemInfo.Exists == false;
+            return Exists() == false;
         }
 
         public string Name => FileSystemInfo.Name;
         public string FullName => FileSystemInfo.FullName;
         public string NameWithoutExtension => Path.GetFileNameWithoutExtension(Name);
         public string Extension => Path.GetExtension(Name);
+        public DirectoryInfo Directoy => GetDir();
 
         public void Refresh()
         {
