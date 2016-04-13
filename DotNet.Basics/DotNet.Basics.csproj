@@ -76,6 +76,7 @@
     <Compile Include="IO\IoDir.cs" />
     <Compile Include="IO\IoFile.cs" />
     <Compile Include="IO\IoPath.cs" />
+    <Compile Include="IO\PathExtensions.cs" />
     <Compile Include="IO\Robocopy.cs" />
     <Compile Include="IO\StringExtensions.cs" />
     <Compile Include="Sys\CommandPrompt.cs" />
