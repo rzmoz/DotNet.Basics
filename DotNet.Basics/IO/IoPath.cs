@@ -8,16 +8,16 @@ using DotNet.Basics.Tasks;
 
 namespace DotNet.Basics.IO
 {
-    public abstract class IoPath<T> where T : FileSystemInfo
+    public abstract class IoPath
     {
-        private readonly FileSystemInfoFactory _fileSystemInfoFactory;
         private readonly List<string> _paths;
 
         private IoPath(IEnumerable<string> paths)
         {
-            _fileSystemInfoFactory = new FileSystemInfoFactory();
             _paths = paths.Select(CleanPath).ToList();
-            SetFileSystemInfo();
+
+            var fullPath = Path.Combine(_paths.ToArray());
+            FileSystemInfo = new FileSystemInfoFactory().Create(fullPath);
         }
 
         protected IoPath(string root, params string[] paths)
@@ -34,7 +34,7 @@ namespace DotNet.Basics.IO
             : this(CombineLists(root._paths, paths))
         {
         }
-        protected IoPath(IoPath<T> root, params string[] paths)
+        protected IoPath(IoPath root, params string[] paths)
             : this(CombineLists(root._paths, paths))
         {
         }
@@ -67,6 +67,15 @@ namespace DotNet.Basics.IO
             return FileSystemInfo.Exists == false;
         }
 
+        public string Name => FileSystemInfo.Name;
+        public string FullName => FileSystemInfo.FullName;
+        public string NameWithoutExtension => Path.GetFileNameWithoutExtension(Name);
+        public string Extension => Path.GetExtension(Name);
+
+        public void Refresh()
+        {
+            FileSystemInfo.Refresh();
+        }
 
         private static IEnumerable<string> CombineLists(IEnumerable<string> root, params string[] paths)
         {
@@ -82,39 +91,7 @@ namespace DotNet.Basics.IO
             return CombineLists(new[] { root }, paths);
         }
 
-        public T FileSystemInfo { get; private set; }
-
-
-        public string Name { get; private set; }
-        public string FullName { get; private set; }
-        public string NameWithoutExtension { get; private set; }
-        public string Extension { get; private set; }
-
-        public void Refresh()
-        {
-            FileSystemInfo.Refresh();
-        }
-
-        private void SetFileSystemInfo()
-        {
-            var fullPath = Path.Combine(_paths.ToArray());
-
-            FileSystemInfo = _fileSystemInfoFactory.Create<T>(fullPath);
-            Name = FileSystemInfo.Name;
-            FullName = FileSystemInfo.FullName;
-
-            var extensionIndex = Name.LastIndexOf(".", StringComparison.InvariantCultureIgnoreCase);
-            if (extensionIndex < 0)
-            {
-                NameWithoutExtension = Name;
-                Extension = string.Empty;
-            }
-            else
-            {
-                NameWithoutExtension = Name.Substring(0, extensionIndex);
-                Extension = Name.Substring(extensionIndex);
-            }
-        }
+        public FileSystemInfo FileSystemInfo { get; }
 
         private static string CleanPath(string rawPath)
         {

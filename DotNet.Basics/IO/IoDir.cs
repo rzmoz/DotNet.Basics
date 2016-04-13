@@ -8,7 +8,7 @@ using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {
-    public class IoDir : IoPath<DirectoryInfo>
+    public class IoDir : IoPath
     {
         public IoDir(string root, params string[] paths)
             : base(root, paths)
@@ -25,7 +25,7 @@ namespace DotNet.Basics.IO
         {
         }
 
-        public IoDir Parent => FileSystemInfo.Parent.ToDir();
+        public IoDir Parent => ((DirectoryInfo)FileSystemInfo).Parent.ToDir();
 
         public void CleanIfExists()
         {
@@ -73,7 +73,7 @@ namespace DotNet.Basics.IO
                     var target = Parent;
                     var moveExitCode = Cmd.Move(source.FullName, target.FullName);
                     if (moveExitCode != 0)
-                        Robocopy.Move(source.Directory.FullName, target.FullName,source.Name);
+                        Robocopy.Move(source.Directory.FullName, target.FullName, source.Name);
                 }
             }
 

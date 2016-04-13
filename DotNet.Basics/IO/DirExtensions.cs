@@ -47,7 +47,7 @@ namespace DotNet.Basics.IO
                 return;
             }
 
-            System.IO.Directory.CreateDirectory(dir.FullName);
+            Directory.CreateDirectory(dir.FullName);
             Debug.WriteLine($"Created: {dir.FullName}");
         }
 
@@ -57,7 +57,7 @@ namespace DotNet.Basics.IO
                 return;
             Debug.WriteLine("Giving {0} user write access to: {1}", username, dir.FullName);
 
-            DirectorySecurity directorySecurity = dir.FileSystemInfo.GetAccessControl();
+            DirectorySecurity directorySecurity = ((DirectoryInfo)dir.FileSystemInfo).GetAccessControl();
             CanonicalizeDacl(directorySecurity);
 
             directorySecurity.AddAccessRule(new FileSystemAccessRule(
@@ -67,7 +67,7 @@ namespace DotNet.Basics.IO
                                     PropagationFlags.None,
                                     AccessControlType.Allow));
 
-            dir.FileSystemInfo.SetAccessControl(directorySecurity);
+            ((DirectoryInfo)dir.FileSystemInfo).SetAccessControl(directorySecurity);
         }
 
         public static bool IsEmpty(this IoDir dir)

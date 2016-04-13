@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.IO
 {
-    public class IoFile : IoPath<FileInfo>
+    public class IoFile : IoPath
     {
         public IoFile(string root, params string[] paths)
             : base(root, paths)
@@ -18,7 +18,7 @@ namespace DotNet.Basics.IO
             : base(root, paths)
         { }
 
-        public IoDir Directory => FileSystemInfo.Directory.ToDir();
+        public IoDir Directory => ((FileInfo)FileSystemInfo).Directory.ToDir();
 
         public async Task<string> ReadAllTextAsync()
         {
