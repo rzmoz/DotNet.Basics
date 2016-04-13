@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DotNet.Basics.IO
@@ -22,6 +25,34 @@ namespace DotNet.Basics.IO
         public static void CopyTo(this IEnumerable<IoFile> sourceFiles, IoDir targetDir, FileCopyOptions fileCopyOptions = FileCopyOptions.AbortIfExists)
         {
             Parallel.ForEach(sourceFiles, (file) => file.CopyTo(targetDir, fileCopyOptions));
+        }
+
+        public static string ToPath(this IEnumerable<string> paths)
+        {
+            var pathsList = paths.Select(CleanPath).ToList();
+            return Path.Combine(pathsList.ToArray());
+        }
+
+        public static string ToPath(this string root, params string[] paths)
+        {
+            return ToPath(new[] {root}, paths);
+        }
+
+        public static string ToPath(this IEnumerable<string> root, params string[] paths)
+        {
+            var allPaths = new List<string>();
+            if (root != null)
+                allPaths.AddRange(root);
+            if (paths.Any())
+                allPaths.AddRange(paths);
+            return ToPath(allPaths.ToArray());
+        }
+
+        private static string CleanPath(string rawPath)
+        {
+            if (string.IsNullOrWhiteSpace(rawPath))
+                return string.Empty;
+            return rawPath.Trim('/').Trim('\\');
         }
     }
 }

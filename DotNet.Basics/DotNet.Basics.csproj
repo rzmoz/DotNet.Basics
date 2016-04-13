@@ -71,7 +71,6 @@
     <Compile Include="IO\DirExtensions.cs" />
     <Compile Include="IO\FileCopyOptions.cs" />
     <Compile Include="IO\FileExtensions.cs" />
-    <Compile Include="IO\FileSystemInfoFactory.cs" />
     <Compile Include="IO\FileType.cs" />
     <Compile Include="IO\FileTypeCollection.cs" />
     <Compile Include="IO\IoDir.cs" />

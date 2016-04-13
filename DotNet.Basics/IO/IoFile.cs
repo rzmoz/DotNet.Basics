@@ -7,15 +7,15 @@ namespace DotNet.Basics.IO
     public class IoFile : IoPath
     {
         public IoFile(string root, params string[] paths)
-            : base(root, paths)
+            : base(new FileInfo(root.ToPath(paths)))
         { }
 
         public IoFile(IoDir root, string fileName)
-            : base(root, ToArray(fileName))
+            : base(new FileInfo(root.FullName.ToPath(fileName)))
         { }
 
         public IoFile(FileSystemInfo root, params string[] paths)
-            : base(root, paths)
+            : base(new FileInfo(root.FullName.ToPath(paths)))
         { }
 
         public IoDir Directory => ((FileInfo)FileSystemInfo).Directory.ToDir();

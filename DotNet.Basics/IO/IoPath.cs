@@ -10,33 +10,10 @@ namespace DotNet.Basics.IO
 {
     public abstract class IoPath
     {
-        private readonly List<string> _paths;
-
-        private IoPath(IEnumerable<string> paths)
+        protected IoPath(FileSystemInfo fsi)
         {
-            _paths = paths.Select(CleanPath).ToList();
-
-            var fullPath = Path.Combine(_paths.ToArray());
-            FileSystemInfo = new FileSystemInfoFactory().Create(fullPath);
-        }
-
-        protected IoPath(string root, params string[] paths)
-            : this(Combine(root, paths))
-        {
-
-        }
-        protected IoPath(FileSystemInfo root, params string[] paths)
-            : this(root.FullName, paths)
-        {
-        }
-
-        protected IoPath(IoDir root, params string[] paths)
-            : this(CombineLists(root._paths, paths))
-        {
-        }
-        protected IoPath(IoPath root, params string[] paths)
-            : this(CombineLists(root._paths, paths))
-        {
+            if (fsi == null) throw new ArgumentNullException(nameof(fsi));
+            FileSystemInfo = fsi;
         }
 
         public bool Exists()
@@ -77,7 +54,7 @@ namespace DotNet.Basics.IO
             FileSystemInfo.Refresh();
         }
 
-        private static IEnumerable<string> CombineLists(IEnumerable<string> root, params string[] paths)
+        protected IEnumerable<string> CombineLists(IEnumerable<string> root, params string[] paths)
         {
             var allPaths = new List<string>();
             if (root != null)
@@ -86,14 +63,14 @@ namespace DotNet.Basics.IO
                 allPaths.AddRange(paths);
             return allPaths.ToArray();
         }
-        private static IEnumerable<string> Combine(string root, params string[] paths)
+        protected IEnumerable<string> Combine(string root, params string[] paths)
         {
             return CombineLists(new[] { root }, paths);
         }
 
         public FileSystemInfo FileSystemInfo { get; }
 
-        private static string CleanPath(string rawPath)
+        protected string CleanPath(string rawPath)
         {
             if (string.IsNullOrWhiteSpace(rawPath))
                 return string.Empty;

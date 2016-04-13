@@ -11,19 +11,16 @@ namespace DotNet.Basics.IO
     public class IoDir : IoPath
     {
         public IoDir(string root, params string[] paths)
-            : base(root, paths)
-        {
-        }
+            : base(new DirectoryInfo(root.ToPath(paths)))
+        { }
 
         public IoDir(IoDir root, params string[] paths)
-            : base(root, paths)
-        {
-        }
+            : base(new DirectoryInfo(root.FullName.ToPath(paths)))
+        { }
 
         public IoDir(DirectoryInfo root, params string[] paths)
-            : base(root, paths)
-        {
-        }
+            : base(new DirectoryInfo(root.FullName.ToPath(paths)))
+        { }
 
         public IoDir Parent => ((DirectoryInfo)FileSystemInfo).Parent.ToDir();
 
