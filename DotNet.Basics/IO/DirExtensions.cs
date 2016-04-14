@@ -142,16 +142,13 @@ namespace DotNet.Basics.IO
             psc.RunScript(cleanDirScript);
         }
 
-        public static void CreateIfNotExists(this DirectoryInfo dir, DirCreateOptions dirCreateOptions = DirCreateOptions.DontCleanIfExists)
+        public static void CreateIfNotExists(this DirectoryInfo dir)
         {
             if (dir.Exists())
-            {
-                if (dirCreateOptions == DirCreateOptions.CleanIfExists)
-                    dir.CleanIfExists();
                 return;
-            }
-
-            Directory.CreateDirectory(dir.FullName);
+            var psc = new PowerShellConsole();
+            var cleanDirScript = $@"New-Item ""{dir.FullName}"" -Type Directory -Force";
+            psc.RunScript(cleanDirScript);
             Debug.WriteLine($"Created: {dir.FullName}");
         }
 

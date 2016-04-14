@@ -194,7 +194,8 @@ namespace DotNet.Basics.Tests.IO
             testDir.GetFiles().Count().Should().Be(1);
 
             //act
-            testDir.CreateIfNotExists(DirCreateOptions.CleanIfExists);
+            testDir.CreateIfNotExists();
+            testDir.CleanIfExists();
 
             //assert
             testDir.Exists().Should().BeTrue();
@@ -213,7 +214,7 @@ namespace DotNet.Basics.Tests.IO
             testDir.GetFiles().Count().Should().Be(1);
 
             //act
-            testDir.CreateIfNotExists(DirCreateOptions.DontCleanIfExists);
+            testDir.CreateIfNotExists();
 
             //assert
             testDir.Exists().Should().BeTrue();
