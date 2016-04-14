@@ -52,10 +52,10 @@ namespace DotNet.Basics.IO
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static int CopyDir(string sourceDir, string targetDir, DirCopyOptions dirCopyOptions = DirCopyOptions.IncludeSubDirectories, string extraOptions = null)
+        public static int CopyDir(string sourceDir, string targetDir, bool includeSubFolders = false, string extraOptions = null)
         {
             var options = string.Empty;
-            if (dirCopyOptions == DirCopyOptions.IncludeSubDirectories)
+            if (includeSubFolders)
                 options = _includeSubfoldersOption;
             if (string.IsNullOrWhiteSpace(extraOptions) == false)
                 options += " " + extraOptions;

@@ -16,7 +16,7 @@ namespace DotNet.Basics.IO
             foreach (var dir in sourceDirs)
             {
                 var targetFolder = target.ToDir(dir.Name);
-                dir.CopyTo(targetFolder, DirCopyOptions.IncludeSubDirectories);
+                dir.CopyTo(targetFolder, includeSubfolders: true);
             }
         }
 
@@ -93,7 +93,7 @@ namespace DotNet.Basics.IO
             return dir.Name.Equals(dir.Parent.Name, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public static void CopyTo(this DirectoryInfo source, DirectoryInfo target, DirCopyOptions dirCopyOptions)
+        public static void CopyTo(this DirectoryInfo source, DirectoryInfo target, bool includeSubfolders = false)
         {
             if (source.Exists() == false)
             {
@@ -112,14 +112,13 @@ namespace DotNet.Basics.IO
                 //depth first to find out quickly if we have long path exceptions - we want to fail early then
                 target.CreateIfNotExists();
 
-                if (dirCopyOptions == DirCopyOptions.IncludeSubDirectories)
+                if (includeSubfolders)
                 {
-
                     Parallel.ForEach(source.GetDirectories(), dir =>
                     {
                         var nextTargetSubDir = target.ToDir(dir.Name);
                         nextTargetSubDir.CreateIfNotExists();
-                        dir.CopyTo(nextTargetSubDir, dirCopyOptions);
+                        dir.CopyTo(nextTargetSubDir, includeSubfolders);
                     });
                 }
 
@@ -131,7 +130,7 @@ namespace DotNet.Basics.IO
             catch (Exception e)
             {
                 Debug.WriteLine("Fast copy failed - falling back to use robocopy\r\n{0}", e);
-                Robocopy.CopyDir(source.FullName, target.FullName, dirCopyOptions);
+                Robocopy.CopyDir(source.FullName, target.FullName, includeSubFolders: includeSubfolders);
             }
         }
 

@@ -67,7 +67,6 @@
     <Compile Include="Ioc\RegistrationsCollection.cs" />
     <Compile Include="Ioc\RegistrationsCollectionItem.cs" />
     <Compile Include="IO\Cmd.cs" />
-    <Compile Include="IO\DirCopyOptions.cs" />
     <Compile Include="IO\DirCreateOptions.cs" />
     <Compile Include="IO\DirExtensions.cs" />
     <Compile Include="IO\FileExtensions.cs" />

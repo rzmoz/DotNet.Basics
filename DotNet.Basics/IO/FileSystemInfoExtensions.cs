@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
 
@@ -12,6 +8,16 @@ namespace DotNet.Basics.IO
 {
     public static class FileSystemInfoExtensions
     {
+        public static DirectoryInfo Directory(this FileSystemInfo fsi)
+        {
+            if (fsi == null) throw new ArgumentNullException(nameof(fsi));
+            if (fsi is DirectoryInfo)
+                return fsi as DirectoryInfo;
+            if (fsi is FileInfo)
+                return (fsi as FileInfo).Directory;
+            throw new ArgumentOutOfRangeException($"Type not supported: {fsi.GetType()}");
+        }
+
         public static bool Exists(this FileSystemInfo fsi)
         {
             if (fsi == null)

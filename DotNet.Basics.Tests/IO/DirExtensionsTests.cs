@@ -99,7 +99,7 @@ namespace DotNet.Basics.Tests.IO
             targetDir.DeleteIfExists();
             targetDir.Exists().Should().BeFalse();
 
-            root.CopyTo(targetDir, DirCopyOptions.IncludeSubDirectories);
+            root.CopyTo(targetDir, includeSubfolders: true);
 
             targetDir.Exists().Should().BeTrue();
             GetHierarchyDepth(targetDir).Should().Be(dirDepth + 1);
