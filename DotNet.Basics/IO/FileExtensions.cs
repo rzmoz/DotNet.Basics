@@ -2,26 +2,21 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
-using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {
     public static class FileExtensions
     {
-        public static FileInfo ToFile(this string root, params string[] paths)
+        public static FileInfo ToFile(this string dir, params string[] paths)
         {
-            return new FileInfo(root.ToPath(paths));
-        }
-        public static FileInfo ToFile(this DirectoryInfo dir, string fileName)
-        {
-            return new FileInfo(dir.FullName.ToPath(fileName));
+            return new FileInfo(dir.ToPath(paths));
         }
 
-        public static FileInfo ToFile(this DirectoryInfo dir, FileInfo fileName)
+        public static FileInfo ToFile(this DirectoryInfo dir, params string[] paths)
         {
-            return new FileInfo(dir.FullName.ToPath(fileName.Name));
+            return new FileInfo(dir.FullName.ToPath(paths));
         }
 
         public static void CopyTo(this IEnumerable<FileInfo> sourceFiles, DirectoryInfo targetDir, bool overwrite = false)

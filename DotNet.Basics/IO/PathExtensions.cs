@@ -6,16 +6,15 @@ namespace DotNet.Basics.IO
 {
     public static class PathExtensions
     {
-
         public static string ToPath(this IEnumerable<string> paths)
         {
-            var pathsList = paths.Select(CleanPath).ToList();
-            return Path.Combine(pathsList.ToArray());
+            var pathsList = paths.Select(CleanPath).ToArray();
+            return Path.Combine(pathsList);
         }
 
         public static string ToPath(this FileSystemInfo root, params string[] paths)
         {
-            return root.FullName.ToPath(paths);
+            return root.ToString().ToPath(paths);
         }
 
         public static string ToPath(this string root, params string[] paths)

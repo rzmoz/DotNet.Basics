@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Threading.Tasks;
 using DotNet.Basics.IO;
 using FluentAssertions;
 using NUnit.Framework;
@@ -85,7 +84,7 @@ namespace DotNet.Basics.Tests.IO
             var sourceFile = fileName.ToFile();
 
             var targetDir = @"c:\MyPath".ToDir("subfolder1", "subfolder2");
-            var targetfile = targetDir.ToFile(sourceFile);
+            var targetfile = targetDir.ToFile(sourceFile.Name);
 
             targetfile.FullName.Should().Be(@"c:\MyPath\subfolder1\subfolder2\" + fileName);
         }
@@ -95,7 +94,7 @@ namespace DotNet.Basics.Tests.IO
             const string fileName = @"c:\Something\myFile.temp";
             var sourceFile = fileName.ToFile();
 
-            var targetfile = @"c:\MyPath".ToDir().ToFile(sourceFile);
+            var targetfile = @"c:\MyPath".ToFile(sourceFile.Name);
 
             targetfile.FullName.Should().Be(@"c:\MyPath\myFile.temp");
         }
@@ -111,9 +110,9 @@ namespace DotNet.Basics.Tests.IO
             var expectedFullName = name + extension;
 
             var file = new FileInfo(expectedFullName);
-            file.Name.Should().Be(expectedFullName,nameof(file.Name));
-            file.NameWithoutExtension().Should().Be(name??"", "NameWithoutExtension");
-            file.Extension.Should().Be(extension??"");
+            file.Name.Should().Be(expectedFullName, nameof(file.Name));
+            file.NameWithoutExtension().Should().Be(name ?? "", "NameWithoutExtension");
+            file.Extension.Should().Be(extension ?? "");
         }
     }
 }
