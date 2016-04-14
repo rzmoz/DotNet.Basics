@@ -1,7 +1,7 @@
 #https://www.appveyor.com/docs/appveyor-yml
 environment:
   VERSION_ASSEMBLY: 1.4.0
-  VERSION_METADATA: -rc2
+  VERSION_METADATA: -rc3
 
 version: "$(VERSION_ASSEMBLY)$(VERSION_METADATA)+{build}"
 
