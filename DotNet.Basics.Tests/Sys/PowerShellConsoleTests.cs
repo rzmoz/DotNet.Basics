@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using DotNet.Basics.Sys;
 using FluentAssertions;
 using NUnit.Framework;
@@ -23,7 +24,7 @@ namespace DotNet.Basics.Tests.Sys
 
             var result = _psc.RunFunction("Greet", new KeyValuePair<string, object>("greetee", greetee), @".\Greetings.ps1");
 
-            result.Should().Be($"Hello {greetee}!");
+            result.Single().ToString().Should().Be($"Hello {greetee}!");
         }
 
         [Test]
@@ -33,7 +34,7 @@ namespace DotNet.Basics.Tests.Sys
 
             var result = _psc.RunScript($"\"{greeting}\"");
 
-            result.Should().Be(greeting);
+            result.Single().ToString().Should().Be(greeting);
         }
     }
 }

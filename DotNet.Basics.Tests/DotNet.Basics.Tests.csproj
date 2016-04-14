@@ -74,8 +74,8 @@
     <Compile Include="Ioc\TestHelpers\MyDotNetContainerRegistrations.cs" />
     <Compile Include="Ioc\TestHelpers\MyTypeRegistrations.cs" />
     <Compile Include="IO\FileTypeTests.cs" />
-    <Compile Include="IO\IoDirTests.cs" />
-    <Compile Include="IO\IoFileTests.cs" />
+    <Compile Include="IO\DirExtensionsTests.cs" />
+    <Compile Include="IO\FileExtensionsTests.cs" />
     <Compile Include="IO\RobocopyTests.cs" />
     <Compile Include="Sys\CommandPromptTests.cs" />
     <Compile Include="Diagnostics\InMemoryTraceListener.cs" />

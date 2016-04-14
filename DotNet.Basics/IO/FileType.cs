@@ -1,4 +1,6 @@
-﻿namespace DotNet.Basics.IO
+﻿using System.IO;
+
+namespace DotNet.Basics.IO
 {
     public class FileType
     {
@@ -14,7 +16,7 @@
         public string Name { get; }
         public string Extension { get; }
 
-        public bool IsType(IoFile file)
+        public bool IsType(FileInfo file)
         {
             if (file == null)
                 return false;

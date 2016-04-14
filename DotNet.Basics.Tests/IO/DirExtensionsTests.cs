@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace DotNet.Basics.Tests.IO
 {
     [TestFixture]
-    public class IoDirTests
+    public class DirExtensionsTests
     {
         private const string _testDirRoot = @"K:\testDir";
         private const string _testDoubleDir = @"\testa\testb";
@@ -37,7 +37,7 @@ namespace DotNet.Basics.Tests.IO
             //we set up a folder with a really long name
             const string testDirName = "DeleteIfExists_DeleteLongNamedDir_DirIsDeleted";
 
-            var rootTestdir = new IoDir(@".\", testDirName);
+            var rootTestdir = @".\".ToDir(testDirName);
             rootTestdir.CleanIfExists();
             var identicalSubDir = rootTestdir;
             try
@@ -112,7 +112,7 @@ namespace DotNet.Basics.Tests.IO
             //we set up a folder with an identical named subfolder with dummy content
             const string testDirName = "ConsolidateTestDir_ForLookDepthLimit";
 
-            var rootTestdir = new IoDir(@".\", testDirName);
+            var rootTestdir = @".\".ToDir(testDirName);
             rootTestdir.CleanIfExists();
 
             var currentDir = CreateIdenticalSubdirs(rootTestdir, 2);
@@ -129,7 +129,7 @@ namespace DotNet.Basics.Tests.IO
             rootTestdir.GetFiles().Count().Should().Be(0);
         }
 
-        private int GetHierarchyDepth(IoDir root)
+        private int GetHierarchyDepth(DirectoryInfo root)
         {
             var subDir = root.GetDirectories().SingleOrDefault(dir => dir.Name.Equals(root.Name, StringComparison.InvariantCultureIgnoreCase));
             if (subDir == null)
@@ -146,7 +146,7 @@ namespace DotNet.Basics.Tests.IO
             //we set up a folder with an identical named subfolder with dummy content
             const string testDirName = "ConsolidateTestDir_WithReallyLongName";
 
-            var rootTestdir = new IoDir(@".\" + testDirName);
+            var rootTestdir = @".\".ToDir(testDirName);
             rootTestdir.CleanIfExists();
 
             var currentDir = CreateIdenticalSubdirs(rootTestdir, 10);
@@ -172,7 +172,7 @@ namespace DotNet.Basics.Tests.IO
         {
             //arrange
             //we set up a folder with an identical named subfolder with dummy content
-            var rootTestdir = new IoDir(@"C:\Users\rar\AppData\Local\dftmp\Resources\e59b639c-1cde-479a-a572-389619020a60\directory\ScaaSTemp\Sitecore 7.5 rev. 140612_Andes");
+            var rootTestdir = @"C:\Users\rar\AppData\Local\dftmp\Resources\e59b639c-1cde-479a-a572-389619020a60\directory\ScaaSTemp\Sitecore 7.5 rev. 140612_Andes".ToDir();
 
             //act
             rootTestdir.ConsolidateIdenticalSubfolders();
@@ -187,7 +187,7 @@ namespace DotNet.Basics.Tests.IO
         public void CreateIfExists_CreateOptions_ExistingDirIsCleaned()
         {
             //arrange
-            var testDir = new IoDir(@"CreateIfExists_CreateOptions_ExistingDirIsCleaned");
+            var testDir = @"CreateIfExists_CreateOptions_ExistingDirIsCleaned".ToDir();
             @"bllll".WriteToDisk(testDir, "myFile.txt");
 
             testDir.Exists().Should().BeTrue();
@@ -205,7 +205,7 @@ namespace DotNet.Basics.Tests.IO
         public void CreateIfExists_CreateOptions_ExistingDirIsNotCleaned()
         {
             //arrange
-            var testDir = new IoDir(@"CreateIfExists_CreateOptions_ExistingDirIsNotCleaned");
+            var testDir = @"CreateIfExists_CreateOptions_ExistingDirIsNotCleaned".ToDir();
             testDir.DeleteIfExists();
             @"bllll".WriteToDisk(testDir, "myFile.txt");
 
@@ -224,7 +224,7 @@ namespace DotNet.Basics.Tests.IO
         public void CleanIfExists_DirDoesntExists_NoActionAndNoExceptions()
         {
             //arrange
-            var testDir = new IoDir(@"SOMETHINGTHAT DOESNT EXIST_BLAAAAAA");
+            var testDir = @"SOMETHINGTHAT DOESNT EXIST_BLAAAAAA".ToDir();
 
             //act
             testDir.CleanIfExists();
@@ -236,7 +236,7 @@ namespace DotNet.Basics.Tests.IO
         public void CleanIfExists_RemoveAllContentFromADir_DirIsCleaned()
         {
             //arrange
-            var testDir = new IoDir(@".\MyTestDir");
+            var testDir = @".\MyTestDir".ToDir();
             testDir.CreateIfNotExists();
 
             const int numOfTestFiles = 3;
@@ -268,7 +268,7 @@ namespace DotNet.Basics.Tests.IO
             actual.FullName.Should().Be(expected);
 
 
-            actual = new IoDir(@"c:\BuildLibrary\Sitecore\Sitecore 8.0 rev. 141212", "Website");
+            actual = @"c:\BuildLibrary\Sitecore\Sitecore 8.0 rev. 141212".ToDir("Website");
             expected = @"c:\BuildLibrary\Sitecore\Sitecore 8.0 rev. 141212\Website";
             actual.FullName.Should().Be(expected);
         }
@@ -281,7 +281,7 @@ namespace DotNet.Basics.Tests.IO
             dir.Parent.Name.Should().Be(rootDir.Name);
         }
 
-        private void AddTestContent(IoDir dir, int numOfTestDirs, int numOfTestFiles)
+        private void AddTestContent(DirectoryInfo dir, int numOfTestDirs, int numOfTestFiles)
         {
             for (var i = 0; i < numOfTestDirs; i++)
             {
@@ -294,7 +294,7 @@ namespace DotNet.Basics.Tests.IO
         }
 
 
-        private IoDir CreateIdenticalSubdirs(IoDir root, int maxDepth)
+        private DirectoryInfo CreateIdenticalSubdirs(DirectoryInfo root, int maxDepth)
         {
             try
             {

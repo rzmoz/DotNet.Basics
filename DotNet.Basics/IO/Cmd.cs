@@ -16,11 +16,11 @@ namespace DotNet.Basics.IO
             return CommandPrompt.Run(moveString);
         }
 
-        public static int Move(IoDir source, IoDir target)
+        public static int Move(DirectoryInfo source, DirectoryInfo target)
         {
             return Move(source.FullName, target.FullName);
         }
-        public static int Move(IoFile source, IoDir target)
+        public static int Move(FileInfo source, FileInfo target)
         {
             return Move(source.FullName, target.FullName);
         }
@@ -34,13 +34,13 @@ namespace DotNet.Basics.IO
             return CommandPrompt.Run(copyString);
         }
 
-        public static int RmDir(IoDir dir)
+        public static int RmDir(DirectoryInfo dir)
         {
             if (dir == null) { throw new ArgumentNullException(nameof(dir)); }
             return RmDir(dir.FullName);
         }
 
-        public static int MkLink(IoDir linkDir, IoDir targetDir)
+        public static int MkLink(DirectoryInfo linkDir, DirectoryInfo targetDir)
         {
             if (linkDir == null) { throw new ArgumentNullException(nameof(linkDir)); }
             if (targetDir == null) { throw new ArgumentNullException(nameof(targetDir)); }

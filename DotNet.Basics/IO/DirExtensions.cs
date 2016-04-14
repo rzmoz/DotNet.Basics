@@ -4,41 +4,146 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
+using System.Threading.Tasks;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {
     public static class DirExtensions
     {
-        public static void CopyTo(this IEnumerable<IoDir> sourceDirs, IoDir target)
+        public static void CopyTo(this IEnumerable<DirectoryInfo> sourceDirs, DirectoryInfo target)
         {
             foreach (var dir in sourceDirs)
             {
-                var targetFolder = new IoDir(target, dir.Name);
+                var targetFolder = target.ToDir(dir.Name);
                 dir.CopyTo(targetFolder, DirCopyOptions.IncludeSubDirectories);
             }
         }
 
-        public static IoDir ToDir(this string directory, params string[] paths)
+        public static DirectoryInfo ToDir(this string dir, params string[] paths)
         {
-            return new IoDir(directory, paths);
-        }
-        public static IoDir ToDir(this DirectoryInfo directory, params string[] paths)
-        {
-            return new IoDir(directory, paths);
-        }
-        public static IoDir ToDir(this IoDir directory, params string[] paths)
-        {
-            return new IoDir(directory, paths);
+            return new DirectoryInfo(dir.ToPath(paths));
         }
 
-        public static IoDir CreateSubdir(this IoDir directory, string path)
+        public static DirectoryInfo ToDir(this DirectoryInfo dir, params string[] paths)
         {
-            var subDir = directory.ToDir(path);
+            return dir.FullName.ToDir(paths);
+        }
+
+        public static DirectoryInfo CreateSubdir(this DirectoryInfo dir, string path)
+        {
+            var subDir = dir.ToDir(path);
             subDir.CreateIfNotExists();
             return subDir;
         }
 
-        public static void CreateIfNotExists(this IoDir dir, DirCreateOptions dirCreateOptions = DirCreateOptions.DontCleanIfExists)
+        public static void ConsolidateIdenticalSubfolders(this DirectoryInfo dir, int lookDepth = int.MaxValue)
+        {
+            if (dir.Exists() == false)
+                throw new IOException(dir.FullName);
+
+            //depth first recursive
+            if (lookDepth > 0)//we only look to a certain depth
+                foreach (var subDir in dir.GetDirectories())
+                {
+                    subDir.ConsolidateIdenticalSubfolders(lookDepth - 1);//decrement look depth as a stop criteria
+                }
+
+            //if folder was deleted during consolidation
+            if (dir.Exists() == false)
+                return;
+
+            //we move this dir up as long up the hieararchy as long as the folder names are identical
+            if (dir.ParentHasIdenticalName() == false)
+                return;
+
+            bool subDirIsIdenticalToParentDir = false;
+
+            foreach (var source in dir.GetDirectories())
+            {
+                var target = dir.Parent.ToDir(source.Name);
+                if (target.FullName.Equals(dir.FullName, StringComparison.InvariantCultureIgnoreCase))
+                    subDirIsIdenticalToParentDir = true;
+                Robocopy.Move(source.FullName, target.FullName);
+            }
+
+            if (subDirIsIdenticalToParentDir == false)
+            {
+                var filesToMove = dir.GetFiles();
+                foreach (var source in filesToMove)
+                {
+                    var target = dir.Parent;
+                    var moveExitCode = Cmd.Move(source.FullName, target.FullName);
+                    if (moveExitCode != 0)
+                        Robocopy.Move(source.Directory.FullName, target.FullName, source.Name);
+                }
+            }
+
+            //we delete the folder if it's empty if everything was moved - otherwise, we don't 
+            if (dir.IsEmpty() && !subDirIsIdenticalToParentDir)
+                dir.DeleteIfExists();
+        }
+
+        private static bool ParentHasIdenticalName(this DirectoryInfo dir)
+        {
+            if (dir.Exists() == false)
+                return false;
+            if (dir.Parent == null)
+                return false;
+            return dir.Name.Equals(dir.Parent.Name, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        public static void CopyTo(this DirectoryInfo source, DirectoryInfo target, DirCopyOptions dirCopyOptions)
+        {
+            if (source.Exists() == false)
+            {
+                Debug.WriteLine("Source '{0}' not found. Aborting", source.FullName);
+                return;
+            }
+
+            if (source.FullName.Equals(target.FullName, StringComparison.OrdinalIgnoreCase))
+            {
+                Debug.WriteLine("Source and Target are the same '{0}'. Aborting", source.FullName);
+                return;
+            }
+
+            try
+            {
+                //depth first to find out quickly if we have long path exceptions - we want to fail early then
+                target.CreateIfNotExists();
+
+                if (dirCopyOptions == DirCopyOptions.IncludeSubDirectories)
+                {
+
+                    Parallel.ForEach(source.GetDirectories(), dir =>
+                    {
+                        var nextTargetSubDir = target.ToDir(dir.Name);
+                        nextTargetSubDir.CreateIfNotExists();
+                        dir.CopyTo(nextTargetSubDir, dirCopyOptions);
+                    });
+                }
+
+                Parallel.ForEach(source.GetFiles(), file =>
+                {
+                    file.CopyTo(target, overwrite: true);
+                });
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Fast copy failed - falling back to use robocopy\r\n{0}", e);
+                Robocopy.CopyDir(source.FullName, target.FullName, dirCopyOptions);
+            }
+        }
+
+        public static void CleanIfExists(this DirectoryInfo dir)
+        {
+            if (dir == null) throw new ArgumentNullException(nameof(dir));
+            var psc = new PowerShellConsole();
+            var cleanDirScript = $@"Remove-Item ""{dir.FullName}\*"" -Recurse -Force -ErrorAction SilentlyContinue";
+            psc.RunScript(cleanDirScript);
+        }
+
+        public static void CreateIfNotExists(this DirectoryInfo dir, DirCreateOptions dirCreateOptions = DirCreateOptions.DontCleanIfExists)
         {
             if (dir.Exists())
             {
@@ -51,13 +156,13 @@ namespace DotNet.Basics.IO
             Debug.WriteLine($"Created: {dir.FullName}");
         }
 
-        public static void GrantAccess(this IoDir dir, string username, FileSystemRights fileSystemRights = FileSystemRights.FullControl)
+        public static void GrantAccess(this DirectoryInfo dir, string username, FileSystemRights fileSystemRights = FileSystemRights.FullControl)
         {
-            if (Directory.Exists(dir.FullName) == false)
+            if (dir.Exists() == false)
                 return;
             Debug.WriteLine("Giving {0} user write access to: {1}", username, dir.FullName);
 
-            DirectorySecurity directorySecurity = ((DirectoryInfo)dir.FileSystemInfo).GetAccessControl();
+            DirectorySecurity directorySecurity = dir.GetAccessControl();
             CanonicalizeDacl(directorySecurity);
 
             directorySecurity.AddAccessRule(new FileSystemAccessRule(
@@ -67,10 +172,10 @@ namespace DotNet.Basics.IO
                                     PropagationFlags.None,
                                     AccessControlType.Allow));
 
-            ((DirectoryInfo)dir.FileSystemInfo).SetAccessControl(directorySecurity);
+            dir.SetAccessControl(directorySecurity);
         }
 
-        public static bool IsEmpty(this IoDir dir)
+        public static bool IsEmpty(this DirectoryInfo dir)
         {
             if (dir == null) throw new ArgumentNullException(nameof(dir));
             dir.Refresh();

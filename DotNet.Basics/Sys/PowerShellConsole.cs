@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
-using System.Text;
 
 namespace DotNet.Basics.Sys
 {
     public class PowerShellConsole
     {
-        public string RunScript(string script)
+        public object[] RunScript(string script)
         {
             if (script == null) { throw new ArgumentNullException(nameof(script)); }
             using (var ps = PowerShell.Create())
@@ -20,7 +19,7 @@ namespace DotNet.Basics.Sys
             }
         }
 
-        public string RunFunction(string methodName, KeyValuePair<string, object> arg, string scriptPath)
+        public object[] RunFunction(string methodName, KeyValuePair<string, object> arg, string scriptPath)
         {
             if (methodName == null) { throw new ArgumentNullException(nameof(methodName)); }
             if (scriptPath == null) { throw new ArgumentNullException(nameof(scriptPath)); }
@@ -45,18 +44,10 @@ namespace DotNet.Basics.Sys
             }
         }
 
-        private static string WriteResult(PowerShell ps)
+        private static object[] WriteResult(PowerShell ps)
         {
             var results = ps.Invoke();
-
-            var resultString = new StringBuilder();
-
-            foreach (var psObject in results)
-                resultString.Append(psObject + Environment.NewLine);
-            
-            var result = resultString.ToString().TrimEnd(Environment.NewLine.ToCharArray());
-            Debug.WriteLine(result);
-            return result;
+            return results.Select(pso => pso.BaseObject).ToArray();
         }
 
 

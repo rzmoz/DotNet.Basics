@@ -69,13 +69,10 @@
     <Compile Include="IO\DirCopyOptions.cs" />
     <Compile Include="IO\DirCreateOptions.cs" />
     <Compile Include="IO\DirExtensions.cs" />
-    <Compile Include="IO\FileCopyOptions.cs" />
     <Compile Include="IO\FileExtensions.cs" />
+    <Compile Include="IO\FileSystemInfoExtensions.cs" />
     <Compile Include="IO\FileType.cs" />
     <Compile Include="IO\FileTypeCollection.cs" />
-    <Compile Include="IO\IoDir.cs" />
-    <Compile Include="IO\IoFile.cs" />
-    <Compile Include="IO\IoPath.cs" />
     <Compile Include="IO\PathExtensions.cs" />
     <Compile Include="IO\Robocopy.cs" />
     <Compile Include="IO\StringExtensions.cs" />
