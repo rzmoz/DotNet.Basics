@@ -75,10 +75,6 @@
     <Compile Include="Diagnostics\MetricEntryTests.cs" />
     <Compile Include="Diagnostics\ProfileEntryTests.cs" />
     <Compile Include="Ioc\IocContainerTests.cs" />
-    <Compile Include="Ioc\TestHelpers\ITypeWithStringParameterInConstructor.cs" />
-    <Compile Include="Ioc\TestHelpers\MyIocContainer.cs" />
-    <Compile Include="Ioc\TestHelpers\MyIocContainerRegistrations.cs" />
-    <Compile Include="Ioc\TestHelpers\MyTypeRegistrations.cs" />
     <Compile Include="Ioc\TestHelpers\TypeWithValue.cs" />
     <Compile Include="IO\FileTypeTests.cs" />
     <Compile Include="IO\DirExtensionsTests.cs" />
@@ -86,12 +82,9 @@
     <Compile Include="IO\RobocopyTests.cs" />
     <Compile Include="Sys\CommandPromptTests.cs" />
     <Compile Include="Diagnostics\InMemoryTraceListener.cs" />
-    <Compile Include="Ioc\TestHelpers\DependsOnIMyType.cs" />
     <Compile Include="Ioc\TestHelpers\IMyType.cs" />
-    <Compile Include="Ioc\TestHelpers\InterfaceUsedInConstructor.cs" />
     <Compile Include="Ioc\TestHelpers\MyType1.cs" />
     <Compile Include="Ioc\TestHelpers\MyType2.cs" />
-    <Compile Include="Ioc\TestHelpers\TypeWithStringParameterInConstructor.cs" />
     <Compile Include="Pipelines\ClassThatIncrementArgsDependOn.cs" />
     <Compile Include="Pipelines\IncrementArgsStep.cs" />
     <Compile Include="Pipelines\SimplePipeline.cs" />
