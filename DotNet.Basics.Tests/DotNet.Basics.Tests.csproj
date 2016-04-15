@@ -105,7 +105,6 @@
     <Compile Include="Tasks\ThrowExceptionUntilXTriesDummeTask.cs" />
     <Compile Include="Tasks\RepeaterTaskTests.cs" />
     <Compile Include="Sys\TimeSpanExtensionsTests.cs" />
-    <Compile Include="Sys\TypeExtensionsTests.cs" />
     <Compile Include="Sys\UriExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>
