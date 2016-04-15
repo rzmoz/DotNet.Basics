@@ -6,9 +6,9 @@ using DotNet.Basics.Pipelines;
 
 namespace DotNet.Basics.Tests.Pipelines
 {
-    public class TaskStepWithDisplayNameSetStep : TaskStep<EventArgs>
+    public class PipelineStepWithDisplayNameSetStep : PipelineStep<EventArgs>
     {
-        public TaskStepWithDisplayNameSetStep()
+        public PipelineStepWithDisplayNameSetStep()
         {
             DisplayName = "MyDisplayName";
         }

@@ -8,7 +8,7 @@ using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Tests.Pipelines
 {
-    public class SimplePipeline : TaskPipeline<TEventArgs<int>>
+    public class SimplePipeline : Pipeline<TEventArgs<int>>
     {
         public SimplePipeline()
         {

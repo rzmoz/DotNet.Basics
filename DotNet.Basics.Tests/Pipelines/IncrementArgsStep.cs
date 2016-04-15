@@ -5,7 +5,7 @@ using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Tests.Pipelines
 {
-    public class IncrementArgsStep : TaskStep<TEventArgs<int>>
+    public class IncrementArgsStep : PipelineStep<TEventArgs<int>>
     {
         private readonly ClassThatIncrementArgsDependOn _classThatIncrementArgsDependOn;
 

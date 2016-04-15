@@ -5,9 +5,9 @@ using DotNet.Basics.Diagnostics;
 
 namespace DotNet.Basics.Pipelines
 {
-    public class LazyBindStep<T, TStep> : TaskStep<T>
+    public class LazyBindStep<T, TStep> : PipelineStep<T>
         where T : EventArgs, new()
-        where TStep : TaskStep<T>
+        where TStep : PipelineStep<T>
     {
         public override void Init()
         {

@@ -26,59 +26,37 @@ namespace DotNet.Basics.Tests.Pipelines
         [Test]
         public async Task DisplayName_DisplayNameIsSet_DisplayNameIsUsed()
         {
-            var result = await TaskPipelineRunner.RunAsync<EventArgs>(pipeline =>
-            {
-                pipeline.AddBlock().AddStep<TaskStepWithDisplayNameSetStep>();
-            }, container: _container).ConfigureAwait(false);
+            var pipeline = new Pipeline<EventArgs>();
+            pipeline.AddBlock().AddStep<PipelineStepWithDisplayNameSetStep>();
+            var runner = new PipelineRunner(_container);
+            string stepName = null;
 
-            result.Profile.BlockProfiles.Single().StepProfiles.Single().Name.Should().Be("MyDisplayName");
+            runner.StepStarting += delegate (string name, PipelineType type) { stepName = name; };
+
+            var result = await runner.RunAsync(pipeline).ConfigureAwait(false);
+
+            stepName.Should().Be("MyDisplayName");
         }
 
         [Test]
         public async Task DisplayName_DisplayNameIsNotSet_TypeNameNameIsUsed()
         {
-            var result = await TaskPipelineRunner.RunAsync<TEventArgs<int>>(pipeline =>
-            {
-                pipeline.AddBlock().AddStep<IncrementArgsStep>();
-            }, container: _container).ConfigureAwait(false);
+            var pipeline = new Pipeline<TEventArgs<int>>();
+            pipeline.AddBlock().AddStep<IncrementArgsStep>();
+            var runner = new PipelineRunner(_container);
+            string stepName = null;
 
-            result.Profile.BlockProfiles.Single().StepProfiles.Single().Name.Should().Be("MyIncrementArgsStep");
+            runner.StepStarting += delegate (string name, PipelineType type) { stepName = name; };
+
+            var result = await runner.RunAsync(pipeline).ConfigureAwait(false);
+
+            stepName.Should().Be("MyIncrementArgsStep");
         }
 
-
-        [Test]
-        public async Task RunAsync_ImplicitPipeline_PipelineIsRun()
-        {
-            var logger = new InMemDiagnostics();
-            var result = await TaskPipelineRunner.RunAsync<TEventArgs<int>>(pipeline =>
-            {
-                pipeline.AddBlock().AddStep<IncrementArgsStep>();
-                pipeline.AddBlock().AddStep<IncrementArgsStep>();
-            }, logger: logger, container: _container).ConfigureAwait(false);
-            result.Args.Value.Should().Be(2);
-            logger.GetLogs(LogLevel.Info).Count.Should().Be(2);
-        }
-
-        [Test]
-        public async Task RunAsync_BlockName_BlockNamesAreInStatus()
-        {
-            const string blockName1 = "MyBLock01";
-            const string blockName2 = "MyBLock02";
-
-            var result = await TaskPipelineRunner.RunAsync<TEventArgs<int>>(pipeline =>
-            {
-                pipeline.AddBlock(blockName1).AddStep<IncrementArgsStep>();
-                pipeline.AddBlock(blockName2).AddStep<IncrementArgsStep>();
-            }, container: _container).ConfigureAwait(false);
-
-            result.Profile.BlockProfiles.Count.Should().Be(2);
-            result.Profile.BlockProfiles.First().Name.Should().Be(blockName1);
-            result.Profile.BlockProfiles.Last().Name.Should().Be(blockName2);
-        }
         [Test]
         public async Task RunAsync_PipelineSpecifiedAsGenericParameter_PipelineIsRun()
         {
-            var runner = new TaskPipelineRunner(_container);
+            var runner = new PipelineRunner(_container);
             var result = await runner.RunAsync<SimplePipeline, TEventArgs<int>>().ConfigureAwait(false);
             result.Args.Value.Should().Be(1);
         }
@@ -86,7 +64,7 @@ namespace DotNet.Basics.Tests.Pipelines
         [Test]
         public async Task RunAsync_AllInParallel_AllStepsAreRunInParallel()
         {
-            var pipeline = new TaskPipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<TEventArgs<int>>();
             pipeline.AddBlock(async (args, logger) => await Task.Delay(TimeSpan.FromSeconds(1)),
                               async (args, logger) => await Task.Delay(TimeSpan.FromSeconds(1)),
                               async (args, logger) => await Task.Delay(TimeSpan.FromSeconds(1)),
@@ -100,7 +78,7 @@ namespace DotNet.Basics.Tests.Pipelines
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            await new TaskPipelineRunner(_container).RunAsync(pipeline).ConfigureAwait(false);
+            await new PipelineRunner(_container).RunAsync(pipeline).ConfigureAwait(false);
             stopwatch.Stop();
 
             //total timespan should be close to 1 second since tasks were run in parallel
@@ -112,7 +90,7 @@ namespace DotNet.Basics.Tests.Pipelines
         {
             var task1Called = false;
             var task2Called = false;
-            var pipeline = new TaskPipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<TEventArgs<int>>();
             pipeline.AddBlock(async (args, logger) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200)); });
             pipeline.AddBlock(async (args, logger) =>
             {
@@ -127,7 +105,7 @@ namespace DotNet.Basics.Tests.Pipelines
             task1Called.Should().BeFalse();
             task2Called.Should().BeFalse();
 
-            await new TaskPipelineRunner(_container).RunAsync(pipeline).ConfigureAwait(false);
+            await new PipelineRunner(_container).RunAsync(pipeline).ConfigureAwait(false);
 
             task1Called.Should().BeTrue();
             task2Called.Should().BeTrue();
@@ -136,102 +114,100 @@ namespace DotNet.Basics.Tests.Pipelines
         [Test]
         public async Task RunAsync_Result_FinishedWithErrors()
         {
-            var pipeline = new TaskPipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<TEventArgs<int>>();
             pipeline.AddBlock(async (args, log) => { log.Log("This is error logged", LogLevel.Error); });
             var logger = new InMemDiagnostics();
 
-            var result = await new TaskPipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
+            var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
 
             logger.GetLogs(LogLevel.Error).Any().Should().BeTrue();
             logger.GetLogs(LogLevel.Warning).Any().Should().BeFalse();
             logger.GetLogs(LogLevel.Info).Any().Should().BeFalse();
-            logger.GetLogs(LogLevel.Debug).Any().Should().BeFalse();
-            logger.Get<ProfileEntry>().Any().Should().BeTrue();
+            logger.GetLogs(LogLevel.Debug).Count.Should().Be(6);
+            
         }
         [Test]
         public async Task RunAsync_Result_FinishedWithWarnings()
         {
-            var pipeline = new TaskPipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<TEventArgs<int>>();
             pipeline.AddBlock(async (args, log) => { log.Log("This is warning logged", LogLevel.Warning); });
             var logger = new InMemDiagnostics();
 
-            var result = await new TaskPipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
+            var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
 
             logger.GetLogs(LogLevel.Error).Any().Should().BeFalse();
             logger.GetLogs(LogLevel.Warning).Any().Should().BeTrue();
             logger.GetLogs(LogLevel.Info).Any().Should().BeFalse();
-            logger.GetLogs(LogLevel.Debug).Any().Should().BeFalse();
-            logger.Get<ProfileEntry>().Any().Should().BeTrue();
+            logger.GetLogs(LogLevel.Debug).Count.Should().Be(6);
+
         }
 
         [Test]
         public async Task RunAsync_Result_FinishedWithInfos()
         {
-            var pipeline = new TaskPipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<TEventArgs<int>>();
             pipeline.AddBlock(async (args, log) => { log.Log("This is info logged"); });
             var logger = new InMemDiagnostics();
 
-            var result = await new TaskPipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
+            var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
 
             logger.GetLogs(LogLevel.Error).Any().Should().BeFalse();
             logger.GetLogs(LogLevel.Warning).Any().Should().BeFalse();
             logger.GetLogs(LogLevel.Info).Any().Should().BeTrue();
-            logger.GetLogs(LogLevel.Debug).Any().Should().BeFalse();
-            logger.Get<ProfileEntry>().Any().Should().BeTrue();
+            logger.GetLogs(LogLevel.Debug).Count.Should().Be(6);
+
         }
 
         [Test]
         public async Task RunAsync_Result_FinishedWithDebugs()
         {
-            var pipeline = new TaskPipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<TEventArgs<int>>();
             pipeline.AddBlock(async (args, log) => { log.Log("This is debug logged", LogLevel.Debug); });
             var logger = new InMemDiagnostics();
 
-            var result = await new TaskPipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
+            var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
 
             logger.GetLogs(LogLevel.Error).Any().Should().BeFalse();
             logger.GetLogs(LogLevel.Warning).Any().Should().BeFalse();
             logger.GetLogs(LogLevel.Info).Any().Should().BeFalse();
-            logger.GetLogs(LogLevel.Debug).Any().Should().BeTrue();
-            logger.Get<ProfileEntry>().Any().Should().BeTrue();
+            logger.GetLogs(LogLevel.Debug).Count.Should().Be(7);
         }
         [Test]
         public async Task RunAsync_Result_FinishedWithProfiles()
         {
-            var pipeline = new TaskPipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<TEventArgs<int>>();
             pipeline.AddBlock(async (args, log) => { log.Profile("", TimeSpan.FromSeconds(1)); });
             var logger = new InMemDiagnostics();
 
-            var result = await new TaskPipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
+            var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
 
             logger.GetLogs(LogLevel.Error).Any().Should().BeFalse();
             logger.GetLogs(LogLevel.Warning).Any().Should().BeFalse();
             logger.GetLogs(LogLevel.Info).Any().Should().BeFalse();
-            logger.GetLogs(LogLevel.Debug).Any().Should().BeFalse();
-            logger.Get<ProfileEntry>().Any().Should().BeTrue();
+            logger.GetLogs(LogLevel.Debug).Count.Should().Be(6);
         }
 
         [Test]
         public async Task RunAsync_PassArgs_ArgsArePassedInPipeline()
         {
-            var pipeline = new TaskPipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<TEventArgs<int>>();
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
 
-            var result = await new TaskPipelineRunner(_container).RunAsync(pipeline).ConfigureAwait(false);
+            var result = await new PipelineRunner(_container).RunAsync(pipeline).ConfigureAwait(false);
             result.Args.Value.Should().Be(5);
         }
-        
+
         [Test]
         public async Task RunAsync_Events_StartAndEndEventsAreRaised()
         {
             //arrange
-            var pipeline = new TaskPipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<TEventArgs<int>>();
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
-            var runner = new TaskPipelineRunner(_container);
+            var runner = new PipelineRunner(_container);
             string pipelineStarting = string.Empty;
             string pipelineEnded = string.Empty;
             string blockStarting = string.Empty;
@@ -239,41 +215,24 @@ namespace DotNet.Basics.Tests.Pipelines
             string stepStarting = string.Empty;
             string stepEnded = string.Empty;
 
-            runner.PipelineStarting += delegate (Profile stats) { pipelineStarting = stats.ToString(); };
-            runner.PipelineEnded += delegate (Profile stats) { pipelineEnded = stats.ToString(); };
-            runner.BlockStarting += delegate (Profile stats) { blockStarting = stats.ToString(); };
-            runner.BlockEnded += delegate (Profile stats) { blockEnded = stats.ToString(); };
-            runner.StepStarting += delegate (Profile stats) { stepStarting = stats.ToString(); };
-            runner.StepEnded += delegate (Profile stats) { stepEnded = stats.ToString(); };
+            runner.PipelineStarting += delegate (string name, PipelineType type) { pipelineStarting = name; };
+            runner.PipelineEnded += delegate (string name, PipelineType type) { pipelineEnded = name; };
+            runner.BlockStarting += delegate (string name, PipelineType type) { blockStarting = name; };
+            runner.BlockEnded += delegate (string name, PipelineType type) { blockEnded = name; };
+            runner.StepStarting += delegate (string name, PipelineType type) { stepStarting = name; };
+            runner.StepEnded += delegate (string name, PipelineType type) { stepEnded = name; };
 
             //act
             await runner.RunAsync(pipeline).ConfigureAwait(false);
 
             //assert
-            pipelineStarting.Should().Contain("started");
-            pipelineEnded.Should().Contain("finished");
-            blockStarting.Should().Contain("started");
-            blockEnded.Should().Contain("finished");
-            stepStarting.Should().Contain("started");
-            stepEnded.Should().Contain("finished");
+            pipelineStarting.Should().Be("Pipeline`1");
+            pipelineEnded.Should().Be("Pipeline`1");
+            blockStarting.Should().Be("Block 0");
+            blockEnded.Should().Be("Block 0");
+            stepStarting.Should().Be("MyIncrementArgsStep");
+            stepEnded.Should().Be("MyIncrementArgsStep");
         }
-
-        [Test]
-        public async Task RunAsync_LogProfile_ProfilesAreLoggedForStartAndEnd()
-        {
-
-            //arrange
-            var pipeline = new TaskPipeline<TEventArgs<int>>();
-            pipeline.AddBlock().AddStep<IncrementArgsStep>();
-            var runner = new TaskPipelineRunner(_container);
-            var logger = new InMemDiagnostics();
-
-            //act
-            var result = await runner.RunAsync(pipeline, logger: logger).ConfigureAwait(false);
-
-            //assert
-            //pipeline, block and step started and finished = 6 profile log entries
-            logger.Get<ProfileEntry>().Count.Should().Be(6);
-        }
+        
     }
 }

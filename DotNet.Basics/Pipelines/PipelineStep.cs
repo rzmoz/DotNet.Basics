@@ -5,9 +5,9 @@ using DotNet.Basics.Ioc;
 
 namespace DotNet.Basics.Pipelines
 {
-    public abstract class TaskStep<T> where T : EventArgs, new()
+    public abstract class PipelineStep<T> where T : EventArgs, new()
     {
-        protected TaskStep()
+        protected PipelineStep()
         {
             DisplayName = GetType().Name;
         }

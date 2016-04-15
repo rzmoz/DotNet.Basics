@@ -9,11 +9,12 @@ namespace DotNet.Basics.Tests.Pipelines
     public class TaskPipelineResultTests
     {
         [Test]
-        public void Ctor_NoProfile_DureationIsZero()
+        public void Ctor_NoArgs_Ar()
         {
-            var result = new TaskPipelineResult<EventArgs>();
+            var result = new PipelineResult<EventArgs>();
 
-            result.Profile.Duration.Should().Be(0.Seconds());
+            result.Args.Should().NotBeNull();
+            result.Args.Should().BeOfType(typeof(EventArgs));
         }
     }
 }

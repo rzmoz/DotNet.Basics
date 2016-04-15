@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace DotNet.Basics.Tests.Ioc
 {
     [TestFixture]
-    public class DotNetContainerRegistrationsTests
+    public class IocContainerRegistrationsTests
     {
         private IocContainer _container;
 

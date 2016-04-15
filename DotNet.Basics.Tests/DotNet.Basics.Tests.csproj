@@ -69,7 +69,7 @@
     <Compile Include="Collections\StringKeyDictionaryTests.cs" />
     <Compile Include="Diagnostics\MetricEntryTests.cs" />
     <Compile Include="Diagnostics\ProfileEntryTests.cs" />
-    <Compile Include="Ioc\DotNetContainerRegistrationsTests.cs" />
+    <Compile Include="Ioc\IocContainerRegistrationsTests.cs" />
     <Compile Include="Ioc\RegistrationsCollectionTests.cs" />
     <Compile Include="Ioc\TestHelpers\MyIocContainer.cs" />
     <Compile Include="Ioc\TestHelpers\MyDotNetContainerRegistrations.cs" />
@@ -80,10 +80,10 @@
     <Compile Include="IO\RobocopyTests.cs" />
     <Compile Include="Sys\CommandPromptTests.cs" />
     <Compile Include="Diagnostics\InMemoryTraceListener.cs" />
-    <Compile Include="Ioc\DotNetContainerBindInstanceTests.cs" />
-    <Compile Include="Ioc\DotNetContainerBindTypeTests.cs" />
-    <Compile Include="Ioc\DotNetContainerBindTypeWithCtorArgsTests.cs" />
-    <Compile Include="Ioc\DotNetContainerGetTests.cs" />
+    <Compile Include="Ioc\IocContainerBindInstanceTests.cs" />
+    <Compile Include="Ioc\IocContainerBindTypeTests.cs" />
+    <Compile Include="Ioc\IocContainerBindTypeWithCtorArgsTests.cs" />
+    <Compile Include="Ioc\IocContainerGetTests.cs" />
     <Compile Include="Ioc\ITypeWithStringParameterInConstructor.cs" />
     <Compile Include="Ioc\TestHelpers\DependsOnIMyType.cs" />
     <Compile Include="Ioc\TestHelpers\IMyType.cs" />
@@ -97,9 +97,8 @@
     <Compile Include="Pipelines\StepBlockTests.cs" />
     <Compile Include="Pipelines\TaskPipelineResultTests.cs" />
     <Compile Include="Pipelines\TaskPipelineRunnerTests.cs" />
-    <Compile Include="Pipelines\TaskPipelineProfileTests.cs" />
     <Compile Include="Diagnostics\ProfileTests.cs" />
-    <Compile Include="Pipelines\TaskStepWithDisplayNameSetStep.cs" />
+    <Compile Include="Pipelines\PipelineStepWithDisplayNameSetStep.cs" />
     <Compile Include="Collections\StringDictionaryTests.cs" />
     <Compile Include="Collections\StringPairTests.cs" />
     <Compile Include="Sys\PowerShellConsoleTests.cs" />

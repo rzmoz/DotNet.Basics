@@ -8,47 +8,47 @@ using DotNet.Basics.Diagnostics;
 
 namespace DotNet.Basics.Pipelines
 {
-    public class TaskPipeline<T> : IEnumerable<StepBlock<T>> where T : EventArgs, new()
+    public class Pipeline<T> : IEnumerable<PipelineBlock<T>> where T : EventArgs, new()
     {
-        private readonly IList<StepBlock<T>> _stepBlocks;
+        private readonly IList<PipelineBlock<T>> _stepBlocks;
 
-        public TaskPipeline()
+        public Pipeline()
         {
-            _stepBlocks = new List<StepBlock<T>>();
+            _stepBlocks = new List<PipelineBlock<T>>();
         }
 
-        public StepBlock<T>[] StepBlocks => _stepBlocks.ToArray();
+        public PipelineBlock<T>[] PipelineBlocks => _stepBlocks.ToArray();
 
-        public StepBlock<T> AddBlock(string blockName = null)
+        public PipelineBlock<T> AddBlock(string blockName = null)
         {
             var block = CreateStepBlock(blockName);
             return block;
         }
-        public StepBlock<T> AddBlock(string blockName, params Func<T, IDiagnostics, Task>[] asyncFunc)
+        public PipelineBlock<T> AddBlock(string blockName, params Func<T, IDiagnostics, Task>[] asyncFunc)
         {
             var block = CreateStepBlock(blockName);
             block.AddSteps(asyncFunc);
             return block;
         }
-        public StepBlock<T> AddBlock(params Func<T, IDiagnostics, Task>[] asyncFunc)
+        public PipelineBlock<T> AddBlock(params Func<T, IDiagnostics, Task>[] asyncFunc)
         {
             return AddBlock(null, asyncFunc);
         }
-        public StepBlock<T> AddBlock(params TaskStep<T>[] steps)
+        public PipelineBlock<T> AddBlock(params PipelineStep<T>[] steps)
         {
             var block = CreateStepBlock();
             block.AddSteps(steps);
             return block;
         }
 
-        private StepBlock<T> CreateStepBlock(string blockName = null)
+        private PipelineBlock<T> CreateStepBlock(string blockName = null)
         {
-            var stepBlock = new StepBlock<T>(blockName);
+            var stepBlock = new PipelineBlock<T>(blockName);
             _stepBlocks.Add(stepBlock);
             return stepBlock;
         }
 
-        public IEnumerator<StepBlock<T>> GetEnumerator()
+        public IEnumerator<PipelineBlock<T>> GetEnumerator()
         {
             return _stepBlocks.GetEnumerator();
         }

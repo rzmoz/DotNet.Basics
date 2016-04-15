@@ -5,7 +5,7 @@ using DotNet.Basics.Diagnostics;
 
 namespace DotNet.Basics.Pipelines
 {
-    public class EagerBindStep<T> : TaskStep<T> where T : EventArgs, new()
+    public class EagerBindStep<T> : PipelineStep<T> where T : EventArgs, new()
     {
         private readonly Func<T, IDiagnostics, Task> _actionAsync;
 

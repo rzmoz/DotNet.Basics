@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace DotNet.Basics.Tests.Ioc
 {
     [TestFixture]
-    public class DotNetContainerBindTypeWithCtorArgsTests
+    public class IocContainerBindTypeWithCtorArgsTests
     {
         private IIocContainer _container;
 

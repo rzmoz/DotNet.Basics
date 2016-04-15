@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace DotNet.Basics.Tests.Ioc
 {
     [TestFixture]
-    public class DotNetContainerBindTypeTests
+    public class IocContainerBindTypeTests
     {
         private const string _bindingNameAlpha = "MyBindingAlpha";
 
@@ -17,7 +17,7 @@ namespace DotNet.Basics.Tests.Ioc
             using (IIocContainer container = new IocContainer())
             {
                 //act
-                Action act = () => container.BindType<IMyType>(typeof(DotNetContainerBindTypeTests));
+                Action act = () => container.BindType<IMyType>(typeof(IocContainerBindTypeTests));
 
                 act.ShouldThrow<ArgumentException>();
             }
