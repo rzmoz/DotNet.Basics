@@ -35,9 +35,19 @@ namespace DotNet.Basics.Pipelines
         }
         public PipelineBlock<T> AddBlock(params Func<T, IDiagnostics, Task>[] asyncFunc)
         {
-            return AddBlock(null, asyncFunc);
+            return AddBlock(string.Empty, asyncFunc);
         }
 
+        public PipelineBlock<T> AddBlock(params Action<T, IDiagnostics>[] syncFunc)
+        {
+            var asyncFuncs = syncFunc.Select<Action<T, IDiagnostics>, Func<T, IDiagnostics, Task>>(f => (args, logger) =>
+             {
+                 return Task.Run(() => f(args, logger));
+             });
+
+            return AddBlock(string.Empty, asyncFuncs.ToArray());
+        }
+        
         public PipelineBlock<T> AddBlock(params PipelineStep<T>[] steps)
         {
             var block = CreateStepBlock();

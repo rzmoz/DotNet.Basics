@@ -5,7 +5,7 @@ namespace DotNet.Basics.Tasks
 {
     public static class Repeat
     {
-        public static RepeaterTask TaskAsync(Func<Task> asyncAction)
+        public static RepeaterTask Task(Func<Task> asyncAction)
         {
             return new RepeaterTask(asyncAction);
         }

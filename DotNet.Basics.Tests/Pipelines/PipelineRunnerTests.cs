@@ -30,10 +30,13 @@ namespace DotNet.Basics.Tests.Pipelines
             const string message = "MyMessage";
             var pipeline = new Pipeline();
 
-            pipeline.AddBlock(async (args, l) => l.Log(message),
-                            async (args, l) => l.Log(message),
-                            async (args, l) => l.Log(message)
+            pipeline.AddBlock((args, l) => l.Log(message),
+                            (args, l) => l.Log(message),
+                            (args, l) => l.Log(message)
             );
+
+            await Task.Delay(100.MilliSeconds()).ConfigureAwait(false);
+            logger.GetLogs(LogLevel.Info).Count.Should().Be(0);//ensure task isn't started until runner starts
 
             var runner = new PipelineRunner(_container, logger);
 
@@ -135,7 +138,7 @@ namespace DotNet.Basics.Tests.Pipelines
         public async Task RunAsync_Result_FinishedWithErrors()
         {
             var pipeline = new Pipeline<TEventArgs<int>>();
-            pipeline.AddBlock(async (args, log) => { log.Log("This is error logged", LogLevel.Error); });
+            pipeline.AddBlock((args, log) => { log.Log("This is error logged", LogLevel.Error); });
             var logger = new InMemDiagnostics();
 
             var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
@@ -150,7 +153,7 @@ namespace DotNet.Basics.Tests.Pipelines
         public async Task RunAsync_Result_FinishedWithWarnings()
         {
             var pipeline = new Pipeline<TEventArgs<int>>();
-            pipeline.AddBlock(async (args, log) => { log.Log("This is warning logged", LogLevel.Warning); });
+            pipeline.AddBlock((args, log) => { log.Log("This is warning logged", LogLevel.Warning); });
             var logger = new InMemDiagnostics();
 
             var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
@@ -166,7 +169,7 @@ namespace DotNet.Basics.Tests.Pipelines
         public async Task RunAsync_Result_FinishedWithInfos()
         {
             var pipeline = new Pipeline<TEventArgs<int>>();
-            pipeline.AddBlock(async (args, log) => { log.Log("This is info logged"); });
+            pipeline.AddBlock((args, log) => { log.Log("This is info logged"); });
             var logger = new InMemDiagnostics();
 
             var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
@@ -182,7 +185,7 @@ namespace DotNet.Basics.Tests.Pipelines
         public async Task RunAsync_Result_FinishedWithDebugs()
         {
             var pipeline = new Pipeline<TEventArgs<int>>();
-            pipeline.AddBlock(async (args, log) => { log.Log("This is debug logged", LogLevel.Debug); });
+            pipeline.AddBlock((args, log) => { log.Log("This is debug logged", LogLevel.Debug); });
             var logger = new InMemDiagnostics();
 
             var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
@@ -196,7 +199,7 @@ namespace DotNet.Basics.Tests.Pipelines
         public async Task RunAsync_Result_FinishedWithProfiles()
         {
             var pipeline = new Pipeline<TEventArgs<int>>();
-            pipeline.AddBlock(async (args, log) => { log.Profile("", TimeSpan.FromSeconds(1)); });
+            pipeline.AddBlock((args, log) => { log.Profile("", TimeSpan.FromSeconds(1)); });
             var logger = new InMemDiagnostics();
 
             var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);

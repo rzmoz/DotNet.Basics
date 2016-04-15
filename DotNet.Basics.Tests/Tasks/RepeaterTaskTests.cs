@@ -14,10 +14,7 @@ namespace DotNet.Basics.Tests.Tasks
         [Test]
         public void Task_WithFinallyNoExceptionInAction_ExceptionInfinallyIsFloated()
         {
-            Action action = () => Repeat.Task(() =>
-           {
-               Thread.Sleep(10); //do nothing
-           })
+            Action action = () => Repeat.Task(async () => await Task.Delay(10.Milliseconds()))
                     .WithMaxTries(2)
                     .WithFinally(() => { throw new IOException("doh"); })
                     .UntilNoExceptions()
@@ -29,10 +26,10 @@ namespace DotNet.Basics.Tests.Tasks
         [Test]
         public void Task_WithFinallyExInBothFinallyAndAction_ExceptionsAreFloated()
         {
-            Action action = () => Repeat.Task((Action)(() =>
+            Action action = () => Repeat.Task(() =>
            {
                throw new ApplicationException(); //run action that throw exception
-           }))
+           })
                       .WithMaxTries(2)
                       .WithFinally(() => { throw new IOException("doh"); })
                       .UntilNoExceptions()
@@ -49,10 +46,10 @@ namespace DotNet.Basics.Tests.Tasks
 
             try
             {
-                var result = Repeat.Task((Action)(() =>
+                var result = Repeat.Task(() =>
                {
                    throw new ApplicationException();//run action that throw exception
-               }))
+               })
                                                   .WithMaxTries(2)
                                                   .WithFinally(() => { @finally = true; })
                                                   .UntilNoExceptions()
@@ -69,16 +66,16 @@ namespace DotNet.Basics.Tests.Tasks
 
 
         [Test]
-        public void Task_IgnoreExceptionsEvenIfUntilIsNotReached_ActionIsInvokedFiveTimesAndNoExceptions()
+        public async Task Task_IgnoreExceptionsEvenIfUntilIsNotReached_ActionIsInvokedFiveTimesAndNoExceptions()
         {
             var doCounter = 0;
             const int until = 5;
-            var result = Repeat.Task((Action)(() => { doCounter++; throw new IOException("buuh"); }))
+            var result = await Repeat.Task(() => { doCounter++; throw new IOException("buuh"); })
                 .WithNoRetryDelay()
                 .WithMaxTries(until)
                 .Until(() => false)
                 .IgnoreExceptionsOfType(typeof(IOException))
-                .Sync();
+                .Async().ConfigureAwait(false);
 
             result.Should().BeFalse();
             doCounter.Should().Be(until);
@@ -90,7 +87,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var doCounter = 0;
             const int until = 5;
-            Action runTask = () => Repeat.Task((Action)(() => { doCounter++; throw new IOException("buuh"); }))
+            Action runTask = () => Repeat.Task(() => { doCounter++; throw new IOException("buuh"); })
                 .WithNoRetryDelay()
                 .WithMaxTries(until)
                 .Until(() => false)
@@ -109,7 +106,7 @@ namespace DotNet.Basics.Tests.Tasks
             var pinged = 0;
             const int until = 5;
 
-            var result = await Repeat.Task(() => invoked++)
+            var result = await Repeat.Task(() => { invoked++; })
                 .WithNoRetryDelay()
                 .WithPing(() => pinged++)
                  .Until(() => invoked == until)
