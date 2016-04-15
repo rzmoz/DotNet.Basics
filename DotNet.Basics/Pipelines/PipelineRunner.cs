@@ -9,6 +9,7 @@ namespace DotNet.Basics.Pipelines
     public class PipelineRunner
     {
         private readonly IIocContainer _container;
+        private readonly MediatorDiagnostics _diagnostics;
 
         public event PipelineEventHandler PipelineStarting;
         public event PipelineEventHandler PipelineEnded;
@@ -20,13 +21,26 @@ namespace DotNet.Basics.Pipelines
         public delegate void PipelineEventHandler(string name, PipelineType pipelineType);
 
         public PipelineRunner()
-            : this(null)
+            : this(null, null)
         {
         }
 
         public PipelineRunner(IIocContainer container)
+            : this(container, null)
+        {
+        }
+
+        public PipelineRunner(IDiagnostics logger)
+            : this(null, logger)
+        {
+        }
+
+        public PipelineRunner(IIocContainer container, IDiagnostics logger)
         {
             _container = container ?? new IocContainer();
+            _diagnostics = new MediatorDiagnostics();
+            if (logger != null)
+                _diagnostics.Add(Guid.NewGuid().ToString(), logger);
         }
 
         public async Task<PipelineResult<TArgs>> RunAsync<TTaskPipeline, TArgs>(TArgs args = null, IDiagnostics logger = null)
@@ -44,21 +58,21 @@ namespace DotNet.Basics.Pipelines
             if (args == null)
                 args = new TArgs();
 
-            if (logger == null)
-                logger = new NullDiagnostics();
+            if (logger != null)
+                _diagnostics.Add(Guid.NewGuid().ToString(), logger);
 
             var pipelineName = pipeline.GetType().Name;
 
             try
             {
-                logger.Log($"Pipeline starting:{pipelineName }", LogLevel.Debug);
+                _diagnostics.Log($"Pipeline starting:{pipelineName }", LogLevel.Debug);
                 PipelineStarting?.Invoke(pipelineName, PipelineType.Pipeline);
 
                 var blockCount = 0;
                 foreach (var block in pipeline.PipelineBlocks)
                 {
                     var blockName = string.IsNullOrWhiteSpace(block.Name) ? $"Block {blockCount++}" : block.Name;
-                    logger.Log($"Block starting:{blockName}", LogLevel.Debug);
+                    _diagnostics.Log($"Block starting:{blockName}", LogLevel.Debug);
                     BlockStarting?.Invoke(blockName, PipelineType.Block);
 
                     await Task.WhenAll(block.Select(async step =>
@@ -67,27 +81,27 @@ namespace DotNet.Basics.Pipelines
                         step.Init();//must run before resolving step name for lazy bound steps
                         var stepName = string.IsNullOrWhiteSpace(step.DisplayName) ? step.GetType().Name : step.DisplayName;
 
-                        logger.Log($"Step starting:{stepName}", LogLevel.Debug);
+                        _diagnostics.Log($"Step starting:{stepName}", LogLevel.Debug);
                         StepStarting?.Invoke(stepName, PipelineType.Step);
 
-                        await step.RunAsync(args, logger).ConfigureAwait(false);
+                        await step.RunAsync(args, _diagnostics).ConfigureAwait(false);
 
-                        logger.Log($"Step ended:{stepName}", LogLevel.Debug);
+                        _diagnostics.Log($"Step ended:{stepName}", LogLevel.Debug);
                         StepEnded?.Invoke(stepName, PipelineType.Step);
 
                     })).ConfigureAwait(false);
 
-                    logger.Log($"Block ended:{blockName}", LogLevel.Debug);
+                    _diagnostics.Log($"Block ended:{blockName}", LogLevel.Debug);
                     BlockEnded?.Invoke(blockName, PipelineType.Block);
                 }
             }
             catch (Exception exc)
             {
-                logger.Log(exc.Message, LogLevel.Error, exc);
+                _diagnostics.Log(exc.Message, LogLevel.Error, exc);
             }
             finally
             {
-                logger.Log($"Pipeline ended:{pipelineName}", LogLevel.Debug);
+                _diagnostics.Log($"Pipeline ended:{pipelineName}", LogLevel.Debug);
                 PipelineEnded?.Invoke(pipelineName, PipelineType.Pipeline);
             }
 

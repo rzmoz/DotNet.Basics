@@ -8,6 +8,9 @@ using DotNet.Basics.Diagnostics;
 
 namespace DotNet.Basics.Pipelines
 {
+    public class Pipeline : Pipeline<EventArgs>
+    { }
+
     public class Pipeline<T> : IEnumerable<PipelineBlock<T>> where T : EventArgs, new()
     {
         private readonly IList<PipelineBlock<T>> _stepBlocks;

@@ -12,7 +12,7 @@ using NUnit.Framework;
 namespace DotNet.Basics.Tests.Pipelines
 {
     [TestFixture]
-    public class TaskPipelineRunnerTests
+    public class PipelineRunnerTests
     {
         private IIocContainer _container;
 
@@ -21,6 +21,26 @@ namespace DotNet.Basics.Tests.Pipelines
         {
             _container = new IocContainer();
             _container.BindType<ClassThatIncrementArgsDependOn>();
+        }
+
+        [Test]
+        public async Task Ctor_Logger_LoggerIsLoggedTo()
+        {
+            var logger = new InMemDiagnostics();
+            const string message = "MyMessage";
+            var pipeline = new Pipeline();
+
+            pipeline.AddBlock(async (args, l) => l.Log(message),
+                async (args, l) => l.Log(message),
+                async (args, l) => l.Log(message)
+            );
+
+            var runner = new PipelineRunner(_container, logger);
+
+            await runner.RunAsync(pipeline).ConfigureAwait(false);
+
+            logger.GetLogs(LogLevel.Info).All(e => e.Message == message).Should().BeTrue();
+
         }
 
         [Test]
@@ -124,7 +144,7 @@ namespace DotNet.Basics.Tests.Pipelines
             logger.GetLogs(LogLevel.Warning).Any().Should().BeFalse();
             logger.GetLogs(LogLevel.Info).Any().Should().BeFalse();
             logger.GetLogs(LogLevel.Debug).Count.Should().Be(6);
-            
+
         }
         [Test]
         public async Task RunAsync_Result_FinishedWithWarnings()
@@ -226,13 +246,13 @@ namespace DotNet.Basics.Tests.Pipelines
             await runner.RunAsync(pipeline).ConfigureAwait(false);
 
             //assert
-            pipelineStarting.Should().Be("Pipeline`1");
-            pipelineEnded.Should().Be("Pipeline`1");
-            blockStarting.Should().Be("Block 0");
-            blockEnded.Should().Be("Block 0");
-            stepStarting.Should().Be("MyIncrementArgsStep");
-            stepEnded.Should().Be("MyIncrementArgsStep");
+            pipelineStarting.Should().Be("Pipeline`1", nameof(runner.PipelineStarting));
+            pipelineEnded.Should().Be("Pipeline`1", nameof(runner.PipelineEnded));
+            blockStarting.Should().Be("Block 0", nameof(runner.BlockStarting));
+            blockEnded.Should().Be("Block 0", nameof(runner.BlockEnded));
+            stepStarting.Should().Be("MyIncrementArgsStep", nameof(runner.StepStarting));
+            stepEnded.Should().Be("MyIncrementArgsStep", nameof(runner.StepEnded));
         }
-        
+
     }
 }

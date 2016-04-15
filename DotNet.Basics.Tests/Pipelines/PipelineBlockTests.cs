@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace DotNet.Basics.Tests.Pipelines
 {
     [TestFixture]
-    public class StepBlockTests
+    public class PipelineBlockTests
     {
         
         [SetUp]

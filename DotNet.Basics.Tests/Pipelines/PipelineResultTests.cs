@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace DotNet.Basics.Tests.Pipelines
 {
     [TestFixture]
-    public class TaskPipelineResultTests
+    public class PipelineResultTests
     {
         [Test]
         public void Ctor_NoArgs_Ar()
