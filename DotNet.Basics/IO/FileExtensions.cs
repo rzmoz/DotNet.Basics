@@ -2,13 +2,20 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DotNet.Basics.IO
 {
     public static class FileExtensions
     {
+        public static bool IsFileType(this FileInfo file, FileType fileType)
+        {
+            if (fileType == null) throw new ArgumentNullException(nameof(fileType));
+            if (file == null)
+                return false;
+            return file.Name.EndsWith(fileType.Extension, true, null);
+        }
+
         public static FileInfo ToFile(this string dir, params string[] paths)
         {
             return new FileInfo(dir.ToPath(paths));

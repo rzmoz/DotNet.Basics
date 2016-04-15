@@ -15,23 +15,6 @@ namespace DotNet.Basics.IO
 
         public string Name { get; }
         public string Extension { get; }
-
-        public bool IsType(FileInfo file)
-        {
-            if (file == null)
-                return false;
-
-            return IsType(file.Name);
-        }
-
-        public bool IsType(string filename)
-        {
-            if (string.IsNullOrEmpty(filename))
-                return false;
-
-            return filename.EndsWith(Extension, true, null);
-        }
-
         public string GetAllSearchPattern { get; }
     }
 }

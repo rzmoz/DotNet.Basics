@@ -40,7 +40,7 @@ namespace DotNet.Basics.Tests.IO
 
             var fileType = new FileType("TwoPartExtensionFilyType", twoPartExtension);
 
-            fileType.IsType(fileName).Should().BeTrue();
+            fileName.ToFile().IsFileType(fileType).Should().BeTrue();
         }
     }
 }
