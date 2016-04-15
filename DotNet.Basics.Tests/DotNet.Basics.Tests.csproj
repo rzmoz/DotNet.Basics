@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\StringKeyDictionaryTests.cs" />
+    <Compile Include="Diagnostics\MediatorDiagnosticsTests.cs" />
     <Compile Include="Diagnostics\MetricEntryTests.cs" />
     <Compile Include="Diagnostics\ProfileEntryTests.cs" />
     <Compile Include="Ioc\IocContainerRegistrationsTests.cs" />

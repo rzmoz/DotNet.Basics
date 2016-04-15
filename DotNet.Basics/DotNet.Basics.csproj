@@ -58,6 +58,7 @@
     <Compile Include="Diagnostics\EventDiagnostics.cs" />
     <Compile Include="Diagnostics\IDiagnostics.cs" />
     <Compile Include="Diagnostics\InMemDiagnostics.cs" />
+    <Compile Include="Diagnostics\MediatorDiagnostics.cs" />
     <Compile Include="Diagnostics\MetricEntry.cs" />
     <Compile Include="Diagnostics\ProfileEntry.cs" />
     <Compile Include="Diagnostics\LogEntry.cs" />
