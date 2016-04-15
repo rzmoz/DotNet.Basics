@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Autofac;
 using Autofac.Core;
 using Autofac.Core.Registration;
 
 namespace DotNet.Basics.Ioc
 {
-    public class DotNetContainer : IDotNetContainer
+    public class IocContainer : IIocContainer
     {
         protected IContainer _container;
 
-        public DotNetContainer(params IDotNetRegistrations[] registrations)
+        public IocContainer(params IDotNetRegistrations[] registrations)
         {
             _container = null;
             Registrations = new RegistrationsCollection(this);
@@ -169,10 +168,10 @@ namespace DotNet.Basics.Ioc
         protected virtual void Bind(Action<ContainerBuilder> bindAction)
         {
             if (bindAction == null) throw new ArgumentNullException(nameof(bindAction));
-            
-                var builder = new ContainerBuilder();
-                bindAction.Invoke(builder);
-                builder.Update(_container);
+
+            var builder = new ContainerBuilder();
+            bindAction.Invoke(builder);
+            builder.Update(_container);
         }
 
         public virtual void Dispose()

@@ -7,10 +7,10 @@ namespace DotNet.Basics.Ioc
 {
     public class RegistrationsCollection : IReadOnlyCollection<IDotNetRegistrations>
     {
-        private readonly IDotNetContainer _container;
+        private readonly IIocContainer _container;
         private readonly IList<RegistrationsCollectionItem> _registrations;
 
-        public RegistrationsCollection(IDotNetContainer container
+        public RegistrationsCollection(IIocContainer container
             )
         {
             _container = container;

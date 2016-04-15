@@ -15,7 +15,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Add_AddInOrderBFirst_RegistrationsAreEnumeratedFIFO()
         {
-            var registrations = new RegistrationsCollection(new DotNetContainer())
+            var registrations = new RegistrationsCollection(new IocContainer())
             {
                 new BRegistrations(),//Add B first to make sure it stays first
                 new ARegistrations()
@@ -27,7 +27,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Add_AddInOrderAFirst_RegistrationsAreEnumeratedFIFO()
         {
-            var registrations = new RegistrationsCollection(new DotNetContainer())
+            var registrations = new RegistrationsCollection(new IocContainer())
             {
                 new ARegistrations(),
                 new BRegistrations()
@@ -40,13 +40,13 @@ namespace DotNet.Basics.Tests.Ioc
 
     public class ARegistrations : IDotNetRegistrations
     {
-        public void RegisterIn(IDotNetContainer container)
+        public void RegisterIn(IIocContainer container)
         {
         }
     }
     public class BRegistrations : IDotNetRegistrations
     {
-        public void RegisterIn(IDotNetContainer container)
+        public void RegisterIn(IIocContainer container)
         {
         }
     }

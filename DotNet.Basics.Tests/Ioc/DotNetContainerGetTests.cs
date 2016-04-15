@@ -15,7 +15,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Get_ReferenceChainInMultipleRegistrationTypes_ConstructorDependenciesAreResolved()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 container.BindType<IInterfaceUsedInConstructor, ClassImplementingInterfaceUsedInConstructor>();
                 container.BindType<IInterfaceForClassDependentOnInterfaceUsedInConstructor, ClassDependentOnInterfaceUsedInConstructor>();
@@ -33,7 +33,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Get_InterfaceIsntRegistered_ExceptionIsThrown()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 //act
                 Action act = () => container.Get<IMyType>(); //not registered
@@ -45,7 +45,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Get_NamedTypeIsntRegistered_ExceptionIsThrown()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 //act
                 Action act = () => container.Get<IMyType>("named"); //not registered
@@ -57,7 +57,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Get_TypeIsntRegistered_TypeIsResolved()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 //act
                 var type = container.Get<MyType1>(); //not registered
@@ -68,7 +68,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Get_NestedNamedResolving_DependencyIsResolvedBasedOnNamedParameter()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 //act
                 container.BindInstance<IMyType>(new MyType1(), _bindingNameAlpha);
@@ -84,7 +84,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Get_WithNoNameWhenNamedTypeIsRegistered_FirstRegistrationIsReturnEvenIfNamed()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 //act
                 container.BindType<IMyType, MyType1>(_bindingNameAlpha);
@@ -97,7 +97,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Get_WithNoNameWhenNamedInstanceIsRegistered_FirstRegistrationIsReturnEvenIfName()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 //arrange
                 var instance = new MyType1();
@@ -112,7 +112,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Get_WithNotRegisteredNameWhenNamedTypeIsRegistered_ExceptionIsThrown()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 //act
                 container.BindType<IMyType, MyType1>(_bindingNameAlpha);
@@ -125,7 +125,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Get_WithNotRegisteredNameWhenNamedInstanceIsRegistered_ExceptionIsThrown()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 //act
                 container.BindInstance<IMyType>(new MyType1(), _bindingNameAlpha);

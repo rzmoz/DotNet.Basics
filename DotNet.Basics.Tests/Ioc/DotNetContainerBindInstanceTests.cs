@@ -20,7 +20,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void BindInstance_GetByInterface_InstanceIsReturnedFromInterface()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 var instance = new MyType1();
 
@@ -35,7 +35,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void BindInstance_OverrideExistingRegistrationsInstance_NewInstanceIsResolved()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 //arrange 
                 const int result1 = 1;
@@ -58,7 +58,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void BindInstance_NamedInstanceOverride_DifferentNamesDontOverride()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 //arrange 
                 const int result1 = 1;

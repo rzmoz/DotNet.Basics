@@ -2,6 +2,6 @@
 {
     public interface IDotNetRegistrations
     {
-        void RegisterIn(IDotNetContainer container);
+        void RegisterIn(IIocContainer container);
     }
 }

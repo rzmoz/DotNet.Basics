@@ -71,7 +71,7 @@
     <Compile Include="Diagnostics\ProfileEntryTests.cs" />
     <Compile Include="Ioc\DotNetContainerRegistrationsTests.cs" />
     <Compile Include="Ioc\RegistrationsCollectionTests.cs" />
-    <Compile Include="Ioc\TestHelpers\MyDotNetContainer.cs" />
+    <Compile Include="Ioc\TestHelpers\MyIocContainer.cs" />
     <Compile Include="Ioc\TestHelpers\MyDotNetContainerRegistrations.cs" />
     <Compile Include="Ioc\TestHelpers\MyTypeRegistrations.cs" />
     <Compile Include="IO\FileTypeTests.cs" />

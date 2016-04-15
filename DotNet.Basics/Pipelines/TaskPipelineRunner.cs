@@ -8,7 +8,7 @@ namespace DotNet.Basics.Pipelines
 {
     public class TaskPipelineRunner
     {
-        private readonly IDotNetContainer _container;
+        private readonly IIocContainer _container;
 
         public event ProfileEventHandler PipelineStarting;
         public event ProfileEventHandler PipelineEnded;
@@ -19,14 +19,14 @@ namespace DotNet.Basics.Pipelines
 
         public delegate void ProfileEventHandler(Profile profile);
 
-        public TaskPipelineRunner(IDotNetContainer container = null)
+        public TaskPipelineRunner(IIocContainer container = null)
         {
-            _container = container ?? new DotNetContainer();
+            _container = container ?? new IocContainer();
         }
 
         public bool IsRunning { get; private set; }
 
-        public static async Task<TaskPipelineResult<T>> RunAsync<T>(Action<TaskPipeline<T>> pipelineActions, T args = null, IDiagnostics logger = null, IDotNetContainer container = null) where T : EventArgs, new()
+        public static async Task<TaskPipelineResult<T>> RunAsync<T>(Action<TaskPipeline<T>> pipelineActions, T args = null, IDiagnostics logger = null, IIocContainer container = null) where T : EventArgs, new()
         {
             var validatePipeline = new TaskPipeline<T>();
             pipelineActions(validatePipeline);

@@ -2,7 +2,7 @@
 
 namespace DotNet.Basics.Ioc
 {
-    public interface IDotNetContainer : IDisposable
+    public interface IIocContainer : IDisposable
     {
         T Get<T>() where T : class;
         T Get<T>(string bindingName) where T : class;

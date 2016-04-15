@@ -4,7 +4,7 @@ namespace DotNet.Basics.Ioc
 {
     public class LazyCtorArg<T> : ICtorArg where T : class
     {
-        public LazyCtorArg(DotNetContainer container, string parameterName, string getBindingName = null)
+        public LazyCtorArg(IocContainer container, string parameterName, string getBindingName = null)
         {
             ParameterName = parameterName;
             if (getBindingName == null)
@@ -14,7 +14,7 @@ namespace DotNet.Basics.Ioc
         }
 
         public string ParameterName { get; }
-        public Func<IDotNetContainer, object> GetValue { get; }
+        public Func<IIocContainer, object> GetValue { get; }
     }
 
     public class LazyCtorArg : ICtorArg
@@ -31,6 +31,6 @@ namespace DotNet.Basics.Ioc
 
 
         public string ParameterName { get; }
-        public Func<IDotNetContainer, object> GetValue { get; }
+        public Func<IIocContainer, object> GetValue { get; }
     }
 }

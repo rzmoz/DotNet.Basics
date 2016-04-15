@@ -14,7 +14,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void BindType_BindNonGenericWithTypeNotImplementingInterface_RuntimeException()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 //act
                 Action act = () => container.BindType<IMyType>(typeof(DotNetContainerBindTypeTests));
@@ -26,7 +26,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void BindType_BindNonGenericWithBothInterfaceAndTyp_BindingsAreResolved()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 //act
                 container.BindType<IMyType>(typeof(MyType1));
@@ -41,7 +41,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void BindType_BindNonGenericWithNaming_BindingsAreResolved()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 //act
                 container.BindType<IMyType>(typeof(MyType1),_bindingNameAlpha);
@@ -57,7 +57,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void BindType_BindNonGeneric_NewRegistrationsAreAdded()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 //act
                 container.BindType<IMyType>(typeof(MyType1));
@@ -74,7 +74,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void BindType_BindTypesAfterContainerIsCreated_NewRegistrationsAreAdded()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 //act
                 container.BindType<IMyType, MyType1>();
@@ -90,7 +90,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void BindType_OverrideExistingRegistrationsType_NewTypeIsResolved()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 //act
                 container.BindType<IMyType, MyType1>();
@@ -106,7 +106,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void BindType_NamedTypeOverride_DifferentNamesDontOverride()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 //act
                 container.BindType<IMyType, MyType1>();
@@ -124,7 +124,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void BindType_NamedTypeOverride_SameNameOverrides()
         {
-            using (IDotNetContainer container = new DotNetContainer())
+            using (IIocContainer container = new IocContainer())
             {
                 //act
                 container.BindType<IMyType, MyType1>(_bindingNameAlpha);

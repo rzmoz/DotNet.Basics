@@ -79,8 +79,8 @@
     <Compile Include="Ioc\CtorArgsExtensions.cs" />
     <Compile Include="Ioc\EagerCtorArg.cs" />
     <Compile Include="Ioc\ICtorArg.cs" />
-    <Compile Include="Ioc\IDotNetContainer.cs" />
-    <Compile Include="Ioc\DotNetContainer.cs" />
+    <Compile Include="Ioc\IIocContainer.cs" />
+    <Compile Include="Ioc\IocContainer.cs" />
     <Compile Include="Ioc\IocException.cs" />
     <Compile Include="Ioc\LazyCtorArg.cs" />
     <Compile Include="Pipelines\EagerBindStep.cs" />
