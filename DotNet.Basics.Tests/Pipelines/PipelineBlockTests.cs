@@ -19,7 +19,7 @@ namespace DotNet.Basics.Tests.Pipelines
         [Test]
         public void Add_AddGenericSteps_StepsAreAdded()
         {
-            var stepBlock = new PipelineBlock<TEventArgs<int>>()
+            var stepBlock = new PipelineBlock<EventArgs<int>>()
                 .AddStep<IncrementArgsStep>()
                 .AddStep<IncrementArgsStep>()
                 .AddStep<IncrementArgsStep>()

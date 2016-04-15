@@ -2,14 +2,14 @@
 
 namespace DotNet.Basics.Sys
 {
-    public class TEventArgs<T> : EventArgs
+    public class EventArgs<T> : EventArgs
     {
-        public TEventArgs()
+        public EventArgs()
             : this(default(T))
         {
         }
 
-        public TEventArgs(T value)
+        public EventArgs(T value)
         {
             Value = value;
         }

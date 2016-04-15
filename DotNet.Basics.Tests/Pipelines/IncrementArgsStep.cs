@@ -5,7 +5,7 @@ using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Tests.Pipelines
 {
-    public class IncrementArgsStep : PipelineStep<TEventArgs<int>>
+    public class IncrementArgsStep : PipelineStep<EventArgs<int>>
     {
         private readonly ClassThatIncrementArgsDependOn _classThatIncrementArgsDependOn;
 
@@ -15,7 +15,7 @@ namespace DotNet.Basics.Tests.Pipelines
             DisplayName = "MyIncrementArgsStep";
         }
 
-        public override async Task RunAsync(TEventArgs<int> args, IDiagnostics logger)
+        public override async Task RunAsync(EventArgs<int> args, IDiagnostics logger)
         {
             await Task.Delay(1.MilliSeconds()).ConfigureAwait(false);//silence compiler warning
             args.Value = _classThatIncrementArgsDependOn.IncrementByOne(args.Value);

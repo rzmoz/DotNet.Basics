@@ -64,7 +64,7 @@ namespace DotNet.Basics.Tests.Pipelines
         [Test]
         public async Task DisplayName_DisplayNameIsNotSet_TypeNameNameIsUsed()
         {
-            var pipeline = new Pipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<EventArgs<int>>();
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
             var runner = new PipelineRunner(_container);
             string stepName = null;
@@ -80,14 +80,14 @@ namespace DotNet.Basics.Tests.Pipelines
         public async Task RunAsync_PipelineSpecifiedAsGenericParameter_PipelineIsRun()
         {
             var runner = new PipelineRunner(_container);
-            var result = await runner.RunAsync<SimplePipeline, TEventArgs<int>>().ConfigureAwait(false);
+            var result = await runner.RunAsync<SimplePipeline, EventArgs<int>>().ConfigureAwait(false);
             result.Args.Value.Should().Be(1);
         }
 
         [Test]
         public async Task RunAsync_AllInParallel_AllStepsAreRunInParallel()
         {
-            var pipeline = new Pipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<EventArgs<int>>();
             pipeline.AddBlock(async (args, logger) => await Task.Delay(TimeSpan.FromSeconds(1)),
                               async (args, logger) => await Task.Delay(TimeSpan.FromSeconds(1)),
                               async (args, logger) => await Task.Delay(TimeSpan.FromSeconds(1)),
@@ -113,7 +113,7 @@ namespace DotNet.Basics.Tests.Pipelines
         {
             var task1Called = false;
             var task2Called = false;
-            var pipeline = new Pipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<EventArgs<int>>();
             pipeline.AddBlock(async (args, logger) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200)); });
             pipeline.AddBlock(async (args, logger) =>
             {
@@ -137,7 +137,7 @@ namespace DotNet.Basics.Tests.Pipelines
         [Test]
         public async Task RunAsync_Result_FinishedWithErrors()
         {
-            var pipeline = new Pipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<EventArgs<int>>();
             pipeline.AddBlock((args, log) => { log.Log("This is error logged", LogLevel.Error); });
             var logger = new InMemDiagnostics();
 
@@ -152,7 +152,7 @@ namespace DotNet.Basics.Tests.Pipelines
         [Test]
         public async Task RunAsync_Result_FinishedWithWarnings()
         {
-            var pipeline = new Pipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<EventArgs<int>>();
             pipeline.AddBlock((args, log) => { log.Log("This is warning logged", LogLevel.Warning); });
             var logger = new InMemDiagnostics();
 
@@ -168,7 +168,7 @@ namespace DotNet.Basics.Tests.Pipelines
         [Test]
         public async Task RunAsync_Result_FinishedWithInfos()
         {
-            var pipeline = new Pipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<EventArgs<int>>();
             pipeline.AddBlock((args, log) => { log.Log("This is info logged"); });
             var logger = new InMemDiagnostics();
 
@@ -184,7 +184,7 @@ namespace DotNet.Basics.Tests.Pipelines
         [Test]
         public async Task RunAsync_Result_FinishedWithDebugs()
         {
-            var pipeline = new Pipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<EventArgs<int>>();
             pipeline.AddBlock((args, log) => { log.Log("This is debug logged", LogLevel.Debug); });
             var logger = new InMemDiagnostics();
 
@@ -198,7 +198,7 @@ namespace DotNet.Basics.Tests.Pipelines
         [Test]
         public async Task RunAsync_Result_FinishedWithProfiles()
         {
-            var pipeline = new Pipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<EventArgs<int>>();
             pipeline.AddBlock((args, log) => { log.Profile("", TimeSpan.FromSeconds(1)); });
             var logger = new InMemDiagnostics();
 
@@ -213,7 +213,7 @@ namespace DotNet.Basics.Tests.Pipelines
         [Test]
         public async Task RunAsync_PassArgs_ArgsArePassedInPipeline()
         {
-            var pipeline = new Pipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<EventArgs<int>>();
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
@@ -228,7 +228,7 @@ namespace DotNet.Basics.Tests.Pipelines
         public async Task RunAsync_Events_StartAndEndEventsAreRaised()
         {
             //arrange
-            var pipeline = new Pipeline<TEventArgs<int>>();
+            var pipeline = new Pipeline<EventArgs<int>>();
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
             var runner = new PipelineRunner(_container);
             string pipelineStarting = string.Empty;

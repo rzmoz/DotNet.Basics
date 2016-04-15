@@ -27,8 +27,8 @@ namespace DotNet.Basics.Sys
         private bool _notifyListeners;
 
         private readonly Func<T, bool> _setValue;
-        public event EventHandler<TEventArgs<T>> Updating;
-        public event EventHandler<TEventArgs<T>> Updated;
+        public event EventHandler<EventArgs<T>> Updating;
+        public event EventHandler<EventArgs<T>> Updated;
 
         public void Reset()
         {
@@ -46,12 +46,12 @@ namespace DotNet.Basics.Sys
         private void SetValue(T t)
         {
             if (_notifyListeners && Updating != null)
-                Updating(this, new TEventArgs<T>(_value));
+                Updating(this, new EventArgs<T>(_value));
 
             _value = t;
 
             if (_notifyListeners && Updated != null)
-                Updated(this, new TEventArgs<T>(_value));
+                Updated(this, new EventArgs<T>(_value));
         }
 
         private bool ValueTypeSetter(T t)

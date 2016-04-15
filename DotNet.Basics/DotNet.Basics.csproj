@@ -94,7 +94,7 @@
     <Compile Include="Tasks\CountLoopBreakPredicate.cs" />
     <Compile Include="Sys\EnumClass.cs" />
     <Compile Include="Sys\EnumExtensions.cs" />
-    <Compile Include="Sys\TEventArgs.cs" />
+    <Compile Include="Sys\EventArgs.cs" />
     <Compile Include="Tasks\NoStopConditionIsSetException.cs" />
     <Compile Include="Tasks\OnceOnlyAction.cs" />
     <Compile Include="Tasks\Repeat.cs" />
