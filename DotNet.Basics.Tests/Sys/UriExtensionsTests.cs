@@ -1,9 +1,9 @@
 ﻿using System;
-using DotNet.Basics.Web;
+using DotNet.Basics.Sys;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace DotNet.Basics.Tests.Web
+namespace DotNet.Basics.Tests.Sys
 {
     [TestFixture]
     public class UriExtensionsTests
