@@ -105,7 +105,7 @@
     <Compile Include="Tasks\TimeoutLoopBreakPredicate.cs" />
     <Compile Include="Sys\TimeSpanExtensions.cs" />
     <Compile Include="Sys\TypeExtensions.cs" />
-    <Compile Include="Web\UriExtensions.cs" />
+    <Compile Include="Sys\UriExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DotNet.Basics.nuspec" />

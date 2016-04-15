@@ -106,7 +106,7 @@
     <Compile Include="Tasks\RepeaterTaskTests.cs" />
     <Compile Include="Sys\TimeSpanExtensionsTests.cs" />
     <Compile Include="Sys\TypeExtensionsTests.cs" />
-    <Compile Include="Web\UriExtensionsTests.cs" />
+    <Compile Include="Sys\UriExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -133,6 +133,9 @@
     <Content Include="IO\TestSources\TextFile1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Web\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

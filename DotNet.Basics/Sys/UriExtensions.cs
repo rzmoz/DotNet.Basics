@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DotNet.Basics.Sys;
 
-namespace DotNet.Basics.Web
+namespace DotNet.Basics.Sys
 {
     public static class UriExtensions
     {
