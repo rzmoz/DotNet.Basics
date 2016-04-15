@@ -8,7 +8,7 @@ namespace DotNet.Basics.Pipelines
 {
     public class PipelineRunner
     {
-        private readonly IIocContainer _container;
+        private readonly IocContainer _container;
         private readonly MediatorDiagnostics _diagnostics;
 
         public event PipelineEventHandler PipelineStarting;
@@ -25,7 +25,7 @@ namespace DotNet.Basics.Pipelines
         {
         }
 
-        public PipelineRunner(IIocContainer container)
+        public PipelineRunner(IocContainer container)
             : this(container, null)
         {
         }
@@ -35,7 +35,7 @@ namespace DotNet.Basics.Pipelines
         {
         }
 
-        public PipelineRunner(IIocContainer container, IDiagnostics logger)
+        public PipelineRunner(IocContainer container, IDiagnostics logger)
         {
             _container = container ?? new IocContainer();
             _diagnostics = new MediatorDiagnostics();

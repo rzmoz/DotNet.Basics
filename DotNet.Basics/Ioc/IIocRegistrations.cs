@@ -1,7 +1,9 @@
-﻿namespace DotNet.Basics.Ioc
+﻿using SimpleInjector;
+
+namespace DotNet.Basics.Ioc
 {
     public interface IIocRegistrations
     {
-        void RegisterIn(IIocContainer container);
+        void RegisterIn(IocContainer container);
     }
 }

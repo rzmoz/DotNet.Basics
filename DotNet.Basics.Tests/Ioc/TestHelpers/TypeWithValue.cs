@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotNet.Basics.Tests.Ioc
+namespace DotNet.Basics.Tests.Ioc.TestHelpers
 {
-    public interface ITypeWithStringParameterInConstructor
+    public class TypeWithValue
     {
-        string Text { get; }
+        public int Value { get; set; }
     }
 }

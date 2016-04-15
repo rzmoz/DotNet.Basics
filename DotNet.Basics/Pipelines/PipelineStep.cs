@@ -20,6 +20,6 @@ namespace DotNet.Basics.Pipelines
 
         public string DisplayName { get; protected set; }
 
-        internal IIocContainer Container { get; set; }
+        internal IocContainer Container { get; set; }
     }
 }

@@ -55,6 +55,10 @@
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="SimpleInjector, Version=3.1.3.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.3.1.3\lib\net45\SimpleInjector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
@@ -70,22 +74,18 @@
     <Compile Include="Diagnostics\MediatorDiagnosticsTests.cs" />
     <Compile Include="Diagnostics\MetricEntryTests.cs" />
     <Compile Include="Diagnostics\ProfileEntryTests.cs" />
-    <Compile Include="Ioc\IocContainerRegistrationsTests.cs" />
-    <Compile Include="Ioc\RegistrationsCollectionTests.cs" />
+    <Compile Include="Ioc\IocContainerTests.cs" />
+    <Compile Include="Ioc\TestHelpers\ITypeWithStringParameterInConstructor.cs" />
     <Compile Include="Ioc\TestHelpers\MyIocContainer.cs" />
     <Compile Include="Ioc\TestHelpers\MyIocContainerRegistrations.cs" />
     <Compile Include="Ioc\TestHelpers\MyTypeRegistrations.cs" />
+    <Compile Include="Ioc\TestHelpers\TypeWithValue.cs" />
     <Compile Include="IO\FileTypeTests.cs" />
     <Compile Include="IO\DirExtensionsTests.cs" />
     <Compile Include="IO\FileExtensionsTests.cs" />
     <Compile Include="IO\RobocopyTests.cs" />
     <Compile Include="Sys\CommandPromptTests.cs" />
     <Compile Include="Diagnostics\InMemoryTraceListener.cs" />
-    <Compile Include="Ioc\IocContainerBindInstanceTests.cs" />
-    <Compile Include="Ioc\IocContainerBindTypeTests.cs" />
-    <Compile Include="Ioc\IocContainerBindTypeWithCtorArgsTests.cs" />
-    <Compile Include="Ioc\IocContainerGetTests.cs" />
-    <Compile Include="Ioc\ITypeWithStringParameterInConstructor.cs" />
     <Compile Include="Ioc\TestHelpers\DependsOnIMyType.cs" />
     <Compile Include="Ioc\TestHelpers\IMyType.cs" />
     <Compile Include="Ioc\TestHelpers\InterfaceUsedInConstructor.cs" />
