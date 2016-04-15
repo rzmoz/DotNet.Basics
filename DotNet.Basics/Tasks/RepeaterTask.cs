@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Sys;
 
@@ -7,139 +7,102 @@ namespace DotNet.Basics.Tasks
 {
     public class RepeaterTask
     {
-        private Type _ignoreExceptionsOfType;
-
-        protected RepeaterTask(Action action)
-            : this()
+        public RepeaterTask(Action action)
         {
-            Action = () => Task.Factory.StartNew(action);
+            Action = () => Task.Run(action);
         }
-
-        protected RepeaterTask(Func<Task> action)
-            : this()
+        public RepeaterTask(Func<Task> action)
         {
             Action = action;
         }
 
-        private RepeaterTask()
+        public RepeaterTask WithNoRetryDelay()
         {
-            RetryDelay = 500.MilliSeconds();
+            RetryDelay = 5.MilliSeconds();
+            return this;
         }
 
-        protected async Task<bool> RunAsync()
+        public RepeaterTask WithRetryDelay(TimeSpan retryDelay)
         {
-            if (UntilPredicate == null)
-                throw new NoStopConditionIsSetException("Task will potentially run forever. Set Until and consider adding WithTimeout and/or WithMaxTries");
-
-            Exception lastException = null;
-            CountLoopBreakPredicate?.Reset();
-            TimeoutLoopBreakPredicate?.Reset();
-
-            bool success;
-            try//ensure finally is executed
-            {
-                do
-                {
-                    Exception exceptionInLastLoop;
-                    try
-                    {
-                        await Action.Invoke().ConfigureAwait(false);
-                        CountLoopBreakPredicate?.LoopCallback();
-                        exceptionInLastLoop = null;
-                    }
-                    catch (Exception e)
-                    {
-                        lastException = e;
-                        exceptionInLastLoop = e;
-                        CountLoopBreakPredicate?.LoopCallback();
-                    }
-
-                    Pingback();
-
-                    if (UntilPredicate != null)
-                        if (UntilPredicate.Invoke(exceptionInLastLoop))
-                        {
-                            success = true;
-                            break;
-                        }
-
-                    if (ShouldContinue(lastException) == false)
-                    {
-                        success = false;
-                        break;
-                    }
-
-                    await Task.Delay(RetryDelay).ConfigureAwait(false);
-
-                } while (true);
-            }
-            finally
-            {
-                try
-                {
-                    Finally?.Invoke();//we don't catch exceptions here since it needs to float if any
-                }
-                catch (Exception e)
-                {
-                    if (lastException == null)
-                        throw e;
-                    throw new AggregateException(lastException, e);
-                }
-            }
-
-            return success;
+            RetryDelay = retryDelay;
+            return this;
         }
 
-        private void Pingback()
+        public RepeaterTask IgnoreExceptionsOfType(Type exceptionTypeToIgnore)
         {
-            if (Ping == null)
-                return;
+            IgnoreExceptionType = exceptionTypeToIgnore;
+            return this;
+        }
 
+        public RepeaterTask WithPing(Action pingAction)
+        {
+            Ping = pingAction;
+            return this;
+        }
+
+        public RepeaterTask WithTimeout(TimeSpan timeout)
+        {
+            TimeoutLoopBreakPredicate = new TimeoutLoopBreakPredicate(timeout);
+            return this;
+        }
+        public RepeaterTask WithMaxTries(uint maxTries)
+        {
+            CountLoopBreakPredicate = new CountLoopBreakPredicate(maxTries);
+            return this;
+        }
+
+        public RepeaterTask WithFinally(Action finallyAction)
+        {
+            Finally = finallyAction;
+            return this;
+        }
+
+        public RepeaterTask Until(Func<bool> untilPredicate)
+        {
+            UntilPredicate = e => untilPredicate.Invoke();
+            return this;
+        }
+
+        public RepeaterTask UntilNoExceptions()
+        {
+            UntilPredicate = e => e == null;
+            return this;
+        }
+
+        public async Task<bool> Async()
+        {
             try
             {
-                Ping.Invoke();
+                var runner = new RepeaterTaskRunner();
+                return await runner.RunAsync(this).ConfigureAwait(false);
             }
-            catch (Exception e)
+            catch (AggregateException ae)
             {
-                Debug.WriteLine(e.ToString());
+                throw ae.InnerException;
             }
         }
 
-        private bool ShouldContinue(Exception lastException)
+        public bool Sync()
         {
-            bool shouldBreak = CountLoopBreakPredicate != null && CountLoopBreakPredicate.ShouldBreak() ||
-                               TimeoutLoopBreakPredicate != null && TimeoutLoopBreakPredicate.ShouldBreak();
-
-            if (shouldBreak)
+            try
             {
-                if (lastException == null)
-                    return false;
-
-                if (_ignoreExceptionsOfType == null)
-                    throw lastException;
-
-                if (lastException.GetType().IsSubclassOf(_ignoreExceptionsOfType) ||
-                    lastException.GetType() == _ignoreExceptionsOfType)
-                    return false;
-
-                throw lastException;
+                var runner = new RepeaterTaskRunner();
+                var task = runner.RunAsync(this);
+                task.Wait();
+                return task.Result;
             }
-            return true;
+            catch (AggregateException ae)
+            {
+                throw ae.InnerException;
+            }
         }
-
-        internal void InteralIgnoreExceptionsOfType(Type exceptionTypeToIgnore)
-        {
-            _ignoreExceptionsOfType = exceptionTypeToIgnore;
-        }
-
-        private Func<Task> Action { get; set; }
-        internal CountLoopBreakPredicate CountLoopBreakPredicate { get; set; }
-        internal TimeoutLoopBreakPredicate TimeoutLoopBreakPredicate { get; set; }
-        internal Func<Exception, bool> UntilPredicate { get; set; }
-        internal Action Ping { get; set; }
-        internal Action Finally { get; set; }
-        public TimeSpan RetryDelay { get; internal set; }
-
-
+        internal Func<Task> Action { get; private set; }
+        internal CountLoopBreakPredicate CountLoopBreakPredicate { get; private set; }
+        internal TimeoutLoopBreakPredicate TimeoutLoopBreakPredicate { get; private set; }
+        internal Func<Exception, bool> UntilPredicate { get; private set; }
+        internal Action Ping { get; private set; }
+        internal Action Finally { get; private set; }
+        internal Type IgnoreExceptionType { get; private set; }
+        public TimeSpan RetryDelay { get; private set; }
     }
 }

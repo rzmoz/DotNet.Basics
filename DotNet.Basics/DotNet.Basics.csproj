@@ -108,10 +108,8 @@
     <Compile Include="Tasks\Repeat.cs" />
     <Compile Include="Sys\Observable.cs" />
     <Compile Include="Sys\StringExtensions.cs" />
-    <Compile Include="Tasks\RepeaterAsyncTask.cs" />
-    <Compile Include="Tasks\RepeaterSyncTask.cs" />
+    <Compile Include="Tasks\RepeaterTaskRunner.cs" />
     <Compile Include="Tasks\RepeaterTask.cs" />
-    <Compile Include="Tasks\RepeaterTaskExtensions.cs" />
     <Compile Include="Tasks\TimeoutLoopBreakPredicate.cs" />
     <Compile Include="Sys\TimeSpanExtensions.cs" />
     <Compile Include="Sys\TypeExtensions.cs" />

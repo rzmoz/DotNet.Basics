@@ -5,20 +5,20 @@ namespace DotNet.Basics.Tasks
 {
     public static class Repeat
     {
-        public static RepeaterAsyncTask TaskAsync(Func<Task> asyncAction)
+        public static RepeaterTask TaskAsync(Func<Task> asyncAction)
         {
-            return new RepeaterAsyncTask(asyncAction.Invoke);
+            return new RepeaterTask(asyncAction);
         }
 
-        public static RepeaterSyncTask Task(Action action)
+        public static RepeaterTask Task(Action action)
         {
-            return new RepeaterSyncTask(action);
+            return new RepeaterTask(action);
         }
 
-        public static RepeaterSyncTask TaskOnce(Action action)
+        public static RepeaterTask TaskOnce(Action action)
         {
             var onceOnlyAction = new OnceOnlyAction(action);
-            return new RepeaterSyncTask(onceOnlyAction.Invoke);
+            return new RepeaterTask((Action)onceOnlyAction.Invoke);
         }
     }
 }

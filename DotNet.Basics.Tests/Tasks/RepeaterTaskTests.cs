@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Tasks;
 using FluentAssertions;
@@ -13,14 +14,14 @@ namespace DotNet.Basics.Tests.Tasks
         [Test]
         public void Task_WithFinallyNoExceptionInAction_ExceptionInfinallyIsFloated()
         {
-            Action action = () => Repeat.Task(async () =>
-                  {
-                      await Task.Delay(1.Milliseconds()).ConfigureAwait(false);//do nothing
-                  })
+            Action action = () => Repeat.Task(() =>
+           {
+               Thread.Sleep(10); //do nothing
+           })
                     .WithMaxTries(2)
                     .WithFinally(() => { throw new IOException("doh"); })
                     .UntilNoExceptions()
-                    .Now();
+                    .Sync();
 
             action.ShouldThrow<IOException>();
         }
@@ -28,14 +29,14 @@ namespace DotNet.Basics.Tests.Tasks
         [Test]
         public void Task_WithFinallyExInBothFinallyAndAction_ExceptionsAreFloated()
         {
-            Action action = () => Repeat.Task(() =>
-                   {
-                       throw new ApplicationException(); //run action that throw exception
-                   })
+            Action action = () => Repeat.Task((Action)(() =>
+           {
+               throw new ApplicationException(); //run action that throw exception
+           }))
                       .WithMaxTries(2)
                       .WithFinally(() => { throw new IOException("doh"); })
                       .UntilNoExceptions()
-                      .Now();
+                      .Sync();
             action.ShouldThrow<AggregateException>();
 
         }
@@ -48,14 +49,14 @@ namespace DotNet.Basics.Tests.Tasks
 
             try
             {
-                var result = Repeat.Task(() =>
-                 {
-                     throw new ApplicationException();//run action that throw exception
-                 })
+                var result = Repeat.Task((Action)(() =>
+               {
+                   throw new ApplicationException();//run action that throw exception
+               }))
                                                   .WithMaxTries(2)
                                                   .WithFinally(() => { @finally = true; })
                                                   .UntilNoExceptions()
-                                                  .Now();
+                                                  .Sync();
                 result.Should().BeFalse();
             }
             catch (ApplicationException)
@@ -72,12 +73,12 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var doCounter = 0;
             const int until = 5;
-            var result = Repeat.Task(() => { doCounter++; throw new IOException("buuh"); })
+            var result = Repeat.Task((Action)(() => { doCounter++; throw new IOException("buuh"); }))
                 .WithNoRetryDelay()
                 .WithMaxTries(until)
                 .Until(() => false)
                 .IgnoreExceptionsOfType(typeof(IOException))
-                .Now();
+                .Sync();
 
             result.Should().BeFalse();
             doCounter.Should().Be(until);
@@ -89,11 +90,11 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var doCounter = 0;
             const int until = 5;
-            Action runTask = () => Repeat.Task(() => { doCounter++; throw new IOException("buuh"); })
+            Action runTask = () => Repeat.Task((Action)(() => { doCounter++; throw new IOException("buuh"); }))
                 .WithNoRetryDelay()
                 .WithMaxTries(until)
                 .Until(() => false)
-                .Now();
+                .Sync();
 
 
             runTask.ShouldThrow<IOException>();
@@ -108,11 +109,11 @@ namespace DotNet.Basics.Tests.Tasks
             var pinged = 0;
             const int until = 5;
 
-            var result = await Repeat.TaskAsync(async () => invoked++)
+            var result = await Repeat.Task(() => invoked++)
                 .WithNoRetryDelay()
                 .WithPing(() => pinged++)
                  .Until(() => invoked == until)
-                 .NowAsync();
+                 .Async().ConfigureAwait(false);
 
             invoked.Should().Be(until);
             pinged.Should().Be(until);
@@ -130,7 +131,7 @@ namespace DotNet.Basics.Tests.Tasks
             var result = Repeat.Task(() => throwExceptionUntilXTriesDummeTask.DoSomething())
                  .WithPing(() => tried++)
                  .UntilNoExceptions()
-                 .Now();
+                 .Sync();
 
             tried.Should().Be(stopThrowingExceptionsAt + 1);
             result.Should().BeTrue();
@@ -139,7 +140,7 @@ namespace DotNet.Basics.Tests.Tasks
         [Test]
         public void Task_NoUntilSpecified_ExceptionIsThrownSinceLoopIsLikelyToRunForever()
         {
-            Action action = () => Repeat.Task(() => { }).Now();
+            Action action = () => Repeat.Task(() => { }).Sync();
             action.ShouldThrow<NoStopConditionIsSetException>();
         }
 
@@ -150,7 +151,7 @@ namespace DotNet.Basics.Tests.Tasks
             var result = Repeat.Task(() => { doCounter++; })
                 .Until(() => false)
                 .WithTimeout(1.Seconds())
-                .Now();
+                .Sync();
 
             //means that the action has been run a couple of times - we don't know the exact number since it depends on cpu time slots
             doCounter.Should().BeGreaterThan(2);
@@ -166,7 +167,7 @@ namespace DotNet.Basics.Tests.Tasks
                 .WithRetryDelay(100.Milliseconds())
                 .WithTimeout(1.Seconds())
                 .Until(() => false)
-                .Now();
+                .Sync();
 
             //means that the action has been run a couple of times - we don't know the exact number since it depends on cpu time slots
             doCounter.Should().BeGreaterThan(8);
@@ -184,7 +185,7 @@ namespace DotNet.Basics.Tests.Tasks
                 .WithNoRetryDelay()
                 .WithMaxTries(maxTries)
                 .Until(() => false)
-                .Now();
+                .Sync();
 
             //means that the action reached max tries and quit
             doCounter.Should().Be(maxTries);
@@ -203,7 +204,7 @@ namespace DotNet.Basics.Tests.Tasks
                 .WithMaxTries(maxTries)
                 .WithNoRetryDelay()
                 .Until(() => false)
-                .Now();
+                .Sync();
 
             //means that the action has only been run once even though we waited 5 cyckes
             doCounter.Should().Be(maxTries);
@@ -223,7 +224,7 @@ namespace DotNet.Basics.Tests.Tasks
                 .WithMaxTries(maxTries)
                 .WithNoRetryDelay()
                 .Until(() => false)
-                .Now();
+                .Sync();
 
             //means that the action has only been run once even though we waited 5 cyckes
             doCounter.Should().Be(1);

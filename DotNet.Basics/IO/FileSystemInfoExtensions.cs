@@ -41,7 +41,7 @@ namespace DotNet.Basics.IO
             .WithTimeout(30.Seconds())
             .WithRetryDelay(3.Seconds())
             .Until(() => fsi.Exists() == false)
-            .Now();
+            .Sync();
 
             return fsi.Exists() == false;
         }
