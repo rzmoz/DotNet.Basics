@@ -72,7 +72,7 @@
     <Compile Include="Ioc\IocContainerRegistrationsTests.cs" />
     <Compile Include="Ioc\RegistrationsCollectionTests.cs" />
     <Compile Include="Ioc\TestHelpers\MyIocContainer.cs" />
-    <Compile Include="Ioc\TestHelpers\MyDotNetContainerRegistrations.cs" />
+    <Compile Include="Ioc\TestHelpers\MyIocContainerRegistrations.cs" />
     <Compile Include="Ioc\TestHelpers\MyTypeRegistrations.cs" />
     <Compile Include="IO\FileTypeTests.cs" />
     <Compile Include="IO\DirExtensionsTests.cs" />

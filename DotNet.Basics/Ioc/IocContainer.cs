@@ -11,7 +11,7 @@ namespace DotNet.Basics.Ioc
     {
         protected IContainer _container;
 
-        public IocContainer(params IDotNetRegistrations[] registrations)
+        public IocContainer(params IIocRegistrations[] registrations)
         {
             _container = null;
             Registrations = new RegistrationsCollection(this);
@@ -28,7 +28,7 @@ namespace DotNet.Basics.Ioc
             Init(Registrations.ToArray());
         }
 
-        private void Init(params IDotNetRegistrations[] registrations)
+        private void Init(params IIocRegistrations[] registrations)
         {
             ResetContainers();
             Registrations.Add(registrations);
@@ -179,7 +179,7 @@ namespace DotNet.Basics.Ioc
             _container.Dispose();
         }
 
-        public IEnumerator<IDotNetRegistrations> GetEnumerator()
+        public IEnumerator<IIocRegistrations> GetEnumerator()
         {
             return Registrations.GetEnumerator();
         }

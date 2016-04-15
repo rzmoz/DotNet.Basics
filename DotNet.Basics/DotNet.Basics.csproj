@@ -63,7 +63,7 @@
     <Compile Include="Diagnostics\LogEntry.cs" />
     <Compile Include="Diagnostics\LogLevel.cs" />
     <Compile Include="Diagnostics\NullDiagnostics.cs" />
-    <Compile Include="Ioc\IDotNetRegistrations.cs" />
+    <Compile Include="Ioc\IIocRegistrations.cs" />
     <Compile Include="Ioc\RegistrationsCollection.cs" />
     <Compile Include="Ioc\RegistrationsCollectionItem.cs" />
     <Compile Include="IO\Cmd.cs" />

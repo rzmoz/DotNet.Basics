@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DotNet.Basics.Ioc
 {
-    public class RegistrationsCollection : IReadOnlyCollection<IDotNetRegistrations>
+    public class RegistrationsCollection : IReadOnlyCollection<IIocRegistrations>
     {
         private readonly IIocContainer _container;
         private readonly IList<RegistrationsCollectionItem> _registrations;
@@ -17,17 +17,17 @@ namespace DotNet.Basics.Ioc
             _registrations = new List<RegistrationsCollectionItem>();
         }
 
-        public void Add<T>() where T : IDotNetRegistrations, new()
+        public void Add<T>() where T : IIocRegistrations, new()
         {
             Add(new T());
         }
 
-        public void Add(IDotNetRegistrations registrations)
+        public void Add(IIocRegistrations registrations)
         {
             Add(new[] { registrations });
         }
 
-        public void Add(params IDotNetRegistrations[] registrations)
+        public void Add(params IIocRegistrations[] registrations)
         {
             if (registrations == null) throw new ArgumentNullException(nameof(registrations));
 
@@ -51,7 +51,7 @@ namespace DotNet.Basics.Ioc
             _registrations.Clear();
         }
 
-        public IEnumerator<IDotNetRegistrations> GetEnumerator()
+        public IEnumerator<IIocRegistrations> GetEnumerator()
         {
             return _registrations.Select(regItem => regItem.Registration).GetEnumerator();
         }

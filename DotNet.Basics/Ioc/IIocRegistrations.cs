@@ -1,6 +1,6 @@
 ﻿namespace DotNet.Basics.Ioc
 {
-    public interface IDotNetRegistrations
+    public interface IIocRegistrations
     {
         void RegisterIn(IIocContainer container);
     }

@@ -38,13 +38,13 @@ namespace DotNet.Basics.Tests.Ioc
         }
     }
 
-    public class ARegistrations : IDotNetRegistrations
+    public class ARegistrations : IIocRegistrations
     {
         public void RegisterIn(IIocContainer container)
         {
         }
     }
-    public class BRegistrations : IDotNetRegistrations
+    public class BRegistrations : IIocRegistrations
     {
         public void RegisterIn(IIocContainer container)
         {

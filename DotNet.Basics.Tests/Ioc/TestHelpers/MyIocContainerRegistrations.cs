@@ -2,7 +2,7 @@
 
 namespace DotNet.Basics.Tests.Ioc.TestHelpers
 {
-    public class MyDotNetContainerRegistrations : IDotNetRegistrations
+    public class MyIocContainerRegistrations : IIocRegistrations
     {
         public void RegisterIn(IIocContainer container)
         {

@@ -22,7 +22,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void _AddRegistration_DerivedCsbContainerType_RegistrationsAreAdded()
         {
-            var myCsbRegistrations = new MyDotNetContainerRegistrations();
+            var myCsbRegistrations = new MyIocContainerRegistrations();
             MyIocContainer container = new MyIocContainer();
 
             container.Registrations.Count().Should().Be(0);
