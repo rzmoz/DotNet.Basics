@@ -31,8 +31,8 @@ namespace DotNet.Basics.Tests.Pipelines
             var pipeline = new Pipeline();
 
             pipeline.AddBlock(async (args, l) => l.Log(message),
-                async (args, l) => l.Log(message),
-                async (args, l) => l.Log(message)
+                            async (args, l) => l.Log(message),
+                            async (args, l) => l.Log(message)
             );
 
             var runner = new PipelineRunner(_container, logger);

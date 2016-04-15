@@ -37,6 +37,7 @@ namespace DotNet.Basics.Pipelines
         {
             return AddBlock(null, asyncFunc);
         }
+
         public PipelineBlock<T> AddBlock(params PipelineStep<T>[] steps)
         {
             var block = CreateStepBlock();
