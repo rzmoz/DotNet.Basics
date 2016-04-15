@@ -62,7 +62,7 @@
     <Compile Include="Diagnostics\ProfileEntry.cs" />
     <Compile Include="Diagnostics\LogEntry.cs" />
     <Compile Include="Diagnostics\LogLevel.cs" />
-    <Compile Include="Diagnostics\VoidDiagnostics.cs" />
+    <Compile Include="Diagnostics\NullDiagnostics.cs" />
     <Compile Include="Ioc\IDotNetRegistrations.cs" />
     <Compile Include="Ioc\RegistrationsCollection.cs" />
     <Compile Include="Ioc\RegistrationsCollectionItem.cs" />
@@ -75,6 +75,7 @@
     <Compile Include="IO\PathExtensions.cs" />
     <Compile Include="IO\Robocopy.cs" />
     <Compile Include="IO\StringExtensions.cs" />
+    <Compile Include="Pipelines\PipelineType.cs" />
     <Compile Include="Sys\CommandPrompt.cs" />
     <Compile Include="Ioc\CtorArgsExtensions.cs" />
     <Compile Include="Ioc\EagerCtorArg.cs" />
