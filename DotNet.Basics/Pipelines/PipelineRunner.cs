@@ -9,7 +9,7 @@ namespace DotNet.Basics.Pipelines
     public class PipelineRunner
     {
         private readonly IocContainer _container;
-        private readonly MediatorDiagnostics _diagnostics;
+        private readonly MediatorDiagnostics _logger;
 
         public event PipelineEventHandler PipelineStarting;
         public event PipelineEventHandler PipelineEnded;
@@ -38,9 +38,9 @@ namespace DotNet.Basics.Pipelines
         public PipelineRunner(IocContainer container, IDiagnostics logger)
         {
             _container = container ?? new IocContainer();
-            _diagnostics = new MediatorDiagnostics();
+            _logger = new MediatorDiagnostics();
             if (logger != null)
-                _diagnostics.Add(Guid.NewGuid().ToString(), logger);
+                _logger.Add(Guid.NewGuid().ToString(), logger);
         }
 
         public async Task<PipelineResult<TArgs>> RunAsync<TTaskPipeline, TArgs>(TArgs args = null, IDiagnostics logger = null)
@@ -59,20 +59,20 @@ namespace DotNet.Basics.Pipelines
                 args = new TArgs();
 
             if (logger != null)
-                _diagnostics.Add(Guid.NewGuid().ToString(), logger);
+                _logger.Add(Guid.NewGuid().ToString(), logger);
 
             var pipelineName = pipeline.GetType().Name;
 
             try
             {
-                _diagnostics.Log($"Pipeline starting:{pipelineName }", LogLevel.Debug);
+                _logger.Log($"Pipeline starting:{pipelineName }", LogLevel.Debug);
                 PipelineStarting?.Invoke(pipelineName, PipelineType.Pipeline);
 
                 var blockCount = 0;
                 foreach (var block in pipeline.PipelineBlocks)
                 {
                     var blockName = string.IsNullOrWhiteSpace(block.Name) ? $"Block {blockCount++}" : block.Name;
-                    _diagnostics.Log($"Block starting:{blockName}", LogLevel.Debug);
+                    _logger.Log($"Block starting:{blockName}", LogLevel.Debug);
                     BlockStarting?.Invoke(blockName, PipelineType.Block);
 
                     await Task.WhenAll(block.Select(async step =>
@@ -81,27 +81,27 @@ namespace DotNet.Basics.Pipelines
                         step.Init();//must run before resolving step name for lazy bound steps
                         var stepName = string.IsNullOrWhiteSpace(step.DisplayName) ? step.GetType().Name : step.DisplayName;
 
-                        _diagnostics.Log($"Step starting:{stepName}", LogLevel.Debug);
+                        _logger.Log($"Step starting:{stepName}", LogLevel.Debug);
                         StepStarting?.Invoke(stepName, PipelineType.Step);
 
-                        await step.RunAsync(args, _diagnostics).ConfigureAwait(false);
+                        await step.RunAsync(args, _logger).ConfigureAwait(false);
 
-                        _diagnostics.Log($"Step ended:{stepName}", LogLevel.Debug);
+                        _logger.Log($"Step ended:{stepName}", LogLevel.Debug);
                         StepEnded?.Invoke(stepName, PipelineType.Step);
 
                     })).ConfigureAwait(false);
 
-                    _diagnostics.Log($"Block ended:{blockName}", LogLevel.Debug);
+                    _logger.Log($"Block ended:{blockName}", LogLevel.Debug);
                     BlockEnded?.Invoke(blockName, PipelineType.Block);
                 }
             }
             catch (Exception exc)
             {
-                _diagnostics.Log(exc.Message, LogLevel.Error, exc);
+                _logger.Log(exc.Message, LogLevel.Error, exc);
             }
             finally
             {
-                _diagnostics.Log($"Pipeline ended:{pipelineName}", LogLevel.Debug);
+                _logger.Log($"Pipeline ended:{pipelineName}", LogLevel.Debug);
                 PipelineEnded?.Invoke(pipelineName, PipelineType.Pipeline);
             }
 
