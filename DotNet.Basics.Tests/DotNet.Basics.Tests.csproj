@@ -75,6 +75,7 @@
     <Compile Include="Diagnostics\MetricEntryTests.cs" />
     <Compile Include="Diagnostics\ProfileEntryTests.cs" />
     <Compile Include="Ioc\IocContainerTests.cs" />
+    <Compile Include="Ioc\TestHelpers\MyRegistrations.cs" />
     <Compile Include="Ioc\TestHelpers\TypeWithValue.cs" />
     <Compile Include="IO\FileTypeTests.cs" />
     <Compile Include="IO\DirExtensionsTests.cs" />

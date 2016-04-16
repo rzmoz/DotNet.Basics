@@ -7,12 +7,26 @@ using DotNet.Basics.Ioc;
 using DotNet.Basics.Tests.Ioc.TestHelpers;
 using FluentAssertions;
 using NUnit.Framework;
+using SimpleInjector;
 
 namespace DotNet.Basics.Tests.Ioc
 {
     [TestFixture]
     public class IocContainerTests
     {
+        [Test]
+        public void Ctor_Registrations_RegistrationsAreRegistered()
+        {
+            var containerWitoutRegistrations = new IocContainer();
+
+            Action getWithoutRegistrions = () => { var mytype = containerWitoutRegistrations.GetInstance<IMyType>(); };
+            getWithoutRegistrions.ShouldThrow<ActivationException>();
+
+            var containerWithRegistrations = new IocContainer(new MyRegistrations());
+            var myResolvedType= containerWithRegistrations.GetInstance<IMyType>();
+            myResolvedType.GetType().Should().Be<MyType1>();
+        }
+
         [Test]
         public void GetInstance_Singleton_InstanceIsResolved()
         {
