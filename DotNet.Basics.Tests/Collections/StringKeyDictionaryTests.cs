@@ -18,7 +18,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Add_AddItemCaseInsensitive_ItemIsAdded()
         {
-            var dic = new StringKeyDictionary<string>(KeyMode.CaseInsensitive, KeyNotFoundMode.ReturnDefault);
+            var dic = new StringKeyDictionary<string>(KeyMode.IgnoreCase, KeyNotFoundMode.ReturnDefault);
             dic.Count.Should().Be(0);
             dic.Add(_myKey, _myValue);
             dic.Count.Should().Be(1);
@@ -27,7 +27,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Get_GetValue_ValueIsRetrived()
         {
-            var dic = new StringKeyDictionary<string>(KeyMode.CaseInsensitive, KeyNotFoundMode.ReturnDefault);
+            var dic = new StringKeyDictionary<string>(KeyMode.IgnoreCase, KeyNotFoundMode.ReturnDefault);
             dic.Count.Should().Be(0);
             dic.Add(_myKey, _myValue);
             dic[_myKey].Should().Be(_myValue);
@@ -48,7 +48,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Set_SetValue_ValueIsSet()
         {
-            var dic = new StringKeyDictionary<string>(KeyMode.CaseInsensitive, KeyNotFoundMode.ReturnDefault);
+            var dic = new StringKeyDictionary<string>(KeyMode.IgnoreCase, KeyNotFoundMode.ReturnDefault);
             dic.Count.Should().Be(0);
             dic.Add(_myKey, _myValue);
             dic[_myKey].Should().Be(_myValue);

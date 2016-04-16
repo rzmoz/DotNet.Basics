@@ -3,6 +3,6 @@
     public enum KeyMode
     {
         CaseSensitive,
-        CaseInsensitive
+        IgnoreCase
     }
 }
