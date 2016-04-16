@@ -30,9 +30,9 @@ namespace DotNet.Basics.Diagnostics
             return _entries.OfType<LogEntry>().Where(entry => entry.Level == logLevel).ToList();
         }
 
-        public bool HasErrors()
+        public bool HasFailed()
         {
-            return _entries.OfType<LogEntry>().Any(e => e.Level == LogLevel.Error);
+            return _entries.OfType<LogEntry>().Any(e => e.Level == LogLevel.Error || e.Level == LogLevel.Critical);
         }
 
         public void Log(string message, LogLevel logLevel = LogLevel.Info, Exception exception = null)
@@ -44,7 +44,7 @@ namespace DotNet.Basics.Diagnostics
         {
             _entries.Enqueue(new MetricEntry(GetTimestamp(), name, value));
         }
-        
+
         public void Profile(string taskName, TimeSpan duration)
         {
             _entries.Enqueue(new ProfileEntry(GetTimestamp(), taskName, duration));

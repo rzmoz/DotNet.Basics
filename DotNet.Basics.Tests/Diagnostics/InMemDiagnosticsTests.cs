@@ -41,13 +41,22 @@ namespace DotNet.Basics.Tests.Diagnostics
         }
 
         [Test]
-        public void HasErrors_HasErrors_ErrorsAreDetected()
+        public void HasFailed_Error_FailDetected()
         {
             var logger = new InMemDiagnostics();
 
             logger.Log("error", LogLevel.Error);
 
-            logger.HasErrors().Should().BeTrue();
+            logger.HasFailed().Should().BeTrue();
+        }
+        [Test]
+        public void HasFailed_Critical_FailDetected()
+        {
+            var logger = new InMemDiagnostics();
+
+            logger.Log("critical", LogLevel.Critical);
+
+            logger.HasFailed().Should().BeTrue();
         }
 
         [Test]
@@ -61,7 +70,7 @@ namespace DotNet.Basics.Tests.Diagnostics
             logger.Metric("metric", 1.0);
             logger.Profile("profile", 1.Seconds());
 
-            logger.HasErrors().Should().BeFalse();
+            logger.HasFailed().Should().BeFalse();
         }
 
         [Test]

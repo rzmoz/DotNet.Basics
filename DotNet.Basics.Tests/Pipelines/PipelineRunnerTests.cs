@@ -135,6 +135,24 @@ namespace DotNet.Basics.Tests.Pipelines
         }
 
         [Test]
+        public async Task RunAsync_Result_FinishedWithCritical()
+        {
+            var pipeline = new Pipeline<EventArgs<int>>();
+            pipeline.AddBlock((args, log) => { log.Log("This is critical logged", LogLevel.Critical); });
+            var logger = new InMemDiagnostics();
+
+            var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
+
+            logger.GetLogs(LogLevel.Critical).Any().Should().BeTrue(nameof(LogLevel.Critical));
+            logger.GetLogs(LogLevel.Error).Any().Should().BeFalse(nameof(LogLevel.Error));
+            logger.GetLogs(LogLevel.Warning).Any().Should().BeFalse(nameof(LogLevel.Warning));
+            logger.GetLogs(LogLevel.Info).Any().Should().BeFalse(nameof(LogLevel.Info));
+            logger.GetLogs(LogLevel.Debug).Count.Should().Be(6);
+
+            result.Success.Should().BeFalse(nameof(result.Success));
+        }
+
+        [Test]
         public async Task RunAsync_Result_FinishedWithErrors()
         {
             var pipeline = new Pipeline<EventArgs<int>>();
@@ -143,11 +161,13 @@ namespace DotNet.Basics.Tests.Pipelines
 
             var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
 
-            logger.GetLogs(LogLevel.Error).Any().Should().BeTrue();
-            logger.GetLogs(LogLevel.Warning).Any().Should().BeFalse();
-            logger.GetLogs(LogLevel.Info).Any().Should().BeFalse();
+            logger.GetLogs(LogLevel.Critical).Any().Should().BeFalse(nameof(LogLevel.Critical));
+            logger.GetLogs(LogLevel.Error).Any().Should().BeTrue(nameof(LogLevel.Error));
+            logger.GetLogs(LogLevel.Warning).Any().Should().BeFalse(nameof(LogLevel.Warning));
+            logger.GetLogs(LogLevel.Info).Any().Should().BeFalse(nameof(LogLevel.Info));
             logger.GetLogs(LogLevel.Debug).Count.Should().Be(6);
 
+            result.Success.Should().BeFalse(nameof(result.Success));
         }
         [Test]
         public async Task RunAsync_Result_FinishedWithWarnings()
@@ -158,11 +178,13 @@ namespace DotNet.Basics.Tests.Pipelines
 
             var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
 
-            logger.GetLogs(LogLevel.Error).Any().Should().BeFalse();
-            logger.GetLogs(LogLevel.Warning).Any().Should().BeTrue();
-            logger.GetLogs(LogLevel.Info).Any().Should().BeFalse();
+            logger.GetLogs(LogLevel.Critical).Any().Should().BeFalse(nameof(LogLevel.Critical));
+            logger.GetLogs(LogLevel.Error).Any().Should().BeFalse(nameof(LogLevel.Error));
+            logger.GetLogs(LogLevel.Warning).Any().Should().BeTrue(nameof(LogLevel.Warning));
+            logger.GetLogs(LogLevel.Info).Any().Should().BeFalse(nameof(LogLevel.Info));
             logger.GetLogs(LogLevel.Debug).Count.Should().Be(6);
 
+            result.Success.Should().BeTrue(nameof(result.Success));
         }
 
         [Test]
@@ -174,11 +196,13 @@ namespace DotNet.Basics.Tests.Pipelines
 
             var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
 
-            logger.GetLogs(LogLevel.Error).Any().Should().BeFalse();
-            logger.GetLogs(LogLevel.Warning).Any().Should().BeFalse();
-            logger.GetLogs(LogLevel.Info).Any().Should().BeTrue();
+            logger.GetLogs(LogLevel.Critical).Any().Should().BeFalse(nameof(LogLevel.Critical));
+            logger.GetLogs(LogLevel.Error).Any().Should().BeFalse(nameof(LogLevel.Error));
+            logger.GetLogs(LogLevel.Warning).Any().Should().BeFalse(nameof(LogLevel.Warning));
+            logger.GetLogs(LogLevel.Info).Any().Should().BeTrue(nameof(LogLevel.Info));
             logger.GetLogs(LogLevel.Debug).Count.Should().Be(6);
 
+            result.Success.Should().BeTrue(nameof(result.Success));
         }
 
         [Test]
@@ -190,10 +214,13 @@ namespace DotNet.Basics.Tests.Pipelines
 
             var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
 
+            logger.GetLogs(LogLevel.Critical).Any().Should().BeFalse();
             logger.GetLogs(LogLevel.Error).Any().Should().BeFalse();
             logger.GetLogs(LogLevel.Warning).Any().Should().BeFalse();
             logger.GetLogs(LogLevel.Info).Any().Should().BeFalse();
             logger.GetLogs(LogLevel.Debug).Count.Should().Be(7);
+
+            result.Success.Should().BeTrue(nameof(result.Success));
         }
         [Test]
         public async Task RunAsync_Result_FinishedWithProfiles()
@@ -204,10 +231,13 @@ namespace DotNet.Basics.Tests.Pipelines
 
             var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
 
+            logger.GetLogs(LogLevel.Critical).Any().Should().BeFalse();
             logger.GetLogs(LogLevel.Error).Any().Should().BeFalse();
             logger.GetLogs(LogLevel.Warning).Any().Should().BeFalse();
             logger.GetLogs(LogLevel.Info).Any().Should().BeFalse();
             logger.GetLogs(LogLevel.Debug).Count.Should().Be(6);
+
+            result.Success.Should().BeTrue(nameof(result.Success));
         }
 
         [Test]
