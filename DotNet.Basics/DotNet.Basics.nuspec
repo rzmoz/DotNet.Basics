@@ -2,7 +2,7 @@
 <package >
     <metadata>
         <id>$id$</id>
-        <version>$version$-rc1</version>
+        <version>$version$</version>
         <title>$title$</title>
         <authors>rzmoz</authors>
         <owners>rzmoz</owners>
