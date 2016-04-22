@@ -69,7 +69,7 @@ namespace DotNet.Basics.Tasks
             return this;
         }
 
-        public async Task<bool> Async()
+        public async Task<bool> NowAsync()
         {
             try
             {
@@ -82,7 +82,7 @@ namespace DotNet.Basics.Tasks
             }
         }
 
-        public bool Sync()
+        public bool Now()
         {
             try
             {
