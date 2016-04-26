@@ -2,7 +2,7 @@
 using DotNet.Basics.Sys;
 using Microsoft.Extensions.Logging;
 
-namespace DotNet.Basics.Logging
+namespace DotNet.Basics.Diagnostics
 {
     public static class LoggerExtensions
     {

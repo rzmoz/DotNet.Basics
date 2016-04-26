@@ -57,18 +57,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\CollectionExtensions.cs" />
-    <Compile Include="Logging\DotNetBasicsLogger.cs" />
-    <Compile Include="Logging\LoggerExtensions.cs" />
+    <Compile Include="Diagnostics\DotNetBasicsLogger.cs" />
+    <Compile Include="Diagnostics\LoggerExtensions.cs" />
     <Compile Include="Diagnostics\ProfileFormatter.cs" />
     <Compile Include="Diagnostics\DurationFormattingUnit.cs" />
     <Compile Include="Diagnostics\EventDiagnostics.cs" />
-    <Compile Include="Logging\EventLogger.cs" />
+    <Compile Include="Diagnostics\EventLogger.cs" />
     <Compile Include="Diagnostics\IDiagnostics.cs" />
-    <Compile Include="Logging\InMemLogger.cs" />
-    <Compile Include="Logging\MediatorLogger.cs" />
+    <Compile Include="Diagnostics\InMemLogger.cs" />
+    <Compile Include="Diagnostics\MediatorLogger.cs" />
     <Compile Include="Diagnostics\MetricEntry.cs" />
     <Compile Include="Diagnostics\ProfileEntry.cs" />
-    <Compile Include="Logging\LogEntry.cs" />
+    <Compile Include="Diagnostics\LogEntry.cs" />
     <Compile Include="Diagnostics\ProfileStates.cs" />
     <Compile Include="Ioc\IocContainer.cs" />
     <Compile Include="Ioc\IIocRegistrations.cs" />

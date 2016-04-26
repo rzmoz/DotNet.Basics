@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 
-namespace DotNet.Basics.Logging
+namespace DotNet.Basics.Diagnostics
 {
     public class InMemLogger : DotNetBasicsLogger, IReadOnlyCollection<LogEntry>
     {

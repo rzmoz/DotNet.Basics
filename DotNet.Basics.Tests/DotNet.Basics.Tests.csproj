@@ -73,7 +73,7 @@
   <ItemGroup>
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\StringKeyDictionaryTests.cs" />
-    <Compile Include="Logging\MediatorLoggersTests.cs" />
+    <Compile Include="Diagnostics\MediatorLoggersTests.cs" />
     <Compile Include="Diagnostics\MetricEntryTests.cs" />
     <Compile Include="Diagnostics\ProfileEntryTests.cs" />
     <Compile Include="Ioc\IocContainerTests.cs" />
@@ -100,7 +100,7 @@
     <Compile Include="Collections\StringPairTests.cs" />
     <Compile Include="Sys\PowerShellConsoleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Logging\InMemLoggerTests.cs" />
+    <Compile Include="Diagnostics\InMemLoggerTests.cs" />
     <Compile Include="Sys\EnumExtensionsTests.cs" />
     <Compile Include="Sys\ObservableTests.cs" />
     <Compile Include="Sys\StringExtensionsTests.cs" />

@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Ioc;
-using DotNet.Basics.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Pipelines

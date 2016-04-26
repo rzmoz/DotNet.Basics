@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DotNet.Basics.Logging;
+using DotNet.Basics.Diagnostics;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 
-namespace DotNet.Basics.Tests.Logging
+namespace DotNet.Basics.Tests.Diagnostics
 {
     [TestFixture]
     public class MediatorLoggersTests

@@ -2,10 +2,9 @@
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
-using DotNet.Basics.Diagnostics;
 using Microsoft.Extensions.Logging;
 
-namespace DotNet.Basics.Logging
+namespace DotNet.Basics.Diagnostics
 {
     public class MediatorLogger : DotNetBasicsLogger
     {

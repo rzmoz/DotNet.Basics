@@ -1,7 +1,6 @@
 ﻿using System;
-using DotNet.Basics.Diagnostics;
 
-namespace DotNet.Basics.Logging
+namespace DotNet.Basics.Diagnostics
 {
     public class EventLogger : DotNetBasicsLogger
     {

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Ioc;
-using DotNet.Basics.Logging;
 using DotNet.Basics.Pipelines;
 using DotNet.Basics.Sys;
 using FluentAssertions;

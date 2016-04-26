@@ -2,13 +2,13 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using DotNet.Basics.Logging;
+using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 
-namespace DotNet.Basics.Tests.Logging
+namespace DotNet.Basics.Tests.Diagnostics
 {
     [TestFixture]
     public class InMemLoggerTests
