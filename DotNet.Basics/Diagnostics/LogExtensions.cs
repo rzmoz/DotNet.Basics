@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Diagnostics
 {
-    public static class LoggerExtensions
+    public static class LogExtensions
     {
         public static void Log(this ILogger logger, string message, LogLevel logLevel, Exception exception = null)
         {

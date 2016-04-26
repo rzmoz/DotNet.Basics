@@ -7,7 +7,7 @@ using System.Text;
 
 namespace DotNet.Basics.Sys
 {
-    public static class StringExtensions
+    public static class SysExtensions
     {
         public static string ToHash(this string text, HashAlgorithm hashAlgorithm)
         {

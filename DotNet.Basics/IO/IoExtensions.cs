@@ -4,7 +4,7 @@ using System.IO;
 
 namespace DotNet.Basics.IO
 {
-    public static class StringExtensions
+    public static class IoExtensions
     {
         public static FileInfo WriteToDisk(this string content, FileInfo targetFile)
         {

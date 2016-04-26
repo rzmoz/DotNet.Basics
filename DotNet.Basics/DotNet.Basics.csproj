@@ -58,7 +58,7 @@
   <ItemGroup>
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Diagnostics\DotNetBasicsLogger.cs" />
-    <Compile Include="Diagnostics\LoggerExtensions.cs" />
+    <Compile Include="Diagnostics\LogExtensions.cs" />
     <Compile Include="Diagnostics\ProfileFormatter.cs" />
     <Compile Include="Diagnostics\DurationFormattingUnit.cs" />
     <Compile Include="Diagnostics\EventLogger.cs" />
@@ -76,7 +76,7 @@
     <Compile Include="IO\FileTypeCollection.cs" />
     <Compile Include="IO\PathExtensions.cs" />
     <Compile Include="IO\Robocopy.cs" />
-    <Compile Include="IO\StringExtensions.cs" />
+    <Compile Include="IO\IoExtensions.cs" />
     <Compile Include="Pipelines\PipelineType.cs" />
     <Compile Include="Sys\CommandPrompt.cs" />
     <Compile Include="Pipelines\EagerBindStep.cs" />
@@ -102,7 +102,7 @@
     <Compile Include="Tasks\OnceOnlyAction.cs" />
     <Compile Include="Tasks\Repeat.cs" />
     <Compile Include="Sys\Observable.cs" />
-    <Compile Include="Sys\StringExtensions.cs" />
+    <Compile Include="Sys\SysExtensions.cs" />
     <Compile Include="Tasks\RepeaterTaskRunner.cs" />
     <Compile Include="Tasks\RepeaterTask.cs" />
     <Compile Include="Tasks\TimeoutLoopBreakPredicate.cs" />
