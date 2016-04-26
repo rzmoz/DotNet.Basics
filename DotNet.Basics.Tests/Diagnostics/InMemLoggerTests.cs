@@ -57,14 +57,15 @@ namespace DotNet.Basics.Tests.Diagnostics
             logger.HasFailed().Should().BeTrue(logLevel.ToName());
         }
         [Test]
+        [TestCase(LogLevel.Debug)]
+        [TestCase(LogLevel.Verbose)]
+        [TestCase(LogLevel.Information)]
+        [TestCase(LogLevel.Warning)]
         public void HasFailed_LoggerNotFailed_FailNotDetected(LogLevel logLevel)
         {
             var logger = new InMemLogger();
 
-            logger.LogDebug("not failure");
-            logger.LogVerbose("not failure");
-            logger.LogInformation("not failure");
-            logger.LogWarning("not failure");
+            logger.Log("not failure", logLevel); 
 
             logger.HasFailed().Should().BeFalse(logLevel.ToName());
         }
