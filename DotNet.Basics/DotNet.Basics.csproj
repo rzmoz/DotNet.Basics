@@ -61,13 +61,9 @@
     <Compile Include="Diagnostics\LoggerExtensions.cs" />
     <Compile Include="Diagnostics\ProfileFormatter.cs" />
     <Compile Include="Diagnostics\DurationFormattingUnit.cs" />
-    <Compile Include="Diagnostics\EventDiagnostics.cs" />
     <Compile Include="Diagnostics\EventLogger.cs" />
-    <Compile Include="Diagnostics\IDiagnostics.cs" />
     <Compile Include="Diagnostics\InMemLogger.cs" />
     <Compile Include="Diagnostics\MediatorLogger.cs" />
-    <Compile Include="Diagnostics\MetricEntry.cs" />
-    <Compile Include="Diagnostics\ProfileEntry.cs" />
     <Compile Include="Diagnostics\LogEntry.cs" />
     <Compile Include="Diagnostics\ProfileStates.cs" />
     <Compile Include="Ioc\IocContainer.cs" />

@@ -74,8 +74,6 @@
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\StringKeyDictionaryTests.cs" />
     <Compile Include="Diagnostics\MediatorLoggersTests.cs" />
-    <Compile Include="Diagnostics\MetricEntryTests.cs" />
-    <Compile Include="Diagnostics\ProfileEntryTests.cs" />
     <Compile Include="Ioc\IocContainerTests.cs" />
     <Compile Include="Ioc\TestHelpers\MyRegistrations.cs" />
     <Compile Include="Ioc\TestHelpers\TypeWithValue.cs" />
