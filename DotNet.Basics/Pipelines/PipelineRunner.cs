@@ -3,13 +3,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Ioc;
+using DotNet.Basics.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Pipelines
 {
     public class PipelineRunner
     {
         private const string _errorLoggerName = "ErrorLogger";
-        private readonly IDiagnostics _objectScopeLogger;
+        private readonly ILogger _objectScopeLogger;
         private readonly IocContainer _container;
 
         public event PipelineEventHandler PipelineStarting;
@@ -26,18 +28,18 @@ namespace DotNet.Basics.Pipelines
         {
         }
 
-        public PipelineRunner(IDiagnostics logger)
+        public PipelineRunner(ILogger logger)
             : this(null, logger)
         {
         }
 
-        public PipelineRunner(IocContainer container, IDiagnostics objectScopeLogger = null)
+        public PipelineRunner(IocContainer container, ILogger objectScopeLogger = null)
         {
             _objectScopeLogger = objectScopeLogger;
             _container = container ?? new IocContainer();
         }
 
-        public async Task<PipelineResult<TArgs>> RunAsync<TTaskPipeline, TArgs>(TArgs args = null, IDiagnostics logger = null)
+        public async Task<PipelineResult<TArgs>> RunAsync<TTaskPipeline, TArgs>(TArgs args = null, ILogger logger = null)
             where TTaskPipeline : Pipeline<TArgs>, new()
             where TArgs : EventArgs, new()
         {
@@ -46,12 +48,12 @@ namespace DotNet.Basics.Pipelines
         }
 
 
-        public async Task<PipelineResult<TArgs>> RunAsync<TArgs>(Pipeline<TArgs> pipeline, TArgs args = null, IDiagnostics logger = null)
+        public async Task<PipelineResult<TArgs>> RunAsync<TArgs>(Pipeline<TArgs> pipeline, TArgs args = null, ILogger logger = null)
             where TArgs : EventArgs, new()
         {
             if (args == null)
                 args = new TArgs();
-            MediatorDiagnostics mediatorLogger = new MediatorDiagnostics();
+            MediatorLogger mediatorLogger = new MediatorLogger();
             //add object scope objectScopeLogger
             if (_objectScopeLogger != null)
                 mediatorLogger.Add(Guid.NewGuid().ToString(), _objectScopeLogger);
@@ -59,11 +61,11 @@ namespace DotNet.Basics.Pipelines
             if (logger != null)
                 mediatorLogger.Add(Guid.NewGuid().ToString(), logger);
             //add error detector
-            var errorLogger = new EventDiagnostics();
+            var errorLogger = new EventLogger();
             var success = true;
-            errorLogger.LogLogged += (e, logEntry) =>
+            errorLogger.EntryLogged += (e, logEntry) =>
             {
-                if (logEntry.Level == LogLevel.Error || logEntry.Level == LogLevel.Critical)
+                if (logEntry.Level >= LogLevel.Error)
                     success = false;
             };
 
@@ -72,14 +74,14 @@ namespace DotNet.Basics.Pipelines
 
             try
             {
-                mediatorLogger.Log($"Pipeline starting:{pipelineName }", LogLevel.Debug);
+                mediatorLogger.LogVerbose($"Pipeline starting:{pipelineName }");
                 PipelineStarting?.Invoke(pipelineName, PipelineType.Pipeline);
 
                 var blockCount = 0;
                 foreach (var block in pipeline.PipelineBlocks)
                 {
                     var blockName = string.IsNullOrWhiteSpace(block.Name) ? $"Block {blockCount++}" : block.Name;
-                    mediatorLogger.Log($"Block starting:{blockName}", LogLevel.Debug);
+                    mediatorLogger.LogVerbose($"Block starting:{blockName}");
                     BlockStarting?.Invoke(blockName, PipelineType.Block);
 
                     await Task.WhenAll(block.Select(async step =>
@@ -88,27 +90,27 @@ namespace DotNet.Basics.Pipelines
                         step.Init();//must run before resolving step name for lazy bound steps
                         var stepName = string.IsNullOrWhiteSpace(step.DisplayName) ? step.GetType().Name : step.DisplayName;
 
-                        mediatorLogger.Log($"Step starting:{stepName}", LogLevel.Debug);
+                        mediatorLogger.LogVerbose($"Step starting:{stepName}", LogLevel.Debug);
                         StepStarting?.Invoke(stepName, PipelineType.Step);
 
                         await step.RunAsync(args, mediatorLogger).ConfigureAwait(false);
 
-                        mediatorLogger.Log($"Step ended:{stepName}", LogLevel.Debug);
+                        mediatorLogger.LogVerbose($"Step ended:{stepName}", LogLevel.Debug);
                         StepEnded?.Invoke(stepName, PipelineType.Step);
 
                     })).ConfigureAwait(false);
 
-                    mediatorLogger.Log($"Block ended:{blockName}", LogLevel.Debug);
+                    mediatorLogger.LogVerbose($"Block ended:{blockName}", LogLevel.Debug);
                     BlockEnded?.Invoke(blockName, PipelineType.Block);
                 }
             }
             catch (Exception exc)
             {
-                mediatorLogger.Log(exc.Message, LogLevel.Error, exc);
+                mediatorLogger.LogError(exc.Message, exc);
             }
             finally
             {
-                mediatorLogger.Log($"Pipeline ended:{pipelineName}", LogLevel.Debug);
+                mediatorLogger.LogVerbose($"Pipeline ended:{pipelineName}");
                 PipelineEnded?.Invoke(pipelineName, PipelineType.Pipeline);
             }
 

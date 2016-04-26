@@ -2,21 +2,17 @@
 
 namespace DotNet.Basics.Diagnostics
 {
-    public class MetricEntry : DiagnosticsEntry
+    public class MetricEntry
     {
         public MetricEntry(DateTime timestamp, string name, double value = 0.0)
-            : base(timestamp, DiagnosticsType.Metric)
         {
+            Timestamp = timestamp;
             Name = name;
             Value = value;
         }
 
+        public DateTime Timestamp { get; set; }
         public string Name { get; set; }
         public double Value { get; }
-
-        protected override string GetMessage()
-        {
-            return $"'{Name}':{Value}";
-        }
     }
 }

@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DotNet.Basics.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 
 namespace DotNet.Basics.Pipelines
 {
     public class EagerBindStep<T> : PipelineStep<T> where T : EventArgs, new()
     {
-        private readonly Func<T, IDiagnostics, Task> _actionAsync;
+        private readonly Func<T, ILogger, Task> _actionAsync;
 
-        public EagerBindStep(Func<T, IDiagnostics, Task> actionAsync)
+        public EagerBindStep(Func<T, ILogger, Task> actionAsync)
         {
             if (actionAsync == null) throw new ArgumentNullException(nameof(actionAsync));
             _actionAsync = actionAsync;
         }
 
-        public override async Task RunAsync(T args, IDiagnostics logger)
+        public override async Task RunAsync(T args, ILogger logger)
         {
             await _actionAsync.Invoke(args, logger).ConfigureAwait(false);
         }

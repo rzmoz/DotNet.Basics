@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DotNet.Basics.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 
 namespace DotNet.Basics.Pipelines
@@ -27,20 +27,20 @@ namespace DotNet.Basics.Pipelines
             var block = CreateStepBlock(blockName);
             return block;
         }
-        public PipelineBlock<T> AddBlock(string blockName, params Func<T, IDiagnostics, Task>[] asyncFunc)
+        public PipelineBlock<T> AddBlock(string blockName, params Func<T, ILogger, Task>[] asyncFunc)
         {
             var block = CreateStepBlock(blockName);
             block.AddSteps(asyncFunc);
             return block;
         }
-        public PipelineBlock<T> AddBlock(params Func<T, IDiagnostics, Task>[] asyncFunc)
+        public PipelineBlock<T> AddBlock(params Func<T, ILogger, Task>[] asyncFunc)
         {
             return AddBlock(string.Empty, asyncFunc);
         }
 
-        public PipelineBlock<T> AddBlock(params Action<T, IDiagnostics>[] syncFunc)
+        public PipelineBlock<T> AddBlock(params Action<T, ILogger>[] syncFunc)
         {
-            var asyncFuncs = syncFunc.Select<Action<T, IDiagnostics>, Func<T, IDiagnostics, Task>>(f => (args, logger) =>
+            var asyncFuncs = syncFunc.Select<Action<T, ILogger>, Func<T, ILogger, Task>>(f => (args, logger) =>
              {
                  return Task.Run(() => f(args, logger));
              });

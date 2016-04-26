@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Pipelines;
+using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Tests.Pipelines
 {
@@ -13,10 +13,10 @@ namespace DotNet.Basics.Tests.Pipelines
             DisplayName = "MyDisplayName";
         }
 
-        public override async Task RunAsync(EventArgs args, IDiagnostics logger)
+        public override async Task RunAsync(EventArgs args, ILogger logger)
         {
             await Task.Delay(1.MilliSeconds()).ConfigureAwait(false);//silence compiler warning
-            logger.Log($"Display name set to {DisplayName}");
+            logger.LogInformation($"Display name set to {DisplayName}");
         }
     }
 }

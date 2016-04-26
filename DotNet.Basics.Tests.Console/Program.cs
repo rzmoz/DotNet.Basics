@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-
-
-namespace DotNet.Basics.Tests.Console
+﻿namespace DotNet.Basics.Tests.Console
 {
     class Program
     {

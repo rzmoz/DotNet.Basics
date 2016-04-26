@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Ioc;
+using DotNet.Basics.Logging;
 using DotNet.Basics.Pipelines;
 using DotNet.Basics.Sys;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 
 namespace DotNet.Basics.Tests.Pipelines
@@ -26,23 +28,23 @@ namespace DotNet.Basics.Tests.Pipelines
         [Test]
         public async Task Ctor_Logger_LoggerIsLoggedTo()
         {
-            var logger = new InMemDiagnostics();
+            var logger = new InMemLogger();
             const string message = "MyMessage";
             var pipeline = new Pipeline();
 
-            pipeline.AddBlock((args, l) => l.Log(message),
-                            (args, l) => l.Log(message),
-                            (args, l) => l.Log(message)
+            pipeline.AddBlock((args, l) => l.LogInformation(message),
+                            (args, l) => l.LogInformation(message),
+                            (args, l) => l.LogInformation(message)
             );
 
             await Task.Delay(100.MilliSeconds()).ConfigureAwait(false);
-            logger.GetLogs(LogLevel.Info).Count.Should().Be(0);//ensure task isn't started until runner starts
+            logger.GetLogs(LogLevel.Information).Count.Should().Be(0);//ensure task isn't started until runner starts
 
             var runner = new PipelineRunner(_container, logger);
 
             await runner.RunAsync(pipeline).ConfigureAwait(false);
 
-            logger.GetLogs(LogLevel.Info).All(e => e.Message == message).Should().BeTrue();
+            logger.GetLogs(LogLevel.Information).All(e => e.Message == message).Should().BeTrue();
 
         }
 
@@ -135,109 +137,40 @@ namespace DotNet.Basics.Tests.Pipelines
         }
 
         [Test]
-        public async Task RunAsync_Result_FinishedWithCritical()
+        [TestCase(LogLevel.Debug)]
+        [TestCase(LogLevel.Verbose)]
+        [TestCase(LogLevel.Information)]
+        [TestCase(LogLevel.Warning)]
+        [TestCase(LogLevel.Error)]
+        [TestCase(LogLevel.Critical)]
+        public async Task RunAsync_Result_FinishedWitEntryLogged(LogLevel logLevel)
         {
             var pipeline = new Pipeline<EventArgs<int>>();
-            pipeline.AddBlock((args, log) => { log.Log("This is critical logged", LogLevel.Critical); });
-            var logger = new InMemDiagnostics();
+            pipeline.AddBlock((args, log) => { log.Log("Entry logged", logLevel); });
+            var logger = new InMemLogger();
 
             var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
 
-            logger.GetLogs(LogLevel.Critical).Any().Should().BeTrue(nameof(LogLevel.Critical));
-            logger.GetLogs(LogLevel.Error).Any().Should().BeFalse(nameof(LogLevel.Error));
-            logger.GetLogs(LogLevel.Warning).Any().Should().BeFalse(nameof(LogLevel.Warning));
-            logger.GetLogs(LogLevel.Info).Any().Should().BeFalse(nameof(LogLevel.Info));
-            logger.GetLogs(LogLevel.Debug).Count.Should().Be(6);
+            foreach (LogLevel value in Enum.GetValues(typeof(LogLevel)))
+            {
+                var found = logger.GetLogs(value).Any();
 
-            result.Success.Should().BeFalse(nameof(result.Success));
-        }
+                if (logLevel == LogLevel.Verbose)
+                    logger.GetLogs(logLevel).Count.Should().Be(7);
+                else if (value == LogLevel.Verbose)
+                    logger.GetLogs(value).Count.Should().Be(6);
 
-        [Test]
-        public async Task RunAsync_Result_FinishedWithErrors()
-        {
-            var pipeline = new Pipeline<EventArgs<int>>();
-            pipeline.AddBlock((args, log) => { log.Log("This is error logged", LogLevel.Error); });
-            var logger = new InMemDiagnostics();
+                if (value == logLevel)
+                    found.Should().BeTrue(value.ToName());
+                else if (value != LogLevel.Verbose)
+                    found.Should().BeFalse(value.ToName());
 
-            var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
 
-            logger.GetLogs(LogLevel.Critical).Any().Should().BeFalse(nameof(LogLevel.Critical));
-            logger.GetLogs(LogLevel.Error).Any().Should().BeTrue(nameof(LogLevel.Error));
-            logger.GetLogs(LogLevel.Warning).Any().Should().BeFalse(nameof(LogLevel.Warning));
-            logger.GetLogs(LogLevel.Info).Any().Should().BeFalse(nameof(LogLevel.Info));
-            logger.GetLogs(LogLevel.Debug).Count.Should().Be(6);
-
-            result.Success.Should().BeFalse(nameof(result.Success));
-        }
-        [Test]
-        public async Task RunAsync_Result_FinishedWithWarnings()
-        {
-            var pipeline = new Pipeline<EventArgs<int>>();
-            pipeline.AddBlock((args, log) => { log.Log("This is warning logged", LogLevel.Warning); });
-            var logger = new InMemDiagnostics();
-
-            var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
-
-            logger.GetLogs(LogLevel.Critical).Any().Should().BeFalse(nameof(LogLevel.Critical));
-            logger.GetLogs(LogLevel.Error).Any().Should().BeFalse(nameof(LogLevel.Error));
-            logger.GetLogs(LogLevel.Warning).Any().Should().BeTrue(nameof(LogLevel.Warning));
-            logger.GetLogs(LogLevel.Info).Any().Should().BeFalse(nameof(LogLevel.Info));
-            logger.GetLogs(LogLevel.Debug).Count.Should().Be(6);
-
-            result.Success.Should().BeTrue(nameof(result.Success));
-        }
-
-        [Test]
-        public async Task RunAsync_Result_FinishedWithInfos()
-        {
-            var pipeline = new Pipeline<EventArgs<int>>();
-            pipeline.AddBlock((args, log) => { log.Log("This is info logged"); });
-            var logger = new InMemDiagnostics();
-
-            var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
-
-            logger.GetLogs(LogLevel.Critical).Any().Should().BeFalse(nameof(LogLevel.Critical));
-            logger.GetLogs(LogLevel.Error).Any().Should().BeFalse(nameof(LogLevel.Error));
-            logger.GetLogs(LogLevel.Warning).Any().Should().BeFalse(nameof(LogLevel.Warning));
-            logger.GetLogs(LogLevel.Info).Any().Should().BeTrue(nameof(LogLevel.Info));
-            logger.GetLogs(LogLevel.Debug).Count.Should().Be(6);
-
-            result.Success.Should().BeTrue(nameof(result.Success));
-        }
-
-        [Test]
-        public async Task RunAsync_Result_FinishedWithDebugs()
-        {
-            var pipeline = new Pipeline<EventArgs<int>>();
-            pipeline.AddBlock((args, log) => { log.Log("This is debug logged", LogLevel.Debug); });
-            var logger = new InMemDiagnostics();
-
-            var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
-
-            logger.GetLogs(LogLevel.Critical).Any().Should().BeFalse();
-            logger.GetLogs(LogLevel.Error).Any().Should().BeFalse();
-            logger.GetLogs(LogLevel.Warning).Any().Should().BeFalse();
-            logger.GetLogs(LogLevel.Info).Any().Should().BeFalse();
-            logger.GetLogs(LogLevel.Debug).Count.Should().Be(7);
-
-            result.Success.Should().BeTrue(nameof(result.Success));
-        }
-        [Test]
-        public async Task RunAsync_Result_FinishedWithProfiles()
-        {
-            var pipeline = new Pipeline<EventArgs<int>>();
-            pipeline.AddBlock((args, log) => { log.Profile("", TimeSpan.FromSeconds(1)); });
-            var logger = new InMemDiagnostics();
-
-            var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
-
-            logger.GetLogs(LogLevel.Critical).Any().Should().BeFalse();
-            logger.GetLogs(LogLevel.Error).Any().Should().BeFalse();
-            logger.GetLogs(LogLevel.Warning).Any().Should().BeFalse();
-            logger.GetLogs(LogLevel.Info).Any().Should().BeFalse();
-            logger.GetLogs(LogLevel.Debug).Count.Should().Be(6);
-
-            result.Success.Should().BeTrue(nameof(result.Success));
+                if (logLevel < LogLevel.Error && logLevel != LogLevel.None)
+                    result.Success.Should().BeTrue($"{logLevel.ToName()} success: {result.Success}");
+                else
+                    result.Success.Should().BeFalse($"{logLevel.ToName()} success: {result.Success}");
+            }
         }
 
         [Test]

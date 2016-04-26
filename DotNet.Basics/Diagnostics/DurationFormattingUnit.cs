@@ -5,6 +5,7 @@
         MilliSeconds,
         Seconds,
         Minutes,
-        Hours
+        Hours,
+        Days
     }
 }

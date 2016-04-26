@@ -4,32 +4,36 @@ namespace DotNet.Basics.Diagnostics
 {
     public class Profile
     {
+        private readonly ProfileFormatter _formatter = new ProfileFormatter();
+
         public Profile(string name = null)
+            : this(name, DateTime.MinValue, DateTime.MinValue, isFinished: false)
         {
+        }
+
+        public Profile(string name, DateTime startTime, DateTime endTime, bool isFinished = true)
+        {
+            if (startTime > endTime)
+                throw new ArgumentException($"Start time has to be before end time. Start:{startTime} End:{endTime}");
             InternalStart = ActiveStart;
             InternalStop = Passive;
             Name = name ?? string.Empty;
-            Duration = TimeSpan.Zero;
-            InternalToString = () => $"'{Name}' not started";
-        }
-
-        public Profile(string name, DateTime startTime, DateTime endTime)
-            : this(name)
-        {
             StartTime = startTime;
             EndTime = endTime;
-            Duration = EndTime - StartTime;
-            InternalStart(startTime);
-            InternalStop(endTime);
+            State = ProfileStates.NotStarted;
+            if (isFinished)
+            {
+                InternalStart(startTime);
+                InternalStop(endTime);
+            }
         }
 
         public string Name { get; set; }
 
-        public DateTime StartTime { get; protected set; }
-        public DateTime EndTime { get; protected set; }
-
-        public TimeSpan Duration { get; protected set; }
-
+        public DateTime StartTime { get; private set; }
+        public DateTime EndTime { get; private set; }
+        public TimeSpan Duration => EndTime - StartTime;
+        public ProfileStates State { get; private set; }
         public bool Start()
         {
             return Start(DateTime.UtcNow);
@@ -50,23 +54,21 @@ namespace DotNet.Basics.Diagnostics
 
         private Func<DateTime, bool> InternalStart;
         private Func<DateTime, bool> InternalStop;
-        private Func<string> InternalToString;
 
         private bool ActiveStart(DateTime start)
         {
             StartTime = start;
             InternalStart = Passive;
             InternalStop = ActiveStop;
-            InternalToString = () => $"'{Name}' started";
+            State = ProfileStates.Running;
             return true;
         }
 
         private bool ActiveStop(DateTime end)
         {
             EndTime = end;
-            Duration = EndTime - StartTime;
             InternalStop = Passive;
-            InternalToString = () => $"'{Name}' finished in {Duration}";
+            State = ProfileStates.Finished;
             return true;
         }
 
@@ -77,7 +79,11 @@ namespace DotNet.Basics.Diagnostics
 
         public override string ToString()
         {
-            return InternalToString();
+            return _formatter.Format(this);
+        }
+        public string ToString(DurationFormattingUnit durationFormattingUnit)
+        {
+            return _formatter.Format(this, durationFormattingUnit);
         }
     }
 }

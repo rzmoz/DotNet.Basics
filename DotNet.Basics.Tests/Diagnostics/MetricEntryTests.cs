@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DotNet.Basics.Diagnostics;
 using FluentAssertions;
 using NUnit.Framework;
@@ -12,7 +8,7 @@ namespace DotNet.Basics.Tests.Diagnostics
     [TestFixture]
     public class MetricEntryTests
     {
-        [Test]
+        [Test, Ignore]
         public void Message_Formatting_ValueIsIncludedInMessage()
         {
             var name = "myMetric";
