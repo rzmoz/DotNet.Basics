@@ -16,7 +16,7 @@ namespace DotNet.Basics.Tests.Diagnostics
             string rawLogMessage = string.Empty;//something different than logMessage
 
             logger.EntryLogged += (o, e) => { logMessage = e.Message; };
-            logger.RawEntryLogged += (o, e) => { rawLogMessage = e.Formatter.Invoke(e.state, e.Exception); };
+            logger.RawEntryLogged += (o, e) => { rawLogMessage = e.Formatter.Invoke(e.State, e.Exception); };
 
             logMessage.Should().NotBe(rawLogMessage);
 

@@ -9,14 +9,14 @@ namespace DotNet.Basics.Diagnostics
         {
             LogLevel = logLevel;
             EventId = eventId;
-            this.state = state;
+            State = state;
             Exception = exception;
             Formatter = formatter;
         }
 
         public LogLevel LogLevel { get; }
         public int EventId { get; }
-        public object state { get; }
+        public object State { get; }
         public Exception Exception { get; }
         public Func<object, Exception, string> Formatter { get; }
     }
