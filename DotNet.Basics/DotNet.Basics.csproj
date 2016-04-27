@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Diagnostics\DotNetBasicsLogger.cs" />
+    <Compile Include="Diagnostics\RawLogEntry.cs" />
     <Compile Include="Diagnostics\LogExtensions.cs" />
     <Compile Include="Diagnostics\ProfileFormatter.cs" />
     <Compile Include="Diagnostics\DurationFormattingUnit.cs" />

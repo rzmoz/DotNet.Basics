@@ -73,6 +73,7 @@
   <ItemGroup>
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\StringKeyDictionaryTests.cs" />
+    <Compile Include="Diagnostics\EventLoggerTests.cs" />
     <Compile Include="Diagnostics\MediatorLoggersTests.cs" />
     <Compile Include="Ioc\IocContainerTests.cs" />
     <Compile Include="Ioc\TestHelpers\MyRegistrations.cs" />
