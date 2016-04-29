@@ -69,14 +69,11 @@ namespace DotNet.Basics.IO
 
             if (subDirIsIdenticalToParentDir == false)
             {
-                var filesToMove = dir.GetFiles();
-                foreach (var source in filesToMove)
-                {
-                    var target = dir.Parent;
-                    var moveExitCode = Cmd.Move(source.FullName, target.FullName);
-                    if (moveExitCode != 0)
-                        Robocopy.Move(source.Directory.FullName, target.FullName, source.Name);
-                }
+                var source = dir;
+                var target = dir.Parent;
+                var moveResult = PowerShellConsole.MoveItem(source.FullName, target.FullName, true);
+                if (moveResult.HadErrors)
+                    Robocopy.Move(source.FullName, target.FullName);
             }
 
             //we delete the folder if it's empty if everything was moved - otherwise, we don't 
@@ -137,7 +134,7 @@ namespace DotNet.Basics.IO
         public static void CleanIfExists(this DirectoryInfo dir)
         {
             if (dir == null) throw new ArgumentNullException(nameof(dir));
-            var cleanDirScript = $@"Remove-Item ""{dir.FullName}\*"" -Recurse -Force -ErrorAction SilentlyContinue";
+            var cleanDirScript = $@"Remove-Item ""{dir.FullName}\*""".WithForce().WithRecurse().WithErrorAction();
             PowerShellConsole.RunScript(cleanDirScript);
         }
 
@@ -145,7 +142,8 @@ namespace DotNet.Basics.IO
         {
             if (dir.Exists())
                 return;
-            var cleanDirScript = $@"New-Item ""{dir.FullName}"" -Type Directory -Force";
+            var cleanDirScript = $@"New-Item ""{dir.FullName}"" -Type Directory".WithForce(true);
+
             PowerShellConsole.RunScript(cleanDirScript);
             Debug.WriteLine($"Created: {dir.FullName}");
         }
@@ -173,8 +171,9 @@ namespace DotNet.Basics.IO
         {
             if (dir == null) throw new ArgumentNullException(nameof(dir));
             dir.Refresh();
-
-            return dir.EnumerateFiles().Any() == false && dir.EnumerateDirectories().Any() == false;
+            if (dir.Exists())
+                return dir.EnumerateFiles().Any() == false && dir.EnumerateDirectories().Any() == false;
+            return true;
         }
 
 

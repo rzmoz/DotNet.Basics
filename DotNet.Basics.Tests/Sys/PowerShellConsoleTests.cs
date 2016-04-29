@@ -16,7 +16,7 @@ namespace DotNet.Basics.Tests.Sys
 
             var result = PowerShellConsole.RunFunction("Greet", new KeyValuePair<string, object>("greetee", greetee), @".\Greetings.ps1");
 
-            result.Single().ToString().Should().Be($"Hello {greetee}!");
+            result.PassThru.Single().ToString().Should().Be($"Hello {greetee}!");
         }
 
         [Test]
@@ -26,7 +26,7 @@ namespace DotNet.Basics.Tests.Sys
 
             var result = PowerShellConsole.RunScript($"\"{greeting}\"");
 
-            result.Single().ToString().Should().Be(greeting);
+            result.PassThru.Single().ToString().Should().Be(greeting);
         }
     }
 }

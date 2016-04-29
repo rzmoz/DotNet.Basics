@@ -139,7 +139,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void ToString_Formatting_StringIsJson()
         {
-            var kvc = new StringDictionary(new StringPair(_myKey, _myValue).ToArray());
+            var kvc = new StringDictionary(new StringPair(_myKey, _myValue).ToEnumerable());
             var json = kvc.ToString();
 
             json.Should().Be("[{\"Key\":\"myKey\",\"Value\":\"myValue\"}]");
