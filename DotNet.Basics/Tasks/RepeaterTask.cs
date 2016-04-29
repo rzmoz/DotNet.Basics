@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Sys;
 
@@ -67,34 +66,6 @@ namespace DotNet.Basics.Tasks
         {
             UntilPredicate = e => e == null;
             return this;
-        }
-
-        public async Task<bool> NowAsync()
-        {
-            try
-            {
-                var runner = new RepeaterTaskRunner();
-                return await runner.RunAsync(this).ConfigureAwait(false);
-            }
-            catch (AggregateException ae)
-            {
-                throw ae.InnerException;
-            }
-        }
-
-        public bool Now()
-        {
-            try
-            {
-                var runner = new RepeaterTaskRunner();
-                var task = runner.RunAsync(this);
-                task.Wait();
-                return task.Result;
-            }
-            catch (AggregateException ae)
-            {
-                throw ae.InnerException;
-            }
         }
         internal Func<Task> Action { get; private set; }
         internal CountLoopBreakPredicate CountLoopBreakPredicate { get; private set; }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace DotNet.Basics.Sys
 {
@@ -26,8 +22,7 @@ namespace DotNet.Basics.Sys
                 return $"{script} -{param}";
             return script;
         }
-
-        public static string ToPSParamString(this IEnumerable<string> array)
+        public static string ToPowerShellParameterString(this IEnumerable<string> array)
         {
             const char paramDivider = ',';
             var paramString = "(";

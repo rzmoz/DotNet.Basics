@@ -11,7 +11,7 @@ namespace DotNet.Basics.Tests.Sys
         public void ToPSParamString_Formatting_InputIsFormattedNicely()
         {
             var input = new[] { "myStr1", "myStr2", "myStr3" };
-            var formatted = input.ToPSParamString();
+            var formatted = input.ToPowerShellParameterString();
             formatted.Should().Be("(\"myStr1\",\"myStr2\",\"myStr3\")");
         }
     }
