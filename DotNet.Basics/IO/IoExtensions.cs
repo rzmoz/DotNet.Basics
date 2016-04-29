@@ -6,7 +6,7 @@ namespace DotNet.Basics.IO
 {
     public static class IoExtensions
     {
-        public static FileInfo WriteToDisk(this string content, FileInfo targetFile)
+        public static FileInfo WriteAllText(this string content, FileInfo targetFile)
         {
             if (content == null) throw new ArgumentNullException(nameof(content));
             if (targetFile == null)
@@ -19,10 +19,10 @@ namespace DotNet.Basics.IO
             return targetFile;
         }
 
-        public static FileInfo WriteToDisk(this string content, DirectoryInfo dir, string filename)
+        public static FileInfo WriteAllText(this string content, DirectoryInfo dir, string filename)
         {
             var file = dir.ToFile(filename);
-            WriteToDisk(content, file);
+            WriteAllText(content, file);
             return file;
         }
     }

@@ -134,17 +134,14 @@ namespace DotNet.Basics.IO
         public static void CleanIfExists(this DirectoryInfo dir)
         {
             if (dir == null) throw new ArgumentNullException(nameof(dir));
-            var cleanDirScript = $@"Remove-Item ""{dir.FullName}\*""".WithForce().WithRecurse().WithErrorAction();
-            PowerShellConsole.RunScript(cleanDirScript);
+            PowerShellConsole.RemoveItem($"{dir.FullName}\\*", force: true, recurse: true);
         }
 
         public static void CreateIfNotExists(this DirectoryInfo dir)
         {
             if (dir.Exists())
                 return;
-            var cleanDirScript = $@"New-Item ""{dir.FullName}"" -Type Directory".WithForce(true);
-
-            PowerShellConsole.RunScript(cleanDirScript);
+            var result = PowerShellConsole.NewItem(dir.FullName, "Directory", false);
             Debug.WriteLine($"Created: {dir.FullName}");
         }
 

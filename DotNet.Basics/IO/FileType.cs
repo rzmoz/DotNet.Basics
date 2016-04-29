@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace DotNet.Basics.IO
+﻿namespace DotNet.Basics.IO
 {
     public class FileType
     {

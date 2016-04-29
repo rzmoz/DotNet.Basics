@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
@@ -9,13 +10,25 @@ namespace DotNet.Basics.Sys
 {
     public static class PowerShellConsole
     {
+        public static PSResult NewItem(string path, string itemType, bool force)
+        {
+            return NewItem(path.ToEnumerable(), itemType, force);
+        }
+        public static PSResult NewItem(IEnumerable<string> paths, string itemType, bool force)
+        {
+            var script = $@"New-Item -path {paths.ToPSParamString()} -ItemType {itemType}"
+                .WithForce(force);
+
+            return RunScript(script);
+        }
+
         public static PSResult RemoveItem(string path, bool force, bool recurse, string errorAction = "SilentlyContinue")
         {
             return RemoveItem(path.ToEnumerable(), force, recurse, errorAction);
         }
         public static PSResult RemoveItem(IEnumerable<string> paths, bool force, bool recurse, string errorAction = "SilentlyContinue")
         {
-            var script = $@"Remove-Item -path {paths.ToPSParamString()}"
+            var script = $@"Remove-Item -Path {paths.ToPSParamString()}"
                 .WithForce(force)
                 .WithRecurse(recurse)
                 .WithErrorAction();
@@ -29,7 +42,7 @@ namespace DotNet.Basics.Sys
         }
         public static PSResult MoveItem(IEnumerable<string> paths, string destination, bool force)
         {
-            var script = $@"Move-Item -path {paths.ToPSParamString()}"
+            var script = $@"Move-Item -Path {paths.ToPSParamString()} -Destination ""{destination}"""
                 .WithForce(force)
                 .WithErrorAction();
 
@@ -39,6 +52,7 @@ namespace DotNet.Basics.Sys
         public static PSResult RunScript(string script)
         {
             if (script == null) { throw new ArgumentNullException(nameof(script)); }
+            Debug.WriteLine($"Running script: {script}");
             using (var ps = PowerShell.Create())
             {
                 BypassExecutionPolicyForProcessScope(ps);

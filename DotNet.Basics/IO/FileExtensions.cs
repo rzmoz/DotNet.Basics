@@ -75,8 +75,8 @@ namespace DotNet.Basics.IO
                 Debug.WriteLine("MoveTo skipped. Target already exists and overwrite is set to false: {0}", targetFile.FullName);
                 return;
             }
-            targetFile.DeleteIfExists();
-            File.Move(sourceFile.FullName,targetFile.FullName);
+
+            PowerShellConsole.MoveItem(sourceFile.FullName, targetFile.FullName, force: true);
         }
 
         public static string NameWithoutExtension(this FileInfo file)

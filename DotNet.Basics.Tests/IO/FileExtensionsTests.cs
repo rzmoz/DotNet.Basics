@@ -21,7 +21,7 @@ namespace DotNet.Basics.Tests.IO
 
             string testContent = "Blaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaah";
 
-            testContent.WriteToDisk(testFile);
+            testContent.WriteAllText(testFile);
 
             var read = testFile.ReadAllText();
 
@@ -34,7 +34,7 @@ namespace DotNet.Basics.Tests.IO
             var testdir = "Delete_DeleteFile_FileIsDeleted".ToDir();
             testdir.CleanIfExists();
             var testFile = testdir.ToFile("blaaaah.txt");
-            "blaa".WriteToDisk(testFile);
+            "blaa".WriteAllText(testFile);
 
             testFile.Exists().Should().BeTrue();
 
@@ -50,15 +50,15 @@ namespace DotNet.Basics.Tests.IO
             testdir.CleanIfExists();
             var sourceFile = testdir.ToFile("blaaOld.txt");
             var tagetFile = testdir.ToFile("blaaNew.txt");
-            "blaa".WriteToDisk(sourceFile);
+            "blaa".WriteAllText(sourceFile);
 
-            sourceFile.Exists().Should().BeTrue();
-            tagetFile.Exists().Should().BeFalse();
+            sourceFile.Exists().Should().BeTrue("Source file before move");
+            tagetFile.Exists().Should().BeFalse("Target file before move");
 
             sourceFile.MoveTo(tagetFile);
 
-            sourceFile.Exists().Should().BeFalse();
-            tagetFile.Exists().Should().BeTrue();
+            sourceFile.Exists().Should().BeFalse("Source file after move");
+            tagetFile.Exists().Should().BeTrue("Target file after move");
         }
 
         [Test]

@@ -92,7 +92,7 @@ namespace DotNet.Basics.Tests.IO
             var root = "cpyTo_InclSubDirs_DirIsCop".ToDir();
             root.DeleteIfExists();
             var currentDir = CreateIdenticalSubdirs(root, dirDepth);
-            "blaaaa".WriteToDisk(currentDir, "myFile.txt");
+            "blaaaa".WriteAllText(currentDir, "myFile.txt");
 
             var targetRoot = (root.Name + "Target").ToDir();
             var targetDir = targetRoot.CreateSubdir(root.Name);
@@ -188,7 +188,7 @@ namespace DotNet.Basics.Tests.IO
         {
             //arrange
             var testDir = @"CreateIfExists_CreateOptions_ExistingDirIsCleaned".ToDir();
-            @"bllll".WriteToDisk(testDir, "myFile.txt");
+            @"bllll".WriteAllText(testDir, "myFile.txt");
 
             testDir.Exists().Should().BeTrue();
             testDir.GetFiles().Count().Should().Be(1);
@@ -208,7 +208,7 @@ namespace DotNet.Basics.Tests.IO
             //arrange
             var testDir = @"CreateIfExists_CreateOptions_ExistingDirIsNotCleaned".ToDir();
             testDir.DeleteIfExists();
-            @"bllll".WriteToDisk(testDir, "myFile.txt");
+            @"bllll".WriteAllText(testDir, "myFile.txt");
 
             testDir.Exists().Should().BeTrue();
             testDir.GetFiles().Count().Should().Be(1);
@@ -288,10 +288,10 @@ namespace DotNet.Basics.Tests.IO
             {
                 var testFolder = dir.ToDir("MyTestFolder" + i);
                 testFolder.CreateIfNotExists();
-                "blaaa".WriteToDisk(testFolder, $"blaa{i}.txt");
+                "blaaa".WriteAllText(testFolder, $"blaa{i}.txt");
             }
             for (var i = 0; i < numOfTestFiles; i++)
-                "blaaaaa".WriteToDisk(dir, $"myFile{i}.txt");
+                "blaaaaa".WriteAllText(dir, $"myFile{i}.txt");
         }
 
 
