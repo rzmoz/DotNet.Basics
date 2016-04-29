@@ -9,20 +9,12 @@ namespace DotNet.Basics.Tests.Sys
     [TestFixture]
     public class PowerShellConsoleTests
     {
-        private PowerShellConsole _psc;
-
-        [SetUp]
-        public void SetUp()
-        {
-            _psc = new PowerShellConsole();
-        }
-
         [Test]
         public void RunFunction_ExecuteScript_HelloworldIsOutputted()
         {
             const string greetee = "Wooorld";
 
-            var result = _psc.RunFunction("Greet", new KeyValuePair<string, object>("greetee", greetee), @".\Greetings.ps1");
+            var result = PowerShellConsole.RunFunction("Greet", new KeyValuePair<string, object>("greetee", greetee), @".\Greetings.ps1");
 
             result.Single().ToString().Should().Be($"Hello {greetee}!");
         }
@@ -32,7 +24,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             const string greeting = @"Hello World!";
 
-            var result = _psc.RunScript($"\"{greeting}\"");
+            var result = PowerShellConsole.RunScript($"\"{greeting}\"");
 
             result.Single().ToString().Should().Be(greeting);
         }

@@ -34,9 +34,8 @@ namespace DotNet.Basics.IO
 
             Repeat.Task(() =>
             {
-                var psc = new PowerShellConsole();
                 var cleanDirScript = $@"Remove-Item ""{fsi.FullName}"" -Recurse -Force -ErrorAction SilentlyContinue";
-                psc.RunScript(cleanDirScript);
+                PowerShellConsole.RunScript(cleanDirScript);
             })
             .WithTimeout(30.Seconds())
             .WithRetryDelay(3.Seconds())

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {
@@ -55,6 +56,8 @@ namespace DotNet.Basics.IO
         }
         public static void MoveTo(this FileInfo sourceFile, FileInfo targetFile, bool overwrite = false)
         {
+            if (sourceFile == null) throw new ArgumentNullException(nameof(sourceFile));
+            if (targetFile == null) throw new ArgumentNullException(nameof(targetFile));
             if (sourceFile.FullName == targetFile.FullName)
             {
                 Debug.WriteLine("MoveTo skipped. Source and target are the same: {0}", sourceFile.FullName);
@@ -72,9 +75,8 @@ namespace DotNet.Basics.IO
                 Debug.WriteLine("MoveTo skipped. Target already exists and overwrite is set to false: {0}", targetFile.FullName);
                 return;
             }
-
             targetFile.DeleteIfExists();
-            File.Move(sourceFile.FullName, targetFile.FullName);
+            File.Move(sourceFile.FullName,targetFile.FullName);
         }
 
         public static string NameWithoutExtension(this FileInfo file)

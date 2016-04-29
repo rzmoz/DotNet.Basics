@@ -6,9 +6,9 @@ using System.Management.Automation;
 
 namespace DotNet.Basics.Sys
 {
-    public class PowerShellConsole
+    public static class PowerShellConsole
     {
-        public object[] RunScript(string script)
+        public static object[] RunScript(string script)
         {
             if (script == null) { throw new ArgumentNullException(nameof(script)); }
             using (var ps = PowerShell.Create())
@@ -19,7 +19,7 @@ namespace DotNet.Basics.Sys
             }
         }
 
-        public object[] RunFunction(string methodName, KeyValuePair<string, object> arg, string scriptPath)
+        public static object[] RunFunction(string methodName, KeyValuePair<string, object> arg, string scriptPath)
         {
             if (methodName == null) { throw new ArgumentNullException(nameof(methodName)); }
             if (scriptPath == null) { throw new ArgumentNullException(nameof(scriptPath)); }
@@ -51,7 +51,7 @@ namespace DotNet.Basics.Sys
         }
 
 
-        private void BypassExecutionPolicyForProcessScope(PowerShell ps)
+        private static void BypassExecutionPolicyForProcessScope(PowerShell ps)
         {
             ps.AddScript("Set-ExecutionPolicy Bypass -Scope Process");
         }
