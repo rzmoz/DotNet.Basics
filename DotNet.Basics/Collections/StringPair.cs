@@ -22,12 +22,12 @@ namespace DotNet.Basics.Collections
         [DataMember]
         public string Value { get; set; }
 
-        public static implicit operator StringPair(KeyValuePair<string, string> kvp)
+        public static explicit operator StringPair(KeyValuePair<string, string> kvp)
         {
             var kv = new StringPair(kvp.Key, kvp.Value);
             return kv;
         }
-        public static implicit operator KeyValuePair<string, string>(StringPair kv)
+        public static explicit operator KeyValuePair<string, string>(StringPair kv)
         {
             return new KeyValuePair<string, string>(kv.Key, kv.Value);
         }

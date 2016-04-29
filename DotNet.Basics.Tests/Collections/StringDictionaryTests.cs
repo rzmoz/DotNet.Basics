@@ -20,7 +20,7 @@ namespace DotNet.Basics.Tests.Collections
         public void Json_Serialization_ProperJson()
         {
             //arrange 
-            var kvc = new StringDictionary(new[] { new StringPair(_myKey, _myValue) });
+            var kvc = new StringDictionary(new StringPair(_myKey, _myValue).ToEnumerable());
 
             //serialize
             MemoryStream stream1 = new MemoryStream();
@@ -58,7 +58,7 @@ namespace DotNet.Basics.Tests.Collections
         {
             IEnumerable<StringPair> args = new[] { new StringPair(_myKey, _myValue) };
 
-            var kvCollection = new StringDictionary(args,DictionaryKeyMode.KeyCaseSensitive,KeyNotFoundMode.ThrowKeyNotFoundException);
+            var kvCollection = new StringDictionary(args, DictionaryKeyMode.KeyCaseSensitive, KeyNotFoundMode.ThrowKeyNotFoundException);
 
             kvCollection.Single().Value.Should().Be(_myValue);
         }
@@ -139,7 +139,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void ToString_Formatting_StringIsJson()
         {
-            var kvc = new StringDictionary { new StringPair(_myKey, _myValue) };
+            var kvc = new StringDictionary(new StringPair(_myKey, _myValue).ToArray());
             var json = kvc.ToString();
 
             json.Should().Be("[{\"Key\":\"myKey\",\"Value\":\"myValue\"}]");
