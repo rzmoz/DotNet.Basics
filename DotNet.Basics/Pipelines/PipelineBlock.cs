@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DotNet.Basics.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Pipelines

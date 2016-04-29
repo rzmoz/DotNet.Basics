@@ -1,6 +1,4 @@
-﻿using SimpleInjector;
-
-namespace DotNet.Basics.Ioc
+﻿namespace DotNet.Basics.Ioc
 {
     public interface IIocRegistrations
     {

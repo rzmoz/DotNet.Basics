@@ -55,7 +55,7 @@ namespace DotNet.Basics.Tests.Pipelines
             var runner = new PipelineRunner(_container);
             string stepName = null;
 
-            runner.StepStarting += delegate (string name, PipelineType type) { stepName = name; };
+            runner.StepStarting += delegate (string name) { stepName = name; };
 
             var result = await runner.RunAsync(pipeline).ConfigureAwait(false);
 
@@ -70,7 +70,7 @@ namespace DotNet.Basics.Tests.Pipelines
             var runner = new PipelineRunner(_container);
             string stepName = null;
 
-            runner.StepStarting += delegate (string name, PipelineType type) { stepName = name; };
+            runner.StepStarting += delegate (string name) { stepName = name; };
 
             var result = await runner.RunAsync(pipeline).ConfigureAwait(false);
 
@@ -200,12 +200,12 @@ namespace DotNet.Basics.Tests.Pipelines
             string stepStarting = string.Empty;
             string stepEnded = string.Empty;
 
-            runner.PipelineStarting += delegate (string name, PipelineType type) { pipelineStarting = name; };
-            runner.PipelineEnded += delegate (string name, PipelineType type) { pipelineEnded = name; };
-            runner.BlockStarting += delegate (string name, PipelineType type) { blockStarting = name; };
-            runner.BlockEnded += delegate (string name, PipelineType type) { blockEnded = name; };
-            runner.StepStarting += delegate (string name, PipelineType type) { stepStarting = name; };
-            runner.StepEnded += delegate (string name, PipelineType type) { stepEnded = name; };
+            runner.PipelineStarting += delegate (string name) { pipelineStarting = name; };
+            runner.PipelineEnded += delegate (string name) { pipelineEnded = name; };
+            runner.BlockStarting += delegate (string name) { blockStarting = name; };
+            runner.BlockEnded += delegate (string name) { blockEnded = name; };
+            runner.StepStarting += delegate (string name) { stepStarting = name; };
+            runner.StepEnded += delegate (string name) { stepEnded = name; };
 
             //act
             await runner.RunAsync(pipeline).ConfigureAwait(false);

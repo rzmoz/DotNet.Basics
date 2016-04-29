@@ -78,7 +78,6 @@
     <Compile Include="IO\PathExtensions.cs" />
     <Compile Include="IO\Robocopy.cs" />
     <Compile Include="IO\IoExtensions.cs" />
-    <Compile Include="Pipelines\PipelineType.cs" />
     <Compile Include="Sys\CommandPrompt.cs" />
     <Compile Include="Pipelines\EagerBindStep.cs" />
     <Compile Include="Pipelines\LazyBindStep.cs" />
