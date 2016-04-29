@@ -10,15 +10,35 @@ using NUnit.Framework;
 namespace DotNet.Basics.Tests.Collections
 {
     [TestFixture]
-   public class StringKeyDictionaryTests
+    public class StringKeyDictionaryTests
     {
         private const string _myKey = "MyKey";
         private const string _myValue = "MyValue";
 
         [Test]
+        public void KeyNotFoundMode_ThrowException_ExceptionIsThrown()
+        {
+            var dic = new StringKeyDictionary<string>(DictionaryKeyMode.IgnoreKeyCase, KeyNotFoundMode.ThrowKeyNotFoundException);
+
+            Action action = () => { var temp = dic["aKeyThatDoesntExist"]; };
+            action.ShouldThrow<KeyNotFoundException>();
+        }
+
+        [Test]
+        public void KeyNotFoundMode_Defaukt_NullIsReturned()
+        {
+            var dic = new StringKeyDictionary<string>(DictionaryKeyMode.IgnoreKeyCase, KeyNotFoundMode.ReturnDefault);
+
+            var temp = dic["aKeyThatDoesntExist"]; 
+            temp.Should().BeNull();
+        }
+
+
+
+        [Test]
         public void Add_AddItemCaseInsensitive_ItemIsAdded()
         {
-            var dic = new StringKeyDictionary<string>(KeyMode.IgnoreCase, KeyNotFoundMode.ReturnDefault);
+            var dic = new StringKeyDictionary<string>(DictionaryKeyMode.IgnoreKeyCase, KeyNotFoundMode.ReturnDefault);
             dic.Count.Should().Be(0);
             dic.Add(_myKey, _myValue);
             dic.Count.Should().Be(1);
@@ -27,7 +47,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Get_GetValue_ValueIsRetrived()
         {
-            var dic = new StringKeyDictionary<string>(KeyMode.IgnoreCase, KeyNotFoundMode.ReturnDefault);
+            var dic = new StringKeyDictionary<string>(DictionaryKeyMode.IgnoreKeyCase, KeyNotFoundMode.ReturnDefault);
             dic.Count.Should().Be(0);
             dic.Add(_myKey, _myValue);
             dic[_myKey].Should().Be(_myValue);
@@ -48,7 +68,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Set_SetValue_ValueIsSet()
         {
-            var dic = new StringKeyDictionary<string>(KeyMode.IgnoreCase, KeyNotFoundMode.ReturnDefault);
+            var dic = new StringKeyDictionary<string>(DictionaryKeyMode.IgnoreKeyCase, KeyNotFoundMode.ReturnDefault);
             dic.Count.Should().Be(0);
             dic.Add(_myKey, _myValue);
             dic[_myKey].Should().Be(_myValue);

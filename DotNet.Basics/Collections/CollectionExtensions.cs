@@ -16,5 +16,14 @@ namespace DotNet.Basics.Collections
             foreach (var item in col)
                 forEachAction(item);
         }
+
+        public static IEnumerable<T> ToEnumerable<T>(this T t)
+        {
+            return ToArray(t);
+        }
+        public static T[] ToArray<T>(this T t)
+        {
+            return new[] { t };
+        }
     }
 }

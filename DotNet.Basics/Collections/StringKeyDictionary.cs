@@ -14,20 +14,20 @@ namespace DotNet.Basics.Collections
         private readonly IDictionary<string, string> _casesInsensitiveMapping;
 
         public StringKeyDictionary()
-            : this(KeyMode.CaseSensitive, KeyNotFoundMode.ThrowKeyNotFoundException)
+            : this(DictionaryKeyMode.KeyCaseSensitive, KeyNotFoundMode.ThrowKeyNotFoundException)
         {
         }
 
-        public StringKeyDictionary(KeyMode keyMode = KeyMode.CaseSensitive, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ThrowKeyNotFoundException)
+        public StringKeyDictionary(DictionaryKeyMode dictionaryKeyMode = DictionaryKeyMode.KeyCaseSensitive, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ThrowKeyNotFoundException)
         {
             KeyNotFoundMode = keyNotFoundMode;
-            KeyMode = keyMode;
+            DictionaryKeyMode = dictionaryKeyMode;
             _dic = new Dictionary<string, TValue>();
             _casesInsensitiveMapping = new Dictionary<string, string>();
         }
 
-        public StringKeyDictionary(IEnumerable<KeyValuePair<string, TValue>> keyValues, KeyMode keyMode = KeyMode.CaseSensitive, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ThrowKeyNotFoundException)
-            : this(keyMode, keyNotFoundMode)
+        public StringKeyDictionary(IEnumerable<KeyValuePair<string, TValue>> keyValues, DictionaryKeyMode dictionaryKeyMode = DictionaryKeyMode.KeyCaseSensitive, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ThrowKeyNotFoundException)
+            : this(dictionaryKeyMode, keyNotFoundMode)
         {
             if (keyValues == null)
                 return;
@@ -48,7 +48,7 @@ namespace DotNet.Basics.Collections
 
 
         public KeyNotFoundMode KeyNotFoundMode { get; }
-        public KeyMode KeyMode { get; }
+        public DictionaryKeyMode DictionaryKeyMode { get; }
 
         public bool ContainsKey(string key)
         {
@@ -146,7 +146,7 @@ namespace DotNet.Basics.Collections
 
         private string ResolvedKey(string key)
         {
-            if (KeyMode == KeyMode.CaseSensitive)
+            if (DictionaryKeyMode == DictionaryKeyMode.KeyCaseSensitive)
                 return key;
             var loweredKey = key.ToLower();
             if (_casesInsensitiveMapping.ContainsKey(loweredKey))

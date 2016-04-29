@@ -89,7 +89,7 @@
     <Compile Include="Pipelines\PipelineRunner.cs" />
     <Compile Include="Pipelines\PipelineStep.cs" />
     <Compile Include="Collections\KeyNotFoundMode.cs" />
-    <Compile Include="Collections\KeyMode.cs" />
+    <Compile Include="Collections\DictionaryKeyMode.cs" />
     <Compile Include="Collections\StringPair.cs" />
     <Compile Include="Collections\StringDictionary.cs" />
     <Compile Include="Sys\PowerShellConsole.cs" />

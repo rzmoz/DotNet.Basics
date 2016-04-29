@@ -7,29 +7,28 @@ namespace DotNet.Basics.Collections
 {
     public class StringDictionary : IReadOnlyCollection<StringPair>
     {
-        private readonly KeyNotFoundMode _keyNotFoundMode;
         private readonly StringKeyDictionary<string> _dictionary;
 
         public StringDictionary()
-            : this(KeyMode.CaseSensitive, KeyNotFoundMode.ThrowKeyNotFoundException)
+            : this(DictionaryKeyMode.KeyCaseSensitive, KeyNotFoundMode.ThrowKeyNotFoundException)
         {
         }
 
-        public StringDictionary(KeyMode keyMode = KeyMode.CaseSensitive, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ThrowKeyNotFoundException)
-            : this(Enumerable.Empty<StringPair>(), keyMode, keyNotFoundMode)
+        public StringDictionary(DictionaryKeyMode dictionaryKeyMode = DictionaryKeyMode.KeyCaseSensitive, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ThrowKeyNotFoundException)
+            : this(Enumerable.Empty<StringPair>(), dictionaryKeyMode, keyNotFoundMode)
         {
         }
 
-        public StringDictionary(IEnumerable<StringPair> keyValues, KeyMode keyMode = KeyMode.CaseSensitive, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ThrowKeyNotFoundException)
-            : this(keyValues.Select(kv => new KeyValuePair<string, string>(kv.Key, kv.Value)), keyMode, keyNotFoundMode)
+        public StringDictionary(IEnumerable<StringPair> keyValues, DictionaryKeyMode dictionaryKeyMode = DictionaryKeyMode.KeyCaseSensitive, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ThrowKeyNotFoundException)
+            : this(keyValues.Select(kv => new KeyValuePair<string, string>(kv.Key, kv.Value)), dictionaryKeyMode, keyNotFoundMode)
         {
         }
 
-        public StringDictionary(IEnumerable<KeyValuePair<string, string>> keyValues, KeyMode keyMode = KeyMode.CaseSensitive, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ThrowKeyNotFoundException)
+        public StringDictionary(IEnumerable<KeyValuePair<string, string>> keyValues, DictionaryKeyMode dictionaryKeyMode = DictionaryKeyMode.KeyCaseSensitive, KeyNotFoundMode keyNotFoundMode = KeyNotFoundMode.ThrowKeyNotFoundException)
         {
-            _keyNotFoundMode = keyNotFoundMode;
-            KeyMode = keyMode;
-            _dictionary = new StringKeyDictionary<string>(keyValues, keyMode, keyNotFoundMode);
+            KeyNotFoundMode = keyNotFoundMode;
+            DictionaryKeyMode = dictionaryKeyMode;
+            _dictionary = new StringKeyDictionary<string>(keyValues, dictionaryKeyMode, keyNotFoundMode);
         }
 
         public IEnumerator<StringPair> GetEnumerator()
@@ -57,7 +56,7 @@ namespace DotNet.Basics.Collections
 
 
         public KeyNotFoundMode KeyNotFoundMode { get; }
-        public KeyMode KeyMode { get; }
+        public DictionaryKeyMode DictionaryKeyMode { get; }
 
         public bool ContainsKey(string key)
         {

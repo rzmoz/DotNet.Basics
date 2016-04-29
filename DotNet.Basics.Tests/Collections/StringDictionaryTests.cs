@@ -58,7 +58,7 @@ namespace DotNet.Basics.Tests.Collections
         {
             IEnumerable<StringPair> args = new[] { new StringPair(_myKey, _myValue) };
 
-            var kvCollection = new StringDictionary(args,KeyMode.CaseSensitive,KeyNotFoundMode.ThrowKeyNotFoundException);
+            var kvCollection = new StringDictionary(args,DictionaryKeyMode.KeyCaseSensitive,KeyNotFoundMode.ThrowKeyNotFoundException);
 
             kvCollection.Single().Value.Should().Be(_myValue);
         }
@@ -78,7 +78,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Ctor_KeyModeNullIfNotFound_NullIsReturned()
         {
-            var kvCollection = new StringDictionary(KeyMode.CaseSensitive, KeyNotFoundMode.ReturnDefault) { [_myKey] = _myValue };
+            var kvCollection = new StringDictionary(DictionaryKeyMode.KeyCaseSensitive, KeyNotFoundMode.ReturnDefault) { [_myKey] = _myValue };
 
             kvCollection[_myKeyThatDoesntExist].Should().BeNull();
         }
@@ -86,7 +86,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Ctor_KeyModeNotFoundExceptionfNotFound_ExceptionIsThrown()
         {
-            var kvCollection = new StringDictionary(KeyMode.CaseSensitive, KeyNotFoundMode.ThrowKeyNotFoundException) { [_myKey] = _myValue };
+            var kvCollection = new StringDictionary(DictionaryKeyMode.KeyCaseSensitive, KeyNotFoundMode.ThrowKeyNotFoundException) { [_myKey] = _myValue };
 
             Action action = () => { var @value = kvCollection[_myKeyThatDoesntExist]; };
 
