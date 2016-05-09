@@ -91,10 +91,10 @@
     <Compile Include="Collections\DictionaryKeyMode.cs" />
     <Compile Include="Collections\StringPair.cs" />
     <Compile Include="Collections\StringDictionary.cs" />
+    <Compile Include="Sys\PowerShellCmdlet.cs" />
     <Compile Include="Sys\PowerShellConsole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Collections\StringKeyDictionary.cs" />
-    <Compile Include="Sys\PowerShellExtensions.cs" />
     <Compile Include="Sys\PowerShellResult.cs" />
     <Compile Include="Tasks\CountLoopBreakPredicate.cs" />
     <Compile Include="Sys\EnumClass.cs" />

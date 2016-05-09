@@ -34,8 +34,7 @@ namespace DotNet.Basics.IO
 
             Repeat.Task(() =>
             {
-                var result = PowerShellConsole.RemoveItem(fsi.FullName, force: true, recurse: true,
-                    errorAction: "SilentlyContinue");
+                var result = PowerShellConsole.RemoveItem(fsi.FullName, force: true, recurse: true, errorAction: "SilentlyContinue");
             })
             .WithTimeout(30.Seconds())
             .WithRetryDelay(3.Seconds())

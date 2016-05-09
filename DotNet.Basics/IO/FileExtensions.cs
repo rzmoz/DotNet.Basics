@@ -29,7 +29,7 @@ namespace DotNet.Basics.IO
 
         public static void CopyTo(this IEnumerable<FileInfo> sourceFiles, DirectoryInfo targetDir, bool overwrite = false)
         {
-            var paths = sourceFiles.Select(file => file.FullName).ToList();
+            var paths = sourceFiles.Select(file => file.FullName).ToArray();
             targetDir.CreateIfNotExists();
             PowerShellConsole.CopyItem(paths, targetDir.FullName, force: overwrite, recurse: false);
         }

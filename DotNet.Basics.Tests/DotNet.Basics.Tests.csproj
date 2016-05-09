@@ -97,12 +97,12 @@
     <Compile Include="Pipelines\PipelineStepWithDisplayNameSetStep.cs" />
     <Compile Include="Collections\StringDictionaryTests.cs" />
     <Compile Include="Collections\StringPairTests.cs" />
+    <Compile Include="Sys\PowerShellCmdletTests.cs" />
     <Compile Include="Sys\PowerShellConsoleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Diagnostics\InMemLoggerTests.cs" />
     <Compile Include="Sys\EnumExtensionsTests.cs" />
     <Compile Include="Sys\ObservableTests.cs" />
-    <Compile Include="Sys\PowerShellExtensionsTests.cs" />
     <Compile Include="Sys\StringExtensionsTests.cs" />
     <Compile Include="Tasks\OnceOnlyActionTests.cs" />
     <Compile Include="Tasks\ThrowExceptionUntilXTriesDummeTask.cs" />

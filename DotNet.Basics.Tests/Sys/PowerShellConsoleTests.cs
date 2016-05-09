@@ -10,13 +10,13 @@ namespace DotNet.Basics.Tests.Sys
     public class PowerShellConsoleTests
     {
         [Test]
-        public void RunFunction_ExecuteScript_HelloworldIsOutputted()
+        public void Results_HadErros_ErrorsFound()
         {
-            const string greetee = "Wooorld";
+            string script = $"Copy-Item asdAsdasd asd asd asd asd asd asd"; //cmdlet with invalid arguments
 
-            var result = PowerShellConsole.RunFunction("Greet", new KeyValuePair<string, object>("greetee", greetee), @".\Greetings.ps1");
+            var result = PowerShellConsole.RunScript($"\"{script}\"");
 
-            result.PassThru.Single().ToString().Should().Be($"Hello {greetee}!");
+            result.HadErrors.Should().BeTrue();
         }
 
         [Test]

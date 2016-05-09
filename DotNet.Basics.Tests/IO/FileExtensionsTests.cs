@@ -36,11 +36,11 @@ namespace DotNet.Basics.Tests.IO
             var testFile = testdir.ToFile("blaaaah.txt");
             "blaa".WriteAllText(testFile);
 
-            testFile.Exists().Should().BeTrue();
+            testFile.Exists().Should().BeTrue("File should have been created");
 
             testFile.DeleteIfExists();
 
-            testFile.Exists().Should().BeFalse();
+            testFile.Exists().Should().BeFalse("File should have been deleted");
         }
 
         [Test]
