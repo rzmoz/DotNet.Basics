@@ -10,6 +10,32 @@ namespace DotNet.Basics.Sys
 {
     public static class PowerShellConsole
     {
+        public static PowerShellResult CopyItem(string path, string destination, bool force, bool recurse)
+        {
+            return CopyItem(path.ToEnumerable(), destination, force, recurse);
+        }
+        public static PowerShellResult CopyItem(IEnumerable<string> paths, string destination, bool force, bool recurse)
+        {
+            var script = $@"Copy-Item -path {paths.ToPowerShellParameterString()} -Destination {destination}"
+                .WithForce(force)
+                .WithRecurse(recurse);
+
+            return RunScript(script);
+        }
+
+
+        public static PowerShellResult RenameItem(string path, string newName, bool force)
+        {
+            return RenameItem(path.ToEnumerable(), newName, force);
+        }
+        public static PowerShellResult RenameItem(IEnumerable<string> paths, string newName, bool force)
+        {
+            var script = $@"Name-Item -path {paths.ToPowerShellParameterString()} {newName}"
+                .WithForce(force);
+
+            return RunScript(script);
+        }
+
         public static PowerShellResult NewItem(string path, string itemType, bool force)
         {
             return NewItem(path.ToEnumerable(), itemType, force);

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
+using System.Linq;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
@@ -29,7 +29,9 @@ namespace DotNet.Basics.IO
 
         public static void CopyTo(this IEnumerable<FileInfo> sourceFiles, DirectoryInfo targetDir, bool overwrite = false)
         {
-            Parallel.ForEach(sourceFiles, (file) => file.CopyTo(targetDir, overwrite: overwrite));
+            var paths = sourceFiles.Select(file => file.FullName).ToList();
+            targetDir.CreateIfNotExists();
+            PowerShellConsole.CopyItem(paths, targetDir.FullName, force: overwrite, recurse: false);
         }
 
         public static void CopyTo(this FileInfo file, DirectoryInfo targetDir, bool overwrite = false)
@@ -46,7 +48,7 @@ namespace DotNet.Basics.IO
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
             target.Directory.CreateIfNotExists();
-            File.Copy(source.FullName, target.FullName, overwrite: overwrite);
+            PowerShellConsole.CopyItem(source.FullName, target.FullName, force: overwrite, recurse: false);
             Debug.WriteLine($"{source.FullName} copied to: {target.FullName}");
         }
 
@@ -75,7 +77,7 @@ namespace DotNet.Basics.IO
                 Debug.WriteLine("MoveTo skipped. Target already exists and overwrite is set to false: {0}", targetFile.FullName);
                 return;
             }
-
+            targetFile.Directory.CreateIfNotExists();
             PowerShellConsole.MoveItem(sourceFile.FullName, targetFile.FullName, force: true);
         }
 

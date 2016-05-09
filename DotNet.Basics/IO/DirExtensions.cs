@@ -5,19 +5,16 @@ using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Threading.Tasks;
+using DotNet.Basics.Collections;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {
     public static class DirExtensions
     {
-        public static void CopyTo(this IEnumerable<DirectoryInfo> sourceDirs, DirectoryInfo target)
+        public static void CopyTo(this IEnumerable<DirectoryInfo> sourceDirs, DirectoryInfo target, bool includeSubfolders = true)
         {
-            foreach (var dir in sourceDirs)
-            {
-                var targetFolder = target.ToDir(dir.Name);
-                dir.CopyTo(targetFolder, includeSubfolders: true);
-            }
+            sourceDirs.ForEach(dir => dir.CopyTo(target, includeSubfolders));
         }
 
         public static DirectoryInfo ToDir(this string dir, params string[] paths)
@@ -106,23 +103,7 @@ namespace DotNet.Basics.IO
 
             try
             {
-                //depth first to find out quickly if we have long path exceptions - we want to fail early then
-                target.CreateIfNotExists();
-
-                if (includeSubfolders)
-                {
-                    Parallel.ForEach(source.GetDirectories(), dir =>
-                    {
-                        var nextTargetSubDir = target.ToDir(dir.Name);
-                        nextTargetSubDir.CreateIfNotExists();
-                        dir.CopyTo(nextTargetSubDir, includeSubfolders);
-                    });
-                }
-
-                Parallel.ForEach(source.GetFiles(), file =>
-                {
-                    file.CopyTo(target, overwrite: true);
-                });
+                PowerShellConsole.CopyItem(source.FullName, target.FullName, force: true, recurse: includeSubfolders);
             }
             catch (Exception e)
             {
