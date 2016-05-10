@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
@@ -32,8 +31,8 @@ namespace DotNet.Basics.IO
         }
         public static string ToPath(this string root, params string[] paths)
         {
-            var path = Path.Combine(paths.Select(TrimPath).ToArray());
-            return Path.Combine(TrimPath(root), path);
+            var path = Path.Combine(paths);
+            return Path.Combine(root, path);
         }
 
         public static IList<string> ToPathTokens(this string path)
@@ -42,13 +41,6 @@ namespace DotNet.Basics.IO
                 return new List<string>();
 
             return path.Split(new char[] { _slashDelimiter, _backslashDelimiter }, StringSplitOptions.None);
-        }
-
-        private static string TrimPath(string rawPath)
-        {
-            if (string.IsNullOrWhiteSpace(rawPath))
-                return string.Empty;
-            return rawPath.Trim(_slashDelimiter).Trim(_backslashDelimiter).Trim(_slashDelimiter);
         }
     }
 }

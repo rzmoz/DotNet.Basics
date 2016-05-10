@@ -10,7 +10,8 @@ namespace DotNet.Basics.Tests.IO
     public class PathExtensionsTests
     {
         [Test]
-        [TestCase("With\\Backslash", 2)]
+        [TestCase("With\\Backslash\\", 2)]//dir
+        [TestCase("With\\Backslash", 2)]//file
         [TestCase("With/slash", 2)]
         [TestCase("NoDelimiter", 1)]
         [TestCase("          ", 1)]//spaces
@@ -22,25 +23,32 @@ namespace DotNet.Basics.Tests.IO
             tokens.Count.Should().Be(expectedNoOfTokens);
 
             if (string.IsNullOrEmpty(path) == false)
+            {
                 path.Should().StartWith(tokens.First());
+                path.Should().EndWith(tokens.Last());
+            }
         }
 
         [Test]
-        [TestCase(PathDelimiter.Slash)]
-        [TestCase(PathDelimiter.Backslash)]
-        public void ToPath_PathDelimiter_DelimiterIsSet(PathDelimiter pathDelimiter)
+        [TestCase("//pt101", "pt2", PathDelimiter.Slash)]//file
+        [TestCase("\\pt101", "pt2", PathDelimiter.Backslash)]//file
+        [TestCase("//pt101", "pt2//", PathDelimiter.Slash)]//dir
+        [TestCase("\\pt101", "pt2\\", PathDelimiter.Backslash)]//dir
+        public void ToPath_Combine_PathIsGenerated(string pt1, string pt2, PathDelimiter pathDelimiter)
         {
-            var pathPt1 = "pt1";
-            var pathPt2 = "pt2";
+            var path = pt1.ToPath(pathDelimiter, pt2);
+            var pathRef = pt1.ToPath(pt2).WithDelimiter(pathDelimiter);
 
-            var path = pathPt1.ToPath(pathDelimiter, pathPt2);
-            var pathRef = pathPt1.ToPath(pathPt2).WithDelimiter(pathDelimiter);
+            path.Should().Be(pt1 + GetDelimiter(pathDelimiter) + pt2);
+            path.Should().Be(pathRef);
+        }
+
+        private char GetDelimiter(PathDelimiter pathDelimiter)
+        {
             var delimiter = '/';
             if (pathDelimiter == PathDelimiter.Backslash)
                 delimiter = '\\';
-
-            path.Should().Be(pathPt1 + delimiter + pathPt2);
-            path.Should().Be(pathRef);
+            return delimiter;
         }
     }
 }
