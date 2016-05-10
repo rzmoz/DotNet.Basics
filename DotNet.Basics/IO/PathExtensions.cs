@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DotNet.Basics.Sys;
@@ -26,33 +25,17 @@ namespace DotNet.Basics.IO
             }
         }
 
-        public static string ToPath(this IEnumerable<string> paths)
+        public static string ToPath(this string root, PathDelimiter pathDelimiter = PathDelimiter.Backslash, params string[] paths)
         {
-            var pathsList = paths.Select(CleanPath).ToArray();
-            return Path.Combine(pathsList);
+            return root.ToPath(paths).WithDelimiter(pathDelimiter);
         }
-
-        public static string ToPath(this FileSystemInfo root, params string[] paths)
-        {
-            return root.ToString().ToPath(paths);
-        }
-
         public static string ToPath(this string root, params string[] paths)
         {
-            return ToPath(new[] { root }, paths);
+            var path = Path.Combine(paths.Select(TrimPath).ToArray());
+            return Path.Combine(TrimPath(root), path);
         }
 
-        public static string ToPath(this IEnumerable<string> root, params string[] paths)
-        {
-            var allPaths = new List<string>();
-            if (root != null)
-                allPaths.AddRange(root);
-            if (paths.Any())
-                allPaths.AddRange(paths);
-            return ToPath(allPaths.ToArray());
-        }
-
-        private static string CleanPath(string rawPath)
+        private static string TrimPath(string rawPath)
         {
             if (string.IsNullOrWhiteSpace(rawPath))
                 return string.Empty;
