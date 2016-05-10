@@ -26,7 +26,6 @@ namespace DotNet.Basics.IO
             Debug.WriteLine($"{fsi.FullName} exists:{fsi.Exists}");
             return fsi.Exists;
         }
-
         public static bool DeleteIfExists(this FileSystemInfo fsi)
         {
             if (fsi == null)

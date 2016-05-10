@@ -23,16 +23,15 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         public void Copy_CopySingleFileSourceExists_FileIsCopied()
         {
-            var sourcefile = "IO\\TestSources".ToDir().ToFile("TextFile1.txt");
+            var sourcefile = "IO\\TestSources".ToFile("TextFile1.txt");
             sourcefile.Exists().Should().BeTrue("source file should exist");
 
-            var targetFile = "IO\\TestTargets".ToDir().ToFile($"{sourcefile.Name}");
+            var targetFile = "IO\\TestTargets".ToFile($"{sourcefile.Name}");
             targetFile.DeleteIfExists();
             targetFile.Exists().Should().BeFalse("target file should not exist before copy");
-            var result = Robocopy.CopyFile(sourcefile.Directory.FullName, targetFile.Directory.FullName,sourcefile.Name);
+            var result = Robocopy.CopyFile(sourcefile.FullName, targetFile.Directory.FullName);
             result.Should().BeLessThan(8); //http://ss64.com/nt/robocopy-exit.html
             targetFile.Exists().Should().BeTrue("target file is copied");
         }
-
     }
 }

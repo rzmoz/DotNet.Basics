@@ -6,7 +6,7 @@ using DotNet.Basics.Collections;
 
 namespace DotNet.Basics.Sys
 {
-    public static class PowerShellConsole
+    public class PowerShellConsole
     {
         private const string _silentlyContinueErrorAction = "SilentlyContinue";
 

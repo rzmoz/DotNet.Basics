@@ -34,17 +34,18 @@ namespace DotNet.Basics.IO
             command += options ?? string.Empty;
             return CommandPrompt.Run(command);
         }
-
+        
         /// <summary>
         /// http://ss64.com/nt/robocopy.html
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static int CopyFile(string sourceDir, string targetDir, string file, string extraOptions = null)
+        public static int CopyFile(string sourceFile, string targetDir, string extraOptions = null)
         {
-            if (string.IsNullOrEmpty(file))
-                throw new ArgumentException(nameof(file));
-            return Run(sourceDir, targetDir, file, extraOptions);
+            if (targetDir == null) throw new ArgumentNullException(nameof(targetDir));
+            if (string.IsNullOrEmpty(sourceFile)) throw new ArgumentException(nameof(sourceFile));
+            var file = sourceFile.ToFile();
+            return Run(file.Directory.FullName, targetDir, file.Name, extraOptions);
         }
 
         /// <summary>
