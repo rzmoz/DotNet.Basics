@@ -69,7 +69,6 @@
     <Compile Include="Diagnostics\ProfileStates.cs" />
     <Compile Include="Ioc\IocContainer.cs" />
     <Compile Include="Ioc\IIocRegistrations.cs" />
-    <Compile Include="IO\Cmd.cs" />
     <Compile Include="IO\DirExtensions.cs" />
     <Compile Include="IO\FileExtensions.cs" />
     <Compile Include="IO\FileSystemInfoExtensions.cs" />
