@@ -40,10 +40,11 @@ Function Revert-AssemblyInfoVersions
   }
   Write-host "Assembly infos reverted"
 }
-
-#init settings
+##*********** Init ***********##
 $parameters = Get-Content -Raw -Path .\RC.Params.json | ConvertFrom-Json
 
+$artifactsDir = ".\Artifacts"
+Write-Host "aritfacts dir: $artifactsDir"  -foregroundcolor green
 $branch = git rev-parse --abbrev-ref HEAD
 Write-Host "branch: $branch"  -foregroundcolor green
 $commitHash = git rev-parse --verify HEAD
@@ -67,23 +68,36 @@ $slnPath = $parameters."sln.path"
 Write-Host "sln.path: $slnPath" -foregroundcolor green
 $msbuildConfiguration = $parameters."msbuild.configuration"
 Write-Host "msbuild.configuration: $msbuildConfiguration" -foregroundcolor green
+$nugetTargets = $parameters."nuget.targets"
+foreach($nugetTarget in $nugetTargets.path) {
+    Write-Host "nuget.target: $nugetTarget" -foregroundcolor green
+}
+
+##*********** Build ***********##
+
 
 #clean repo for release - this will fail if everything is not committed
 #https://git-scm.com/docs/git-clean
 git clean -d -x -f
 
-
 #patch assembly infos
-$assemblyInformationalVersionPresenceInAllFiles = $true
 $assemblyInfos = Get-ChildItem .\ -Filter "AssemblyInfo.cs" -recurse | Where-Object { $_.Attributes -ne "Directory"} 
 $assemblyInfos | Update-AssemblyInfoVersions $versionAssembly $semver20
 
 #restore nugets
+#https://docs.nuget.org/consume/command-line-reference
 & ".\nuget.exe" restore $slnPath
 
 #build sln
 & "C:\Program Files (x86)\MSBuild\14.0\Bin\amd64\MSBuild.exe" $slnPath /t:rebuild /p:Configuration=$msbuildConfiguration
 
-
 #revert assembly info
 $assemblyInfos | Revert-AssemblyInfoVersions
+
+New-Item $artifactsDir -ItemType Directory
+
+#create nuget
+foreach($nugetTarget in $nugetTargets.path) {
+#https://docs.nuget.org/consume/command-line-reference
+    & ".\nuget.exe" pack $nugetTarget -Properties "Configuration=$msbuildConfiguration;Platform=AnyCPU" -version $semver10 -OutputDirectory $artifactsDir
+}

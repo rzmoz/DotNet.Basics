@@ -3,11 +3,11 @@
 	"version.prerelease":"rc",
 	"sln.path": "DotNet.Basics.sln",
 	"msbuild.configuration":"release",
-	"nuget.builds": {
-		"name":"DotNet.Basics\\DotNet.Basics.csproj"
-	},
+	"nuget.targets": [
+		{"path":"DotNet.Basics\\DotNet.Basics.csproj"}
+	],
 	"tests.assemblies":"**\\*.Tests.dll",
-	"artifacts.paths":{
-		"name":"*.nupkg"
-	}
+	"artifacts.paths":[
+		{ "name":"*.nupkg"} 
+	]
 }
