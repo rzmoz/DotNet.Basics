@@ -68,6 +68,9 @@ Write-Host "sln.path: $slnPath" -foregroundcolor green
 $msbuildConfiguration = $parameters."msbuild.configuration"
 Write-Host "msbuild.configuration: $msbuildConfiguration" -foregroundcolor green
 
+#clean repo for release - this will fail if everything is not committed
+git clean -n x
+
 
 #patch assembly infos
 $assemblyInformationalVersionPresenceInAllFiles = $true
