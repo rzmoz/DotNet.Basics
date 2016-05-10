@@ -1,6 +1,5 @@
 Import-Module .\AssemblyInfo.Cmdlets.psm1 -verbose -force
 
-
 ##*********** Init ***********##
 $parameters = Get-Content -Raw -Path .\RC.Params.json | ConvertFrom-Json
 
@@ -41,10 +40,7 @@ foreach ($o in $input) {
     Write-Host $o -foregroundcolor blue
 }
 
-
 ##*********** Build ***********##
-
-
 
 #clean repo for release - this will fail if everything is not committed
 #https://git-scm.com/docs/git-clean
@@ -83,10 +79,12 @@ $choices.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentL
 
 $decision = $Host.UI.PromptForChoice($message, $question, $choices, 1)
 if ($decision -eq 0) {
-    $apiKey = Read-Host "Please enter nuget API key:"
+    $apiKey = Read-Host "Please enter nuget API key"
     #https://docs.nuget.org/consume/command-line-reference
-    Get-ChildItem $artifactsDir -Filter "*.nupkg" | 
-        & ".\nuget.exe" push $_.FullName -ApiKey $apiKey -Source "https://api.nuget.org/v3" -NonInteractive
+    Get-ChildItem $artifactsDir -Filter "*.nupkg" | % { 
+            Write-Host $_.FullName -ForegroundColor yellow
+            & ".\nuget.exe" push $_.FullName -ApiKey $apiKey -Source "https://api.nuget.org/v3/index.json" -NonInteractive              
+        }
 } else {
-    Write-Host "push to nuget dismissed" -ForegroundColor yellow
+    Write-Host "Push to nuget dismissed" -ForegroundColor yellow
 }
