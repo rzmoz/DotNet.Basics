@@ -28,6 +28,7 @@ Function Update-AssemblyInfoVersions
         % { $_ -replace $patternAssemblyInformationalVersion, $replacePatternAssemblyInformationalVersion }
      Set-Content $o.FullName -Value $updated -Force
   }
+  Write-Host "Assembly infos updated"
 }
 Function Revert-AssemblyInfoVersions
 {
@@ -62,12 +63,23 @@ if(-Not [string]::IsNullOrWhiteSpace($versionPrerelase)) {
 Write-Host "semVer10: $semver10" -foregroundcolor green
 $semver20 = "$semver10+$commitsSinceInit.$commitHash"
 Write-Host "semVer20: $semver20" -foregroundcolor green
+$slnPath = $parameters."sln.path"
+Write-Host "sln.path: $slnPath" -foregroundcolor green
+$msbuildConfiguration = $parameters."msbuild.configuration"
+Write-Host "msbuild.configuration: $msbuildConfiguration" -foregroundcolor green
+
 
 #patch assembly infos
 $assemblyInformationalVersionPresenceInAllFiles = $true
-
 $assemblyInfos = Get-ChildItem .\ -Filter "AssemblyInfo.cs" -recurse | Where-Object { $_.Attributes -ne "Directory"} 
-
 $assemblyInfos | Update-AssemblyInfoVersions $versionAssembly $semver20
-Write-Host "Assembly infos updated"
+
+#restore nugets
+& ".\nuget.exe" restore $slnPath
+
+#build sln
+& "C:\Program Files (x86)\MSBuild\14.0\Bin\amd64\MSBuild.exe" $slnPath /t:rebuild /p:Configuration=$msbuildConfiguration
+
+
+#revert assembly info
 $assemblyInfos | Revert-AssemblyInfoVersions
