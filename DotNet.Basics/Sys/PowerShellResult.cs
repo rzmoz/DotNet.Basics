@@ -1,12 +1,15 @@
-﻿namespace DotNet.Basics.Sys
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace DotNet.Basics.Sys
 {
     public class PowerShellResult
     {
-        public PowerShellResult(bool hadErrors, object[] passThru, string[] errorMessages)
+        public PowerShellResult(bool hadErrors, IEnumerable<object> passThru, IEnumerable<string> errorMessages = null)
         {
             HadErrors = hadErrors;
-            PassThru = passThru;
-            ErrorMessages = errorMessages;
+            PassThru = passThru?.ToArray();
+            ErrorMessages = errorMessages?.ToArray();
         }
 
         public bool HadErrors { get; }

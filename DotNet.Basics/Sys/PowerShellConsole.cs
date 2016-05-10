@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
+using System.Management.Automation.Runspaces;
+using System.Threading;
 using DotNet.Basics.Collections;
 
 namespace DotNet.Basics.Sys
@@ -86,25 +88,13 @@ namespace DotNet.Basics.Sys
             Debug.WriteLine($"Running script: {script}");
             using (var ps = PowerShell.Create())
             {
-                var execute = _bypassExecutionPolicy + Environment.NewLine + script;
-                ps.AddScript(execute);
-                return GetResult(ps);
+                ps.AddScript(_bypassExecutionPolicy);
+                ps.AddScript(script);
+
+                var passThrus = ps.Invoke();
+                return new PowerShellResult(true, passThrus.Select(pt => pt.BaseObject));
             }
         }
-
-        private static PowerShellResult GetResult(PowerShell ps)
-        {
-            var result = ps.Invoke();
-            var objectPassThru = result.SelectMany(pso => pso.Members).Select(member => member.Value).ToArray();
-            var errorMessages = ps.Streams.Error.Select(rec =>
-            {
-                if (rec.Exception != null)
-                    return rec.Exception.ToString();
-                return rec.ErrorDetails.Message;
-            }).ToArray();
-            return new PowerShellResult(ps.Streams.Error.Count > 0, objectPassThru, errorMessages);
-        }
-
         private const string _bypassExecutionPolicy = "Set-ExecutionPolicy Bypass -Scope Process";
     }
 }
