@@ -91,6 +91,7 @@
     <Compile Include="Collections\DictionaryKeyMode.cs" />
     <Compile Include="Collections\StringPair.cs" />
     <Compile Include="Collections\StringDictionary.cs" />
+    <Compile Include="Sys\PathDelimiter.cs" />
     <Compile Include="Sys\PowerShellCmdlet.cs" />
     <Compile Include="Sys\PowerShellConsole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -110,7 +111,6 @@
     <Compile Include="Tasks\RepeaterTask.cs" />
     <Compile Include="Tasks\TimeoutLoopBreakPredicate.cs" />
     <Compile Include="Sys\TimeSpanExtensions.cs" />
-    <Compile Include="Sys\UriExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DotNet.Basics.nuspec" />
