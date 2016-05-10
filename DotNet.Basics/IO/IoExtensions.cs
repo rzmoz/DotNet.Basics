@@ -9,13 +9,12 @@ namespace DotNet.Basics.IO
         public static FileInfo WriteAllText(this string content, FileInfo targetFile)
         {
             if (content == null) throw new ArgumentNullException(nameof(content));
-            if (targetFile == null)
-                throw new ArgumentNullException(nameof(targetFile));
+            if (targetFile == null) throw new ArgumentNullException(nameof(targetFile));
 
             targetFile.Directory.CreateIfNotExists();
 
             File.WriteAllText(targetFile.FullName, content);
-            Debug.WriteLine($"Saved string to disk at: {targetFile.FullName}");
+            Debug.WriteLine($"Saved text to disk: {targetFile.FullName}");
             return targetFile;
         }
 
