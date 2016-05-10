@@ -69,7 +69,8 @@ $msbuildConfiguration = $parameters."msbuild.configuration"
 Write-Host "msbuild.configuration: $msbuildConfiguration" -foregroundcolor green
 
 #clean repo for release - this will fail if everything is not committed
-git clean -n x
+#https://git-scm.com/docs/git-clean
+git clean -d -x -f
 
 
 #patch assembly infos
