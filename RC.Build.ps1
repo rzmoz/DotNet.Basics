@@ -60,6 +60,12 @@ $assemblyInfos | Update-AssemblyInfoVersions $versionAssembly $semver20
 #revert assembly info
 $assemblyInfos | Undo-AssemblyInfoVersions
 
+#run unit tests
+#https://github.com/nunit/dev/wiki/Command-Line-Options
+& ".nunit3-console.exe" 
+
+<#
+
 #create aritfacts dir
 New-Item $artifactsDir -ItemType Directory
 
@@ -88,3 +94,4 @@ if ($decision -eq 0) {
 } else {
     Write-Host "Push to nuget dismissed" -ForegroundColor yellow
 }
+#>
