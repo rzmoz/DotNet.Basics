@@ -42,6 +42,8 @@ foreach ($o in $input) {
 
 ##*********** Build ***********##
 
+<#
+
 #clean repo for release - this will fail if everything is not committed
 #https://git-scm.com/docs/git-clean
 git clean -d -x -f
@@ -60,9 +62,15 @@ $assemblyInfos | Update-AssemblyInfoVersions $versionAssembly $semver20
 #revert assembly info
 $assemblyInfos | Undo-AssemblyInfoVersions
 
+#>
+
 #run unit tests
 #https://github.com/nunit/dev/wiki/Command-Line-Options
-& ".\nunit3-console.exe" "$testAssemblies"
+$testAssembliesUnfolded = Get-ChildItem .\ -Filter $testAssemblies -Recurse | Where-Object { $_.Attributes -ne "Directory"} 
+foreach($testAssembly in $testAssembliesUnfolded.FullName){
+    Write-Host "Testing $testAssembly"
+    & "C:\Users\rar\OneDrive\Dev\nunit\nunit3-console.exe" "$testAssembly"
+}
 
 <#
 
