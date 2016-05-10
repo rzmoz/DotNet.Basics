@@ -104,7 +104,7 @@
     <Compile Include="Diagnostics\InMemLoggerTests.cs" />
     <Compile Include="Sys\EnumExtensionsTests.cs" />
     <Compile Include="Sys\ObservableTests.cs" />
-    <Compile Include="Sys\StringExtensionsTests.cs" />
+    <Compile Include="Sys\SysExtensionsTests.cs" />
     <Compile Include="Tasks\OnceOnlyActionTests.cs" />
     <Compile Include="Tasks\ThrowExceptionUntilXTriesDummeTask.cs" />
     <Compile Include="Tasks\RepeaterTaskTests.cs" />

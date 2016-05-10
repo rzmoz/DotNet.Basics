@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using DotNet.Basics.Sys;
 using FluentAssertions;
 using NUnit.Framework;
@@ -6,11 +7,23 @@ using NUnit.Framework;
 namespace DotNet.Basics.Tests.Sys
 {
     [TestFixture]
-    public class StringExtensionsTests
+    public class SysExtensionsTests
     {
         const string _str = "myStr";
         const string _prefix = "myPrefix";
         const string _postfix = "myPostfix";
+
+        [Test]
+        public void ToStream_ConvertToStream_StreamIsGenerated()
+        {
+            const string myString = "sdfsfsfsdf";
+            using (var stream = myString.ToStream())
+            {
+                var result = new StreamReader(stream).ReadToEnd();
+                result.Should().Be(myString);
+            }
+        }
+
 
         [Test]
         public void TryFormat_FormatIsNull_ResultIsStringEmpty()

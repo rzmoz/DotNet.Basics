@@ -9,6 +9,18 @@ namespace DotNet.Basics.Sys
 {
     public static class SysExtensions
     {
+        public static Stream ToStream(this string str)
+        {
+            if (str == null) throw new ArgumentNullException(nameof(str));
+            MemoryStream stream = new MemoryStream();
+            StreamWriter writer = new StreamWriter(stream);
+            writer.Write(str);
+            writer.Flush();
+            stream.Position = 0;
+            return stream;
+        }
+
+
         public static string ToHash(this string text, HashAlgorithm hashAlgorithm)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(text);
