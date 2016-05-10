@@ -1,52 +1,14 @@
-Function Update-AssemblyInfoVersions
-{
-  Param (
-  [string]$Version,[
-  string]$SemVer20)
-  
-  foreach ($o in $input)
-  {
-    $fullName=$o.FullName
-    Write-host "Updating $fullName"
-    $TmpFile = $o.FullName + ".tmp"   
-    Write-host "Backup: $TmpFile"  -ForegroundColor DarkGray
+Import-Module .\AssemblyInfo.Cmdlets.psm1 -verbose -force
 
-    #backup file for reverting later
-    Copy-Item $o.FullName $TmpFile
 
-    [regex]$patternAssemblyVersion = "(AssemblyVersion\("")(\d+\.\d+\.\d+\.\d+)(""\))"
-    $replacePatternAssemblyVersion = "`${1}$($Version)`$3"
-    [regex]$patternAssemblyFileVersion = "(AssemblyFileVersion\("")(\d+\.\d+\.\d+\.\d+)(""\))"
-    $replacePatternAssemblyFileVersion = "`${1}$($Version)`$3"
-    [regex]$patternAssemblyInformationalVersion = "(AssemblyInformationalVersion\("")(\d+\.\d+\.\d+\.\d+)(""\))"
-    $replacePatternAssemblyInformationalVersion = "`${1}$($SemVer20)`$3"
-
-     # run the regex replace        
-     $updated = Get-Content -Path $o.FullName |
-        % { $_ -replace $patternAssemblyVersion, $replacePatternAssemblyVersion } |
-        % { $_ -replace $patternAssemblyFileVersion, $replacePatternAssemblyFileVersion } |
-        % { $_ -replace $patternAssemblyInformationalVersion, $replacePatternAssemblyInformationalVersion }
-     Set-Content $o.FullName -Value $updated -Force
-  }
-  Write-Host "Assembly infos updated"
-}
-Function Revert-AssemblyInfoVersions
-{
-  foreach ($o in $input)
-  {
-    $TmpFile = $o.FullName + ".tmp"   
-    Write-host "Reverting $TmpFile"
-    Move-Item  $TmpFile $o.FullName -Force
-  }
-  Write-host "Assembly infos reverted"
-}
 ##*********** Init ***********##
 $parameters = Get-Content -Raw -Path .\RC.Params.json | ConvertFrom-Json
 
+Write-Host "nuget API key: $nugetApiKey" -foregroundcolor green
 $artifactsDir = ".\Artifacts"
-Write-Host "aritfacts dir: $artifactsDir"  -foregroundcolor green
+Write-Host "aritfacts dir: $artifactsDir" -foregroundcolor green
 $branch = git rev-parse --abbrev-ref HEAD
-Write-Host "branch: $branch"  -foregroundcolor green
+Write-Host "branch: $branch" -foregroundcolor green
 $commitHash = git rev-parse --verify HEAD
 Write-Host "hash: $commitHash" -foregroundcolor green
 $shortHash = git log --pretty=format:'%h' -n 1
@@ -68,12 +30,20 @@ $slnPath = $parameters."sln.path"
 Write-Host "sln.path: $slnPath" -foregroundcolor green
 $msbuildConfiguration = $parameters."msbuild.configuration"
 Write-Host "msbuild.configuration: $msbuildConfiguration" -foregroundcolor green
+$testAssemblies = $parameters."test.assemblies"
+Write-Host "test.assemblies: $testAssemblies" -foregroundcolor green
 $nugetTargets = $parameters."nuget.targets"
 foreach($nugetTarget in $nugetTargets.path) {
     Write-Host "nuget.target: $nugetTarget" -foregroundcolor green
 }
 
+foreach ($o in $input) {
+    Write-Host $o -foregroundcolor blue
+}
+
+
 ##*********** Build ***********##
+
 
 
 #clean repo for release - this will fail if everything is not committed
@@ -92,12 +62,31 @@ $assemblyInfos | Update-AssemblyInfoVersions $versionAssembly $semver20
 & "C:\Program Files (x86)\MSBuild\14.0\Bin\amd64\MSBuild.exe" $slnPath /t:rebuild /p:Configuration=$msbuildConfiguration
 
 #revert assembly info
-$assemblyInfos | Revert-AssemblyInfoVersions
+$assemblyInfos | Undo-AssemblyInfoVersions
 
+#create aritfacts dir
 New-Item $artifactsDir -ItemType Directory
 
-#create nuget
+#create nugets and place in artifacts dir
 foreach($nugetTarget in $nugetTargets.path) {
 #https://docs.nuget.org/consume/command-line-reference
     & ".\nuget.exe" pack $nugetTarget -Properties "Configuration=$msbuildConfiguration;Platform=AnyCPU" -version $semver10 -OutputDirectory $artifactsDir
+}
+
+#pust to nuget.org
+$message  = 'Pust to nuget.org'
+$question = 'Do you want to publish nuget packages to nuget.org?'
+
+$choices = New-Object Collections.ObjectModel.Collection[Management.Automation.Host.ChoiceDescription]
+$choices.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&Yes'))
+$choices.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&No'))
+
+$decision = $Host.UI.PromptForChoice($message, $question, $choices, 1)
+if ($decision -eq 0) {
+    $apiKey = Read-Host "Please enter nuget API key:"
+    #https://docs.nuget.org/consume/command-line-reference
+    Get-ChildItem $artifactsDir -Filter "*.nupkg" | 
+        & ".\nuget.exe" push $_.FullName -ApiKey $apiKey -Source "https://api.nuget.org/v3" -NonInteractive
+} else {
+    Write-Host "push to nuget dismissed" -ForegroundColor yellow
 }
