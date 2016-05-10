@@ -9,7 +9,7 @@ namespace DotNet.Basics.Tests.Sys
     [TestFixture]
     public class PowerShellConsoleTests
     {
-        [Test, Ignore("Not being picked up in error streams not invocation state")]
+        [Test, Ignore("Errors are not detected in error streams not invocation state.. Dont know why")]
         public void Results_HadErros_ErrorsFound()
         {
             string script = $"Copy-Item asdAsdasd asd asd asd asd asd asd"; //cmdlet with invalid arguments
