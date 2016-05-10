@@ -13,6 +13,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("With\\Backslash", 2)]
         [TestCase("With/slash", 2)]
         [TestCase("NoDelimiter", 1)]
+        [TestCase("          ", 1)]//spaces
         [TestCase("", 0)]//empty
         [TestCase(null, 0)]//empty
         public void ToPathTokens_Tokenize_PathIsSplit(string path, int expectedNoOfTokens)
