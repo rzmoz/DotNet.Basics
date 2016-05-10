@@ -4,10 +4,12 @@ Function Update-AssemblyInfoVersions
   [string]$Version,[
   string]$SemVer20)
   
+  Write-Host "Updating AssemblyInfos"
+
   foreach ($o in $input)
   {
     $fullName=$o.FullName
-    Write-host "Updating $fullName"
+    Write-host "Updating $fullName" -ForegroundColor DarkGray
     $TmpFile = $o.FullName + ".tmp"   
     Write-host "Backup: $TmpFile"  -ForegroundColor DarkGray
 
@@ -28,15 +30,14 @@ Function Update-AssemblyInfoVersions
         % { $_ -replace $patternAssemblyInformationalVersion, $replacePatternAssemblyInformationalVersion }
      Set-Content $o.FullName -Value $updated -Force
   }
-  Write-Host "Assembly infos updated"
 }
 Function Undo-AssemblyInfoVersions
 {
+Write-host "Reverting assemblyInfos"
   foreach ($o in $input)
   {
     $TmpFile = $o.FullName + ".tmp"   
-    Write-host "Reverting $TmpFile"
+    Write-host "Reverting $TmpFile" -ForegroundColor DarkGray
     Move-Item  $TmpFile $o.FullName -Force
   }
-  Write-host "Assembly infos reverted"
 }
