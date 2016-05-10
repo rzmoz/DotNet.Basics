@@ -1,4 +1,5 @@
-﻿using DotNet.Basics.IO;
+﻿using System.Linq;
+using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using FluentAssertions;
 using NUnit.Framework;
@@ -8,6 +9,21 @@ namespace DotNet.Basics.Tests.IO
     [TestFixture]
     public class PathExtensionsTests
     {
+        [Test]
+        [TestCase("With\\Backslash", 2)]
+        [TestCase("With/slash", 2)]
+        [TestCase("NoDelimiter", 1)]
+        [TestCase("", 0)]//empty
+        [TestCase(null, 0)]//empty
+        public void ToPathTokens_Tokenize_PathIsSplit(string path, int expectedNoOfTokens)
+        {
+            var tokens = path.ToPathTokens();
+            tokens.Count.Should().Be(expectedNoOfTokens);
+
+            if (string.IsNullOrEmpty(path) == false)
+                path.Should().StartWith(tokens.First());
+        }
+
         [Test]
         [TestCase(PathDelimiter.Slash)]
         [TestCase(PathDelimiter.Backslash)]
