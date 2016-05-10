@@ -6,9 +6,11 @@ Function Update-AssemblyInfoVersions
   
   foreach ($o in $input)
   {
-    Write-host $o.FullName -foregroundcolor green
+    $fullName=$o.FullName
+    Write-host "Updating $fullName"
     $TmpFile = $o.FullName + ".tmp"   
-  
+    Write-host "Backup: $TmpFile"  -ForegroundColor DarkGray
+
     #backup file for reverting later
     Copy-Item $o.FullName $TmpFile
 
@@ -20,16 +22,22 @@ Function Update-AssemblyInfoVersions
     $replacePatternAssemblyInformationalVersion = "`${1}$($SemVer20)`$3"
 
      # run the regex replace        
-     Get-Content -Path $o.FullName |
+     $updated = Get-Content -Path $o.FullName |
         % { $_ -replace $patternAssemblyVersion, $replacePatternAssemblyVersion } |
         % { $_ -replace $patternAssemblyFileVersion, $replacePatternAssemblyFileVersion } |
         % { $_ -replace $patternAssemblyInformationalVersion, $replacePatternAssemblyInformationalVersion }
-     <#
-    Get-Content -Path $o.FullName | % { $_ -replace $patternAssemblyVersion, $replacePatternAssemblyVersion }
-    Get-Content -Path $o.FullName | % { $_ -replace $patternAssemblyFileVersion, $replacePatternAssemblyFileVersion } 
-    Get-Content -Path $o.FullName | % { $_ -replace $patternAssemblyInformationalVersion, $replacePatternAssemblyInformationalVersion } 
-    #>
+     Set-Content $o.FullName -Value $updated -Force
   }
+}
+Function Revert-AssemblyInfoVersions
+{
+  foreach ($o in $input)
+  {
+    $TmpFile = $o.FullName + ".tmp"   
+    Write-host "Reverting $TmpFile"
+    Move-Item  $TmpFile $o.FullName -Force
+  }
+  Write-host "Assembly infos reverted"
 }
 
 #init settings
@@ -58,5 +66,8 @@ Write-Host "semVer20: $semver20" -foregroundcolor green
 #patch assembly infos
 $assemblyInformationalVersionPresenceInAllFiles = $true
 
-Get-ChildItem .\ -Filter "AssemblyInfo.cs" -recurse | Where-Object { $_.Attributes -ne "Directory"} |
-    Update-AssemblyInfoVersions $versionAssembly $semver20
+$assemblyInfos = Get-ChildItem .\ -Filter "AssemblyInfo.cs" -recurse | Where-Object { $_.Attributes -ne "Directory"} 
+
+$assemblyInfos | Update-AssemblyInfoVersions $versionAssembly $semver20
+Write-Host "Assembly infos updated"
+$assemblyInfos | Revert-AssemblyInfoVersions
