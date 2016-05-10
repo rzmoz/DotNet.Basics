@@ -62,7 +62,7 @@ $assemblyInfos | Undo-AssemblyInfoVersions
 
 #run unit tests
 #https://github.com/nunit/dev/wiki/Command-Line-Options
-& ".nunit3-console.exe" 
+& ".\nunit3-console.exe" "$testAssemblies"
 
 <#
 
