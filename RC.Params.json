@@ -1,0 +1,13 @@
+{
+	"version.assembly":"2.0.0",
+	"version.prerelease":"rc",
+	"sln.path": "DotNet.Basics.sln",
+	"msbuild.configuration":"release",
+	"nuget.builds": {
+		"name":"DotNet.Basics\\DotNet.Basics.csproj"
+	},
+	"tests.assemblies":"**\\*.Tests.dll",
+	"artifacts.paths":{
+		"name":"*.nupkg"
+	}
+}
