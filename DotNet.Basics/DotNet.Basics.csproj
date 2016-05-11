@@ -67,7 +67,6 @@
     <Compile Include="Diagnostics\MediatorLogger.cs" />
     <Compile Include="Diagnostics\LogEntry.cs" />
     <Compile Include="Diagnostics\ProfileStates.cs" />
-    <Compile Include="Diagnostics\ReadOnlyInMemLogger.cs" />
     <Compile Include="Ioc\IocContainer.cs" />
     <Compile Include="Ioc\IIocRegistrations.cs" />
     <Compile Include="IO\DirExtensions.cs" />

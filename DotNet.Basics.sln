@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics", "DotNet.Basics\DotNet.Basics.csproj", "{A0144B4E-EE9C-4914-82F1-DCC0D9D5196F}"
 EndProject
@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.Tests.Console
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AppVeyor", "AppVeyor", "{CF5747AC-FFBB-4D69-96B8-447202608D3A}"
 	ProjectSection(SolutionItems) = preProject
-		appveyor.yml = appveyor.yml
+		RC.Params.json = RC.Params.json
 	EndProjectSection
 EndProject
 Global
