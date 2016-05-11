@@ -22,6 +22,30 @@ namespace DotNet.Basics.Tests.IO
             path.Should().Be(pathRef);
         }
 
+        [Test]
+        [TestCase("pt101", "pt2")]//file
+        [TestCase("pt101", "pt2")]//file
+        public void ToIoPath_Combine_PathIsGenerated(string pt1, string pt2)
+        {
+            var expectedPath = pt1 + PathExtensions.BackslashDelimiter + pt2;
+
+            var path = pt1.ToIoPath(pt2);
+
+            path.Should().Be(expectedPath);
+        }
+
+        [Test]
+        [TestCase("pt101", "pt2")]//file
+        [TestCase("pt101", "pt2")]//file
+        public void ToUriPath_Combine_PathIsGenerated(string pt1, string pt2)
+        {
+            var expectedPath = pt1 + PathExtensions.SlashDelimiter + pt2;
+
+            var path = pt1.ToUriPath(pt2);
+
+            path.Should().Be(expectedPath);
+        }
+
         private char GetDelimiter(PathDelimiter pathDelimiter)
         {
             var delimiter = PathExtensions.SlashDelimiter;

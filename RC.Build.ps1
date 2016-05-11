@@ -39,7 +39,7 @@ foreach($nugetTarget in $nugetTargets.path) {
 
 ##*********** Build ***********##
 
-<#
+
 
 #clean repo for release - this will fail if everything is not committed
 #https://git-scm.com/docs/git-clean
@@ -62,7 +62,7 @@ Write-Host "Building $slnPath"
 #revert assembly info
 $assemblyInfos | Undo-AssemblyInfoVersions
 
-#>
+
 
 #clean artifacts dir if exists
 if(Test-Path $artifactsDir) { Remove-Item "$artifactsDir\*" -Force | Write-Host -ForegroundColor DarkGray }

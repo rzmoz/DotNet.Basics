@@ -11,7 +11,7 @@ namespace DotNet.Basics.IO
         public static string ToPath(this string root, PathDelimiter pathDelimiter, params string[] paths)
         {
             var path = Path.Combine(paths);
-            path = Path.Combine(root, path);
+            path = Path.Combine(root, path.TrimStart(SlashDelimiter).TrimStart(BackslashDelimiter).TrimStart(SlashDelimiter));
 
             switch (pathDelimiter)
             {
@@ -32,7 +32,7 @@ namespace DotNet.Basics.IO
         /// <returns></returns>
         public static string ToUriPath(this string root, params string[] paths)
         {
-            return root.ToPath(PathDelimiter.Slash);
+            return root.ToPath(PathDelimiter.Slash, paths);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace DotNet.Basics.IO
         /// <returns></returns>
         public static string ToIoPath(this string root, params string[] paths)
         {
-            return root.ToPath(PathDelimiter.Backslash);
+            return root.ToPath(PathDelimiter.Backslash, paths);
         }
     }
 }
