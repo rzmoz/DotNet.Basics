@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.Sys
+﻿namespace DotNet.Basics.IO
 {
     public enum PathDelimiter
     {

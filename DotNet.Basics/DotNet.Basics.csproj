@@ -67,6 +67,7 @@
     <Compile Include="Diagnostics\MediatorLogger.cs" />
     <Compile Include="Diagnostics\LogEntry.cs" />
     <Compile Include="Diagnostics\ProfileStates.cs" />
+    <Compile Include="Diagnostics\ReadOnlyInMemLogger.cs" />
     <Compile Include="Ioc\IocContainer.cs" />
     <Compile Include="Ioc\IIocRegistrations.cs" />
     <Compile Include="IO\DirExtensions.cs" />
@@ -90,7 +91,7 @@
     <Compile Include="Collections\DictionaryKeyMode.cs" />
     <Compile Include="Collections\StringPair.cs" />
     <Compile Include="Collections\StringDictionary.cs" />
-    <Compile Include="Sys\PathDelimiter.cs" />
+    <Compile Include="IO\PathDelimiter.cs" />
     <Compile Include="Sys\PowerShellCmdlet.cs" />
     <Compile Include="Sys\PowerShellConsole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

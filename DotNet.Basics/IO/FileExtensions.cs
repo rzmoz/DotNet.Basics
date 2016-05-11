@@ -19,12 +19,12 @@ namespace DotNet.Basics.IO
 
         public static FileInfo ToFile(this string dir, params string[] paths)
         {
-            return new FileInfo(dir.ToPath(paths));
+            return new FileInfo(dir.ToIoPath(paths));
         }
 
         public static FileInfo ToFile(this DirectoryInfo dir, params string[] paths)
         {
-            return new FileInfo(dir.FullName.ToPath(paths));
+            return new FileInfo(dir.FullName.ToIoPath(paths));
         }
 
         public static void CopyTo(this IEnumerable<FileInfo> sourceFiles, DirectoryInfo targetDir, bool overwrite = false)

@@ -18,7 +18,7 @@ namespace DotNet.Basics.IO
 
         public static DirectoryInfo ToDir(this string dir, params string[] paths)
         {
-            return new DirectoryInfo(dir.ToPath(paths));
+            return new DirectoryInfo(dir.ToIoPath(paths));
         }
 
         public static DirectoryInfo ToDir(this DirectoryInfo dir, params string[] paths)

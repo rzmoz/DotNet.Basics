@@ -1,46 +1,49 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {
     public static class PathExtensions
     {
-        private const char _slashDelimiter = '/';
-        private const char _backslashDelimiter = '\\';
+        public const char SlashDelimiter = '/';
+        public const char BackslashDelimiter = '\\';
 
-        public static string WithDelimiter(this string path, PathDelimiter pathDelimiter = PathDelimiter.Backslash)
+        public static string ToPath(this string root, PathDelimiter pathDelimiter, params string[] paths)
         {
-            if (path == null)
-                return null;
+            var path = Path.Combine(paths);
+            path = Path.Combine(root, path);
+
             switch (pathDelimiter)
             {
                 case PathDelimiter.Backslash:
-                    return path.Replace(_slashDelimiter, _backslashDelimiter);
+                    return path.Replace(SlashDelimiter, BackslashDelimiter);
                 case PathDelimiter.Slash:
-                    return path.Replace(_backslashDelimiter, _slashDelimiter);
+                    return path.Replace(BackslashDelimiter, SlashDelimiter); ;
                 default:
-                    throw new NotSupportedException($"Path Delimiter not supported:{pathDelimiter}");
+                    throw new NotSupportedException($"Path delimiter not supported: {pathDelimiter}");
             }
         }
 
-        public static string ToPath(this string root, PathDelimiter pathDelimiter = PathDelimiter.Backslash, params string[] paths)
+        /// <summary>
+        /// Path delimiters are slash '/' as usually used in Uris
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="paths"></param>
+        /// <returns></returns>
+        public static string ToUriPath(this string root, params string[] paths)
         {
-            return root.ToPath(paths).WithDelimiter(pathDelimiter);
-        }
-        public static string ToPath(this string root, params string[] paths)
-        {
-            var path = Path.Combine(paths);
-            return Path.Combine(root, path);
+            return root.ToPath(PathDelimiter.Slash);
         }
 
-        public static IList<string> ToPathTokens(this string path)
+        /// <summary>
+        /// Path delimiters are backslash '\' as usually used in file systems
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="paths"></param>
+        /// <returns></returns>
+        public static string ToIoPath(this string root, params string[] paths)
         {
-            if (string.IsNullOrEmpty(path))
-                return new List<string>();
-
-            return path.Split(new char[] { _slashDelimiter, _backslashDelimiter }, StringSplitOptions.None);
+            return root.ToPath(PathDelimiter.Backslash);
         }
     }
 }
