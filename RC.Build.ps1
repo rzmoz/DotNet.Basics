@@ -75,6 +75,16 @@ Write-Host $testAssemblies.FullName
 #https://github.com/nunit/docs/wiki/Console-Command-Line
 & "C:\Users\rar\OneDrive\Dev\nunit\nunit3-console.exe" $testAssemblies.FullName --framework:net-4.5 --result:$testResultsPath | Write-Host -ForegroundColor DarkGray
 
+#get test result
+[xml]$testResults = Get-Content -Path $testResultsPath
+$result = $testResults."test-run".result
+if($result -eq "Passed") {
+    Write-Host "Unit tests: $result" -ForegroundColor Green
+} else {
+    Write-Host "Unit tests: $result!" -ForegroundColor Red
+}
+
+
 <#
 
 #create nugets and place in artifacts dir
