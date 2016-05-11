@@ -23,6 +23,14 @@ namespace DotNet.Basics.Diagnostics
             LogLevel = LogLevel.Debug;
         }
 
+        public void Log(params LogEntry[] entries)
+        {
+            if (entries == null)
+                return;
+            foreach (var logEntry in entries)
+                _entries.Enqueue(logEntry);
+        }
+
         public IReadOnlyCollection<T> Get<T>() where T : LogEntry
         {
             return _entries.OfType<T>().ToList();

@@ -14,6 +14,20 @@ namespace DotNet.Basics.Tests.Diagnostics
     public class InMemLoggerTests
     {
         [Test]
+        public void Log_AddEntryCollection_EntriesAreAdded()
+        {
+            var logger = new InMemLogger();
+            logger.Count.Should().Be(0);
+
+            var logentry = new LogEntry(DateTime.UtcNow, "", LogLevel.Critical);
+
+            logger.Log(logentry, logentry, logentry, logentry, logentry, logentry);
+
+            logger.Count.Should().Be(6);
+        }
+
+
+        [Test]
         public void Flush_LogIsCleared_ExistingLogEntriesAre()
         {
             var logger = new InMemLogger();
