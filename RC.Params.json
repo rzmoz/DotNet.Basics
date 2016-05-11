@@ -2,7 +2,6 @@
 	"version.assembly":"2.0.0",
 	"version.prerelease":"rc",
 	"sln.path": "DotNet.Basics.sln",
-	"msbuild.configuration":"release",
 	"test.assemblies":"*.tests.dll",
 	"nuget.targets": [
 		{"path":"DotNet.Basics\\DotNet.Basics.csproj"}
