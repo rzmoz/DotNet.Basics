@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
+using DotNet.Basics.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -56,7 +57,9 @@ namespace DotNet.Basics.Tests.Diagnostics
             logger.LogError("error");
             logger.LogCritical("critical");
 
-            logger.ToString().Should().Be("Count:6;Failed:True");
+            //act
+            var toString = logger.ToString();
+            toString.Should().Be("Count:6;Debugs:1;Verboses:1;Infos:1;Warnings:1;Errors:1;Criticals:1");
         }
 
         [Test]
@@ -68,7 +71,9 @@ namespace DotNet.Basics.Tests.Diagnostics
 
             logger.Log("failure", logLevel);
 
-            logger.HasFailed().Should().BeTrue(logLevel.ToName());
+            var result = new TaskResult(logger.Entries);
+
+            result.HasFailed.Should().BeTrue(logLevel.ToName());
         }
         [Test]
         [TestCase(LogLevel.Debug)]
@@ -79,9 +84,11 @@ namespace DotNet.Basics.Tests.Diagnostics
         {
             var logger = new InMemLogger();
 
-            logger.Log("not failure", logLevel); 
+            logger.Log("not failure", logLevel);
 
-            logger.HasFailed().Should().BeFalse(logLevel.ToName());
+            var result = new TaskResult(logger.Entries);
+
+            result.HasFailed.Should().BeFalse(logLevel.ToName());
         }
 
         [Test]

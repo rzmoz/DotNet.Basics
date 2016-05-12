@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -7,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Diagnostics
 {
-    public class InMemLogger : DotNetBasicsLogger, IReadOnlyCollection<LogEntry>
+    public class InMemLogger : DotNetBasicsLogger
     {
         private ConcurrentQueue<LogEntry> _entries;
 
@@ -45,20 +44,7 @@ namespace DotNet.Basics.Diagnostics
             return _entries.Where(entry => entry.Level == logLevel).ToList();
         }
 
-        public bool HasFailed()
-        {
-            return _entries.Any(e => e.Level == LogLevel.Error || e.Level == LogLevel.Critical);
-        }
-
-        public IEnumerator<LogEntry> GetEnumerator()
-        {
-            return _entries.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        public IReadOnlyCollection<LogEntry> Entries => _entries;
 
         public void Clear()
         {
@@ -69,7 +55,7 @@ namespace DotNet.Basics.Diagnostics
 
         public override string ToString()
         {
-            return $"Count:{Count};Failed:{HasFailed()}";
+            return $"Count:{Count};Debugs:{GetLogs(LogLevel.Debug).Count};Verboses:{GetLogs(LogLevel.Verbose).Count};Infos:{GetLogs(LogLevel.Information).Count};Warnings:{GetLogs(LogLevel.Warning).Count};Errors:{GetLogs(LogLevel.Error).Count};Criticals:{GetLogs(LogLevel.Critical).Count}";
         }
 
         protected override void Log(LogEntry entry)
