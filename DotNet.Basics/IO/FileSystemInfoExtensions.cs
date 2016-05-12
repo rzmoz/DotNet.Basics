@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Management.Automation;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
 
@@ -26,16 +27,21 @@ namespace DotNet.Basics.IO
             Debug.WriteLine($"{fsi.FullName} exists:{fsi.Exists}");
             return fsi.Exists;
         }
+
         public static bool DeleteIfExists(this FileSystemInfo fsi)
+        {
+            return DeleteIfExists(fsi, 30.Seconds());
+        }
+        public static bool DeleteIfExists(this FileSystemInfo fsi, TimeSpan timeout)
         {
             if (fsi == null)
                 return false;
 
             Repeat.Task(() =>
             {
-                var result = PowerShellConsole.RemoveItem(fsi.FullName, force: true, recurse: true, errorAction: "SilentlyContinue");
+                PowerShellConsole.RemoveItem(fsi.FullName, force: true, recurse: true, errorAction: ActionPreference.SilentlyContinue);
             })
-            .WithTimeout(30.Seconds())
+            .WithTimeout(timeout)
             .WithRetryDelay(3.Seconds())
             .Until(() => fsi.Exists() == false)
             .Now();

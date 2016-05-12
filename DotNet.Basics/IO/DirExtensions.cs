@@ -67,9 +67,14 @@ namespace DotNet.Basics.IO
             {
                 var source = dir;
                 var target = dir.Parent;
-                var moveResult = PowerShellConsole.MoveItem(source.FullName, target.FullName, true);
-                if (moveResult.HadErrors)
+                try
+                {
+                    PowerShellConsole.MoveItem($"{source.FullName}\\*.*", target.FullName, true);
+                }
+                catch (Exception)
+                {
                     Robocopy.Move(source.FullName, target.FullName);
+                }
             }
 
             //we delete the folder if it's empty if everything was moved - otherwise, we don't 
@@ -121,7 +126,7 @@ namespace DotNet.Basics.IO
         {
             if (dir.Exists())
                 return;
-            var result = PowerShellConsole.NewItem(dir.FullName, "Directory", false);
+            PowerShellConsole.NewItem(dir.FullName, "Directory", false);
             Debug.WriteLine($"Created: {dir.FullName}");
         }
 

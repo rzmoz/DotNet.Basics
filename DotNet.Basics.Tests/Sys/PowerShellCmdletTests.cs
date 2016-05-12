@@ -20,7 +20,11 @@ namespace DotNet.Basics.Tests.Sys
             cmdlet.AddParameter(paramKey, arrayValues);
 
             //assert
-            cmdlet.Parameters.Single().Value.ToString().Should().Be("(\"myStr1\",\"myStr2\",\"myStr3\")");
+            for (var i = 0; i < cmdlet.Parameters.Length; i++)
+            {
+                var value = (cmdlet.Parameters.Single().Value as string[])[i].ToString();
+                value.Should().Be($"myStr{i + 1}", value);
+            }
         }
 
         [Test]
@@ -31,13 +35,15 @@ namespace DotNet.Basics.Tests.Sys
             var paramKey = "myKey";
             var paramValue = "myValue";
             var cmdlet = new PowerShellCmdlet(cmdletName);
-
-            //act
             cmdlet.AddParameter(paramKey, paramValue); //full value
+            cmdlet.AddParameter(paramKey, new[] { "1", "2" }); //string array
             cmdlet.AddParameter("Force"); //full value
 
+            //act
+            var script = cmdlet.ToScript();
+
             //assert
-            cmdlet.ToScript().Should().Be($"{cmdletName} -{paramKey} \"{paramValue}\" -Force");
+            script.Should().Be($"{cmdletName} -{paramKey} \"{paramValue}\" -myKey (\"1\",\"2\") -Force");
         }
     }
 }

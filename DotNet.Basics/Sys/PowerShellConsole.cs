@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Management.Automation;
@@ -8,13 +9,11 @@ namespace DotNet.Basics.Sys
 {
     public class PowerShellConsole
     {
-        private const string _silentlyContinueErrorAction = "SilentlyContinue";
-
-        public static PowerShellResult CopyItem(string path, string destination, bool force, bool recurse)
+        public static object[] CopyItem(string path, string destination, bool force, bool recurse)
         {
             return CopyItem(path.ToEnumerable().ToArray(), destination, force, recurse);
         }
-        public static PowerShellResult CopyItem(string[] paths, string destination, bool force, bool recurse)
+        public static object[] CopyItem(string[] paths, string destination, bool force, bool recurse)
         {
             var cmdlet = new PowerShellCmdlet("Copy-Item")
                 .AddParameter("Path", paths)
@@ -24,11 +23,11 @@ namespace DotNet.Basics.Sys
             return RunScript(cmdlet.ToScript());
         }
 
-        public static PowerShellResult RenameItem(string path, string newName, bool force)
+        public static object[] RenameItem(string path, string newName, bool force)
         {
             return RenameItem(path.ToEnumerable().ToArray(), newName, force);
         }
-        public static PowerShellResult RenameItem(string[] paths, string newName, bool force)
+        public static object[] RenameItem(string[] paths, string newName, bool force)
         {
             var cmdlet = new PowerShellCmdlet("Rename-Item")
                 .AddParameter("Path", paths)
@@ -37,11 +36,11 @@ namespace DotNet.Basics.Sys
             return RunScript(cmdlet.ToScript());
         }
 
-        public static PowerShellResult NewItem(string path, string itemType, bool force)
+        public static object[] NewItem(string path, string itemType, bool force)
         {
             return NewItem(path.ToEnumerable().ToArray(), itemType, force);
         }
-        public static PowerShellResult NewItem(string[] paths, string itemType, bool force)
+        public static object[] NewItem(string[] paths, string itemType, bool force)
         {
             var cmdlet = new PowerShellCmdlet("New-Item")
                 .AddParameter("Path", paths)
@@ -50,11 +49,11 @@ namespace DotNet.Basics.Sys
             return RunScript(cmdlet.ToScript());
         }
 
-        public static PowerShellResult RemoveItem(string path, bool force, bool recurse, string errorAction = _silentlyContinueErrorAction)
+        public static object[] RemoveItem(string path, bool force, bool recurse, ActionPreference errorAction = ActionPreference.SilentlyContinue)
         {
             return RemoveItem(path.ToEnumerable().ToArray(), force, recurse, errorAction);
         }
-        public static PowerShellResult RemoveItem(string[] paths, bool force, bool recurse, string errorAction = _silentlyContinueErrorAction)
+        public static object[] RemoveItem(string[] paths, bool force, bool recurse, ActionPreference errorAction = ActionPreference.SilentlyContinue)
         {
             var cmdlet = new PowerShellCmdlet("Remove-Item")
                 .AddParameter("Path", paths)
@@ -64,11 +63,11 @@ namespace DotNet.Basics.Sys
             return RunScript(cmdlet.ToScript());
         }
 
-        public static PowerShellResult MoveItem(string path, string destination, bool force, string errorAction = _silentlyContinueErrorAction)
+        public static object[] MoveItem(string path, string destination, bool force, ActionPreference errorAction = ActionPreference.SilentlyContinue)
         {
             return MoveItem(path.ToEnumerable().ToArray(), destination, force, errorAction);
         }
-        public static PowerShellResult MoveItem(string[] paths, string destination, bool force, string errorAction = _silentlyContinueErrorAction)
+        public static object[] MoveItem(string[] paths, string destination, bool force, ActionPreference errorAction = ActionPreference.SilentlyContinue)
         {
             var cmdlet = new PowerShellCmdlet("Move-Item")
                 .AddParameter("Path", paths)
@@ -78,7 +77,33 @@ namespace DotNet.Basics.Sys
             return RunScript(cmdlet.ToScript());
         }
 
-        public static PowerShellResult RunScript(string script)
+        public static object[] RunCommand(string cmdName, params KeyValuePair<string, object>[] parameters)
+        {
+            if (cmdName == null) throw new ArgumentNullException(nameof(cmdName));
+            var cmdlet = new PowerShellCmdlet(cmdName).AddParameter(parameters);
+            return RunCommand(cmdlet);
+        }
+
+        public static object[] RunCommand(PowerShellCmdlet cmdlet)
+        {
+            if (cmdlet == null) throw new ArgumentNullException(nameof(cmdlet));
+            Debug.WriteLine($"Running command: {cmdlet.ToScript()}");
+            using (var ps = PowerShell.Create())
+            {
+                ps.AddScript(_bypassExecutionPolicy);
+                ps.AddCommand(cmdlet.Name);
+                foreach (var parameter in cmdlet.Parameters)
+                {
+                    if (parameter.Value == null)
+                        ps.AddParameter(parameter.Key);
+                    else
+                        ps.AddParameter(parameter.Key, parameter.Value);
+                }
+                return Run(ps);
+            }
+        }
+
+        public static object[] RunScript(string script)
         {
             if (script == null) { throw new ArgumentNullException(nameof(script)); }
             Debug.WriteLine($"Running script: {script}");
@@ -87,10 +112,16 @@ namespace DotNet.Basics.Sys
                 ps.AddScript(_bypassExecutionPolicy);
                 ps.AddScript(script);
 
-                var passThrus = ps.Invoke();
-                return new PowerShellResult(true, passThrus.Select(pt => pt.BaseObject));
+                return Run(ps);
             }
         }
+
+        private static object[] Run(PowerShell ps)
+        {
+            var passThrus = ps.Invoke();
+            return passThrus.Select(pt => pt.BaseObject).ToArray();
+        }
+
         private const string _bypassExecutionPolicy = "Set-ExecutionPolicy Bypass -Scope Process";
     }
 }

@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
+using System.Management.Automation;
 using DotNet.Basics.Sys;
 using FluentAssertions;
 using NUnit.Framework;
@@ -9,15 +10,14 @@ namespace DotNet.Basics.Tests.Sys
     [TestFixture]
     public class PowerShellConsoleTests
     {
-        [Test, Ignore("Errors are not detected in error streams not invocation state.. Dont know why")]
-        public void Results_HadErros_ErrorsFound()
+        [Test]
+        public void RunCommand_ExceptionsBubble_ExcpetionIsThrown()
         {
-            string script = $"Copy-Item asdAsdasd asd asd asd asd asd asd"; //cmdlet with invalid arguments
-            //string script = "throw 'my exception'";
+            var cmdlet = new PowerShellCmdlet("Copy-Item").AddParameter("asdasdasd").AddParameter("asdasdasdad");//invalid parameters
 
-            var result = PowerShellConsole.RunScript($"\"{script}\"");
+            Action action = () => cmdlet.Run();
 
-            result.HadErrors.Should().BeTrue();
+            action.ShouldThrow<ParameterBindingException>();
         }
 
         [Test]
@@ -27,7 +27,7 @@ namespace DotNet.Basics.Tests.Sys
 
             var result = PowerShellConsole.RunScript($"\"{greeting}\"");
 
-            result.PassThru.Single().ToString().Should().Be(greeting);
+            result.Single().ToString().Should().Be(greeting);
         }
     }
 }

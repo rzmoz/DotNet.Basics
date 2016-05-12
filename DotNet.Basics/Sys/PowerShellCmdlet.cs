@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management.Automation;
 
 namespace DotNet.Basics.Sys
 {
@@ -19,28 +20,43 @@ namespace DotNet.Basics.Sys
         public string Name { get; }
         public KeyValuePair<string, object>[] Parameters => _parameters.ToArray();
 
-        public PowerShellCmdlet AddParameter(string name, params string[] values)
+        public PowerShellCmdlet AddParameter(IEnumerable<KeyValuePair<string, object>> parameters)
         {
-            _parameters.Add(new KeyValuePair<string, object>(name, ToPowerShellParameterString(values)));
+            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+            foreach (var parameter in parameters)
+                _parameters.Add(parameter);
             return this;
         }
 
-        public PowerShellCmdlet WithErrorAction(string action)
+        public PowerShellCmdlet AddParameter(string name, object value = null)
         {
-            return AddParameter("ErrorAction", action);
+            _parameters.Add(new KeyValuePair<string, object>(name, value));
+            return this;
         }
 
-        public PowerShellCmdlet WithForce(bool force)
+        public PowerShellCmdlet WithErrorAction(ActionPreference actionPreference)
+        {
+            return AddParameter("ErrorAction", actionPreference);
+        }
+
+        public PowerShellCmdlet WithForce(bool force = true)
         {
             if (force)
                 return AddParameter("Force");
             return this;
         }
 
-        public PowerShellCmdlet WithRecurse(bool recurse)
+        public PowerShellCmdlet WithRecurse(bool recurse = true)
         {
             if (recurse)
                 return AddParameter("Recurse");
+            return this;
+        }
+
+        public PowerShellCmdlet WithVerbose(bool verbose = true)
+        {
+            if (verbose)
+                return AddParameter("Verbose");
             return this;
         }
 
@@ -52,6 +68,10 @@ namespace DotNet.Basics.Sys
                 script += $" -{param.Key}";
 
                 var value = param.Value?.ToString();
+                if (value != null)
+                    value = $"\"{value}\"";
+                if (param.Value is string[])
+                    value = ToPowerShellParameterString(param.Value as string[]);
 
                 if (string.IsNullOrEmpty(value) == false)
                     script += $" {value}";
