@@ -11,12 +11,22 @@ namespace DotNet.Basics.Tasks
     {
         private readonly IReadOnlyCollection<LogEntry> _entries;
 
-        public TaskResult(IEnumerable<LogEntry> entries)
+        public TaskResult(bool finished = true, string name = null)
+            : this(Enumerable.Empty<LogEntry>(), finished, name)
+        {
+
+        }
+        public TaskResult(IEnumerable<LogEntry> entries, bool finished = true, string name = null)
         {
             if (entries == null) throw new ArgumentNullException(nameof(entries));
             _entries = entries.ToList();
             HasFailed = _entries.Any(e => e.Level == LogLevel.Error || e.Level == LogLevel.Critical);
+            Finished = finished;
+            Name = name ?? string.Empty;
         }
+
+        public string Name { get; }
+        public bool Finished { get; }
 
         public bool HasFailed { get; }
 

@@ -106,7 +106,7 @@
     <Compile Include="Sys\ObservableTests.cs" />
     <Compile Include="Sys\SysExtensionsTests.cs" />
     <Compile Include="Tasks\OnceOnlyActionTests.cs" />
-    <Compile Include="Tasks\TestResultTests.cs" />
+    <Compile Include="Tasks\TaskResultTests.cs" />
     <Compile Include="Tasks\ThrowExceptionUntilXTriesDummeTask.cs" />
     <Compile Include="Tasks\RepeaterTaskTests.cs" />
     <Compile Include="Sys\TimeSpanExtensionsTests.cs" />

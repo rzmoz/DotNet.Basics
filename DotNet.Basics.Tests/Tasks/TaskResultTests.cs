@@ -10,8 +10,31 @@ using NUnit.Framework;
 namespace DotNet.Basics.Tests.Tasks
 {
     [TestFixture]
-    public class TestResultTests
+    public class TaskResultTests
     {
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Finished_Set_IsSet(bool finished)
+        {
+            var result = new TaskResult(finished);
+
+            result.Finished.Should().Be(finished);
+        }
+
+        [Test]
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase("   ")]
+        [TestCase("MyResult")]
+        public void Finished_Set_IsSet(string name)
+        {
+            var result = new TaskResult(name:name);
+
+            result.Name.Should().Be(name??string.Empty);
+        }
+
+
         [Test]
         [TestCase(LogLevel.Debug, false)]
         [TestCase(LogLevel.Verbose, false)]
