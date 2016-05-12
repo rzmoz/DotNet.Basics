@@ -77,31 +77,6 @@ namespace DotNet.Basics.Sys
             return RunScript(cmdlet.ToScript());
         }
 
-        public static object[] RunCommand(string cmdName, params KeyValuePair<string, object>[] parameters)
-        {
-            if (cmdName == null) throw new ArgumentNullException(nameof(cmdName));
-            var cmdlet = new PowerShellCmdlet(cmdName).AddParameter(parameters);
-            return RunCommand(cmdlet);
-        }
-
-        public static object[] RunCommand(PowerShellCmdlet cmdlet)
-        {
-            if (cmdlet == null) throw new ArgumentNullException(nameof(cmdlet));
-            Debug.WriteLine($"Running command: {cmdlet.ToScript()}");
-            using (var ps = PowerShell.Create())
-            {
-                ps.AddScript(_bypassExecutionPolicy);
-                ps.AddCommand(cmdlet.Name);
-                foreach (var parameter in cmdlet.Parameters)
-                {
-                    if (parameter.Value == null)
-                        ps.AddParameter(parameter.Key);
-                    else
-                        ps.AddParameter(parameter.Key, parameter.Value);
-                }
-                return Run(ps);
-            }
-        }
 
         public static object[] RunScript(string script)
         {

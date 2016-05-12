@@ -91,7 +91,6 @@
     <Compile Include="Collections\StringDictionary.cs" />
     <Compile Include="IO\PathDelimiter.cs" />
     <Compile Include="Sys\PowerShellCmdlet.cs" />
-    <Compile Include="Sys\PowerShellCmdletsExtensions.cs" />
     <Compile Include="Sys\PowerShellConsole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Collections\StringKeyDictionary.cs" />
