@@ -20,15 +20,14 @@ namespace DotNet.Basics.Tasks
         {
             if (entries == null) throw new ArgumentNullException(nameof(entries));
             _entries = entries.ToList();
-            HasFailed = _entries.Any(e => e.Level == LogLevel.Error || e.Level == LogLevel.Critical);
+            Failed = _entries.Any(e => e.Level == LogLevel.Error || e.Level == LogLevel.Critical);
             Finished = finished;
             Name = name ?? string.Empty;
         }
 
         public string Name { get; }
         public bool Finished { get; }
-
-        public bool HasFailed { get; }
+        public bool Failed { get; }
 
         public IReadOnlyCollection<LogEntry> Debugs => GetLogs(LogLevel.Debug);
         public IReadOnlyCollection<LogEntry> Verboses => GetLogs(LogLevel.Verbose);

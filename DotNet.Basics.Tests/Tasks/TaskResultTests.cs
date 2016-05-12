@@ -49,7 +49,7 @@ namespace DotNet.Basics.Tests.Tasks
 
             var result = new TaskResult(logger.Entries);
 
-            result.HasFailed.Should().Be(hasFailed, logLevel.ToName());
+            result.Failed.Should().Be(hasFailed, logLevel.ToName());
         }
 
         [Test]

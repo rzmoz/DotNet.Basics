@@ -73,7 +73,7 @@ namespace DotNet.Basics.Tests.Diagnostics
 
             var result = new TaskResult(logger.Entries);
 
-            result.HasFailed.Should().BeTrue(logLevel.ToName());
+            result.Failed.Should().BeTrue(logLevel.ToName());
         }
         [Test]
         [TestCase(LogLevel.Debug)]
@@ -88,7 +88,7 @@ namespace DotNet.Basics.Tests.Diagnostics
 
             var result = new TaskResult(logger.Entries);
 
-            result.HasFailed.Should().BeFalse(logLevel.ToName());
+            result.Failed.Should().BeFalse(logLevel.ToName());
         }
 
         [Test]
