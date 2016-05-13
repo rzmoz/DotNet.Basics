@@ -10,16 +10,18 @@ namespace DotNet.Basics.Diagnostics
     {
         private ConcurrentDictionary<string, ILogger> _loggers;
 
-        public MediatorLogger()
+        public MediatorLogger(params ILogger[] loggers)
         {
             _loggers = new ConcurrentDictionary<string, ILogger>();
+            foreach (var logger in loggers)
+                Add(logger);
         }
 
-        public void Add(string name, ILogger logger)
+        public void Add(ILogger logger, string name = null)
         {
             if (logger == null)
                 throw new ArgumentNullException(nameof(logger));
-            _loggers.AddOrUpdate(name ?? logger.GetType().Name, logger, (n, l) => l);
+            _loggers.AddOrUpdate(name ?? Guid.NewGuid().ToString(), logger, (n, l) => l);
         }
 
         public void Clear()

@@ -23,7 +23,7 @@ namespace DotNet.Basics.Tests.Diagnostics
             var mediator = new MediatorLogger();
             var loggers = new List<InMemLogger>();
             runs.ForEach(i => loggers.Add(new InMemLogger())); //add loggers
-            runs.ForEach(i => mediator.Add(i.ToString(), loggers[i])); //add loggers
+            runs.ForEach(i => mediator.Add(loggers[i], i.ToString())); //add loggers
 
             loggers.ForEach(l => l.GetLogs(logLevel).Count.Should().Be(0));//ensure loggers are empty
 

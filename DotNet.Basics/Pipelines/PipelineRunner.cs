@@ -55,10 +55,10 @@ namespace DotNet.Basics.Pipelines
             MediatorLogger mediatorLogger = new MediatorLogger();
             //add object scope objectScopeLogger
             if (_objectScopeLogger != null)
-                mediatorLogger.Add(Guid.NewGuid().ToString(), _objectScopeLogger);
+                mediatorLogger.Add(_objectScopeLogger);
             //add run scope objectScopeLogger
             if (logger != null)
-                mediatorLogger.Add(Guid.NewGuid().ToString(), logger);
+                mediatorLogger.Add(logger);
             //add error detector
             var errorLogger = new EventLogger();
             var success = true;
@@ -68,7 +68,7 @@ namespace DotNet.Basics.Pipelines
                     success = false;
             };
 
-            mediatorLogger.Add(_errorLoggerName, errorLogger);
+            mediatorLogger.Add(errorLogger, _errorLoggerName);
             var pipelineName = pipeline.GetType().Name;
 
             try
