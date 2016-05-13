@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\CollectionExtensions.cs" />
+    <Compile Include="Diagnostics\DebugLogger.cs" />
     <Compile Include="Diagnostics\DotNetBasicsLogger.cs" />
     <Compile Include="Diagnostics\RawLogEntry.cs" />
     <Compile Include="Diagnostics\LogExtensions.cs" />
