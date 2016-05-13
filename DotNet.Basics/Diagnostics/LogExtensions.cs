@@ -1,4 +1,5 @@
 ﻿using System;
+using DotNet.Basics.Collections;
 using DotNet.Basics.Sys;
 using Microsoft.Extensions.Logging;
 
@@ -6,6 +7,10 @@ namespace DotNet.Basics.Diagnostics
 {
     public static class LogExtensions
     {
+        public static void Replay(this ILogger logger, params LogEntry[] entries)
+        {
+            entries.ForEach(e => logger.Log(e.Timestamp, e.Message, e.Level, e.Exception));
+        }
         public static void Log(this ILogger logger, string message, LogLevel logLevel, Exception exception = null)
         {
             Log(logger, DateTime.UtcNow, message, logLevel, exception);
