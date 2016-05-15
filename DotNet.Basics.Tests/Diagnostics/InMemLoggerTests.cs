@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,10 +39,10 @@ namespace DotNet.Basics.Tests.Diagnostics
             Parallel.For(0, logCount, (i) => logger.LogDebug("blaaaa"));
 
             logger.Count.Should().Be(logCount);
-            logger.GetLogs(LogLevel.Debug).Count.Should().Be(logCount);
+            logger.Get(LogLevel.Debug).Count.Should().Be(logCount);
 
             logger.Clear();
-            logger.GetLogs(LogLevel.Debug).Count.Should().Be(0);
+            logger.Get(LogLevel.Debug).Count.Should().Be(0);
             logger.Count.Should().Be(0);
         }
 
@@ -63,32 +64,35 @@ namespace DotNet.Basics.Tests.Diagnostics
         }
 
         [Test]
-        [TestCase(LogLevel.Critical)]
-        [TestCase(LogLevel.Error)]
-        public void HasFailed_LoggerContainsFailures_FailDetected(LogLevel logLevel)
+        [TestCase(LogLevel.Debug, false)]
+        [TestCase(LogLevel.Verbose, false)]
+        [TestCase(LogLevel.Information, false)]
+        [TestCase(LogLevel.Warning, false)]
+        [TestCase(LogLevel.Error, true)]
+        [TestCase(LogLevel.Critical, true)]
+        public void HasFailed_FailureDetection_FailuresAreDetected(LogLevel logLevel, bool hasFailed)
         {
             var logger = new InMemLogger();
+            logger.Log(new LogEntry(DateTime.UtcNow, "message", logLevel));
 
-            logger.Log("failure", logLevel);
-
-            var result = new TaskResult(logger.Entries);
-
-            result.Failed.Should().BeTrue(logLevel.ToName());
+            logger.Failed.Should().Be(hasFailed, logLevel.ToName());
         }
+
         [Test]
         [TestCase(LogLevel.Debug)]
         [TestCase(LogLevel.Verbose)]
         [TestCase(LogLevel.Information)]
         [TestCase(LogLevel.Warning)]
-        public void HasFailed_LoggerNotFailed_FailNotDetected(LogLevel logLevel)
+        [TestCase(LogLevel.Error)]
+        [TestCase(LogLevel.Critical)]
+        public void Log_Entries_EntryIsLogged(LogLevel logLevel)
         {
             var logger = new InMemLogger();
-
-            logger.Log("not failure", logLevel);
-
-            var result = new TaskResult(logger.Entries);
-
-            result.Failed.Should().BeFalse(logLevel.ToName());
+            logger.Count.Should().Be(0);
+            logger.Get(logLevel).Count.Should().Be(0);
+            logger.Log(new LogEntry(DateTime.UtcNow, "message", logLevel));
+            logger.Get(logLevel).Count.Should().Be(1);
+            logger.Count.Should().Be(1);
         }
 
         [Test]
@@ -101,7 +105,7 @@ namespace DotNet.Basics.Tests.Diagnostics
             var timeStamp = new DateTime(2000, 01, 01, 01, 01, 01);
             logger.Log(timeStamp, null, LogLevel.Error, ex);
 
-            var entry = logger.Get<LogEntry>().Single(e => e.Level == LogLevel.Error);
+            var entry = logger.Single(e => e.Level == LogLevel.Error);
 
             var output = entry.Message;
 
@@ -118,7 +122,7 @@ namespace DotNet.Basics.Tests.Diagnostics
             var timeStamp = new DateTime(2000, 01, 01, 01, 01, 01);
             var message = "Hello World!";
             logger.Log(timeStamp, message, LogLevel.Error, ex);
-            var output = logger.Get<LogEntry>().Single(e => e.Level == LogLevel.Error).Message;
+            var output = logger.Single(e => e.Level == LogLevel.Error).Message;
 
             output.Should().Be($"[2000-01-01 01:01:01] <Error> {message}\r\nSystem.ApplicationException: Im outer exception ---> System.IO.IOException: Im Inner Exception\r\n   --- End of inner exception stack trace ---");
         }
@@ -136,12 +140,12 @@ namespace DotNet.Basics.Tests.Diagnostics
             logger.LogCritical("critical");
 
             logger.Count.Should().Be(6);
-            logger.GetLogs(LogLevel.Debug).Count.Should().Be(1);
-            logger.GetLogs(LogLevel.Verbose).Count.Should().Be(1);
-            logger.GetLogs(LogLevel.Information).Count.Should().Be(1);
-            logger.GetLogs(LogLevel.Warning).Count.Should().Be(1);
-            logger.GetLogs(LogLevel.Error).Count.Should().Be(1);
-            logger.GetLogs(LogLevel.Critical).Count.Should().Be(1);
+            logger.Get(LogLevel.Debug).Count.Should().Be(1);
+            logger.Get(LogLevel.Verbose).Count.Should().Be(1);
+            logger.Get(LogLevel.Information).Count.Should().Be(1);
+            logger.Get(LogLevel.Warning).Count.Should().Be(1);
+            logger.Get(LogLevel.Error).Count.Should().Be(1);
+            logger.Get(LogLevel.Critical).Count.Should().Be(1);
         }
     }
 }

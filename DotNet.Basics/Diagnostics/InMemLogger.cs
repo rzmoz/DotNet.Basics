@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -6,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Diagnostics
 {
-    public class InMemLogger : DotNetBasicsLogger
+    public class InMemLogger : DotNetBasicsLogger, IReadOnlyCollection<LogEntry>
     {
         private ConcurrentQueue<LogEntry> _entries;
 
@@ -34,12 +35,7 @@ namespace DotNet.Basics.Diagnostics
             Log((IEnumerable<LogEntry>)entries);
         }
 
-        public IReadOnlyCollection<T> Get<T>() where T : LogEntry
-        {
-            return _entries.OfType<T>().ToList();
-        }
-
-        public IReadOnlyCollection<LogEntry> GetLogs(LogLevel logLevel)
+        public IReadOnlyCollection<LogEntry> Get(LogLevel logLevel)
         {
             return _entries.Where(entry => entry.Level == logLevel).ToList();
         }
@@ -53,9 +49,21 @@ namespace DotNet.Basics.Diagnostics
 
         public int Count => _entries.Count;
 
+        public bool Failed => _entries.Any(e => e.Level >= LogLevel.Error);
+
+        public IEnumerator<LogEntry> GetEnumerator()
+        {
+            return _entries.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
         public override string ToString()
         {
-            return $"Count:{Count};Debugs:{GetLogs(LogLevel.Debug).Count};Verboses:{GetLogs(LogLevel.Verbose).Count};Infos:{GetLogs(LogLevel.Information).Count};Warnings:{GetLogs(LogLevel.Warning).Count};Errors:{GetLogs(LogLevel.Error).Count};Criticals:{GetLogs(LogLevel.Critical).Count}";
+            return $"Count:{Count};Debugs:{Get(LogLevel.Debug).Count};Verboses:{Get(LogLevel.Verbose).Count};Infos:{Get(LogLevel.Information).Count};Warnings:{Get(LogLevel.Warning).Count};Errors:{Get(LogLevel.Error).Count};Criticals:{Get(LogLevel.Critical).Count}";
         }
 
         protected override void Log(LogEntry entry)

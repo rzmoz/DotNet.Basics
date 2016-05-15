@@ -26,7 +26,7 @@ namespace DotNet.Basics.Diagnostics
 
         public virtual bool IsEnabled(LogLevel logLevel)
         {
-            return MinimumLevel <= logLevel;
+            return MinimumLevel <= logLevel && logLevel != LogLevel.None;
         }
 
         public virtual IDisposable BeginScopeImpl(object state)

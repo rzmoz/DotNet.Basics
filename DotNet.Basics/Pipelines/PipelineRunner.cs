@@ -64,7 +64,7 @@ namespace DotNet.Basics.Pipelines
             var success = true;
             errorLogger.EntryLogged += (e, logEntry) =>
             {
-                if (logEntry.Level >= LogLevel.Error)
+                if (logEntry.Level >= LogLevel.Error) 
                     success = false;
             };
 

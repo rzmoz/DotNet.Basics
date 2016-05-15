@@ -107,7 +107,6 @@
     <Compile Include="Tasks\RepeaterTaskExtensions.cs" />
     <Compile Include="Tasks\RepeaterTaskRunner.cs" />
     <Compile Include="Tasks\RepeaterTask.cs" />
-    <Compile Include="Tasks\TaskResult.cs" />
     <Compile Include="Tasks\TimeoutLoopBreakPredicate.cs" />
     <Compile Include="Sys\TimeSpanExtensions.cs" />
   </ItemGroup>

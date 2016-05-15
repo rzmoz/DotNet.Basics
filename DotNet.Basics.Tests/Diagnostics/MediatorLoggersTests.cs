@@ -25,13 +25,13 @@ namespace DotNet.Basics.Tests.Diagnostics
             runs.ForEach(i => loggers.Add(new InMemLogger())); //add loggers
             runs.ForEach(i => mediator.Add(loggers[i], i.ToString())); //add loggers
 
-            loggers.ForEach(l => l.GetLogs(logLevel).Count.Should().Be(0));//ensure loggers are empty
+            loggers.ForEach(l => l.Get(logLevel).Count.Should().Be(0));//ensure loggers are empty
 
             //act
             runs.ForEach(i => mediator.Log(i.ToString(), logLevel));//log
 
             //assert
-            loggers.ForEach(l => l.GetLogs(logLevel).Count.Should().Be(runs.Count()));
+            loggers.ForEach(l => l.Get(logLevel).Count.Should().Be(runs.Count()));
         }
     }
 }

@@ -37,13 +37,13 @@ namespace DotNet.Basics.Tests.Pipelines
             );
 
             await Task.Delay(100.MilliSeconds()).ConfigureAwait(false);
-            logger.GetLogs(LogLevel.Information).Count.Should().Be(0);//ensure task isn't started until runner starts
+            logger.Get(LogLevel.Information).Count.Should().Be(0);//ensure task isn't started until runner starts
 
             var runner = new PipelineRunner(_container, logger);
 
             await runner.RunAsync(pipeline).ConfigureAwait(false);
 
-            logger.GetLogs(LogLevel.Information).All(e => e.Message == message).Should().BeTrue();
+            logger.Get(LogLevel.Information).All(e => e.Message == message).Should().BeTrue();
 
         }
 
@@ -152,12 +152,12 @@ namespace DotNet.Basics.Tests.Pipelines
 
             foreach (LogLevel value in Enum.GetValues(typeof(LogLevel)))
             {
-                var found = logger.GetLogs(value).Any();
+                var found = logger.Get(value).Any();
 
                 if (logLevel == LogLevel.Verbose)
-                    logger.GetLogs(logLevel).Count.Should().Be(7);
+                    logger.Get(logLevel).Count.Should().Be(7);
                 else if (value == LogLevel.Verbose)
-                    logger.GetLogs(value).Count.Should().Be(6);
+                    logger.Get(value).Count.Should().Be(6);
 
                 if (value == logLevel)
                     found.Should().BeTrue(value.ToName());
