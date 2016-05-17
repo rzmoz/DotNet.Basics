@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
-using DotNet.Basics.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -52,7 +50,7 @@ namespace DotNet.Basics.Tests.Diagnostics
             var logger = new InMemLogger();
 
             logger.LogDebug("debug");
-            logger.LogVerbose("verbose");
+            logger.LogTrace("trace");
             logger.LogInformation("info");
             logger.LogWarning("warning");
             logger.LogError("error");
@@ -65,7 +63,7 @@ namespace DotNet.Basics.Tests.Diagnostics
 
         [Test]
         [TestCase(LogLevel.Debug, false)]
-        [TestCase(LogLevel.Verbose, false)]
+        [TestCase(LogLevel.Trace, false)]
         [TestCase(LogLevel.Information, false)]
         [TestCase(LogLevel.Warning, false)]
         [TestCase(LogLevel.Error, true)]
@@ -80,7 +78,7 @@ namespace DotNet.Basics.Tests.Diagnostics
 
         [Test]
         [TestCase(LogLevel.Debug)]
-        [TestCase(LogLevel.Verbose)]
+        [TestCase(LogLevel.Trace)]
         [TestCase(LogLevel.Information)]
         [TestCase(LogLevel.Warning)]
         [TestCase(LogLevel.Error)]
@@ -133,7 +131,7 @@ namespace DotNet.Basics.Tests.Diagnostics
             var logger = new InMemLogger();
 
             logger.LogDebug("debug");
-            logger.LogVerbose("verbose");
+            logger.LogTrace("trace");
             logger.LogInformation("info");
             logger.LogWarning("warning");
             logger.LogError("error");
@@ -141,7 +139,7 @@ namespace DotNet.Basics.Tests.Diagnostics
 
             logger.Count.Should().Be(6);
             logger.Get(LogLevel.Debug).Count.Should().Be(1);
-            logger.Get(LogLevel.Verbose).Count.Should().Be(1);
+            logger.Get(LogLevel.Trace).Count.Should().Be(1);
             logger.Get(LogLevel.Information).Count.Should().Be(1);
             logger.Get(LogLevel.Warning).Count.Should().Be(1);
             logger.Get(LogLevel.Error).Count.Should().Be(1);

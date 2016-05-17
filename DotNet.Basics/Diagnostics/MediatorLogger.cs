@@ -28,8 +28,8 @@ namespace DotNet.Basics.Diagnostics
         {
             Interlocked.Exchange(ref _loggers, new ConcurrentDictionary<string, ILogger>());
         }
-
-        public override void Log(LogLevel logLevel, int eventId, object state, Exception exception, Func<object, Exception, string> formatter)
+        
+        public override void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
             ConcurrentQueue<Exception> exceptions = null;
             Parallel.ForEach(_loggers, logger =>

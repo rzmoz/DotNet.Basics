@@ -63,7 +63,7 @@ namespace DotNet.Basics.Diagnostics
 
         public override string ToString()
         {
-            return $"Count:{Count};Debugs:{Get(LogLevel.Debug).Count};Verboses:{Get(LogLevel.Verbose).Count};Infos:{Get(LogLevel.Information).Count};Warnings:{Get(LogLevel.Warning).Count};Errors:{Get(LogLevel.Error).Count};Criticals:{Get(LogLevel.Critical).Count}";
+            return $"Count:{Count};Debugs:{Get(LogLevel.Debug).Count};Traces:{Get(LogLevel.Trace).Count};Infos:{Get(LogLevel.Information).Count};Warnings:{Get(LogLevel.Warning).Count};Errors:{Get(LogLevel.Error).Count};Criticals:{Get(LogLevel.Critical).Count}";
         }
 
         protected override void Log(LogEntry entry)

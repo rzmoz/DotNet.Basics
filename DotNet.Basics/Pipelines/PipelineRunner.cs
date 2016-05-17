@@ -64,7 +64,7 @@ namespace DotNet.Basics.Pipelines
             var success = true;
             errorLogger.EntryLogged += (e, logEntry) =>
             {
-                if (logEntry.Level >= LogLevel.Error) 
+                if (logEntry.Level >= LogLevel.Error)
                     success = false;
             };
 
@@ -73,14 +73,14 @@ namespace DotNet.Basics.Pipelines
 
             try
             {
-                mediatorLogger.LogVerbose($"Pipeline starting:{pipelineName }");
+                mediatorLogger.LogTrace($"Pipeline starting:{pipelineName }");
                 PipelineStarting?.Invoke(pipelineName);
 
                 var blockCount = 0;
                 foreach (var block in pipeline.PipelineBlocks)
                 {
                     var blockName = string.IsNullOrWhiteSpace(block.Name) ? $"Block {blockCount++}" : block.Name;
-                    mediatorLogger.LogVerbose($"Block starting:{blockName}");
+                    mediatorLogger.LogTrace($"Block starting:{blockName}");
                     BlockStarting?.Invoke(blockName);
 
                     await Task.WhenAll(block.Select(async step =>
@@ -89,17 +89,17 @@ namespace DotNet.Basics.Pipelines
                         step.Init();//must run before resolving step name for lazy bound steps
                         var stepName = string.IsNullOrWhiteSpace(step.DisplayName) ? step.GetType().Name : step.DisplayName;
 
-                        mediatorLogger.LogVerbose($"Step starting:{stepName}", LogLevel.Debug);
+                        mediatorLogger.LogTrace($"Step starting:{stepName}", LogLevel.Debug);
                         StepStarting?.Invoke(stepName);
 
                         await step.RunAsync(args, mediatorLogger).ConfigureAwait(false);
 
-                        mediatorLogger.LogVerbose($"Step ended:{stepName}", LogLevel.Debug);
+                        mediatorLogger.LogTrace($"Step ended:{stepName}", LogLevel.Debug);
                         StepEnded?.Invoke(stepName);
 
                     })).ConfigureAwait(false);
 
-                    mediatorLogger.LogVerbose($"Block ended:{blockName}", LogLevel.Debug);
+                    mediatorLogger.LogTrace($"Block ended:{blockName}", LogLevel.Debug);
                     BlockEnded?.Invoke(blockName);
                 }
             }
@@ -109,7 +109,7 @@ namespace DotNet.Basics.Pipelines
             }
             finally
             {
-                mediatorLogger.LogVerbose($"Pipeline ended:{pipelineName}");
+                mediatorLogger.LogTrace($"Pipeline ended:{pipelineName}");
                 PipelineEnded?.Invoke(pipelineName);
             }
 

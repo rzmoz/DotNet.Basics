@@ -34,7 +34,7 @@
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.1.0.0-rc1-final\lib\net451\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.1.0.0-rc2-final\lib\netstandard1.1\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SimpleInjector, Version=3.1.4.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
@@ -58,7 +58,6 @@
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Diagnostics\DebugLogger.cs" />
     <Compile Include="Diagnostics\DotNetBasicsLogger.cs" />
-    <Compile Include="Diagnostics\RawLogEntry.cs" />
     <Compile Include="Diagnostics\LogExtensions.cs" />
     <Compile Include="Diagnostics\ProfileFormatter.cs" />
     <Compile Include="Diagnostics\DurationFormattingUnit.cs" />

@@ -12,7 +12,7 @@ namespace DotNet.Basics.Tests.Diagnostics
     {
         [Test]
         [TestCase(LogLevel.Debug)]
-        [TestCase(LogLevel.Verbose)]
+        [TestCase(LogLevel.Trace)]
         [TestCase(LogLevel.Information)]
         [TestCase(LogLevel.Warning)]
         [TestCase(LogLevel.Error)]

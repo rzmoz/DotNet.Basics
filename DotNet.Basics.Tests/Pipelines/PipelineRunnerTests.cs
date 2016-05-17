@@ -137,7 +137,7 @@ namespace DotNet.Basics.Tests.Pipelines
 
         [Test]
         [TestCase(LogLevel.Debug)]
-        [TestCase(LogLevel.Verbose)]
+        [TestCase(LogLevel.Trace)]
         [TestCase(LogLevel.Information)]
         [TestCase(LogLevel.Warning)]
         [TestCase(LogLevel.Error)]
@@ -154,14 +154,14 @@ namespace DotNet.Basics.Tests.Pipelines
             {
                 var found = logger.Get(value).Any();
 
-                if (logLevel == LogLevel.Verbose)
+                if (logLevel == LogLevel.Trace)
                     logger.Get(logLevel).Count.Should().Be(7);
-                else if (value == LogLevel.Verbose)
+                else if (value == LogLevel.Trace)
                     logger.Get(value).Count.Should().Be(6);
 
                 if (value == logLevel)
                     found.Should().BeTrue(value.ToName());
-                else if (value != LogLevel.Verbose)
+                else if (value != LogLevel.Trace)
                     found.Should().BeFalse(value.ToName());
 
 
