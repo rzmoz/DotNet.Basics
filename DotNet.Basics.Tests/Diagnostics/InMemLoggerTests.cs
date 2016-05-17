@@ -58,7 +58,7 @@ namespace DotNet.Basics.Tests.Diagnostics
 
             //act
             var toString = logger.ToString();
-            toString.Should().Be("Count:6;Debugs:1;Verboses:1;Infos:1;Warnings:1;Errors:1;Criticals:1");
+            toString.Should().Be("Count:6;Debugs:1;Traces:1;Infos:1;Warnings:1;Errors:1;Criticals:1");
         }
 
         [Test]
@@ -138,6 +138,7 @@ namespace DotNet.Basics.Tests.Diagnostics
             logger.LogCritical("critical");
 
             logger.Count.Should().Be(6);
+
             logger.Get(LogLevel.Debug).Count.Should().Be(1);
             logger.Get(LogLevel.Trace).Count.Should().Be(1);
             logger.Get(LogLevel.Information).Count.Should().Be(1);

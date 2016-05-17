@@ -12,16 +12,16 @@ namespace DotNet.Basics.Tests.Diagnostics
         public void Log_Events_AllEventsAreFired()
         {
             var logger = new EventLogger();
-            string logMessage = null;
-            string rawLogMessage = string.Empty;//something different than logMessage
+            string expectedMessage = "MyMessage";
+            string actualMessage = null;
+            
+            logger.EntryLogged += (o, e) => { actualMessage = e.Message; };
 
-            logger.EntryLogged += (o, e) => { logMessage = e.Message; };
-
-            logMessage.Should().NotBe(rawLogMessage);
+            actualMessage.Should().NotBe(expectedMessage);
 
             logger.LogInformation("MyMessage");
 
-            logMessage.Should().Be(rawLogMessage);
+            actualMessage.Should().Be(expectedMessage);
         }
     }
 }

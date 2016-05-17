@@ -5,13 +5,6 @@ namespace DotNet.Basics.Diagnostics
 {
     public abstract class DotNetBasicsLogger : ILogger
     {
-        protected DotNetBasicsLogger()
-        {
-            MinimumLevel = LogLevel.Debug;
-        }
-
-        public LogLevel MinimumLevel { get; set; }
-        
         protected abstract void Log(LogEntry entry);
 
         public virtual void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
@@ -26,7 +19,7 @@ namespace DotNet.Basics.Diagnostics
 
         public virtual bool IsEnabled(LogLevel logLevel)
         {
-            return MinimumLevel <= logLevel && logLevel != LogLevel.None;
+            return logLevel != LogLevel.None;
         }
 
         public IDisposable BeginScope<TState>(TState state)
