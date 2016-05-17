@@ -60,12 +60,12 @@ namespace DotNet.Basics.Sys
             return prefix + str;
         }
 
-        public static string EnsurePostfix(this string str, string postfix)
+        public static string EnsureSuffix(this string str, string postfix)
         {
             if (str == null) throw new ArgumentNullException(nameof(str));
             if (postfix == null) throw new ArgumentNullException(nameof(postfix));
 
-            str = str.RemovePostfix(postfix);
+            str = str.RemoveSuffix(postfix);
             return str + postfix;
         }
 
@@ -79,7 +79,7 @@ namespace DotNet.Basics.Sys
             return str;
         }
 
-        public static string RemovePostfix(this string str, string postfix)
+        public static string RemoveSuffix(this string str, string postfix)
         {
             if (str == null) throw new ArgumentNullException(nameof(str));
             if (postfix == null) throw new ArgumentNullException(nameof(postfix));

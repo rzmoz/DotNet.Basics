@@ -78,7 +78,7 @@ namespace DotNet.Basics.Tests.Sys
         [Test]
         public void EnsurePostFix_WhenPostFixDoesntExist_StrIsSame()
         {
-            var withPostFix = _str.EnsurePostfix(_postfix);
+            var withPostFix = _str.EnsureSuffix(_postfix);
 
             withPostFix.Should().Be(_str + _postfix);
         }
@@ -87,7 +87,7 @@ namespace DotNet.Basics.Tests.Sys
         public void EnsurePostFix_WhenPostFixExists_StrIsSame()
         {
             const string str = _str + _postfix;
-            var withPostFix = str.EnsurePostfix(_postfix.ToUpper());
+            var withPostFix = str.EnsureSuffix(_postfix.ToUpper());
 
             withPostFix.Should().Be(_str + _postfix.ToUpper());
         }
@@ -113,7 +113,7 @@ namespace DotNet.Basics.Tests.Sys
         [Test]
         public void RemovePostfix_WhenPostfixDoesntExist_PostfixRemoved()
         {
-            var woPpostFix = _str.RemovePostfix(_postfix.ToUpper());
+            var woPpostFix = _str.RemoveSuffix(_postfix.ToUpper());
 
             woPpostFix.Should().Be(_str);
         }
@@ -122,7 +122,7 @@ namespace DotNet.Basics.Tests.Sys
         public void RemovePostfix_WhenPostfixExists_PostfixRemoved()
         {
             const string str = _str + _postfix;
-            var woPostfix = str.RemovePostfix(_postfix);
+            var woPostfix = str.RemoveSuffix(_postfix);
 
             woPostfix.Should().Be(_str);
         }
