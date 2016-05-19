@@ -51,40 +51,40 @@ namespace DotNet.Basics.Sys
             return originalString;
         }
 
-        public static string EnsurePrefix(this string str, string prefix)
+        public static string EnsurePrefix(this string str, string prefix, bool ignoreCase = true)
         {
             if (str == null) throw new ArgumentNullException(nameof(str));
             if (prefix == null) throw new ArgumentNullException(nameof(prefix));
 
-            str = str.RemovePrefix(prefix);
+            str = str.RemovePrefix(prefix, ignoreCase);
             return prefix + str;
         }
 
-        public static string EnsureSuffix(this string str, string postfix)
+        public static string EnsureSuffix(this string str, string postfix, bool ignoreCase = true)
         {
             if (str == null) throw new ArgumentNullException(nameof(str));
             if (postfix == null) throw new ArgumentNullException(nameof(postfix));
 
-            str = str.RemoveSuffix(postfix);
+            str = str.RemoveSuffix(postfix, ignoreCase);
             return str + postfix;
         }
 
-        public static string RemovePrefix(this string str, string prefix)
+        public static string RemovePrefix(this string str, string prefix, bool ignoreCase = true)
         {
             if (str == null) throw new ArgumentNullException(nameof(str));
             if (prefix == null) throw new ArgumentNullException(nameof(prefix));
-
-            if (str.StartsWith(prefix, StringComparison.InvariantCultureIgnoreCase))
+            var comparison = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+            if (str.StartsWith(prefix, comparison))
                 return str.Substring(prefix.Length);
             return str;
         }
 
-        public static string RemoveSuffix(this string str, string postfix)
+        public static string RemoveSuffix(this string str, string postfix, bool ignoreCase = true)
         {
             if (str == null) throw new ArgumentNullException(nameof(str));
             if (postfix == null) throw new ArgumentNullException(nameof(postfix));
-
-            if (str.EndsWith(postfix, StringComparison.InvariantCultureIgnoreCase))
+            var comparison = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+            if (str.EndsWith(postfix, comparison))
                 return str.Remove(str.Length - postfix.Length);
             return str;
         }
