@@ -5,20 +5,46 @@ namespace DotNet.Basics.IO
 {
     public static class PathExtensions
     {
-        public const char SlashDelimiter = '/';
-        public const char BackslashDelimiter = '\\';
+        private const char _slashDelimiter = '/';
+        private const char _backslashDelimiter = '\\';
+
+        public static PathDelimiter ToPathDelimiter(this char delimiter)
+        {
+            switch (delimiter)
+            {
+                case _backslashDelimiter:
+                    return PathDelimiter.Backslash;
+                case _slashDelimiter:
+                    return PathDelimiter.Slash;
+                default:
+                    throw new NotSupportedException($"Path delimiter not supported: {delimiter}");
+            }
+        }
+
+        public static char ToChar(this PathDelimiter pathDelimiter)
+        {
+            switch (pathDelimiter)
+            {
+                case PathDelimiter.Backslash:
+                    return _backslashDelimiter;
+                case PathDelimiter.Slash:
+                    return _slashDelimiter;
+                default:
+                    throw new NotSupportedException($"Path delimiter not supported: {pathDelimiter}");
+            }
+        }
 
         public static string ToPath(this string root, PathDelimiter pathDelimiter, params string[] paths)
         {
             var path = Path.Combine(paths);
-            path = Path.Combine(root, path.TrimStart(SlashDelimiter).TrimStart(BackslashDelimiter).TrimStart(SlashDelimiter));
+            path = Path.Combine(root, path.TrimStart(_slashDelimiter).TrimStart(_backslashDelimiter).TrimStart(_slashDelimiter));
 
             switch (pathDelimiter)
             {
                 case PathDelimiter.Backslash:
-                    return path.Replace(SlashDelimiter, BackslashDelimiter);
+                    return path.Replace(_slashDelimiter, _backslashDelimiter);
                 case PathDelimiter.Slash:
-                    return path.Replace(BackslashDelimiter, SlashDelimiter); ;
+                    return path.Replace(_backslashDelimiter, _slashDelimiter); ;
                 default:
                     throw new NotSupportedException($"Path delimiter not supported: {pathDelimiter}");
             }
