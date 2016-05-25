@@ -53,7 +53,6 @@ namespace DotNet.Basics.Tests.IO
                 refPath = refPath.TrimEnd(pathDelimiter.ToChar());
 
             path.FullName.Should().Be(refPath);
-
         }
     }
 }

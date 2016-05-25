@@ -35,9 +35,13 @@ namespace DotNet.Basics.IO
 
         public static Path ToPath(this string root, params string[] paths)
         {
-            var path = new Path(root);
-            foreach (var segment in paths)
-                path.Add(segment);
+            var path = new Path(root).Add(paths);
+            return path;
+        }
+        public static Path ToPath(this string root, PathDelimiter delimiter, params string[] paths)
+        {
+            var path = new Path(root).Add(paths);
+            path.Delimiter = delimiter;
             return path;
         }
     }

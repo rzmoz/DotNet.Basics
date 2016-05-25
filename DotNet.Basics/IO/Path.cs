@@ -13,7 +13,7 @@ namespace DotNet.Basics.IO
         private const char _backslashDelimiter = '\\';
 
         public Path(string path)
-            : this(null, path, DetectIsFolder(path))
+            : this(null, path)
         {
         }
         public Path(string protocol, string path)
@@ -30,10 +30,7 @@ namespace DotNet.Basics.IO
                 throw new ArgumentException("path is not set");
             _pathTokens = new string[0];
             Protocol = protocol ?? string.Empty;
-            PathDelimiter delimiter;
-            if (TryDetectDelimiter(protocol, out delimiter) == false)
-                TryDetectDelimiter(path, out delimiter);
-            Delimiter = delimiter;
+            Delimiter = DetectDelimiter(protocol, path);
             IsFolder = isFolder;
             Add(path);
         }
@@ -41,7 +38,7 @@ namespace DotNet.Basics.IO
         public string Protocol { get; private set; }
         public string[] PathTokens => _pathTokens;
         public bool IsFolder { get; }
-        public PathDelimiter Delimiter { get; private set; }
+        public PathDelimiter Delimiter { get; set; }
 
         public string Name => PathTokens.Last();
         public string FullName => ToString(Delimiter);
@@ -108,7 +105,14 @@ namespace DotNet.Basics.IO
             return path.EndsWith(_slashDelimiter.ToString()) || path.EndsWith(_backslashDelimiter.ToString());
         }
 
-        private bool TryDetectDelimiter(string path, out PathDelimiter delimiter)
+        private static PathDelimiter DetectDelimiter(string protocol, string path)
+        {
+            PathDelimiter delimiter;
+            if (TryDetectDelimiter(protocol, out delimiter) == false)
+                TryDetectDelimiter(path, out delimiter);
+            return delimiter;
+        }
+        private static bool TryDetectDelimiter(string path, out PathDelimiter delimiter)
         {
             if (path == null)
             {
