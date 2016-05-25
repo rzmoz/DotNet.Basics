@@ -26,8 +26,6 @@ namespace DotNet.Basics.IO
         }
         public Path(string protocol, string path, bool isFolder)
         {
-            if (string.IsNullOrWhiteSpace(path))
-                throw new ArgumentException("path is not set");
             _pathTokens = new string[0];
             Protocol = protocol ?? string.Empty;
             Delimiter = DetectDelimiter(protocol, path);
@@ -55,7 +53,7 @@ namespace DotNet.Basics.IO
         public Path Add(string pathSegment)
         {
             if (string.IsNullOrWhiteSpace(pathSegment))
-                throw new ArgumentException("pathSegment is not set");
+                return this;
 
             var updatedSegments = new List<string>(PathTokens);
             updatedSegments.AddRange(pathSegment.Split(new[] { _slashDelimiter, _backslashDelimiter }, StringSplitOptions.RemoveEmptyEntries));

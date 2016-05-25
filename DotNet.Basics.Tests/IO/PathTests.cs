@@ -9,6 +9,18 @@ namespace DotNet.Basics.Tests.IO
     public class PathTests
     {
         [Test]
+        [TestCase("myFolder", "")]//empty
+        [TestCase("myFolder", null)]//null
+        [TestCase("myFolder", "  ")]//spaces
+        public void Add_EmptySegments_PathIsUnchanged(string root, string newSegment)
+        {
+            var path = new Path(root).Add(newSegment);
+            
+            //assert
+            path.FullName.Should().Be(root);
+        }
+
+        [Test]
         [TestCase("myFolder\\myFolder\\", "myFolder", true)]//folder with trailing delimiter
         [TestCase("myFolder\\myFolder", "myFolder", true)]//folder without trailing delimiter
         [TestCase("myFolder\\myFile.txt", "myFile.txt", false)]//file with extension
