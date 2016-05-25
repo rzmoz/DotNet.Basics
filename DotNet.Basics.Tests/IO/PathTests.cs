@@ -12,6 +12,8 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFolder", "")]//empty
         [TestCase("myFolder", null)]//null
         [TestCase("myFolder", "  ")]//spaces
+        [TestCase("myFolder", "/")]//slash delimiter
+        [TestCase("myFolder", "\\")]//backslash delimiter
         public void Add_EmptySegments_PathIsUnchanged(string root, string newSegment)
         {
             var path = new Path(root).Add(newSegment);
