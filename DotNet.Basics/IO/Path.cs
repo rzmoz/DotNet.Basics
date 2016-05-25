@@ -76,9 +76,22 @@ namespace DotNet.Basics.IO
 
         private PathDelimiter DetectDelimiter(string path)
         {
-            if (path == null || path.IndexOf(_slashDelimiter) < 0)
+            if (path == null)
                 return PathDelimiter.Backslash;
-            return PathDelimiter.Slash;
+
+            var slashIndex = path.IndexOf(_slashDelimiter);
+            var backSlashIndex = path.IndexOf(_backslashDelimiter);
+
+            if (slashIndex < 0)
+                return PathDelimiter.Backslash;
+            if (backSlashIndex < 0)
+                return PathDelimiter.Slash;
+
+            //first occurence decides
+            if (slashIndex < backSlashIndex)
+                return PathDelimiter.Slash;
+            else
+                return PathDelimiter.Backslash;
         }
     }
 }
