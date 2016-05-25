@@ -29,7 +29,7 @@ namespace DotNet.Basics.IO
             if (string.IsNullOrWhiteSpace(path))
                 throw new ArgumentException("path is not set");
             _pathTokens = new string[0];
-            Protocol = protocol;
+            Protocol = protocol ?? string.Empty;
             PathDelimiter delimiter;
             if (TryDetectDelimiter(protocol, out delimiter) == false)
                 TryDetectDelimiter(path, out delimiter);
@@ -38,7 +38,7 @@ namespace DotNet.Basics.IO
             Add(path);
         }
 
-        public string Protocol { get; }
+        public string Protocol { get; private set; }
         public string[] PathTokens => _pathTokens;
         public bool IsFolder { get; }
         public PathDelimiter Delimiter { get; private set; }
@@ -48,19 +48,41 @@ namespace DotNet.Basics.IO
         public string NameWithoutExtensions => System.IO.Path.GetFileNameWithoutExtension(Name);
 
 
-        public void Add(string pathSegment)
+        public Path Add(params string[] pathSegments)
         {
-            Add(pathSegment, Delimiter);
+            foreach (var pathSegment in pathSegments)
+                Add(pathSegment);
+            return this;
         }
-        public void Add(string pathSegment, PathDelimiter delimiter)
+
+        public Path Add(string pathSegment)
         {
             if (string.IsNullOrWhiteSpace(pathSegment))
                 throw new ArgumentException("pathSegment is not set");
 
-            Delimiter = delimiter;
             var updatedSegments = new List<string>(PathTokens);
             updatedSegments.AddRange(pathSegment.Split(new[] { _slashDelimiter, _backslashDelimiter }, StringSplitOptions.RemoveEmptyEntries));
+
+            //leading delimiter detected
+            bool shouldUpdateProtocol = true;
+            shouldUpdateProtocol = shouldUpdateProtocol && string.IsNullOrWhiteSpace(Protocol);//protocol is already set
+            shouldUpdateProtocol = shouldUpdateProtocol && PathTokens.Length == 0;//this is not the initial path added
+            shouldUpdateProtocol = shouldUpdateProtocol && (pathSegment.StartsWith(_slashDelimiter.ToString()) || pathSegment.StartsWith(_backslashDelimiter.ToString()));
+
+            if (shouldUpdateProtocol)
+            {
+                //leading delimiters goes to protocol
+                var leadingDelimiter = pathSegment[0];
+                foreach (char c in pathSegment)
+                {
+                    if (c == leadingDelimiter)
+                        Protocol += c.ToString();
+                    else
+                        break;
+                }
+            }
             Interlocked.Exchange(ref _pathTokens, updatedSegments.ToArray());
+            return this;
         }
 
         public override string ToString()

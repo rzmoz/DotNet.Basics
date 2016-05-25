@@ -48,6 +48,7 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         [TestCase("\\\\", "myFolder/Myfolder2/", "\\\\myFolder\\Myfolder2\\")]//network folder
         [TestCase("http://", "myFolder/Myfolder2/", "http://myFolder/Myfolder2/")]//uri
+        [TestCase(null, "\\\\myFolder\\Myfolder2\\", "\\\\myFolder\\Myfolder2\\")]//network folder
         public void Ctor_Protocol_ProtocolIsPartOfPath(string protocol, string pathSegment, string expectedPath)
         {
             var path = new Path(protocol, pathSegment);

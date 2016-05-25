@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using DotNet.Basics.IO;
+using DotNet.Basics.Sys;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -45,35 +46,14 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("\\pt101", "pt2\\", PathDelimiter.Backslash)]//dir
         public void ToPath_Combine_PathIsGenerated(string pt1, string pt2, PathDelimiter pathDelimiter)
         {
-            var path = pt1.ToPath(pathDelimiter, pt2);
-            var pathRef = pt1.ToPath(pathDelimiter, pt2);
+            var path = pt1.ToPath(pt2);
 
-            path.Should().Be(pt1 + pathDelimiter.ToChar() + pt2);
-            path.Should().Be(pathRef);
-        }
+            var refPath = pt1 + pathDelimiter.ToChar() + pt2;
+            if (path.IsFolder == false)
+                refPath = refPath.TrimEnd(pathDelimiter.ToChar());
 
-        [Test]
-        [TestCase("pt101", "pt2")]//file
-        [TestCase("pt101", "pt2")]//file
-        public void ToIoPath_Combine_PathIsGenerated(string pt1, string pt2)
-        {
-            var expectedPath = pt1 + PathDelimiter.Backslash.ToChar() + pt2;
+            path.FullName.Should().Be(refPath);
 
-            var path = pt1.ToIoPath(pt2);
-
-            path.Should().Be(expectedPath);
-        }
-
-        [Test]
-        [TestCase("pt101", "pt2")]//file
-        [TestCase("pt101", "pt2")]//file
-        public void ToUriPath_Combine_PathIsGenerated(string pt1, string pt2)
-        {
-            var expectedPath = pt1 + PathDelimiter.Slash.ToChar() + pt2;
-
-            var path = pt1.ToUriPath(pt2);
-
-            path.Should().Be(expectedPath);
         }
     }
 }

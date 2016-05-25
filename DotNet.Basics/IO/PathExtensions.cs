@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 
 namespace DotNet.Basics.IO
 {
@@ -34,42 +33,12 @@ namespace DotNet.Basics.IO
             }
         }
 
-        public static string ToPath(this string root, PathDelimiter pathDelimiter, params string[] paths)
+        public static Path ToPath(this string root, params string[] paths)
         {
-            var path = System.IO.Path.Combine(paths);
-            path = System.IO.Path.Combine(root, path.TrimStart(_slashDelimiter).TrimStart(_backslashDelimiter).TrimStart(_slashDelimiter));
-
-            switch (pathDelimiter)
-            {
-                case PathDelimiter.Backslash:
-                    return path.Replace(_slashDelimiter, _backslashDelimiter);
-                case PathDelimiter.Slash:
-                    return path.Replace(_backslashDelimiter, _slashDelimiter); ;
-                default:
-                    throw new NotSupportedException($"Path delimiter not supported: {pathDelimiter}");
-            }
-        }
-
-        /// <summary>
-        /// Path delimiters are slash '/' as usually used in Uris
-        /// </summary>
-        /// <param name="root"></param>
-        /// <param name="paths"></param>
-        /// <returns></returns>
-        public static string ToUriPath(this string root, params string[] paths)
-        {
-            return root.ToPath(PathDelimiter.Slash, paths);
-        }
-
-        /// <summary>
-        /// Path delimiters are backslash '\' as usually used in file systems
-        /// </summary>
-        /// <param name="root"></param>
-        /// <param name="paths"></param>
-        /// <returns></returns>
-        public static string ToIoPath(this string root, params string[] paths)
-        {
-            return root.ToPath(PathDelimiter.Backslash, paths);
+            var path = new Path(root);
+            foreach (var segment in paths)
+                path.Add(segment);
+            return path;
         }
     }
 }
