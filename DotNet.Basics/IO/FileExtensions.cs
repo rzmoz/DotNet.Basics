@@ -83,7 +83,7 @@ namespace DotNet.Basics.IO
 
         public static string NameWithoutExtension(this FileInfo file)
         {
-            return Path.GetFileNameWithoutExtension(file?.Name);
+            return System.IO.Path.GetFileNameWithoutExtension(file?.Name);
         }
 
         public static string ReadAllText(this FileInfo file)

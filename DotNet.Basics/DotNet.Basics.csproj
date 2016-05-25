@@ -73,6 +73,7 @@
     <Compile Include="IO\FileSystemInfoExtensions.cs" />
     <Compile Include="IO\FileType.cs" />
     <Compile Include="IO\FileTypeCollection.cs" />
+    <Compile Include="IO\Path.cs" />
     <Compile Include="IO\PathExtensions.cs" />
     <Compile Include="IO\Robocopy.cs" />
     <Compile Include="IO\IoExtensions.cs" />

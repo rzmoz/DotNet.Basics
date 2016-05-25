@@ -36,8 +36,8 @@ namespace DotNet.Basics.IO
 
         public static string ToPath(this string root, PathDelimiter pathDelimiter, params string[] paths)
         {
-            var path = Path.Combine(paths);
-            path = Path.Combine(root, path.TrimStart(_slashDelimiter).TrimStart(_backslashDelimiter).TrimStart(_slashDelimiter));
+            var path = System.IO.Path.Combine(paths);
+            path = System.IO.Path.Combine(root, path.TrimStart(_slashDelimiter).TrimStart(_backslashDelimiter).TrimStart(_slashDelimiter));
 
             switch (pathDelimiter)
             {
