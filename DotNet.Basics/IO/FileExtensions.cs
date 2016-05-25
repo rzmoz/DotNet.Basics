@@ -19,8 +19,9 @@ namespace DotNet.Basics.IO
 
         public static FileInfo ToFile(this string dir, params string[] paths)
         {
-            var path = new Path(dir, false).Add(paths).ToString(PathDelimiter.Backslash);
-            return new FileInfo(path);
+            var path = dir.ToPath(false, paths);
+            path.IsFolder = false;
+            return new FileInfo(path.ToString(PathDelimiter.Backslash));
         }
 
         public static FileInfo ToFile(this DirectoryInfo dir, params string[] paths)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {
@@ -16,26 +17,18 @@ namespace DotNet.Basics.IO
             : this(null, path)
         {
         }
+
         public Path(string protocol, string path)
-            : this(protocol, path, DetectIsFolder(path))
-        {
-        }
-        public Path(string path, bool isFolder)
-            : this(null, path, isFolder)
-        {
-        }
-        public Path(string protocol, string path, bool isFolder)
         {
             _pathTokens = new string[0];
             Protocol = protocol ?? string.Empty;
             Delimiter = DetectDelimiter(protocol, path);
-            IsFolder = isFolder;
             Add(path);
         }
 
         public string Protocol { get; private set; }
         public string[] PathTokens => _pathTokens;
-        public bool IsFolder { get; }
+        public bool IsFolder { get; set; }
         public PathDelimiter Delimiter { get; set; }
 
         public string Name => PathTokens.Last();
@@ -77,6 +70,7 @@ namespace DotNet.Basics.IO
                 }
             }
             Interlocked.Exchange(ref _pathTokens, updatedSegments.ToArray());
+            IsFolder = DetectIsFolder(pathSegment);
             return this;
         }
 
@@ -90,15 +84,17 @@ namespace DotNet.Basics.IO
             var path = Protocol ?? string.Empty;
             foreach (var pathToken in PathTokens)
                 path += $"{pathToken}{delimiter.ToChar()}";
-            if (IsFolder == false)
-                path = path.TrimEnd(delimiter.ToChar());
+            path = IsFolder ? path.EnsureSuffix(delimiter.ToChar()) : path.TrimEnd(delimiter.ToChar());
             return path;
         }
 
-        private static bool DetectIsFolder(string path)
+        private bool DetectIsFolder(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
                 return false;
+
+            if (path.Trim(_slashDelimiter) == "" || path.Trim(_backslashDelimiter) == "")
+                return IsFolder;//if it's only a delimiter, then we return existing value
 
             return path.EndsWith(_slashDelimiter.ToString()) || path.EndsWith(_backslashDelimiter.ToString());
         }

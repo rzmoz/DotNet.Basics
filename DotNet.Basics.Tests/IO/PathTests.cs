@@ -17,7 +17,7 @@ namespace DotNet.Basics.Tests.IO
         public void Add_EmptySegments_PathIsUnchanged(string root, string newSegment)
         {
             var path = new Path(root).Add(newSegment);
-            
+
             //assert
             path.FullName.Should().Be(root);
         }
@@ -28,7 +28,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFolder\\myFile.txt", "myFile.txt", false)]//file with extension
         public void Name_Parsing_NameIsParsed(string fullPath, string expectedName, bool isFolder)
         {
-            var path = new Path(fullPath, isFolder);
+            var path = new Path(fullPath) { IsFolder = isFolder };
             //assert
             path.Name.Should().Be(expectedName);
         }
@@ -39,7 +39,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFile.txt", ".txt", false)]//file with extension
         public void Extensions_Parsing_ExtensionIsParsed(string name, string extension, bool isFolder)
         {
-            var path = new Path(name, isFolder);
+            var path = new Path(name) { IsFolder = isFolder };
             //assert
             path.Extension.Should().Be(extension);
         }
@@ -51,7 +51,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFolder\\myFile.txt", "myFile.txt", false)]//file with extension
         public void FullName_Parsing_NameIsParsed(string fullPath, string expectedName, bool isFolder)
         {
-            var path = new Path(fullPath, isFolder);
+            var path = new Path(fullPath) { IsFolder = isFolder };
 
             if (isFolder)
                 fullPath = fullPath.EnsureSuffix(path.Delimiter.ToChar());
@@ -65,7 +65,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFolder\\myFile.txt", "myFile", false)]//file with extension
         public void NameWithoutExtension_Parsing_NameIsParsed(string fullPath, string expectedName, bool isFolder)
         {
-            var path = new Path(fullPath, isFolder);
+            var path = new Path(fullPath) { IsFolder = isFolder };
             //assert
             path.NameWithoutExtension.Should().Be(expectedName);
         }
