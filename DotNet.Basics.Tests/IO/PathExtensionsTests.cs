@@ -42,7 +42,7 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         [TestCase("//pt101", "pt2", PathDelimiter.Slash)]//file
         [TestCase("\\pt101", "pt2", PathDelimiter.Backslash)]//file
-        [TestCase("//pt101", "pt2//", PathDelimiter.Slash)]//dir
+        [TestCase("//pt101", "pt2/", PathDelimiter.Slash)]//dir
         [TestCase("\\pt101", "pt2\\", PathDelimiter.Backslash)]//dir
         public void ToPath_Combine_PathIsGenerated(string pt1, string pt2, PathDelimiter pathDelimiter)
         {
