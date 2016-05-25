@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace DotNet.Basics.IO
@@ -15,6 +16,10 @@ namespace DotNet.Basics.IO
             : this(null, path, DetectIsFolder(path))
         {
         }
+        public Path(string protocol, string path)
+            : this(protocol, path, DetectIsFolder(path))
+        {
+        }
         public Path(string path, bool isFolder)
             : this(null, path, isFolder)
         {
@@ -25,8 +30,10 @@ namespace DotNet.Basics.IO
                 throw new ArgumentException("path is not set");
             _pathTokens = new string[0];
             Protocol = protocol;
-            //we assume most path are slash - only io paths are using backslash
-            Delimiter = DetectDelimiter(path);
+            PathDelimiter delimiter;
+            if (TryDetectDelimiter(protocol, out delimiter) == false)
+                TryDetectDelimiter(path, out delimiter);
+            Delimiter = delimiter;
             IsFolder = isFolder;
             Add(path);
         }
@@ -34,18 +41,23 @@ namespace DotNet.Basics.IO
         public string Protocol { get; }
         public string[] PathTokens => _pathTokens;
         public bool IsFolder { get; }
-        public PathDelimiter Delimiter { get; }
+        public PathDelimiter Delimiter { get; private set; }
 
-        public string Name => System.IO.Path.GetFileName(FullName);
+        public string Name => PathTokens.Last();
         public string FullName => ToString(Delimiter);
-        public string NameWithoutExtensions => System.IO.Path.GetFileNameWithoutExtension(FullName);
+        public string NameWithoutExtensions => System.IO.Path.GetFileNameWithoutExtension(Name);
 
 
         public void Add(string pathSegment)
         {
+            Add(pathSegment, Delimiter);
+        }
+        public void Add(string pathSegment, PathDelimiter delimiter)
+        {
             if (string.IsNullOrWhiteSpace(pathSegment))
                 throw new ArgumentException("pathSegment is not set");
 
+            Delimiter = delimiter;
             var updatedSegments = new List<string>(PathTokens);
             updatedSegments.AddRange(pathSegment.Split(new[] { _slashDelimiter, _backslashDelimiter }, StringSplitOptions.RemoveEmptyEntries));
             Interlocked.Exchange(ref _pathTokens, updatedSegments.ToArray());
@@ -60,9 +72,9 @@ namespace DotNet.Basics.IO
         {
             var path = Protocol ?? string.Empty;
             foreach (var pathToken in PathTokens)
-                path += $"{pathToken}{Delimiter.ToChar()}";
+                path += $"{pathToken}{delimiter.ToChar()}";
             if (IsFolder == false)
-                path = path.TrimEnd(Delimiter.ToChar());
+                path = path.TrimEnd(delimiter.ToChar());
             return path;
         }
 
@@ -74,24 +86,32 @@ namespace DotNet.Basics.IO
             return path.EndsWith(_slashDelimiter.ToString()) || path.EndsWith(_backslashDelimiter.ToString());
         }
 
-        private PathDelimiter DetectDelimiter(string path)
+        private bool TryDetectDelimiter(string path, out PathDelimiter delimiter)
         {
             if (path == null)
-                return PathDelimiter.Backslash;
+            {
+                delimiter = PathDelimiter.Backslash;
+                return false;
+            }
 
             var slashIndex = path.IndexOf(_slashDelimiter);
             var backSlashIndex = path.IndexOf(_backslashDelimiter);
 
             if (slashIndex < 0)
-                return PathDelimiter.Backslash;
+            {
+                delimiter = PathDelimiter.Backslash;
+                return true;
+            }
+
             if (backSlashIndex < 0)
-                return PathDelimiter.Slash;
+            {
+                delimiter = PathDelimiter.Slash;
+                return true;
+            }
 
             //first occurence decides
-            if (slashIndex < backSlashIndex)
-                return PathDelimiter.Slash;
-            else
-                return PathDelimiter.Backslash;
+            delimiter = slashIndex < backSlashIndex ? PathDelimiter.Slash : PathDelimiter.Backslash;
+            return true;
         }
     }
 }

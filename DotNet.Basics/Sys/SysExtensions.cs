@@ -51,6 +51,10 @@ namespace DotNet.Basics.Sys
             return originalString;
         }
 
+        public static string EnsurePrefix(this string str, char prefix, bool ignoreCase = true)
+        {
+            return EnsurePrefix(str, prefix.ToString(), ignoreCase);
+        }
         public static string EnsurePrefix(this string str, string prefix, bool ignoreCase = true)
         {
             if (str == null) throw new ArgumentNullException(nameof(str));
@@ -60,15 +64,23 @@ namespace DotNet.Basics.Sys
             return prefix + str;
         }
 
-        public static string EnsureSuffix(this string str, string postfix, bool ignoreCase = true)
+        public static string EnsureSuffix(this string str, char suffix, bool ignoreCase = true)
+        {
+            return EnsureSuffix(str, suffix.ToString(), ignoreCase);
+        }
+        public static string EnsureSuffix(this string str, string suffix, bool ignoreCase = true)
         {
             if (str == null) throw new ArgumentNullException(nameof(str));
-            if (postfix == null) throw new ArgumentNullException(nameof(postfix));
+            if (suffix == null) throw new ArgumentNullException(nameof(suffix));
 
-            str = str.RemoveSuffix(postfix, ignoreCase);
-            return str + postfix;
+            str = str.RemoveSuffix(suffix, ignoreCase);
+            return str + suffix;
         }
 
+        public static string RemovePrefix(this string str, char prefix, bool ignoreCase = true)
+        {
+            return RemovePrefix(str, prefix.ToString(), ignoreCase);
+        }
         public static string RemovePrefix(this string str, string prefix, bool ignoreCase = true)
         {
             if (str == null) throw new ArgumentNullException(nameof(str));
@@ -79,13 +91,17 @@ namespace DotNet.Basics.Sys
             return str;
         }
 
-        public static string RemoveSuffix(this string str, string postfix, bool ignoreCase = true)
+        public static string RemoveSuffix(this string str, char suffix, bool ignoreCase = true)
+        {
+            return RemoveSuffix(str, suffix.ToString(), ignoreCase);
+        }
+        public static string RemoveSuffix(this string str, string suffix, bool ignoreCase = true)
         {
             if (str == null) throw new ArgumentNullException(nameof(str));
-            if (postfix == null) throw new ArgumentNullException(nameof(postfix));
+            if (suffix == null) throw new ArgumentNullException(nameof(suffix));
             var comparison = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
-            if (str.EndsWith(postfix, comparison))
-                return str.Remove(str.Length - postfix.Length);
+            if (str.EndsWith(suffix, comparison))
+                return str.Remove(str.Length - suffix.Length);
             return str;
         }
 
