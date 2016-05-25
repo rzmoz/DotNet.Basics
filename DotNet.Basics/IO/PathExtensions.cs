@@ -41,7 +41,6 @@ namespace DotNet.Basics.IO
         public static Path ToPath(this string root, bool isFolder, params string[] paths)
         {
             var path = new Path(root).Add(paths);
-            path.IsFolder = isFolder;
             return path;
         }
         public static Path ToPath(this string root, PathDelimiter delimiter, params string[] paths)

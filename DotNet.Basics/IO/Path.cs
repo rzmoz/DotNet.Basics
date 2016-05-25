@@ -45,6 +45,12 @@ namespace DotNet.Basics.IO
 
         public Path Add(string pathSegment)
         {
+            var isFolder = DetectIsFolder(pathSegment);
+            return Add(pathSegment, isFolder);
+        }
+
+        public Path Add(string pathSegment, bool isFolder)
+        {
             if (string.IsNullOrWhiteSpace(pathSegment))
                 return this;
 
@@ -70,7 +76,7 @@ namespace DotNet.Basics.IO
                 }
             }
             Interlocked.Exchange(ref _pathTokens, updatedSegments.ToArray());
-            IsFolder = DetectIsFolder(pathSegment);
+            IsFolder = isFolder;
             return this;
         }
 

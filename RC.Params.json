@@ -1,6 +1,6 @@
 {
 	"version.assembly":"2.0.0",
-	"version.prerelease":"rc9",
+	"version.prerelease":"rc10",
 	"sln.path": "DotNet.Basics.sln",
 	"test.assemblies":"*.tests.dll",
 	"nuget.targets": [
