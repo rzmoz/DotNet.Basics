@@ -45,8 +45,8 @@ namespace DotNet.Basics.IO
 
         public string Name => PathTokens.Last();
         public string FullName => ToString(Delimiter);
-        public string NameWithoutExtensions => System.IO.Path.GetFileNameWithoutExtension(Name);
-
+        public string NameWithoutExtension => System.IO.Path.GetFileNameWithoutExtension(Name);
+        public string Extension => System.IO.Path.GetExtension(Name);
 
         public Path Add(params string[] pathSegments)
         {

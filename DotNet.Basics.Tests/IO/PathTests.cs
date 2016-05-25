@@ -18,6 +18,18 @@ namespace DotNet.Basics.Tests.IO
             //assert
             path.Name.Should().Be(expectedName);
         }
+
+        [Test]
+        [TestCase("myFolder\\myFolder\\", "", true)]//folder
+        [TestCase("myFolder\\myFolder", "", false)]//folder without extension
+        [TestCase("myFile.txt", ".txt", false)]//file with extension
+        public void Extensions_Parsing_ExtensionIsParsed(string name, string extension, bool isFolder)
+        {
+            var path = new Path(name, isFolder);
+            //assert
+            path.Extension.Should().Be(extension);
+        }
+
         [Test]
         [TestCase("myFolder\\myFolder\\", "myFolder", true)]//folder with trailing delimiter
         [TestCase("myFolder\\myFolder", "myFolder", true)]//folder without trailing delimiter
@@ -41,7 +53,7 @@ namespace DotNet.Basics.Tests.IO
         {
             var path = new Path(fullPath, isFolder);
             //assert
-            path.NameWithoutExtensions.Should().Be(expectedName);
+            path.NameWithoutExtension.Should().Be(expectedName);
         }
 
 
