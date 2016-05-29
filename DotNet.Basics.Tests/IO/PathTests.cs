@@ -1,13 +1,35 @@
-﻿using DotNet.Basics.IO;
+﻿using System.IO;
+using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using FluentAssertions;
 using NUnit.Framework;
+using Path = DotNet.Basics.IO.Path;
 
 namespace DotNet.Basics.Tests.IO
 {
     [TestFixture]
     public class PathTests
     {
+        [Test]
+        [TestCase("myFolder", true)]
+        [TestCase("myFile.txt", false)]
+        public void Exists_AssertExistence_Asserted(string pathFullName, bool isFolder)
+        {
+
+            var path = new Path(pathFullName) { IsFolder = isFolder };
+            path.DeleteIfExists();
+
+            path.Exists().Should().BeFalse();
+            if (isFolder)
+                path.FullName.ToDir().CreateIfNotExists();
+            else
+                "dummyContent".WriteAllText(path.FullName.ToFile());
+
+            //assert
+            path.Exists().Should().BeTrue();
+        }
+
+
         [Test]
         [TestCase("myFolder", "")]//empty
         [TestCase("myFolder", null)]//null

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using DotNet.Basics.Sys;
+using DotNet.Basics.Tasks;
 
 namespace DotNet.Basics.IO
 {
@@ -12,8 +14,12 @@ namespace DotNet.Basics.IO
             if (targetFile == null) throw new ArgumentNullException(nameof(targetFile));
 
             targetFile.Directory.CreateIfNotExists();
+            var result = Repeat.Task(() => File.WriteAllText(targetFile.FullName, content))
+                .WithRetryDelay(1.Seconds())
+                .UntilNoExceptions()
+                .WithMaxTries(10)
+                .Now();
 
-            File.WriteAllText(targetFile.FullName, content);
             Debug.WriteLine($"Saved text to disk: {targetFile.FullName}");
             return targetFile;
         }

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Management.Automation;
 using System.Threading;
 using DotNet.Basics.Sys;
+using DotNet.Basics.Tasks;
 
 namespace DotNet.Basics.IO
 {
@@ -83,6 +86,23 @@ namespace DotNet.Basics.IO
         public override string ToString()
         {
             return ToString(Delimiter);
+        }
+        
+        public bool Exists()
+        {
+            if (FullName.ToFile().Exists())
+                return true;
+            return FullName.ToDir().Exists();
+        }
+
+        public bool DeleteIfExists()
+        {
+            return DeleteIfExists(30.Seconds());
+        }
+
+        public bool DeleteIfExists(TimeSpan timeout)
+        {
+            return IsFolder ? FullName.ToDir().DeleteIfExists(timeout) : FullName.ToFile().DeleteIfExists(timeout);
         }
 
         public string ToString(PathDelimiter delimiter)
