@@ -148,6 +148,21 @@ namespace DotNet.Basics.Tests.IO
         }
 
         [Test]
+        [TestCase("myFolder/DetectDelimiter/", true)]//folder with delimiter in the end
+        [TestCase("myFolder/DetectDelimiter", true)]//folder withouth delimiter in the end
+        [TestCase("myFolder/myFile.txt", false)]//delimiter fallback
+        public void IsFolder_Formatting_FolderExtensionIsOutput(string pathInput, bool isFolder)
+        {
+            var path = pathInput.ToPath(isFolder);
+            path.IsFolder.Should().Be(isFolder);
+            var formatted = path.ToString();
+            if (isFolder)
+                formatted.Should().EndWith(path.Delimiter.ToChar().ToString());
+            else
+                formatted.Should().NotEndWith(path.Delimiter.ToChar().ToString());
+        }
+
+        [Test]
         [TestCase("myFolder/DetectDelimiter/")]
         [TestCase("myFolder\\DetectDelimiter\\")]
         public void ToString_Delimiter_(string pathInput)

@@ -17,16 +17,30 @@ namespace DotNet.Basics.IO
         private const char _backslashDelimiter = '\\';
 
         public Path(string path)
-            : this(null, path)
+        {
+            _pathTokens = new string[0];
+            Protocol = string.Empty;
+            Delimiter = DetectDelimiter(Protocol, path);
+            Add(path);
+        }
+        public Path(string path, bool isFolder)
+            : this(null, path, isFolder)
         {
         }
-
         public Path(string protocol, string path)
         {
             _pathTokens = new string[0];
             Protocol = protocol ?? string.Empty;
             Delimiter = DetectDelimiter(protocol, path);
             Add(path);
+        }
+
+        public Path(string protocol, string path, bool isFolder)
+        {
+            _pathTokens = new string[0];
+            Protocol = protocol ?? string.Empty;
+            Delimiter = DetectDelimiter(protocol, path);
+            Add(path, isFolder);
         }
 
         public string Protocol { get; private set; }
@@ -41,8 +55,14 @@ namespace DotNet.Basics.IO
 
         public Path Add(params string[] pathSegments)
         {
+            var isFolder = DetectIsFolder(pathSegments.Last());
+            Add(isFolder, pathSegments);
+            return this;
+        }
+        public Path Add(bool isFolder, params string[] pathSegments)
+        {
             foreach (var pathSegment in pathSegments)
-                Add(pathSegment);
+                Add(pathSegment, isFolder);
             return this;
         }
 
@@ -87,7 +107,7 @@ namespace DotNet.Basics.IO
         {
             return ToString(Delimiter);
         }
-        
+
         public bool Exists()
         {
             if (FullName.ToFile().Exists())

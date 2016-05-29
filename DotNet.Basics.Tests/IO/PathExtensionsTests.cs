@@ -54,5 +54,14 @@ namespace DotNet.Basics.Tests.IO
 
             path.FullName.Should().Be(refPath);
         }
+        [Test]
+        [TestCase("mypath", false)]//file
+        [TestCase("mypath", true)]//file
+        public void IsFolder_Set_IsFolderIsSet(string pth, bool isFolder)
+        {
+            var path = pth.ToPath(isFolder);
+
+            path.IsFolder.Should().Be(isFolder);
+        }
     }
 }
