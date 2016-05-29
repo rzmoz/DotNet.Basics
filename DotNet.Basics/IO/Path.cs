@@ -17,16 +17,10 @@ namespace DotNet.Basics.IO
         private const char _backslashDelimiter = '\\';
 
         public Path(string path)
-        {
-            _pathTokens = new string[0];
-            Protocol = string.Empty;
-            Delimiter = DetectDelimiter(Protocol, path);
-            Add(path);
-        }
-        public Path(string path, bool isFolder)
-            : this(null, path, isFolder)
+            : this(null, path)
         {
         }
+
         public Path(string protocol, string path)
         {
             _pathTokens = new string[0];
@@ -34,7 +28,10 @@ namespace DotNet.Basics.IO
             Delimiter = DetectDelimiter(protocol, path);
             Add(path);
         }
-
+        public Path(string path, bool isFolder)
+            : this(null, path, isFolder)
+        {
+        }
         public Path(string protocol, string path, bool isFolder)
         {
             _pathTokens = new string[0];
@@ -55,6 +52,9 @@ namespace DotNet.Basics.IO
 
         public Path Add(params string[] pathSegments)
         {
+            if (pathSegments.Length == 0)
+                return this;
+
             var isFolder = DetectIsFolder(pathSegments.Last());
             Add(isFolder, pathSegments);
             return this;
