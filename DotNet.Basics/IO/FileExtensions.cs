@@ -17,6 +17,12 @@ namespace DotNet.Basics.IO
             return file.Name.EndsWith(fileType.Extension, true, null);
         }
 
+        public static FileInfo ToFile(this Path path)
+        {
+            if (path == null) throw new ArgumentNullException(nameof(path));
+            return new FileInfo(path.ToString(PathDelimiter.Backslash));
+        }
+
         public static FileInfo ToFile(this string dir, params string[] paths)
         {
             var path = dir.ToPath(false, paths);

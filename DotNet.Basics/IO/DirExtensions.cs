@@ -16,6 +16,12 @@ namespace DotNet.Basics.IO
             sourceDirs.ForEach(dir => dir.CopyTo(target, includeSubfolders));
         }
 
+        public static DirectoryInfo ToDir(this Path path)
+        {
+            if (path == null) throw new ArgumentNullException(nameof(path));
+            return new DirectoryInfo(path.ToString(PathDelimiter.Backslash));
+        }
+
         public static DirectoryInfo ToDir(this string dir, params string[] paths)
         {
             return new DirectoryInfo(new Path(dir).Add(paths).ToString(PathDelimiter.Backslash));

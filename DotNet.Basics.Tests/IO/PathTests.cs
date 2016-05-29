@@ -11,47 +11,6 @@ namespace DotNet.Basics.Tests.IO
     public class PathTests
     {
         [Test]
-        [TestCase("myFolder", true)]
-        [TestCase("myFile.txt", false)]
-        public void DeleteIfExists_Deletion_PathIsDeleted(string pathFullName, bool isFolder)
-        {
-
-            var path = new Path("DeleteIfExists_Deletion_PathIsDeleted").Add(pathFullName);
-            path.IsFolder = isFolder;
-            if (isFolder)
-                path.FullName.ToDir().CreateIfNotExists();
-            else
-                "dummyContent".WriteAllText(path.FullName.ToFile());
-            path.Exists().Should().BeTrue();
-
-            //act
-            path.DeleteIfExists();
-
-            //assert
-            path.Exists().Should().BeFalse();
-        }
-        [Test]
-        [TestCase("myFolder", true)]
-        [TestCase("myFile.txt", false)]
-        public void Exists_AssertExistence_Asserted(string pathFullName, bool isFolder)
-        {
-
-            var path = new Path("Exists_AssertExistence_Asserted").Add(pathFullName);
-            path.IsFolder = isFolder;
-            path.DeleteIfExists();
-
-            path.Exists().Should().BeFalse();
-            if (isFolder)
-                path.FullName.ToDir().CreateIfNotExists();
-            else
-                "dummyContent".WriteAllText(path.FullName.ToFile());
-
-            //assert
-            path.Exists().Should().BeTrue();
-        }
-
-
-        [Test]
         [TestCase("myFolder", "")]//empty
         [TestCase("myFolder", null)]//null
         [TestCase("myFolder", "  ")]//spaces
