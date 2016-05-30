@@ -18,12 +18,12 @@ namespace DotNet.Basics.Tests.IO
         {
             DirectoryInfo dir = null;
 
-            var tempWorkDir = new TempWorkDir();
-            tempWorkDir.Use(f =>
+            using (var temp = new TempDir())
             {
-                dir = f;
+                dir = temp.Dir;
                 dir.Exists().Should().BeTrue();
-            });
+            }
+
             dir.Exists().Should().BeFalse();
         }
     }
