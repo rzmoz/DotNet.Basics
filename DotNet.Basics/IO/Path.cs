@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Management.Automation;
 using System.Threading;
 using DotNet.Basics.Sys;
-using DotNet.Basics.Tasks;
 
 namespace DotNet.Basics.IO
 {
@@ -49,6 +46,23 @@ namespace DotNet.Basics.IO
         public string FullName => ToString(Delimiter);
         public string NameWithoutExtension => System.IO.Path.GetFileNameWithoutExtension(Name);
         public string Extension => System.IO.Path.GetExtension(Name);
+
+        public Path Parent
+        {
+            get
+            {
+                if (_pathTokens.Length <= 1)
+                    return null;//no parent
+
+                var parentPath = new Path(Protocol);
+                var allButLast = _pathTokens.Reverse().Skip(1).Reverse().ToArray();
+                parentPath.Add(allButLast);
+                parentPath.IsFolder = true;//parent is always folder
+                return parentPath;
+            }
+        }
+
+        public Path Directory => IsFolder ? this : Parent;
 
         public Path Add(params string[] pathSegments)
         {
@@ -103,11 +117,30 @@ namespace DotNet.Basics.IO
             return this;
         }
 
+        private sealed class ProtocolEqualityComparer : IEqualityComparer<Path>
+        {
+            public bool Equals(Path x, Path y)
+            {
+                if (ReferenceEquals(x, y)) return true;
+                if (ReferenceEquals(x, null)) return false;
+                if (ReferenceEquals(y, null)) return false;
+                if (x.GetType() != y.GetType()) return false;
+                return string.Equals(x.FullName, y.FullName);
+            }
+
+            public int GetHashCode(Path obj)
+            {
+                return obj.FullName?.GetHashCode() ?? 0;
+            }
+        }
+
+        public static IEqualityComparer<Path> ProtocolComparer { get; } = new ProtocolEqualityComparer();
+
         public override string ToString()
         {
             return ToString(Delimiter);
         }
-        
+
         public string ToString(PathDelimiter delimiter)
         {
             var path = Protocol ?? string.Empty;

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using FluentAssertions;
@@ -10,6 +11,40 @@ namespace DotNet.Basics.Tests.IO
     [TestFixture]
     public class PathTests
     {
+        [Test]
+        [TestCase(@"myFolder\", null)]
+        [TestCase(@"myParent\myFolder\", @"myParent\")]
+        [TestCase(@"myParent\myFile", @"myParent\")]
+        [TestCase(@"c:\myParent\myFolder\", @"c:\myParent\")]
+        [TestCase(@"c:\myParent\myFile", @"c:\myParent\")]
+        public void Parent_DirUp_GetParent(string folder, string expectedParent)
+        {
+            var path = new Path(folder);
+
+            var parent = path.Parent;
+            try
+            {
+                parent.FullName.Should().Be(expectedParent);
+            }
+            catch (NullReferenceException)
+            {
+                parent.Should().BeNull();
+            }
+        }
+
+        [Test]
+        [TestCase(@"c:\myParent\myFolder\", true)]
+        [TestCase(@"c:\myParent\myFile", false)]
+        public void Directory_GetDir_Dir(string folder, bool isFolder)
+        {
+            var path = new Path(folder, isFolder);
+
+            var dir = path.Directory;
+
+            dir.FullName.Should().Be(isFolder ? path.FullName : path.Parent.FullName);
+        }
+
+
         [Test]
         [TestCase("myFolder", "")]//empty
         [TestCase("myFolder", null)]//null
@@ -133,7 +168,6 @@ namespace DotNet.Basics.Tests.IO
 
             pathWithSlash.Should().Be(pathInput.Replace('\\', '/'), PathDelimiter.Slash.ToName());
             pathWithBackSlash.Should().Be(pathInput.Replace('/', '\\'), PathDelimiter.Backslash.ToName());
-
         }
     }
 }
