@@ -19,6 +19,13 @@ namespace DotNet.Basics.IO
             throw new ArgumentOutOfRangeException($"Type not supported: {fsi.GetType()}");
         }
 
+        public static void CopyTo(this FileSystemInfo fsi, string destination)
+        {
+            var recurse = fsi is DirectoryInfo;
+            PowerShellConsole.CopyItem(fsi.FullName, destination, force: true, recurse: recurse);
+        }
+
+
         public static bool Exists(this FileSystemInfo fsi)
         {
             if (fsi == null)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace DotNet.Basics.IO
 {
@@ -33,6 +34,11 @@ namespace DotNet.Basics.IO
             }
         }
 
+        public static Path ToPath(this FileSystemInfo fsi)
+        {
+            var path = new Path(fsi.FullName);
+            return path;
+        }
         public static Path ToPath(this string root, params string[] paths)
         {
             var path = new Path(root).Add(paths);
