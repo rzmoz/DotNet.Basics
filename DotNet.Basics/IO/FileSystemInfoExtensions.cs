@@ -19,10 +19,30 @@ namespace DotNet.Basics.IO
             throw new ArgumentOutOfRangeException($"Type not supported: {fsi.GetType()}");
         }
 
-        public static void CopyTo(this FileSystemInfo fsi, string destination)
+        public static void CopyTo(this FileSystemInfo fsi, FileSystemInfo destination, bool overwrite = false)
         {
-            var recurse = fsi is DirectoryInfo;
-            PowerShellConsole.CopyItem(fsi.FullName, destination, force: true, recurse: recurse);
+            var info = destination as DirectoryInfo;
+            if (info == null)
+                fsi.CopyTo(destination as FileInfo, overwrite);
+            else
+                fsi.CopyTo(info, overwrite);
+        }
+
+        public static void CopyTo(this FileSystemInfo fsi, DirectoryInfo destination, bool overwrite = false)
+        {
+            var sourceIsFolder = fsi is DirectoryInfo;
+            destination.CreateIfNotExists();
+
+            if (sourceIsFolder)
+                Robocopy.CopyDir(fsi.FullName, destination.FullName, true);
+            else
+                PowerShellConsole.CopyItem(fsi.FullName, destination.FullName, force: false, recurse: false);
+        }
+        public static void CopyTo(this FileSystemInfo fsi, FileInfo destination, bool overwrite = false)
+        {
+            if (fsi is DirectoryInfo)
+                throw new ArgumentException("You're trying to copy a folder to a file. You should archive it (zip it)");
+            PowerShellConsole.CopyItem(fsi.FullName, destination.FullName, force: overwrite, recurse: false);
         }
 
 

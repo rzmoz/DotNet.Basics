@@ -28,9 +28,9 @@ namespace DotNet.Basics.IO
             if (target == null) { throw new ArgumentNullException(nameof(target)); }
 
             Init();
-            var command = $"{_fullPath} \"{source}\" \"{target}\" ";
+            var command = $"{_fullPath} \"{source.RemoveSuffix('\\')}\" \"{target.RemoveSuffix('\\')}\" ";
             if (string.IsNullOrWhiteSpace(filesToCopy) == false)
-                command += $"\"{filesToCopy}\" ";
+                command += $" \"{filesToCopy}\" ";
             command += options ?? string.Empty;
             return CommandPrompt.Run(command);
         }
@@ -59,7 +59,7 @@ namespace DotNet.Basics.IO
             if (includeSubFolders)
                 options = _includeSubfoldersOption;
             if (string.IsNullOrWhiteSpace(extraOptions) == false)
-                options += " " + extraOptions;
+                options += $" {extraOptions}";//space in front of options
             return Run(sourceDir, targetDir, null, options);
         }
 
