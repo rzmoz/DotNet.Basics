@@ -42,7 +42,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Collections.Concurrent" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -73,6 +72,7 @@
     <Compile Include="IO\FileSystemInfoExtensions.cs" />
     <Compile Include="IO\FileType.cs" />
     <Compile Include="IO\FileTypeCollection.cs" />
+    <Compile Include="IO\IOPath.cs" />
     <Compile Include="IO\Path.cs" />
     <Compile Include="IO\PathExtensions.cs" />
     <Compile Include="IO\Robocopy.cs" />

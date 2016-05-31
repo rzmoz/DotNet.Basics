@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Management.Automation;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
 
@@ -66,7 +65,7 @@ namespace DotNet.Basics.IO
 
             Repeat.Task(() =>
             {
-                PowerShellConsole.RemoveItem(fsi.FullName, force: true, recurse: true, errorAction: ActionPreference.SilentlyContinue);
+                PowerShellConsole.RemoveItem(fsi.FullName, force: true, recurse: true);
             })
             .WithTimeout(timeout)
             .WithRetryDelay(3.Seconds())

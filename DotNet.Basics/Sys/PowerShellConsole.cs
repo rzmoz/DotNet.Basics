@@ -18,7 +18,8 @@ namespace DotNet.Basics.Sys
                 .AddParameter("Path", paths)
                 .AddParameter("Destination", destination)
                 .WithForce(force)
-                .WithRecurse(recurse);
+                .WithRecurse(recurse)
+                .WithErrorAction(ActionPreference.SilentlyContinue); ;
             return RunScript(cmdlet.ToScript());
         }
 
@@ -31,7 +32,8 @@ namespace DotNet.Basics.Sys
             var cmdlet = new PowerShellCmdlet("Rename-Item")
                 .AddParameter("Path", paths)
                 .AddParameter("NewName", newName)
-                .WithForce(force);
+                .WithForce(force)
+                .WithErrorAction(ActionPreference.SilentlyContinue); ;
             return RunScript(cmdlet.ToScript());
         }
 
@@ -44,35 +46,36 @@ namespace DotNet.Basics.Sys
             var cmdlet = new PowerShellCmdlet("New-Item")
                 .AddParameter("Path", paths)
                 .AddParameter("ItemType", itemType)
-                .WithForce(force);
+                .WithForce(force)
+                .WithErrorAction(ActionPreference.SilentlyContinue); ;
             return RunScript(cmdlet.ToScript());
         }
 
-        public static object[] RemoveItem(string path, bool force, bool recurse, ActionPreference errorAction = ActionPreference.SilentlyContinue)
+        public static object[] RemoveItem(string path, bool force, bool recurse)
         {
-            return RemoveItem(path.ToEnumerable().ToArray(), force, recurse, errorAction);
+            return RemoveItem(path.ToEnumerable().ToArray(), force, recurse);
         }
-        public static object[] RemoveItem(string[] paths, bool force, bool recurse, ActionPreference errorAction = ActionPreference.SilentlyContinue)
+        public static object[] RemoveItem(string[] paths, bool force, bool recurse)
         {
             var cmdlet = new PowerShellCmdlet("Remove-Item")
                 .AddParameter("Path", paths)
                 .WithForce(force)
                 .WithRecurse(recurse)
-                .WithErrorAction(errorAction);
+                .WithErrorAction(ActionPreference.SilentlyContinue);
             return RunScript(cmdlet.ToScript());
         }
 
-        public static object[] MoveItem(string path, string destination, bool force, ActionPreference errorAction = ActionPreference.SilentlyContinue)
+        public static object[] MoveItem(string path, string destination, bool force)
         {
-            return MoveItem(path.ToEnumerable().ToArray(), destination, force, errorAction);
+            return MoveItem(path.ToEnumerable().ToArray(), destination, force);
         }
-        public static object[] MoveItem(string[] paths, string destination, bool force, ActionPreference errorAction = ActionPreference.SilentlyContinue)
+        public static object[] MoveItem(string[] paths, string destination, bool force)
         {
             var cmdlet = new PowerShellCmdlet("Move-Item")
                 .AddParameter("Path", paths)
                 .AddParameter("Destination", destination)
                 .WithForce(force)
-                .WithErrorAction(errorAction);
+                .WithErrorAction(ActionPreference.SilentlyContinue);
             return RunScript(cmdlet.ToScript());
         }
 

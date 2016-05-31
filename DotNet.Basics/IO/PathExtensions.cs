@@ -34,20 +34,21 @@ namespace DotNet.Basics.IO
             }
         }
 
-        public static Path ToPath(this FileSystemInfo fsi)
+        public static Path ToPath(this FileInfo file)
         {
-            var path = new Path(fsi.FullName);
-            return path;
+            return new Path(file.FullName, false);
+        }
+        public static Path ToPath(this DirectoryInfo dir)
+        {
+            return new Path(dir.FullName, true);
         }
         public static Path ToPath(this string root, params string[] paths)
         {
-            var path = new Path(root).Add(paths);
-            return path;
+            return new Path(root).Add(paths);
         }
         public static Path ToPath(this string root, bool isFolder, params string[] paths)
         {
-            var path = new Path(root, isFolder).Add(isFolder, paths);
-            return path;
+            return new Path(root, isFolder).Add(isFolder, paths);
         }
         public static Path ToPath(this string root, PathDelimiter delimiter, params string[] paths)
         {
