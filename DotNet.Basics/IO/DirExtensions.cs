@@ -11,8 +11,6 @@ namespace DotNet.Basics.IO
 {
     public static class DirExtensions
     {
-        
-
         public static void CopyTo(this IEnumerable<DirectoryInfo> sourceDirs, DirectoryInfo target, bool includeSubfolders = true)
         {
             sourceDirs.ForEach(dir => dir.CopyTo(target, includeSubfolders));

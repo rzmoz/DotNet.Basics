@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using DotNet.Basics.Sys;
+using DotNet.Basics.Tasks;
 
 namespace DotNet.Basics.IO
 {
@@ -7,6 +10,38 @@ namespace DotNet.Basics.IO
     {
         private const char _slashDelimiter = '/';
         private const char _backslashDelimiter = '\\';
+
+
+        public static bool Exists(this Path path)
+        {
+            if (path == null)
+                return false;
+
+            throw new NotImplementedException();
+        }
+
+
+        public static bool DeleteIfExists(this Path path)
+        {
+            return DeleteIfExists(path, 30.Seconds());
+        }
+        public static bool DeleteIfExists(this Path path, TimeSpan timeout)
+        {
+            if (path == null)
+                return false;
+
+            Repeat.Task(() =>
+            {
+                PowerShellConsole.RemoveItem(path.FullName, force: true, recurse: true);
+            })
+            .WithTimeout(timeout)
+            .WithRetryDelay(3.Seconds())
+            .Until(() => path.Exists() == false)
+            .Now();
+
+            return path.Exists() == false;
+        }
+
 
         public static PathDelimiter ToPathDelimiter(this char delimiter)
         {

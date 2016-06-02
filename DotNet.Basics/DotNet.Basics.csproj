@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Delimon.Win32.IO">
+      <HintPath>..\Lib\Delimon.Win32.IO.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.1.0.0-rc2-final\lib\netstandard1.1\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
@@ -74,6 +77,7 @@
     <Compile Include="IO\FileTypeCollection.cs" />
     <Compile Include="IO\IOPath.cs" />
     <Compile Include="IO\Path.cs" />
+    <Compile Include="IO\PathException.cs" />
     <Compile Include="IO\PathExtensions.cs" />
     <Compile Include="IO\Robocopy.cs" />
     <Compile Include="IO\IoExtensions.cs" />

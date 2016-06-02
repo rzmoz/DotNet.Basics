@@ -43,7 +43,8 @@ namespace DotNet.Basics.IO
         public PathDelimiter Delimiter { get; set; }
 
         public string Name => PathTokens.Last();
-        public string FullName => ToString(Delimiter);
+        public string RelativeName => ToString(Delimiter);
+        public string FullName => Delimon.Win32.IO.Path.GetFullPath(RelativeName);
         public string NameWithoutExtension => System.IO.Path.GetFileNameWithoutExtension(Name);
         public string Extension => System.IO.Path.GetExtension(Name);
 

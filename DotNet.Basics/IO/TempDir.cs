@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
@@ -9,17 +8,17 @@ namespace DotNet.Basics.IO
         public TempDir(string dirPrefix = null)
         {
             Prefix = dirPrefix == null ? string.Empty : dirPrefix.EnsureSuffix(".");
-            Dir = System.IO.Path.GetTempPath().ToPath($"{Prefix}{Guid.NewGuid()}").ToDir();
-            Dir.CleanIfExists();
-            Dir.CreateIfNotExists();
+            Root = System.IO.Path.GetTempPath().ToPath($"{Prefix}{Guid.NewGuid()}");
+            Root.CleanIfExists();
+            Root.CreateIfNotExists();
         }
 
         public string Prefix { get; }
-        public DirectoryInfo Dir { get; }
-        
+        public Path Root { get; }
+
         public void Dispose()
         {
-            Dir.DeleteIfExists();
+            Root.DeleteIfExists();
         }
     }
 }
