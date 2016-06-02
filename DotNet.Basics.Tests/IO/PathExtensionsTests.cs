@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
 using DotNet.Basics.IO;
-using DotNet.Basics.Sys;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -10,6 +8,26 @@ namespace DotNet.Basics.Tests.IO
     [TestFixture]
     public class PathExtensionsTests
     {
+        [Test]
+        [TestCase("Exists_TestPath_PathIsVerified", true)]//dir
+        [TestCase("Exists_TestPath_PathIsVerified\\file.txt", false)]//file
+        public void Exists_TestPath_PathIsVerified(string path, bool isFolder)
+        {
+            var p = new Path(path, isFolder);
+
+            p.DeleteIfExists();
+            p.Exists().Should().BeFalse(p.FullName);
+
+            if (p.IsFolder)
+                p.CreateIfNotExists();
+            else
+                "dummycontent".WriteAllText(p);
+
+            p.Exists().Should().BeTrue(p.FullName);
+        }
+
+
+
         [Test]
         [TestCase(PathDelimiter.Slash, '/')]
         [TestCase(PathDelimiter.Backslash, '\\')]

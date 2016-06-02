@@ -10,12 +10,12 @@ namespace DotNet.Basics.IO
         {
         }
 
-        public PathException(string message, Path path) : base(message)
+        public PathException(string message, Path path) : base($"{message} :{path?.FullName}")
         {
             Path = path;
         }
 
-        public PathException(string message, Exception innerException, Path path) : base(message, innerException)
+        public PathException(string message, Exception innerException, Path path) : base($"{message} :{path?.FullName}", innerException)
         {
             Path = path;
         }

@@ -84,6 +84,7 @@
     <Compile Include="IO\PathExtensionsTests.cs" />
     <Compile Include="IO\PathTests.cs" />
     <Compile Include="IO\RobocopyTests.cs" />
+    <Compile Include="IO\SystemIoPathTests.cs" />
     <Compile Include="IO\TempWorkDirTests.cs" />
     <Compile Include="Sys\CommandPromptTests.cs" />
     <Compile Include="Diagnostics\InMemoryTraceListener.cs" />

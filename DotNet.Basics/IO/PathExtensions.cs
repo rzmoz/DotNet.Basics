@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
 
@@ -11,13 +12,32 @@ namespace DotNet.Basics.IO
         private const char _slashDelimiter = '/';
         private const char _backslashDelimiter = '\\';
 
+        public static void CleanIfExists(this Path path)
+        {
+            if (path == null) throw new ArgumentNullException(nameof(path));
+            if (path.IsFolder == false)
+                throw new PathException($"Can't clean path because it's not a folder", path);
+            PowerShellConsole.RemoveItem($"{path.FullName}\\*", force: true, recurse: true);
+        }
+
+        public static void CreateIfNotExists(this Path path)
+        {
+            if (path.Exists())
+                return;
+
+            if (path.IsFolder == false)
+                throw new PathException($"Can't create path because it's not a folder {path}", path);
+
+            PowerShellConsole.NewItem(path.FullName, "Directory", false);
+            Debug.WriteLine($"Created: {path.FullName}");
+        }
 
         public static bool Exists(this Path path)
         {
             if (path == null)
                 return false;
-
-            throw new NotImplementedException();
+            var result = PowerShellConsole.RunScript($"Test-Path -Path '{path.FullName.Trim()}' -pathtype any");
+            return result.Single().ToString().Equals("True", StringComparison.OrdinalIgnoreCase);
         }
 
 

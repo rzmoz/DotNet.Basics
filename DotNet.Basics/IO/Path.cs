@@ -19,11 +19,8 @@ namespace DotNet.Basics.IO
         }
 
         public Path(string protocol, string path)
+            : this(protocol, path, DetectIsFolder(path))
         {
-            _pathTokens = new string[0];
-            Protocol = protocol ?? string.Empty;
-            Delimiter = DetectDelimiter(protocol, path);
-            Add(path);
         }
         public Path(string path, bool isFolder)
             : this(null, path, isFolder)
@@ -39,12 +36,12 @@ namespace DotNet.Basics.IO
 
         public string Protocol { get; private set; }
         public string[] PathTokens => _pathTokens;
-        public bool IsFolder { get; set; }
+        public bool IsFolder { get; private set; }
         public PathDelimiter Delimiter { get; set; }
 
         public string Name => PathTokens.Last();
         public string RelativeName => ToString(Delimiter);
-        public string FullName => Delimon.Win32.IO.Path.GetFullPath(RelativeName);
+        public string FullName => SystemIoPath.GetFullPath(RelativeName);
         public string NameWithoutExtension => System.IO.Path.GetFileNameWithoutExtension(Name);
         public string Extension => System.IO.Path.GetExtension(Name);
 
@@ -67,11 +64,10 @@ namespace DotNet.Basics.IO
 
         public Path Add(params string[] pathSegments)
         {
-            if (pathSegments.Length == 0)
+            if (pathSegments == null || pathSegments.Length == 0)
                 return this;
 
-            var isFolder = DetectIsFolder(pathSegments.Last());
-            Add(isFolder, pathSegments);
+            Add(IsFolder, pathSegments);
             return this;
         }
         public Path Add(bool isFolder, params string[] pathSegments)
@@ -83,8 +79,7 @@ namespace DotNet.Basics.IO
 
         public Path Add(string pathSegment)
         {
-            var isFolder = DetectIsFolder(pathSegment);
-            return Add(pathSegment, isFolder);
+            return Add(pathSegment, IsFolder);
         }
 
         public Path Add(string pathSegment, bool isFolder)
@@ -151,13 +146,10 @@ namespace DotNet.Basics.IO
             return path;
         }
 
-        private bool DetectIsFolder(string path)
+        private static bool DetectIsFolder(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
                 return false;
-
-            if (path.Trim(_slashDelimiter) == "" || path.Trim(_backslashDelimiter) == "")
-                return IsFolder;//if it's only a delimiter, then we return existing value
 
             return path.EndsWith(_slashDelimiter.ToString()) || path.EndsWith(_backslashDelimiter.ToString());
         }
