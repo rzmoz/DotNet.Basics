@@ -23,7 +23,12 @@ namespace DotNet.Basics.Tests.IO
         public void FullName_LongPath_LongPathsAreSupported(string p)
         {
             var path = new Path(p);
-            path.FullName.Should().Be(p);//no exceptions
+
+            var expectedP = p;
+            if (expectedP.StartsWith("."))
+                expectedP = new DirectoryInfo(".").FullName.ToPath(p.RemovePrefix(".\\")).FullName;
+            
+            path.FullName.Should().Be(expectedP);//no exceptions
         }
 
 
@@ -51,7 +56,7 @@ namespace DotNet.Basics.Tests.IO
             var parent = path.Parent;
             try
             {
-                parent.FullName.Should().Be(expectedParent);
+                parent.RelativeName.Should().Be(expectedParent);
             }
             catch (NullReferenceException)
             {
@@ -83,7 +88,7 @@ namespace DotNet.Basics.Tests.IO
             var path = new Path(root).Add(newSegment);
 
             //assert
-            path.FullName.Should().Be(root);
+            path.RelativeName.Should().Be(root);
         }
 
         [Test]
@@ -120,7 +125,7 @@ namespace DotNet.Basics.Tests.IO
             if (isFolder)
                 fullPath = fullPath.EnsureSuffix(path.Delimiter.ToChar());
 
-            path.FullName.Should().Be(fullPath);
+            path.RelativeName.Should().Be(fullPath);
         }
         [Test]
         [TestCase("myFolder\\myFolder\\", "myFolder", true)]//folder with trailing delimiter
@@ -143,7 +148,7 @@ namespace DotNet.Basics.Tests.IO
         {
             var path = new Path(protocol, pathSegment);
             path.ToString().Should().Be(expectedPath);
-            path.ToString().Should().Be(path.FullName);
+            path.ToString().Should().Be(path.RelativeName);
         }
 
         [Test]

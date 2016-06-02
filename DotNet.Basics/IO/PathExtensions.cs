@@ -99,6 +99,8 @@ namespace DotNet.Basics.IO
         }
         public static Path ToPath(this string root, params string[] paths)
         {
+            if (paths.Length > 0)
+                return new Path(root,true).Add(true, paths);
             return new Path(root).Add(paths);
         }
         public static Path ToPath(this string root, bool isFolder, params string[] paths)

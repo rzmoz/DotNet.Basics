@@ -70,7 +70,7 @@ namespace DotNet.Basics.Tests.IO
             if (path.IsFolder == false)
                 refPath = refPath.TrimEnd(pathDelimiter.ToChar());
 
-            path.FullName.Should().Be(refPath);
+            path.RelativeName.Should().Be(refPath);
         }
         [Test]
         [TestCase("mypath", false)]//file

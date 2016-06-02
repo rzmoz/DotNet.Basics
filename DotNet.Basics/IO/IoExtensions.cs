@@ -16,6 +16,7 @@ namespace DotNet.Basics.IO
             var outFileCmdlet = new PowerShellCmdlet("Out-File");
             outFileCmdlet.AddParameter("FilePath", targetFile.FullName);
             outFileCmdlet.AddParameter("inputobject", content);
+            outFileCmdlet.AddParameter("NoNewline");
 
             targetFile.Directory.CreateIfNotExists();
             var result = Repeat.Task(() => PowerShellConsole.RunScript(outFileCmdlet.ToScript()))
