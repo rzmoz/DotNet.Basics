@@ -34,7 +34,7 @@ namespace DotNet.Basics.IO
             if (content == null) throw new ArgumentNullException(nameof(content));
             if (targetFile == null) throw new ArgumentNullException(nameof(targetFile));
 
-            return content.WriteAllText(targetFile.FullName.ToPath(false)).ToFile();
+            return content.WriteAllText(targetFile.FullName.ToPath(DetectOptions.SetToFile)).ToFile();
         }
 
         public static FileInfo WriteAllText(this string content, DirectoryInfo dir, string filename)

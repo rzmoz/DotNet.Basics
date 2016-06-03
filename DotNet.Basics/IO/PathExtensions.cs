@@ -91,25 +91,29 @@ namespace DotNet.Basics.IO
 
         public static Path ToPath(this FileInfo file)
         {
-            return new Path(file.FullName, false);
+            return new Path(file.FullName, DetectOptions.SetToFile);
         }
         public static Path ToPath(this DirectoryInfo dir)
         {
-            return new Path(dir.FullName, true);
+            return new Path(dir.FullName, DetectOptions.SetToDir);
         }
         public static Path ToPath(this string root, params string[] paths)
         {
-            if (paths.Length > 0)
-                return new Path(root,true).Add(true, paths);
-            return new Path(root).Add(paths);
+            return root.ToPath(DetectOptions.AutoDetect, paths);
         }
-        public static Path ToPath(this string root, bool isFolder, params string[] paths)
+        public static Path ToPath(this string root, DetectOptions detectOptions, params string[] paths)
         {
-            return new Path(root, isFolder).Add(isFolder, paths);
+            return new Path(root, detectOptions).Add(detectOptions, paths);
         }
         public static Path ToPath(this string root, PathDelimiter delimiter, params string[] paths)
         {
             var path = new Path(root).Add(paths);
+            path.Delimiter = delimiter;
+            return path;
+        }
+        public static Path ToPath(this string root, DetectOptions detectOptions, PathDelimiter delimiter, params string[] paths)
+        {
+            var path = new Path(root).Add(detectOptions, paths);
             path.Delimiter = delimiter;
             return path;
         }

@@ -13,25 +13,16 @@ namespace DotNet.Basics.IO
         private const char _slashDelimiter = '/';
         private const char _backslashDelimiter = '\\';
 
-        public Path(string path)
-            : this(null, path)
+        public Path(string path, DetectOptions detectOptions = DetectOptions.AutoDetect)
+            : this(null, path, detectOptions)
         {
         }
-
-        public Path(string protocol, string path)
-            : this(protocol, path, DetectIsFolder(path))
-        {
-        }
-        public Path(string path, bool isFolder)
-            : this(null, path, isFolder)
-        {
-        }
-        public Path(string protocol, string path, bool isFolder)
+        public Path(string protocol, string path, DetectOptions detectOptions = DetectOptions.AutoDetect)
         {
             _pathTokens = new string[0];
             Protocol = protocol ?? string.Empty;
             Delimiter = DetectDelimiter(protocol, path);
-            Add(path, isFolder);
+            Add(detectOptions, path);
         }
 
         public string Protocol { get; private set; }
@@ -52,10 +43,9 @@ namespace DotNet.Basics.IO
                 if (_pathTokens.Length <= 1)
                     return null;//no parent
 
-                var parentPath = new Path(Protocol);
+                var parentPath = new Path(Protocol, DetectOptions.SetToDir);
                 var allButLast = _pathTokens.Reverse().Skip(1).Reverse().ToArray();
-                parentPath.Add(allButLast);
-                parentPath.IsFolder = true;//parent is always folder
+                parentPath.Add(DetectOptions.SetToDir, allButLast);
                 return parentPath;
             }
         }
@@ -64,25 +54,19 @@ namespace DotNet.Basics.IO
 
         public Path Add(params string[] pathSegments)
         {
+            return Add(DetectOptions.AutoDetect, pathSegments);
+        }
+        public Path Add(DetectOptions detectOptions = DetectOptions.AutoDetect, params string[] pathSegments)
+        {
             if (pathSegments == null || pathSegments.Length == 0)
                 return this;
 
-            Add(IsFolder, pathSegments);
-            return this;
-        }
-        public Path Add(bool isFolder, params string[] pathSegments)
-        {
             foreach (var pathSegment in pathSegments)
-                Add(pathSegment, isFolder);
+                Add(pathSegment, detectOptions);
             return this;
         }
 
-        public Path Add(string pathSegment)
-        {
-            return Add(pathSegment, IsFolder);
-        }
-
-        public Path Add(string pathSegment, bool isFolder)
+        public Path Add(string pathSegment, DetectOptions detectOptions = DetectOptions.AutoDetect)
         {
             if (string.IsNullOrWhiteSpace(pathSegment))
                 return this;
@@ -109,7 +93,20 @@ namespace DotNet.Basics.IO
                 }
             }
             Interlocked.Exchange(ref _pathTokens, updatedSegments.ToArray());
-            IsFolder = isFolder;
+            switch (detectOptions)
+            {
+                case DetectOptions.SetToDir:
+                    IsFolder = true;
+                    break;
+                case DetectOptions.SetToFile:
+                    IsFolder = false;
+                    break;
+                case DetectOptions.AutoDetect:
+                    IsFolder = DetectIsFolder(pathSegment);
+                    break;
+                case DetectOptions.KeepExisting:
+                    break;
+            }
             return this;
         }
 

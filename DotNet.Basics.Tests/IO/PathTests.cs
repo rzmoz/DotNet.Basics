@@ -27,7 +27,7 @@ namespace DotNet.Basics.Tests.IO
             var expectedP = p;
             if (expectedP.StartsWith("."))
                 expectedP = new DirectoryInfo(".").FullName.ToPath(p.RemovePrefix(".\\")).FullName;
-            
+
             path.FullName.Should().Be(expectedP);//no exceptions
         }
 
@@ -69,20 +69,28 @@ namespace DotNet.Basics.Tests.IO
         [TestCase(@"c:\myParent\myFile", false)]
         public void Directory_GetDir_Dir(string folder, bool isFolder)
         {
-            var path = new Path(folder, isFolder);
+            var path = new Path(folder, isFolder ? DetectOptions.SetToDir : DetectOptions.SetToFile);
 
             var dir = path.Directory;
 
             dir.FullName.Should().Be(isFolder ? path.FullName : path.Parent.FullName);
         }
 
+        [Test]
+        [TestCase("myFolder", "/")]//slash delimiter
+        [TestCase("myFolder", "\\")]//backslash delimiter
+        public void Add_AutoDetec_PathIsUpdatedToNewType(string root, string newSegment)
+        {
+            var path = new Path(root).Add(newSegment);
+
+            //assert
+            path.RelativeName.Should().Be(root + path.Delimiter.ToChar());
+        }
 
         [Test]
         [TestCase("myFolder", "")]//empty
         [TestCase("myFolder", null)]//null
         [TestCase("myFolder", "  ")]//spaces
-        [TestCase("myFolder", "/")]//slash delimiter
-        [TestCase("myFolder", "\\")]//backslash delimiter
         public void Add_EmptySegments_PathIsUnchanged(string root, string newSegment)
         {
             var path = new Path(root).Add(newSegment);
@@ -97,7 +105,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFolder\\myFile.txt", "myFile.txt", false)]//file with extension
         public void Name_Parsing_NameIsParsed(string fullPath, string expectedName, bool isFolder)
         {
-            var path = new Path(fullPath, isFolder);
+            var path = new Path(fullPath, isFolder ? DetectOptions.SetToDir : DetectOptions.SetToFile);
             //assert
             path.Name.Should().Be(expectedName);
         }
@@ -108,7 +116,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFile.txt", ".txt", false)]//file with extension
         public void Extensions_Parsing_ExtensionIsParsed(string name, string extension, bool isFolder)
         {
-            var path = new Path(name, isFolder);
+            var path = new Path(name, isFolder ? DetectOptions.SetToDir : DetectOptions.SetToFile);
             //assert
             path.Extension.Should().Be(extension);
         }
@@ -120,7 +128,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFolder\\myFile.txt", "myFile.txt", false)]//file with extension
         public void FullName_Parsing_NameIsParsed(string fullPath, string expectedName, bool isFolder)
         {
-            var path = new Path(fullPath, isFolder);
+            var path = new Path(fullPath, isFolder ? DetectOptions.SetToDir : DetectOptions.SetToFile);
 
             if (isFolder)
                 fullPath = fullPath.EnsureSuffix(path.Delimiter.ToChar());
@@ -134,7 +142,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFolder\\myFile.txt", "myFile", false)]//file with extension
         public void NameWithoutExtension_Parsing_NameIsParsed(string fullPath, string expectedName, bool isFolder)
         {
-            var path = new Path(fullPath, isFolder);
+            var path = new Path(fullPath, isFolder ? DetectOptions.SetToDir : DetectOptions.SetToFile);
             //assert
             path.NameWithoutExtension.Should().Be(expectedName);
         }
@@ -179,7 +187,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFolder/myFile.txt", false)]//delimiter fallback
         public void IsFolder_Formatting_FolderExtensionIsOutput(string pathInput, bool isFolder)
         {
-            var path = pathInput.ToPath(isFolder);
+            var path = pathInput.ToPath(isFolder ? DetectOptions.SetToDir : DetectOptions.SetToFile);
             path.IsFolder.Should().Be(isFolder);
             var formatted = path.ToString();
             if (isFolder)

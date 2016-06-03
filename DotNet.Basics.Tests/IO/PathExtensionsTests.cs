@@ -13,7 +13,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("Exists_TestPath_PathIsVerified\\file.txt", false)]//file
         public void Exists_TestPath_PathIsVerified(string path, bool isFolder)
         {
-            var p = new Path(path, isFolder);
+            var p = new Path(path, isFolder?DetectOptions.SetToDir : DetectOptions.SetToFile);
 
             p.DeleteIfExists();
             p.Exists().Should().BeFalse(p.FullName);
@@ -77,7 +77,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("mypath", true)]//file
         public void IsFolder_Set_IsFolderIsSet(string pth, bool isFolder)
         {
-            var path = pth.ToPath(isFolder);
+            var path = pth.ToPath(isFolder?DetectOptions.SetToDir : DetectOptions.SetToFile);
 
             path.IsFolder.Should().Be(isFolder);
         }

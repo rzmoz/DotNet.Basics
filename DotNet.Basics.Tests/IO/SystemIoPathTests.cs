@@ -21,7 +21,7 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         public void Exists_PathExists_Works()
         {
-            var path = "Exists_PathExists_Works".ToPath(true);
+            var path = "Exists_PathExists_Works".ToPath(DetectOptions.SetToDir);
 
             path.DeleteIfExists();
 
