@@ -8,10 +8,19 @@ namespace DotNet.Basics.IO
 {
     public class Path
     {
-        private string[] _pathTokens;
+        private readonly string[] _pathTokens;
 
         private const char _slashDelimiter = '/';
         private const char _backslashDelimiter = '\\';
+
+
+        public Path(string protocol, string[] pathTokens, bool isFolder, PathDelimiter delimiter)
+        {
+            Protocol = protocol ?? string.Empty;
+            _pathTokens = pathTokens ?? new string[0];
+            IsFolder = isFolder;
+            Delimiter = delimiter;
+        }
 
         public Path(string path, DetectOptions detectOptions = DetectOptions.AutoDetect)
             : this(null, path, detectOptions)
@@ -19,10 +28,12 @@ namespace DotNet.Basics.IO
         }
         public Path(string protocol, string path, DetectOptions detectOptions = DetectOptions.AutoDetect)
         {
-            _pathTokens = new string[0];
+
             Protocol = protocol ?? string.Empty;
             Delimiter = DetectDelimiter(protocol, path);
-            Add(detectOptions, path);
+            var updatedPath = Add(detectOptions, path);
+            _pathTokens = updatedPath.PathTokens;
+            IsFolder = updatedPath.IsFolder;
         }
 
         public string Protocol { get; private set; }
@@ -45,8 +56,7 @@ namespace DotNet.Basics.IO
 
                 var parentPath = new Path(Protocol, DetectOptions.SetToDir);
                 var allButLast = _pathTokens.Reverse().Skip(1).Reverse().ToArray();
-                parentPath.Add(DetectOptions.SetToDir, allButLast);
-                return parentPath;
+                return parentPath.Add(DetectOptions.SetToDir, allButLast);
             }
         }
 
@@ -61,9 +71,10 @@ namespace DotNet.Basics.IO
             if (pathSegments == null || pathSegments.Length == 0)
                 return this;
 
+            Path newPath = this;
             foreach (var pathSegment in pathSegments)
-                Add(pathSegment, detectOptions);
-            return this;
+                newPath = newPath.Add(pathSegment, detectOptions);
+            return newPath;
         }
 
         public Path Add(string pathSegment, DetectOptions detectOptions = DetectOptions.AutoDetect)
@@ -71,13 +82,13 @@ namespace DotNet.Basics.IO
             if (string.IsNullOrWhiteSpace(pathSegment))
                 return this;
 
-            var updatedSegments = new List<string>(PathTokens);
+            var updatedSegments = PathTokens == null ? new List<string>() : new List<string>(PathTokens);
             updatedSegments.AddRange(pathSegment.Split(new[] { _slashDelimiter, _backslashDelimiter }, StringSplitOptions.RemoveEmptyEntries));
 
             //leading delimiter detected
             bool shouldUpdateProtocol = true;
             shouldUpdateProtocol = shouldUpdateProtocol && string.IsNullOrWhiteSpace(Protocol);//protocol is already set
-            shouldUpdateProtocol = shouldUpdateProtocol && PathTokens.Length == 0;//this is not the initial path added
+            shouldUpdateProtocol = shouldUpdateProtocol && (PathTokens == null || PathTokens.Length == 0);//this is not the initial path added
             shouldUpdateProtocol = shouldUpdateProtocol && (pathSegment.StartsWith(_slashDelimiter.ToString()) || pathSegment.StartsWith(_backslashDelimiter.ToString()));
 
             if (shouldUpdateProtocol)
@@ -92,22 +103,24 @@ namespace DotNet.Basics.IO
                         break;
                 }
             }
-            Interlocked.Exchange(ref _pathTokens, updatedSegments.ToArray());
+
+            var isFolder = IsFolder;
+
             switch (detectOptions)
             {
                 case DetectOptions.SetToDir:
-                    IsFolder = true;
+                    isFolder = true;
                     break;
                 case DetectOptions.SetToFile:
-                    IsFolder = false;
+                    isFolder = false;
                     break;
                 case DetectOptions.AutoDetect:
-                    IsFolder = DetectIsFolder(pathSegment);
+                    isFolder = DetectIsFolder(pathSegment);
                     break;
                 case DetectOptions.KeepExisting:
                     break;
             }
-            return this;
+            return new Path(Protocol, updatedSegments.ToArray(), isFolder, Delimiter);
         }
 
         private sealed class ProtocolEqualityComparer : IEqualityComparer<Path>

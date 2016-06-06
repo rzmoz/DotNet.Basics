@@ -31,6 +31,14 @@ namespace DotNet.Basics.Tests.IO
             path.FullName.Should().Be(expectedP);//no exceptions
         }
 
+        [Test]
+        public void Add_Immutable_AddShouldBeImmutable()
+        {
+            var root = "root".ToPath();
+            root.Add("sazas");
+            root.RawName.Should().Be("root");
+        }
+
 
         [Test]
         public void FullName_SysstemIoCompliance_RelativePathsAreResolvedToSame()
