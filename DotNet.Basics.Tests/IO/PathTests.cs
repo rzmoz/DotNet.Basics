@@ -56,7 +56,7 @@ namespace DotNet.Basics.Tests.IO
             var parent = path.Parent;
             try
             {
-                parent.RelativeName.Should().Be(expectedParent);
+                parent.RawName.Should().Be(expectedParent);
             }
             catch (NullReferenceException)
             {
@@ -84,7 +84,7 @@ namespace DotNet.Basics.Tests.IO
             var path = new Path(root).Add(newSegment);
 
             //assert
-            path.RelativeName.Should().Be(root + path.Delimiter.ToChar());
+            path.RawName.Should().Be(root + path.Delimiter.ToChar());
         }
 
         [Test]
@@ -96,7 +96,7 @@ namespace DotNet.Basics.Tests.IO
             var path = new Path(root).Add(newSegment);
 
             //assert
-            path.RelativeName.Should().Be(root);
+            path.RawName.Should().Be(root);
         }
 
         [Test]
@@ -133,7 +133,7 @@ namespace DotNet.Basics.Tests.IO
             if (isFolder)
                 fullPath = fullPath.EnsureSuffix(path.Delimiter.ToChar());
 
-            path.RelativeName.Should().Be(fullPath);
+            path.RawName.Should().Be(fullPath);
         }
         [Test]
         [TestCase("myFolder\\myFolder\\", "myFolder", true)]//folder with trailing delimiter
@@ -156,7 +156,7 @@ namespace DotNet.Basics.Tests.IO
         {
             var path = new Path(protocol, pathSegment);
             path.ToString().Should().Be(expectedPath);
-            path.ToString().Should().Be(path.RelativeName);
+            path.ToString().Should().Be(path.RawName);
         }
 
         [Test]
