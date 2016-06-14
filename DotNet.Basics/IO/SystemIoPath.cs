@@ -13,6 +13,9 @@ namespace DotNet.Basics.IO
                 return string.Empty;
 
             var type = typeof(System.IO.Path);
+            type?.GetField("MaxPath", BindingFlags.Static| BindingFlags.NonPublic)?.SetValue("MaxPath", 3200);
+            type?.GetField("MaxDirectoryLength", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue("MaxDirectoryLength", 3200);
+
             string methodName = "NormalizePath";
 
             var method = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Static)

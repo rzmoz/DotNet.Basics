@@ -8,6 +8,17 @@ namespace DotNet.Basics.Tests.IO
     public class SystemIoPathTests
     {
         [Test]
+        public void GetFullPath_LongPath_NoExceptionIsThrown()
+        {
+            var longPath= "GetFullPath_LongPath_NoExceptionIsThrownxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+            
+            var fullPath = SystemIoPath.GetFullPath(longPath);
+            
+            fullPath.Should().EndWith(longPath);//no exception is thrown
+        }
+
+
+        [Test]
         public void GetFullPath_CallSystemIo_PathsAreIdentical()
         {
             var relativePath = "GetFullPath_CallSystemIo_PathsAreIdentical";
