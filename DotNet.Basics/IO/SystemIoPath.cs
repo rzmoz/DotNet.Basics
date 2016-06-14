@@ -12,9 +12,9 @@ namespace DotNet.Basics.IO
             if (string.IsNullOrWhiteSpace(path))
                 return string.Empty;
 
+            EnsureLongPathsAreEnabled();
+
             var type = typeof(System.IO.Path);
-            type?.GetField("MaxPath", BindingFlags.Static| BindingFlags.NonPublic)?.SetValue("MaxPath", 3200);
-            type?.GetField("MaxDirectoryLength", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue("MaxDirectoryLength", 3200);
 
             string methodName = "NormalizePath";
 
@@ -43,6 +43,8 @@ namespace DotNet.Basics.IO
             if (path == null)
                 return false;
 
+            EnsureLongPathsAreEnabled();
+
             var type = path.IsFolder ? typeof(System.IO.Directory) : typeof(System.IO.File);
 
             string methodName = "InternalExists";
@@ -64,6 +66,12 @@ namespace DotNet.Basics.IO
             return Boolean.Parse(result.ToString());
         }
 
+        private static void EnsureLongPathsAreEnabled()
+        {
+            var type = typeof(System.IO.Path);
+            type?.GetField("MaxPath", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue("MaxPath", 3200);
+            type?.GetField("MaxDirectoryLength", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue("MaxDirectoryLength", 3200);
+        }
 
         private static IEnumerable<MethodInfo> GetMethods(string methodName)
         {

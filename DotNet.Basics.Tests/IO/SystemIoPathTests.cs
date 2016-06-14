@@ -42,5 +42,13 @@ namespace DotNet.Basics.Tests.IO
 
             SystemIoPath.Exists(path).Should().BeTrue();
         }
+
+        [Test]
+        public void Exists_LongPaths_NoExceptionIsThrown()
+        {
+            var path = "Exists_LongPaths_NoExceptionIsThrownxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx".ToPath(DetectOptions.SetToDir);
+            
+            SystemIoPath.Exists(path).Should().BeFalse();
+        }
     }
 }

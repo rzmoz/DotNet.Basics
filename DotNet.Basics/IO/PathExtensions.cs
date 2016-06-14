@@ -36,8 +36,7 @@ namespace DotNet.Basics.IO
         {
             if (path == null)
                 return false;
-            var result = PowerShellConsole.RunScript($"Test-Path -Path '{path.FullName.Trim()}' -pathtype any");
-            return result.Single().ToString().Equals("True", StringComparison.OrdinalIgnoreCase);
+            return SystemIoPath.Exists(path);
         }
 
 
