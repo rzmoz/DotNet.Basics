@@ -8,19 +8,14 @@ namespace DotNet.Basics.IO
     public class Path
     {
         private readonly string[] _pathTokens;
-
-        private const char _slashDelimiter = '/';
-        private const char _backslashDelimiter = '\\';
-
-        protected Path(string protocol, string[] pathTokens, bool isFolder, PathDelimiter delimiter)
+        
+        protected Path(string[] pathTokens, bool isFolder, PathDelimiter delimiter)
         {
-            Protocol = protocol ?? string.Empty;
             _pathTokens = pathTokens ?? new string[0];
             IsFolder = isFolder;
             Delimiter = delimiter;
         }
 
-        public string Protocol { get; private set; }
         public string[] PathTokens => _pathTokens;
         public bool IsFolder { get; private set; }
         public PathDelimiter Delimiter { get; set; }
@@ -37,10 +32,9 @@ namespace DotNet.Basics.IO
             {
                 if (_pathTokens.Length <= 1)
                     return null;//no parent
-
-                var parentPath = new Path(Protocol, new string[0], true, Delimiter);
+                
                 var allButLast = _pathTokens.Reverse().Skip(1).Reverse().ToArray();
-                return parentPath.Add(allButLast);
+                return new Path(allButLast, true, Delimiter);
             }
         }
 
@@ -72,7 +66,7 @@ namespace DotNet.Basics.IO
 
         public string ToString(PathDelimiter delimiter)
         {
-            var path = Protocol ?? string.Empty;
+            var path = string.Empty;
             foreach (var pathToken in PathTokens)
                 path += $"{pathToken}{delimiter.ToChar()}";
             path = IsFolder ? path.EnsureSuffix(delimiter.ToChar()) : path.TrimEnd(delimiter.ToChar());

@@ -3,12 +3,13 @@
     public class DirPath : Path
     {
         public DirPath(string fullPath)
-            : this(null, new[] { fullPath }) { }
-        public DirPath(string protocol, string[] pathTokens)
-            : this(protocol, pathTokens, PathDelimiter.Backslash)
+            : this(new[] { fullPath })
         { }
-        public DirPath(string protocol, string[] pathTokens, PathDelimiter delimiter) : base(protocol, pathTokens, true, delimiter)
-        {
-        }
+        public DirPath(string[] pathTokens)
+            : this(pathTokens, PathDelimiter.Backslash)
+        { }
+        public DirPath(string[] pathTokens, PathDelimiter delimiter)
+            : base(pathTokens, true, delimiter)
+        { }
     }
 }

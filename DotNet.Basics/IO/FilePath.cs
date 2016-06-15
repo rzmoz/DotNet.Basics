@@ -9,13 +9,13 @@ namespace DotNet.Basics.IO
     public class FilePath : Path
     {
         public FilePath(string fullPath)
-            : this(null, new[] { fullPath }) { }
-        public FilePath(string protocol, string[] pathTokens)
-            : this(protocol, pathTokens, PathDelimiter.Backslash)
+            : this(new[] { fullPath })
         { }
-        public FilePath(string protocol, string[] pathTokens, PathDelimiter delimiter)
-            : base(protocol, pathTokens, false, delimiter)
-        {
-        }
+        public FilePath(string[] pathTokens)
+            : this(pathTokens, PathDelimiter.Backslash)
+        { }
+        public FilePath(string[] pathTokens, PathDelimiter delimiter)
+            : base(pathTokens, false, delimiter)
+        { }
     }
 }

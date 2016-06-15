@@ -49,7 +49,7 @@ namespace DotNet.Basics.IO
         }
         public static FilePath ToFilePath(this Path path)
         {
-            return new FilePath(path.Protocol, path.PathTokens, path.Delimiter);
+            return new FilePath(path.PathTokens, path.Delimiter);
         }
         public static DirPath ToDirPath(this string path, params string[] pathTokens)
         {
@@ -57,21 +57,9 @@ namespace DotNet.Basics.IO
         }
         public static DirPath ToDirPath(this Path path)
         {
-            return new DirPath(path.Protocol, path.PathTokens, path.Delimiter);
+            return new DirPath(path.PathTokens, path.Delimiter);
         }
-
-        public static Path ToPath(this string protocol, string path)
-        {
-            if (string.IsNullOrEmpty(path))
-                return null;
-            var isFolder = DetectIsFolder(path);
-            var delimiter = DetectDelimiter(null, path);
-            if (isFolder)
-                return new DirPath(protocol, new[] { path }, delimiter);
-            else
-                return new FilePath(protocol, new[] { path }, delimiter);
-            
-        }
+        
         public static Path ToPath(this string path)
         {
             if (string.IsNullOrEmpty(path))
@@ -86,9 +74,9 @@ namespace DotNet.Basics.IO
             var delimiter = DetectDelimiter(null, path);
 
             if (isFolder)
-                return new DirPath(null, new[] { path }, delimiter);
+                return new DirPath(new[] { path }, delimiter);
             else
-                return new FilePath(null, new[] { path }, delimiter);
+                return new FilePath(new[] { path }, delimiter);
         }
 
         private static bool DetectIsFolder(string path)
@@ -139,30 +127,10 @@ namespace DotNet.Basics.IO
 
             var updatedSegments = path.PathTokens == null ? new List<string>() : new List<string>(path.PathTokens);
             updatedSegments.AddRange(pathToken.Split(new[] { _slashDelimiter, _backslashDelimiter }, StringSplitOptions.RemoveEmptyEntries));
-
-            //leading delimiter detected
-            bool shouldUpdateProtocol = true;
-            shouldUpdateProtocol = shouldUpdateProtocol && string.IsNullOrWhiteSpace(path.Protocol);//protocol is already set
-            shouldUpdateProtocol = shouldUpdateProtocol && (path.PathTokens == null || path.PathTokens.Length == 0);//this is not the initial path added
-            shouldUpdateProtocol = shouldUpdateProtocol && (pathToken.StartsWith(_slashDelimiter.ToString()) || pathToken.StartsWith(_backslashDelimiter.ToString()));
-
-            var protocol = path.Protocol;
-
-            if (shouldUpdateProtocol)
-            {
-                //leading delimiters goes to protocol
-                var leadingDelimiter = pathToken[0];
-                foreach (char c in pathToken)
-                {
-                    if (c == leadingDelimiter)
-                        protocol += c.ToString();
-                    else
-                        break;
-                }
-            }
+            
             if (path.IsFolder)
-                return new DirPath(protocol, updatedSegments.ToArray(), path.Delimiter);
-            return new FilePath(protocol, updatedSegments.ToArray(), path.Delimiter);
+                return new DirPath(updatedSegments.ToArray(), path.Delimiter);
+            return new FilePath(updatedSegments.ToArray(), path.Delimiter);
         }
     }
 }

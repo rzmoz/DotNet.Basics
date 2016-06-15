@@ -84,7 +84,6 @@
     <Compile Include="IO\Path.cs" />
     <Compile Include="IO\PathException.cs" />
     <Compile Include="IO\PathExtensions.cs" />
-    <Compile Include="IO\PathFactory.cs" />
     <Compile Include="IO\PathFileSystemExtensions.cs" />
     <Compile Include="IO\PathNotFoundException.cs" />
     <Compile Include="IO\Robocopy.cs" />
