@@ -8,7 +8,7 @@ namespace DotNet.Basics.IO
         public TempDir(string dirPrefix = null)
         {
             Prefix = dirPrefix == null ? string.Empty : dirPrefix.EnsureSuffix(".");
-            Root = System.IO.Path.GetTempPath().ToPath(DetectOptions.SetToDir, $"{Prefix}{Guid.NewGuid()}");
+            Root = System.IO.Path.GetTempPath().ToDirPath($"{Prefix}{Guid.NewGuid()}");
             Root.CleanIfExists();
             Root.CreateIfNotExists();
         }

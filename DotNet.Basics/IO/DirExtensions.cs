@@ -24,7 +24,7 @@ namespace DotNet.Basics.IO
 
         public static DirectoryInfo ToDir(this string dir, params string[] paths)
         {
-            return new DirectoryInfo(new Path(dir).Add(paths).ToString(PathDelimiter.Backslash));
+            return new DirectoryInfo(new DirPath(dir).Add(paths).ToString(PathDelimiter.Backslash));
         }
 
         public static DirectoryInfo ToDir(this DirectoryInfo dir, params string[] paths)

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
@@ -13,27 +12,12 @@ namespace DotNet.Basics.IO
         private const char _slashDelimiter = '/';
         private const char _backslashDelimiter = '\\';
 
-
-        public Path(string protocol, string[] pathTokens, bool isFolder, PathDelimiter delimiter)
+        protected Path(string protocol, string[] pathTokens, bool isFolder, PathDelimiter delimiter)
         {
             Protocol = protocol ?? string.Empty;
             _pathTokens = pathTokens ?? new string[0];
             IsFolder = isFolder;
             Delimiter = delimiter;
-        }
-
-        public Path(string path, DetectOptions detectOptions = DetectOptions.AutoDetect)
-            : this(null, path, detectOptions)
-        {
-        }
-        public Path(string protocol, string path, DetectOptions detectOptions = DetectOptions.AutoDetect)
-        {
-
-            Protocol = protocol ?? string.Empty;
-            Delimiter = DetectDelimiter(protocol, path);
-            var updatedPath = Add(detectOptions, path);
-            _pathTokens = updatedPath.PathTokens;
-            IsFolder = updatedPath.IsFolder;
         }
 
         public string Protocol { get; private set; }
@@ -54,74 +38,13 @@ namespace DotNet.Basics.IO
                 if (_pathTokens.Length <= 1)
                     return null;//no parent
 
-                var parentPath = new Path(Protocol, DetectOptions.SetToDir);
+                var parentPath = new Path(Protocol, new string[0], true, Delimiter);
                 var allButLast = _pathTokens.Reverse().Skip(1).Reverse().ToArray();
-                return parentPath.Add(DetectOptions.SetToDir, allButLast);
+                return parentPath.Add(allButLast);
             }
         }
 
         public Path Directory => IsFolder ? this : Parent;
-
-        public Path Add(params string[] pathSegments)
-        {
-            return Add(DetectOptions.AutoDetect, pathSegments);
-        }
-        public Path Add(DetectOptions detectOptions = DetectOptions.AutoDetect, params string[] pathSegments)
-        {
-            if (pathSegments == null || pathSegments.Length == 0)
-                return this;
-
-            Path newPath = this;
-            foreach (var pathSegment in pathSegments)
-                newPath = newPath.Add(pathSegment, detectOptions);
-            return newPath;
-        }
-
-        public Path Add(string pathSegment, DetectOptions detectOptions = DetectOptions.AutoDetect)
-        {
-            if (string.IsNullOrWhiteSpace(pathSegment))
-                return this;
-
-            var updatedSegments = PathTokens == null ? new List<string>() : new List<string>(PathTokens);
-            updatedSegments.AddRange(pathSegment.Split(new[] { _slashDelimiter, _backslashDelimiter }, StringSplitOptions.RemoveEmptyEntries));
-
-            //leading delimiter detected
-            bool shouldUpdateProtocol = true;
-            shouldUpdateProtocol = shouldUpdateProtocol && string.IsNullOrWhiteSpace(Protocol);//protocol is already set
-            shouldUpdateProtocol = shouldUpdateProtocol && (PathTokens == null || PathTokens.Length == 0);//this is not the initial path added
-            shouldUpdateProtocol = shouldUpdateProtocol && (pathSegment.StartsWith(_slashDelimiter.ToString()) || pathSegment.StartsWith(_backslashDelimiter.ToString()));
-
-            if (shouldUpdateProtocol)
-            {
-                //leading delimiters goes to protocol
-                var leadingDelimiter = pathSegment[0];
-                foreach (char c in pathSegment)
-                {
-                    if (c == leadingDelimiter)
-                        Protocol += c.ToString();
-                    else
-                        break;
-                }
-            }
-
-            var isFolder = IsFolder;
-
-            switch (detectOptions)
-            {
-                case DetectOptions.SetToDir:
-                    isFolder = true;
-                    break;
-                case DetectOptions.SetToFile:
-                    isFolder = false;
-                    break;
-                case DetectOptions.AutoDetect:
-                    isFolder = DetectIsFolder(pathSegment);
-                    break;
-                case DetectOptions.KeepExisting:
-                    break;
-            }
-            return new Path(Protocol, updatedSegments.ToArray(), isFolder, Delimiter);
-        }
 
         private sealed class ProtocolEqualityComparer : IEqualityComparer<Path>
         {
@@ -154,49 +77,6 @@ namespace DotNet.Basics.IO
                 path += $"{pathToken}{delimiter.ToChar()}";
             path = IsFolder ? path.EnsureSuffix(delimiter.ToChar()) : path.TrimEnd(delimiter.ToChar());
             return path;
-        }
-
-        private static bool DetectIsFolder(string path)
-        {
-            if (string.IsNullOrWhiteSpace(path))
-                return false;
-
-            return path.EndsWith(_slashDelimiter.ToString()) || path.EndsWith(_backslashDelimiter.ToString());
-        }
-
-        private static PathDelimiter DetectDelimiter(string protocol, string path)
-        {
-            PathDelimiter delimiter;
-            if (TryDetectDelimiter(protocol, out delimiter) == false)
-                TryDetectDelimiter(path, out delimiter);
-            return delimiter;
-        }
-        private static bool TryDetectDelimiter(string path, out PathDelimiter delimiter)
-        {
-            if (path == null)
-            {
-                delimiter = PathDelimiter.Backslash;
-                return false;
-            }
-
-            var slashIndex = path.IndexOf(_slashDelimiter);
-            var backSlashIndex = path.IndexOf(_backslashDelimiter);
-
-            if (slashIndex < 0)
-            {
-                delimiter = PathDelimiter.Backslash;
-                return true;
-            }
-
-            if (backSlashIndex < 0)
-            {
-                delimiter = PathDelimiter.Slash;
-                return true;
-            }
-
-            //first occurence decides
-            delimiter = slashIndex < backSlashIndex ? PathDelimiter.Slash : PathDelimiter.Backslash;
-            return true;
         }
     }
 }

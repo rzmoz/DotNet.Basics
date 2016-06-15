@@ -13,7 +13,11 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("Exists_TestPath_PathIsVerified\\file.txt", false)]//file
         public void Exists_TestPath_PathIsVerified(string path, bool isFolder)
         {
-            var p = new Path(path, isFolder?DetectOptions.SetToDir : DetectOptions.SetToFile);
+            Path p = null;
+            if (isFolder)
+                p = path.ToDirPath();
+            else
+                p = path.ToFilePath();
 
             p.DeleteIfExists();
             p.Exists().Should().BeFalse(p.FullName);
@@ -64,22 +68,28 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("\\pt101", "pt2\\", PathDelimiter.Backslash)]//dir
         public void ToPath_Combine_PathIsGenerated(string pt1, string pt2, PathDelimiter pathDelimiter)
         {
+            throw new NotImplementedException();/*
             var path = pt1.ToPath(pt2);
 
             var refPath = pt1 + pathDelimiter.ToChar() + pt2;
             if (path.IsFolder == false)
                 refPath = refPath.TrimEnd(pathDelimiter.ToChar());
 
-            path.RawName.Should().Be(refPath);
+            path.RawName.Should().Be(refPath);*/
         }
         [Test]
         [TestCase("mypath", false)]//file
         [TestCase("mypath", true)]//file
         public void IsFolder_Set_IsFolderIsSet(string pth, bool isFolder)
         {
-            var path = pth.ToPath(isFolder?DetectOptions.SetToDir : DetectOptions.SetToFile);
 
-            path.IsFolder.Should().Be(isFolder);
+            Path p = null;
+            if (isFolder)
+                p = pth.ToDirPath();
+            else
+                p=pth.ToFilePath();
+
+            p.IsFolder.Should().Be(isFolder);
         }
     }
 }

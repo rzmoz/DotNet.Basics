@@ -75,13 +75,17 @@
     <Compile Include="Ioc\IIocRegistrations.cs" />
     <Compile Include="IO\DetectOptions.cs" />
     <Compile Include="IO\DirExtensions.cs" />
+    <Compile Include="IO\DirPath.cs" />
     <Compile Include="IO\FileExtensions.cs" />
+    <Compile Include="IO\FilePath.cs" />
     <Compile Include="IO\FileSystemInfoExtensions.cs" />
     <Compile Include="IO\FileType.cs" />
     <Compile Include="IO\FileTypeCollection.cs" />
     <Compile Include="IO\Path.cs" />
     <Compile Include="IO\PathException.cs" />
     <Compile Include="IO\PathExtensions.cs" />
+    <Compile Include="IO\PathFactory.cs" />
+    <Compile Include="IO\PathFileSystemExtensions.cs" />
     <Compile Include="IO\PathNotFoundException.cs" />
     <Compile Include="IO\Robocopy.cs" />
     <Compile Include="IO\IoExtensions.cs" />

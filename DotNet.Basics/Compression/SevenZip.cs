@@ -17,7 +17,7 @@ namespace DotNet.Basics.Compression
 
         public int ExtractToDirectory(string archivePath, string targetDirPath)
         {
-            return ExecuteSevenZip("x", $"\"{archivePath}\"", $"\"-o{targetDirPath.ToPath(DetectOptions.SetToDir)}\"", "*", "-r");
+            return ExecuteSevenZip("x", $"\"{archivePath}\"", $"\"-o{targetDirPath.ToDirPath().FullName}\"", "*", "-r");
         }
 
         public int CreateFromDirectory(string sourceDirPath, string archivePath, bool overwrite = false)
@@ -25,18 +25,18 @@ namespace DotNet.Basics.Compression
             if (overwrite == false && archivePath.ToPath().Exists())
                 throw new IOException($"Target archie path already exists: {archivePath}. Set overwrite to true to ignore");
 
-            return ExecuteSevenZip("a", $"\"{archivePath}\"", $"\"{sourceDirPath.ToPath(DetectOptions.SetToDir)}\\*\"", "-tzip", "-mx3", "-mmt");
+            return ExecuteSevenZip("a", $"\"{archivePath}\"", $"\"{sourceDirPath.ToDirPath().FullName}\\*\"", "-tzip", "-mx3", "-mmt");
         }
 
         private int ExecuteSevenZip(string command, params string[] @params)
         {
             using (var temp = new TempDir("7z"))
             {
-                var temp7ZExe = temp.Root.Add("7za.exe", DetectOptions.SetToFile);
+                var temp7ZExe = temp.Root.Add("7za.exe").ToFilePath();
                 Extract(temp7ZExe.FullName, CompressionResources._7za);
-                var temp7ZipDll = temp.Root.Add("7za.dll", DetectOptions.SetToFile);
+                var temp7ZipDll = temp.Root.Add("7za.dll").ToFilePath();
                 Extract(temp7ZipDll.FullName, CompressionResources._7za1);
-                var temp7Zip32Dll = temp.Root.Add("7zxa.dll", DetectOptions.SetToFile);
+                var temp7Zip32Dll = temp.Root.Add("7zxa.dll").ToFilePath();
                 Extract(temp7Zip32Dll.FullName, CompressionResources._7zxa);
 
                 var paramsString = @params.Aggregate(string.Empty, (current, param) => current + $" {param}");

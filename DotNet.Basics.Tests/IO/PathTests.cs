@@ -22,11 +22,11 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("c:\\FileWithMoreThan260Chars\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")]
         public void FullName_LongPath_LongPathsAreSupported(string p)
         {
-            var path = new Path(p);
+            var path = p.ToPath();
 
             var expectedP = p;
             if (expectedP.StartsWith("."))
-                expectedP = new DirectoryInfo(".").FullName.ToPath(p.RemovePrefix(".\\")).FullName;
+                expectedP = new DirectoryInfo(".").FullName.ToPath().Add(p.RemovePrefix(".\\")).FullName;
 
             path.FullName.Should().Be(expectedP);//no exceptions
         }
@@ -45,7 +45,7 @@ namespace DotNet.Basics.Tests.IO
         {
             var relativePath = "myfile.txt";
             var systemIo = new FileInfo(relativePath);
-            var path = new Path(relativePath);
+            var path = relativePath.ToPath();
 
             System.IO.Path.GetFullPath(path.FullName).Should().Be(systemIo.FullName);
 
@@ -59,7 +59,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase(@"c:\myParent\myFile", @"c:\myParent\")]
         public void Parent_DirUp_GetParent(string folder, string expectedParent)
         {
-            var path = new Path(folder);
+            var path = folder.ToPath();
 
             var parent = path.Parent;
             try
@@ -77,7 +77,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase(@"c:\myParent\myFile", false)]
         public void Directory_GetDir_Dir(string folder, bool isFolder)
         {
-            var path = new Path(folder, isFolder ? DetectOptions.SetToDir : DetectOptions.SetToFile);
+            var path = folder.ToPath(isFolder);
 
             var dir = path.Directory;
 
@@ -89,7 +89,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFolder", "\\")]//backslash delimiter
         public void Add_AutoDetec_PathIsUpdatedToNewType(string root, string newSegment)
         {
-            var path = new Path(root).Add(newSegment);
+            var path = root.ToPath().Add(newSegment);
 
             //assert
             path.RawName.Should().Be(root + path.Delimiter.ToChar());
@@ -101,7 +101,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFolder", "  ")]//spaces
         public void Add_EmptySegments_PathIsUnchanged(string root, string newSegment)
         {
-            var path = new Path(root).Add(newSegment);
+            var path = root.ToPath().Add(newSegment);
 
             //assert
             path.RawName.Should().Be(root);
@@ -113,7 +113,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFolder\\myFile.txt", "myFile.txt", false)]//file with extension
         public void Name_Parsing_NameIsParsed(string fullPath, string expectedName, bool isFolder)
         {
-            var path = new Path(fullPath, isFolder ? DetectOptions.SetToDir : DetectOptions.SetToFile);
+            var path = fullPath.ToPath(isFolder);
             //assert
             path.Name.Should().Be(expectedName);
         }
@@ -124,7 +124,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFile.txt", ".txt", false)]//file with extension
         public void Extensions_Parsing_ExtensionIsParsed(string name, string extension, bool isFolder)
         {
-            var path = new Path(name, isFolder ? DetectOptions.SetToDir : DetectOptions.SetToFile);
+            var path = name.ToPath(isFolder);
             //assert
             path.Extension.Should().Be(extension);
         }
@@ -136,7 +136,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFolder\\myFile.txt", "myFile.txt", false)]//file with extension
         public void FullName_Parsing_NameIsParsed(string fullPath, string expectedName, bool isFolder)
         {
-            var path = new Path(fullPath, isFolder ? DetectOptions.SetToDir : DetectOptions.SetToFile);
+            var path = fullPath.ToPath(isFolder);
 
             if (isFolder)
                 fullPath = fullPath.EnsureSuffix(path.Delimiter.ToChar());
@@ -150,7 +150,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFolder\\myFile.txt", "myFile", false)]//file with extension
         public void NameWithoutExtension_Parsing_NameIsParsed(string fullPath, string expectedName, bool isFolder)
         {
-            var path = new Path(fullPath, isFolder ? DetectOptions.SetToDir : DetectOptions.SetToFile);
+            var path = fullPath.ToPath(isFolder);
             //assert
             path.NameWithoutExtension.Should().Be(expectedName);
         }
@@ -162,7 +162,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase(null, "\\\\myFolder\\Myfolder2\\", "\\\\myFolder\\Myfolder2\\")]//network folder
         public void Ctor_Protocol_ProtocolIsPartOfPath(string protocol, string pathSegment, string expectedPath)
         {
-            var path = new Path(protocol, pathSegment);
+            var path = protocol.ToPath(pathSegment);
             path.ToString().Should().Be(expectedPath);
             path.ToString().Should().Be(path.RawName);
         }
@@ -175,7 +175,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("DetectDelimiter", PathDelimiter.Backslash)]//delimiter fallback
         public void Delimiter_Detection_DelimiterDetected(string pathInput, PathDelimiter delimiter)
         {
-            var path = new Path(pathInput);
+            var path = pathInput.ToPath();
             path.Delimiter.Should().Be(delimiter);
         }
 
@@ -185,7 +185,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFolder/DetectDelimiter", false)]//delimiter fallback
         public void IsFolder_Detection_IsFolderIsDetected(string pathInput, bool isFolder)
         {
-            var path = new Path(pathInput);
+            var path = pathInput.ToPath();
             path.IsFolder.Should().Be(isFolder);
         }
 
@@ -195,7 +195,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFolder/myFile.txt", false)]//delimiter fallback
         public void IsFolder_Formatting_FolderExtensionIsOutput(string pathInput, bool isFolder)
         {
-            var path = pathInput.ToPath(isFolder ? DetectOptions.SetToDir : DetectOptions.SetToFile);
+            var path = pathInput.ToPath(isFolder);
             path.IsFolder.Should().Be(isFolder);
             var formatted = path.ToString();
             if (isFolder)
@@ -209,7 +209,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFolder\\DetectDelimiter\\")]
         public void ToString_Delimiter_(string pathInput)
         {
-            var path = new Path(pathInput);
+            var path = pathInput.ToPath();
 
             var pathWithSlash = path.ToString(PathDelimiter.Slash);
             var pathWithBackSlash = path.ToString(PathDelimiter.Backslash);
