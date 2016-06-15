@@ -55,6 +55,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\CollectionExtensions.cs" />
+    <Compile Include="Compression\CompressionResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CompressionResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Compression\SevenZip.cs" />
     <Compile Include="Diagnostics\ConsoleLogger.cs" />
     <Compile Include="Diagnostics\DotNetBasicsLogger.cs" />
     <Compile Include="Diagnostics\LogExtensions.cs" />
@@ -118,7 +124,17 @@
     <None Include="DotNet.Basics.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Compression\CompressionResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CompressionResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Compression\7za.dll" />
+    <Content Include="Compression\7za.exe" />
+    <Content Include="Compression\7zxa.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
