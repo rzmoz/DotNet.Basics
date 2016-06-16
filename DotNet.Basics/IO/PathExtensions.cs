@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DotNet.Basics.IO
 {
@@ -34,22 +35,27 @@ namespace DotNet.Basics.IO
             }
         }
 
-        public static Path Add(this Path path, params string[] pathTokens)
+        public static Path Add(this Path path, params string[] pathSegments)
         {
-            var newPath = path;
-            foreach (var pathToken in pathTokens)
-            {
-                newPath = path.Add(pathToken);
-            }
-            return newPath;
+            if (pathSegments == null)
+                return path;
+
+            var splitNewSegments = SplitSegments(pathSegments);
+            if (splitNewSegments.Length == 0)
+                return path;
+
+            var combinedSegments = path.Segments.Concat(pathSegments).ToArray();
+
+            return Create(combinedSegments, path.IsFolder, path.Delimiter);
         }
+
         public static FilePath ToFilePath(this string path, params string[] pathTokens)
         {
             return (FilePath)new FilePath(path).Add(pathTokens);
         }
         public static FilePath ToFilePath(this Path path)
         {
-            return new FilePath(path.PathTokens, path.Delimiter);
+            return new FilePath(path.Segments, path.Delimiter);
         }
         public static DirPath ToDirPath(this string path, params string[] pathTokens)
         {
@@ -57,26 +63,60 @@ namespace DotNet.Basics.IO
         }
         public static DirPath ToDirPath(this Path path)
         {
-            return new DirPath(path.PathTokens, path.Delimiter);
+            return new DirPath(path.Segments, path.Delimiter);
         }
-        
-        public static Path ToPath(this string path)
+
+        public static Path ToPath(this string path, params string[] segments)
         {
             if (string.IsNullOrEmpty(path))
                 return null;
-            var isFolder = DetectIsFolder(path);
-            return ToPath(path, isFolder);
+            var isFolder = DetectIsFolder(segments.Length > 0 ? segments.Last() : path);
+
+            var allSegments = new[] { path }.Concat(segments).ToArray();
+
+            PathDelimiter delimiter = PathDelimiter.Backslash;
+            foreach (var segment in allSegments)
+            {
+                if (TryDetectDelimiter(segment, out delimiter))
+                    break;
+            }
+
+            return Create(allSegments, isFolder, delimiter);
         }
         public static Path ToPath(this string path, bool isFolder)
         {
             if (string.IsNullOrEmpty(path))
                 return null;
-            var delimiter = DetectDelimiter(null, path);
 
+            PathDelimiter delimiter;
+            TryDetectDelimiter(path, out delimiter);
+            return Create(new[] { path }, isFolder, delimiter);
+        }
+
+        public static string[] SplitSegments(this string[] pathSegments)
+        {
+            if (pathSegments == null)
+                return new string[0];
+
+            var updatedSegments = new List<string>();
+            foreach (var pathSegment in pathSegments)
+            {
+                if (string.IsNullOrWhiteSpace(pathSegment))
+                    continue;
+
+                var split = pathSegment.Split(new[] { _slashDelimiter, _backslashDelimiter },
+                    StringSplitOptions.RemoveEmptyEntries);
+                updatedSegments.AddRange(split);
+            }
+
+            return updatedSegments.ToArray();
+        }
+
+        private static Path Create(string[] pathSegments, bool isFolder, PathDelimiter delimiter)
+        {
             if (isFolder)
-                return new DirPath(new[] { path }, delimiter);
-            else
-                return new FilePath(new[] { path }, delimiter);
+                return new DirPath(pathSegments, delimiter);
+            return new FilePath(pathSegments, delimiter);
         }
 
         private static bool DetectIsFolder(string path)
@@ -86,13 +126,7 @@ namespace DotNet.Basics.IO
 
             return path.EndsWith(_slashDelimiter.ToString()) || path.EndsWith(_backslashDelimiter.ToString());
         }
-        private static PathDelimiter DetectDelimiter(string protocol, string path)
-        {
-            PathDelimiter delimiter;
-            if (TryDetectDelimiter(protocol, out delimiter) == false)
-                TryDetectDelimiter(path, out delimiter);
-            return delimiter;
-        }
+
         private static bool TryDetectDelimiter(string path, out PathDelimiter delimiter)
         {
             if (path == null)
@@ -119,18 +153,6 @@ namespace DotNet.Basics.IO
             //first occurence decides
             delimiter = slashIndex < backSlashIndex ? PathDelimiter.Slash : PathDelimiter.Backslash;
             return true;
-        }
-        private static Path Add(this Path path, string pathToken)
-        {
-            if (string.IsNullOrWhiteSpace(pathToken))
-                return path;
-
-            var updatedSegments = path.PathTokens == null ? new List<string>() : new List<string>(path.PathTokens);
-            updatedSegments.AddRange(pathToken.Split(new[] { _slashDelimiter, _backslashDelimiter }, StringSplitOptions.RemoveEmptyEntries));
-            
-            if (path.IsFolder)
-                return new DirPath(updatedSegments.ToArray(), path.Delimiter);
-            return new FilePath(updatedSegments.ToArray(), path.Delimiter);
         }
     }
 }

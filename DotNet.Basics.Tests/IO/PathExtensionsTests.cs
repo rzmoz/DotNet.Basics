@@ -68,14 +68,13 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("\\pt101", "pt2\\", PathDelimiter.Backslash)]//dir
         public void ToPath_Combine_PathIsGenerated(string pt1, string pt2, PathDelimiter pathDelimiter)
         {
-            throw new NotImplementedException();/*
             var path = pt1.ToPath(pt2);
 
             var refPath = pt1 + pathDelimiter.ToChar() + pt2;
             if (path.IsFolder == false)
                 refPath = refPath.TrimEnd(pathDelimiter.ToChar());
-
-            path.RawName.Should().Be(refPath);*/
+            refPath = refPath.TrimStart(pathDelimiter.ToChar());
+            path.RawName.Should().Be(refPath);
         }
         [Test]
         [TestCase("mypath", false)]//file

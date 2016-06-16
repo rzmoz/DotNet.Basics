@@ -11,11 +11,11 @@ namespace DotNet.Basics.IO
         public FilePath(string fullPath)
             : this(new[] { fullPath })
         { }
-        public FilePath(string[] pathTokens)
-            : this(pathTokens, PathDelimiter.Backslash)
+        public FilePath(string[] pathSegments)
+            : this(pathSegments, PathDelimiter.Backslash)
         { }
-        public FilePath(string[] pathTokens, PathDelimiter delimiter)
-            : base(pathTokens, false, delimiter)
+        public FilePath(string[] pathSegments, PathDelimiter delimiter)
+            : base(pathSegments, false, delimiter)
         { }
     }
 }
