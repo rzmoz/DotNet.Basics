@@ -129,7 +129,7 @@ namespace DotNet.Basics.Tests.IO
             rootTestdir.GetFiles().Count().Should().Be(0);
         }
 
-        private int GetHierarchyDepth(DirectoryInfo root)
+        private int GetHierarchyDepth(DirPath root)
         {
             var subDir = root.GetDirectories().SingleOrDefault(dir => dir.Name.Equals(root.Name, StringComparison.InvariantCultureIgnoreCase));
             if (subDir == null)
@@ -282,7 +282,7 @@ namespace DotNet.Basics.Tests.IO
             dir.Parent.Name.Should().Be(rootDir.Name);
         }
 
-        private void AddTestContent(DirectoryInfo dir, int numOfTestDirs, int numOfTestFiles)
+        private void AddTestContent(DirPath dir, int numOfTestDirs, int numOfTestFiles)
         {
             for (var i = 0; i < numOfTestDirs; i++)
             {
@@ -295,7 +295,7 @@ namespace DotNet.Basics.Tests.IO
         }
 
 
-        private DirectoryInfo CreateIdenticalSubdirs(DirectoryInfo root, int maxDepth)
+        private DirPath CreateIdenticalSubdirs(DirPath root, int maxDepth)
         {
             try
             {

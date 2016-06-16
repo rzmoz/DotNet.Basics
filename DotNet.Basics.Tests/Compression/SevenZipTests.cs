@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
@@ -17,7 +16,7 @@ namespace DotNet.Basics.Tests.Compression
         public void CreateFromDirectory_DontOverWrite_ExceptionWhenTargetAlreadyExists()
         {
             //arrange
-            var targetPath = "CreateFromDirectory_DontOverWrite_ExceptionWhenTargetAlreadyExists".ToFilePath("myArchive.zip");
+            var targetPath = "CreateFromDirectory_DontOverWrite_ExceptionWhenTargetAlreadyExists".ToFile("myArchive.zip");
             targetPath.DeleteIfExists();
             "dummyContent".WriteAllText(targetPath);
             targetPath.Exists().Should().BeTrue();
@@ -25,20 +24,20 @@ namespace DotNet.Basics.Tests.Compression
             //act
             Action action = () => zip.CreateFromDirectory("mySource", targetPath.FullName, false);
 
-            action.ShouldThrow<IOException>();
+            action.ShouldThrow<System.IO.IOException>();
         }
 
         [Test]
         public void CreateFromDirectory_Zip_ContentIsZipped()
         {
             //arrange
-            var sourceDir = "CreateFromDirectory_Zip_ContentIsZipped".ToDirPath("source");
-            var dummyfile = sourceDir.Add("myfile.txt").ToFilePath();
+            var sourceDir = "CreateFromDirectory_Zip_ContentIsZipped".ToDir("source");
+            var dummyfile = sourceDir.Add("myfile.txt").ToFile();
             var dummycontent = "dummyContent";
 
             dummycontent.WriteAllText(dummyfile);
 
-            var targetZip = "CreateFromDirectory_Zip_ContentIsZipped".ToFilePath("myArchive.zip");
+            var targetZip = "CreateFromDirectory_Zip_ContentIsZipped".ToFile("myArchive.zip");
             targetZip.DeleteIfExists();
 
             targetZip.Exists().Should().BeFalse();
@@ -52,7 +51,7 @@ namespace DotNet.Basics.Tests.Compression
                 archive.Entries.Count.Should().Be(1);
 
                 using (var stream = archive.Entries.Single().Open())
-                using (var reader = new StreamReader(stream, Encoding.UTF8))
+                using (var reader = new System.IO.StreamReader(stream, Encoding.UTF8))
                 {
                     var read = reader.ReadToEnd();
                     read.Should().Be(dummycontent);
@@ -64,9 +63,9 @@ namespace DotNet.Basics.Tests.Compression
         public void ExtractToDirectory_TargetDirDoesntExist_ArchiveIsExtractedToNewDir()
         {
             //arrange
-            var targetDir = "ExtractToDirectory_TargetDirDoesntExist_ArchiveIsExtractedToNewDir".ToDirPath("out");
-            var targetFile = targetDir.Add("myfile.txt").ToFilePath();
-            var sourceZip = "compression".ToFilePath("myArchive.zip");
+            var targetDir = "ExtractToDirectory_TargetDirDoesntExist_ArchiveIsExtractedToNewDir".ToDir("out");
+            var targetFile = targetDir.Add("myfile.txt").ToFile();
+            var sourceZip = "compression".ToFile("myArchive.zip");
             targetDir.DeleteIfExists();
             targetDir.Exists().Should().BeFalse();
             targetFile.Exists().Should().BeFalse();
@@ -75,10 +74,10 @@ namespace DotNet.Basics.Tests.Compression
             //act
             zip.ExtractToDirectory(sourceZip.FullName, targetDir.FullName);
             targetDir.Exists().Should().BeTrue($"Exists:{targetDir.FullName}");
-            targetDir.ToDir().EnumerateFileSystemInfos().Count().Should().Be(1);
+            targetDir.ToDir().EnumeratePaths().Count().Should().Be(1);
             targetFile.Exists().Should().BeTrue();
 
-            var content = File.ReadAllText(targetFile.FullName);
+            var content = targetFile.ReadAllText();
 
             content.Should().Be("dummyContent");
         }

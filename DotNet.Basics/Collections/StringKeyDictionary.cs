@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.Serialization.Json;
 
 namespace DotNet.Basics.Collections
@@ -131,12 +130,12 @@ namespace DotNet.Basics.Collections
 
         public override string ToString()
         {
-            using (MemoryStream stream1 = new MemoryStream())
+            using (var stream1 = new System.IO.MemoryStream())
             {
                 DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(IDictionary<string, string>));
                 ser.WriteObject(stream1, _dic);
                 stream1.Position = 0;
-                StreamReader sr = new StreamReader(stream1);
+                var sr = new System.IO.StreamReader(stream1);
                 return sr.ReadToEnd();
             }
         }

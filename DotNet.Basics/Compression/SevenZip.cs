@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using Microsoft.Extensions.Logging;
@@ -17,26 +16,26 @@ namespace DotNet.Basics.Compression
 
         public int ExtractToDirectory(string archivePath, string targetDirPath)
         {
-            return ExecuteSevenZip("x", $"\"{archivePath}\"", $"\"-o{targetDirPath.ToDirPath().FullName}\"", "*", "-r");
+            return ExecuteSevenZip("x", $"\"{archivePath}\"", $"\"-o{targetDirPath.ToDir().FullName}\"", "*", "-r");
         }
 
         public int CreateFromDirectory(string sourceDirPath, string archivePath, bool overwrite = false)
         {
             if (overwrite == false && archivePath.ToPath().Exists())
-                throw new IOException($"Target archie path already exists: {archivePath}. Set overwrite to true to ignore");
+                throw new System.IO.IOException($"Target archive path already exists: {archivePath}. Set overwrite to true to ignore");
 
-            return ExecuteSevenZip("a", $"\"{archivePath}\"", $"\"{sourceDirPath.ToDirPath().FullName}\\*\"", "-tzip", "-mx3", "-mmt");
+            return ExecuteSevenZip("a", $"\"{archivePath}\"", $"\"{sourceDirPath.ToDir().FullName}\\*\"", "-tzip", "-mx3", "-mmt");
         }
 
         private int ExecuteSevenZip(string command, params string[] @params)
         {
             using (var temp = new TempDir("7z"))
             {
-                var temp7ZExe = temp.Root.Add("7za.exe").ToFilePath();
+                var temp7ZExe = temp.Root.ToFile("7za.exe");
                 Extract(temp7ZExe.FullName, CompressionResources._7za);
-                var temp7ZipDll = temp.Root.Add("7za.dll").ToFilePath();
+                var temp7ZipDll = temp.Root.ToFile("7za.dll");
                 Extract(temp7ZipDll.FullName, CompressionResources._7za1);
-                var temp7Zip32Dll = temp.Root.Add("7zxa.dll").ToFilePath();
+                var temp7Zip32Dll = temp.Root.ToFile("7zxa.dll");
                 Extract(temp7Zip32Dll.FullName, CompressionResources._7zxa);
 
                 var paramsString = @params.Aggregate(string.Empty, (current, param) => current + $" {param}");
@@ -47,10 +46,9 @@ namespace DotNet.Basics.Compression
 
         private void Extract(string path, byte[] bytes)
         {
-            using (var fsDst = new FileStream(path, FileMode.CreateNew, FileAccess.Write))
-            {
+            using (var fsDst = new System.IO.FileStream(path, System.IO.FileMode.CreateNew, System.IO.FileAccess.Write))
                 fsDst.Write(bytes, 0, bytes.Length);
-            }
+            
         }
     }
 }

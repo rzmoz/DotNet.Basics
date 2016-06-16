@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 using DotNet.Basics.Collections;
@@ -11,38 +10,33 @@ namespace DotNet.Basics.IO
 {
     public static class DirExtensions
     {
-        public static void CopyTo(this IEnumerable<DirectoryInfo> sourceDirs, DirectoryInfo target, bool includeSubfolders = true)
+
+        public static DirPath ToDir(this Path path, params string[] pathSegments)
+        {
+            return new DirPath(path.Segments, path.Delimiter).Add(pathSegments);
+        }
+
+        public static DirPath ToDir(this string dir, params string[] pathSegments)
+        {
+            return new DirPath(dir).Add(pathSegments);
+        }
+
+        public static void CopyTo(this IEnumerable<DirPath> sourceDirs, DirPath target, bool includeSubfolders = true)
         {
             sourceDirs.ForEach(dir => dir.CopyTo(target, includeSubfolders));
         }
 
-        public static DirectoryInfo ToDir(this Path path)
+        public static DirPath CreateSubdir(this DirPath dir, string path)
         {
-            if (path == null) throw new ArgumentNullException(nameof(path));
-            return new DirectoryInfo(path.ToString(PathDelimiter.Backslash));
-        }
-
-        public static DirectoryInfo ToDir(this string dir, params string[] paths)
-        {
-            return new DirectoryInfo(new DirPath(dir).Add(paths).ToString(PathDelimiter.Backslash));
-        }
-
-        public static DirectoryInfo ToDir(this DirectoryInfo dir, params string[] paths)
-        {
-            return dir.FullName.ToDir(paths);
-        }
-
-        public static DirectoryInfo CreateSubdir(this DirectoryInfo dir, string path)
-        {
-            var subDir = dir.ToDir(path);
+            var subDir = dir.Add(path);
             subDir.CreateIfNotExists();
             return subDir;
         }
 
-        public static void ConsolidateIdenticalSubfolders(this DirectoryInfo dir, int lookDepth = int.MaxValue)
+        public static void ConsolidateIdenticalSubfolders(this DirPath dir, int lookDepth = int.MaxValue)
         {
             if (dir.Exists() == false)
-                throw new IOException(dir.FullName);
+                throw new PathException(dir);
 
             //depth first recursive
             if (lookDepth > 0)//we only look to a certain depth
@@ -88,7 +82,7 @@ namespace DotNet.Basics.IO
                 dir.DeleteIfExists();
         }
 
-        private static bool ParentHasIdenticalName(this DirectoryInfo dir)
+        private static bool ParentHasIdenticalName(this DirPath dir)
         {
             if (dir.Exists() == false)
                 return false;
@@ -97,7 +91,7 @@ namespace DotNet.Basics.IO
             return dir.Name.Equals(dir.Parent.Name, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public static void CopyTo(this DirectoryInfo source, DirectoryInfo target, bool includeSubfolders = false)
+        public static void CopyTo(this DirPath source, DirPath target, bool includeSubfolders = false)
         {
             if (source.Exists() == false)
             {
@@ -122,13 +116,13 @@ namespace DotNet.Basics.IO
             }
         }
 
-        public static void CleanIfExists(this DirectoryInfo dir)
+        public static void CleanIfExists(this DirPath dir)
         {
             if (dir == null) throw new ArgumentNullException(nameof(dir));
             PowerShellConsole.RemoveItem($"{dir.FullName}\\*", force: true, recurse: true);
         }
 
-        public static void CreateIfNotExists(this DirectoryInfo dir)
+        public static void CreateIfNotExists(this DirPath dir)
         {
             if (dir.Exists())
                 return;
@@ -136,7 +130,7 @@ namespace DotNet.Basics.IO
             Debug.WriteLine($"Created: {dir.FullName}");
         }
 
-        public static void GrantAccess(this DirectoryInfo dir, string username, FileSystemRights fileSystemRights = FileSystemRights.FullControl)
+        public static void GrantAccess(this DirPath dir, string username, FileSystemRights fileSystemRights = FileSystemRights.FullControl)
         {
             if (dir.Exists() == false)
                 return;
@@ -155,12 +149,11 @@ namespace DotNet.Basics.IO
             dir.SetAccessControl(directorySecurity);
         }
 
-        public static bool IsEmpty(this DirectoryInfo dir)
+        public static bool IsEmpty(this DirPath dir)
         {
             if (dir == null) throw new ArgumentNullException(nameof(dir));
-            dir.Refresh();
             if (dir.Exists())
-                return dir.EnumerateFiles().Any() == false && dir.EnumerateDirectories().Any() == false;
+                return dir.EnumeratePaths().Any() == false;
             return true;
         }
 

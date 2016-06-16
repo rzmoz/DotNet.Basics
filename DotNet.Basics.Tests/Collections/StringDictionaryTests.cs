@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
 using DotNet.Basics.Collections;
@@ -23,11 +22,11 @@ namespace DotNet.Basics.Tests.Collections
             var kvc = new StringDictionary(new StringPair(_myKey, _myValue).ToEnumerable());
 
             //serialize
-            MemoryStream stream1 = new MemoryStream();
+            var stream1 = new System.IO.MemoryStream();
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(StringDictionary));
             ser.WriteObject(stream1, kvc);
             stream1.Position = 0;
-            StreamReader sr = new StreamReader(stream1);
+            var sr = new System.IO.StreamReader(stream1);
             var json = sr.ReadToEnd();
 
             //assert
@@ -115,9 +114,8 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Add_KeyDoesNotExist_ValueIsAdded()
         {
-            var kvCollection = new StringDictionary();
+            var kvCollection = new StringDictionary { { _myKey, _myValue } };
 
-            kvCollection.Add(_myKey, _myValue);
 
             kvCollection[_myKey].Should().Be(_myValue);
         }

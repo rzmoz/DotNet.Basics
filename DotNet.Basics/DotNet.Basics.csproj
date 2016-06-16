@@ -73,11 +73,10 @@
     <Compile Include="Diagnostics\ProfileStates.cs" />
     <Compile Include="Ioc\IocContainer.cs" />
     <Compile Include="Ioc\IIocRegistrations.cs" />
-    <Compile Include="IO\DetectOptions.cs" />
     <Compile Include="IO\DirExtensions.cs" />
     <Compile Include="IO\DirPath.cs" />
-    <Compile Include="IO\FileExtensions.cs" />
     <Compile Include="IO\FilePath.cs" />
+    <Compile Include="IO\FileExtensions.cs" />
     <Compile Include="IO\FileSystemInfoExtensions.cs" />
     <Compile Include="IO\FileType.cs" />
     <Compile Include="IO\FileTypeCollection.cs" />

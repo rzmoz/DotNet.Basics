@@ -15,9 +15,9 @@ namespace DotNet.Basics.Tests.IO
         {
             Path p = null;
             if (isFolder)
-                p = path.ToDirPath();
+                p = path.ToDir();
             else
-                p = path.ToFilePath();
+                p = path.ToFile();
 
             p.DeleteIfExists();
             p.Exists().Should().BeFalse(p.FullName);
@@ -29,8 +29,6 @@ namespace DotNet.Basics.Tests.IO
 
             p.Exists().Should().BeTrue(p.FullName);
         }
-
-
 
         [Test]
         [TestCase(PathDelimiter.Slash, '/')]
@@ -60,7 +58,6 @@ namespace DotNet.Basics.Tests.IO
             action.ShouldThrow<NotSupportedException>();
         }
 
-
         [Test]
         [TestCase("//pt101", "pt2", PathDelimiter.Slash)]//file
         [TestCase("\\pt101", "pt2", PathDelimiter.Backslash)]//file
@@ -76,17 +73,17 @@ namespace DotNet.Basics.Tests.IO
             refPath = refPath.TrimStart(pathDelimiter.ToChar());
             path.RawName.Should().Be(refPath);
         }
+
         [Test]
         [TestCase("mypath", false)]//file
         [TestCase("mypath", true)]//file
         public void IsFolder_Set_IsFolderIsSet(string pth, bool isFolder)
         {
-
-            Path p = null;
+            Path p;
             if (isFolder)
-                p = pth.ToDirPath();
+                p = pth.ToDir();
             else
-                p=pth.ToFilePath();
+                p = pth.ToFile();
 
             p.IsFolder.Should().Be(isFolder);
         }

@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 
 namespace DotNet.Basics.IO
@@ -25,7 +24,7 @@ namespace DotNet.Basics.IO
             KnownFileTypes.Add(extension);
         }
 
-        public bool IsRegisteredFileType(FileInfo file)
+        public bool IsRegisteredFileType(FilePath file)
         {
             return KnownFileTypes.Any(fileType => file.Name.EndsWith(fileType, true, CultureInfo.InvariantCulture));
         }

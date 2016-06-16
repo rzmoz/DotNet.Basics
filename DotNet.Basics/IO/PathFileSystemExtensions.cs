@@ -33,8 +33,7 @@ namespace DotNet.Basics.IO
                 return false;
             return SystemIoPath.Exists(path);
         }
-
-
+        
         public static bool DeleteIfExists(this Path path)
         {
             return DeleteIfExists(path, 30.Seconds());

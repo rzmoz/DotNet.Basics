@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using DotNet.Basics.Sys;
 using Microsoft.Extensions.Logging;
 
@@ -103,19 +102,19 @@ namespace DotNet.Basics.IO
             if (exitCode == 16)
                 return _fileName;
 
-            var drives = DriveInfo.GetDrives();
+            var drives = System.IO.DriveInfo.GetDrives();
             foreach (var driveInfo in drives)
             {
                 foreach (var searchPath in searchPaths)
                 {
                     var lookFor = driveInfo.Name + searchPath.TrimStart('\\');
                     Debug.WriteLine("Looking for robocopy in {0}", lookFor);
-                    if (File.Exists(lookFor))
+                    if (lookFor.ToFile().Exists())
                         return lookFor;
                 }
             }
 
-            throw new IOException("Robocopy not found");
+            throw new System.IO.IOException("Robocopy not found");
         }
     }
 }

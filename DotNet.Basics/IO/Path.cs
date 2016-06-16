@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using DotNet.Basics.Sys;
 
@@ -25,9 +24,9 @@ namespace DotNet.Basics.IO
         public string FullName => SystemIoPath.GetFullPath(RawName);
         public string NameWithoutExtension => System.IO.Path.GetFileNameWithoutExtension(Name);
         public string Extension => System.IO.Path.GetExtension(Name);
-        public Path Directory => IsFolder ? this : Parent;
+        public DirPath Directory => IsFolder ? (DirPath)this : Parent;
 
-        public Path Parent
+        public DirPath Parent
         {
             get
             {
@@ -35,10 +34,29 @@ namespace DotNet.Basics.IO
                     return null;//no parent
 
                 var allButLast = _segments.Reverse().Skip(1).Reverse().ToArray();
-                return new Path(allButLast, true, Delimiter);
+                return new DirPath(allButLast, Delimiter);
             }
         }
-        
+
+        public Path Add(params string[] pathSegments)
+        {
+            var combinedSegments = AddSegments(Segments);
+            return new Path(combinedSegments, IsFolder, Delimiter);
+        }
+
+        protected string[] AddSegments(params string[] pathSegments)
+        {
+            if (pathSegments == null)
+                return Segments;
+
+            var splitNewSegments = pathSegments.SplitSegments();
+            if (splitNewSegments.Length == 0)
+                return Segments;
+
+            var combinedSegments = Segments.Concat(pathSegments).ToArray();
+            return combinedSegments;
+        }
+
         public override string ToString()
         {
             return ToString(Delimiter);

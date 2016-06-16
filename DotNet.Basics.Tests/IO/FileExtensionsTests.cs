@@ -1,5 +1,4 @@
-﻿using System.IO;
-using DotNet.Basics.IO;
+﻿using DotNet.Basics.IO;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -109,9 +108,9 @@ namespace DotNet.Basics.Tests.IO
         {
             var expectedFullName = name + extension;
 
-            var file = new FileInfo(expectedFullName);
+            var file = expectedFullName.ToFile();
             file.Name.Should().Be(expectedFullName, nameof(file.Name));
-            file.NameWithoutExtension().Should().Be(name ?? "", "NameWithoutExtension");
+            file.NameWithoutExtension.Should().Be(name ?? "", "NameWithoutExtension");
             file.Extension.Should().Be(extension ?? "");
         }
     }

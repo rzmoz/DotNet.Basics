@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {
@@ -17,5 +14,29 @@ namespace DotNet.Basics.IO
         public FilePath(string[] pathSegments, PathDelimiter delimiter)
             : base(pathSegments, false, delimiter)
         { }
+
+        public new FilePath Add(params string[] pathSegments)
+        {
+            var combinedSegments = AddSegments(pathSegments);
+            return new FilePath(combinedSegments, Delimiter);
+        }
+
+        public bool IsFileType(FileType fileType)
+        {
+            if (fileType == null)
+                return false;
+            return Name.EndsWith(fileType.Extension, true, null);
+        }
+
+        public string ReadAllText()
+        {
+            var getContentCmdlet = new PowerShellCmdlet("Get-Content");
+            getContentCmdlet.AddParameter("Path", FullName);
+            getContentCmdlet.AddParameter("raw");
+
+            var result = PowerShellConsole.RunScript(getContentCmdlet.ToScript());
+            return result.FirstOrDefault()?.ToString();
+        }
+
     }
 }

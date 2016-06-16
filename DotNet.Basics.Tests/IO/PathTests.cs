@@ -35,7 +35,7 @@ namespace DotNet.Basics.Tests.IO
         public void Add_Immutable_AddShouldBeImmutable()
         {
             var root = "root".ToPath();
-            root.Add("sazas");
+            root = root.Add("sazas");
             root.RawName.Should().Be("root");
         }
 
@@ -87,8 +87,8 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         [TestCase("myFolder\\", "dir\\", true)]//backslash all dirs
         [TestCase("myFolder\\", "file.txt", true)]//backslash dir remains when file added
-        [TestCase("myfile", "dir//",false)]//slash file remains when dir added - should throw exception?
-        [TestCase("myfile.txt", "file.txt",false)]//slash file remains when dir added - should throw exception?
+        [TestCase("myfile", "dir//", false)]//slash file remains when dir added - should throw exception?
+        [TestCase("myfile.txt", "file.txt", false)]//slash file remains when dir added - should throw exception?
         public void Add_KeepIsFolder_PathRemainsRegardlesOfSegmentsAdded(string root, string newSegment, bool expectedIsFolder)
         {
             var path = root.ToPath();

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
 
@@ -8,40 +7,41 @@ namespace DotNet.Basics.IO
 {
     public static class IoExtensions
     {
-        public static Path WriteAllText(this string content, Path targetFile, bool overwrite = false)
+        public static FilePath WriteAllText(this string content, string targetFile, bool overwrite = false)
         {
             if (content == null) throw new ArgumentNullException(nameof(content));
             if (targetFile == null) throw new ArgumentNullException(nameof(targetFile));
 
             var outFileCmdlet = new PowerShellCmdlet("Out-File");
-            outFileCmdlet.AddParameter("FilePath", targetFile.FullName);
+            outFileCmdlet.AddParameter("FilePath", targetFile);
             outFileCmdlet.AddParameter("inputobject", content);
             outFileCmdlet.AddParameter("NoNewline");
 
-            targetFile.Directory.CreateIfNotExists();
+            targetFile.ToFile().Directory.CreateIfNotExists();
             var result = Repeat.Task(() => PowerShellConsole.RunScript(outFileCmdlet.ToScript()))
                 .WithRetryDelay(1.Seconds())
                 .UntilNoExceptions()
                 .WithMaxTries(10)
                 .Now();
 
-            Debug.WriteLine($"Saved text to disk: {targetFile.FullName}");
-            return targetFile;
+            Debug.WriteLine($"Saved text to disk: {targetFile}");
+            return targetFile.ToFile();
         }
-
-        public static FileInfo WriteAllText(this string content, FileInfo targetFile)
+        public static FilePath WriteAllText(this string content, Path targetPath, bool overwrite = false)
         {
-            if (content == null) throw new ArgumentNullException(nameof(content));
-            if (targetFile == null) throw new ArgumentNullException(nameof(targetFile));
+            if (targetPath == null) throw new ArgumentNullException(nameof(targetPath));
+            if (targetPath is FilePath == false)
+                throw new ArgumentException($"target path is not a file:{targetPath}. Was: {targetPath.GetType()}");
 
-            return content.WriteAllText(targetFile.FullName.ToFilePath()).ToFile();
+            return WriteAllText(content, targetPath.FullName, overwrite);
         }
-
-        public static FileInfo WriteAllText(this string content, DirectoryInfo dir, string filename)
+        public static FilePath WriteAllText(this string content, FilePath targetPath, bool overwrite = false)
         {
-            var file = dir.ToFile(filename);
-            WriteAllText(content, file);
-            return file;
+            return WriteAllText(content, targetPath.FullName, overwrite);
+        }
+        public static FilePath WriteAllText(this string content, DirPath targetDir, string fileName, bool overwrite = false)
+        {
+            return WriteAllText(content, targetDir.ToFile(fileName).FullName, overwrite);
         }
     }
 }

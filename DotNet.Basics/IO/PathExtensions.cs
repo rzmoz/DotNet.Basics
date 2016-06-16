@@ -34,37 +34,8 @@ namespace DotNet.Basics.IO
                     throw new NotSupportedException($"Path delimiter not supported: {pathDelimiter}");
             }
         }
-
-        public static Path Add(this Path path, params string[] pathSegments)
-        {
-            if (pathSegments == null)
-                return path;
-
-            var splitNewSegments = SplitSegments(pathSegments);
-            if (splitNewSegments.Length == 0)
-                return path;
-
-            var combinedSegments = path.Segments.Concat(pathSegments).ToArray();
-
-            return Create(combinedSegments, path.IsFolder, path.Delimiter);
-        }
-
-        public static FilePath ToFilePath(this string path, params string[] pathTokens)
-        {
-            return (FilePath)new FilePath(path).Add(pathTokens);
-        }
-        public static FilePath ToFilePath(this Path path)
-        {
-            return new FilePath(path.Segments, path.Delimiter);
-        }
-        public static DirPath ToDirPath(this string path, params string[] pathTokens)
-        {
-            return (DirPath)new DirPath(path).Add(pathTokens);
-        }
-        public static DirPath ToDirPath(this Path path)
-        {
-            return new DirPath(path.Segments, path.Delimiter);
-        }
+        
+        
 
         public static Path ToPath(this string path, params string[] segments)
         {
