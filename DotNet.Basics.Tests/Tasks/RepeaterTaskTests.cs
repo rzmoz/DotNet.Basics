@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Tasks;
 using FluentAssertions;
@@ -16,11 +14,11 @@ namespace DotNet.Basics.Tests.Tasks
         {
             Action action = () => Repeat.Task(async () => await Task.Delay(10.Milliseconds()))
                     .WithMaxTries(2)
-                    .WithFinally(() => { throw new IOException("doh"); })
+                    .WithFinally(() => { throw new System.IO.IOException("doh"); })
                     .UntilNoExceptions()
                     .Now();
 
-            action.ShouldThrow<IOException>();
+            action.ShouldThrow<System.IO.IOException>();
         }
 
         [Test]
@@ -31,7 +29,7 @@ namespace DotNet.Basics.Tests.Tasks
                throw new ApplicationException(); //run action that throw exception
            })
                       .WithMaxTries(2)
-                      .WithFinally(() => { throw new IOException("doh"); })
+                      .WithFinally(() => { throw new System.IO.IOException("doh"); })
                       .UntilNoExceptions()
                       .Now();
             action.ShouldThrow<AggregateException>();
@@ -70,11 +68,11 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var doCounter = 0;
             const int until = 5;
-            var result = await Repeat.Task(() => { doCounter++; throw new IOException("buuh"); })
+            var result = await Repeat.Task(() => { doCounter++; throw new System.IO.IOException("buuh"); })
                 .WithNoRetryDelay()
                 .WithMaxTries(until)
                 .Until(() => false)
-                .IgnoreExceptionsOfType(typeof(IOException))
+                .IgnoreExceptionsOfType(typeof(System.IO.IOException))
                 .NowAsync().ConfigureAwait(false);
 
             result.Should().BeFalse();
@@ -87,14 +85,14 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var doCounter = 0;
             const int until = 5;
-            Action runTask = () => Repeat.Task(() => { doCounter++; throw new IOException("buuh"); })
+            Action runTask = () => Repeat.Task(() => { doCounter++; throw new System.IO.IOException("buuh"); })
                 .WithNoRetryDelay()
                 .WithMaxTries(until)
                 .Until(() => false)
                 .Now();
 
 
-            runTask.ShouldThrow<IOException>();
+            runTask.ShouldThrow<System.IO.IOException>();
             doCounter.Should().Be(until);
             //we can assert result as it never returned properly
         }
@@ -123,7 +121,7 @@ namespace DotNet.Basics.Tests.Tasks
             const int stopThrowingExceptionsAt = 5;
             var tried = 0;
 
-            var throwExceptionUntilXTriesDummeTask = new ThrowExceptionUntilXTriesDummeTask<IOException>(stopThrowingExceptionsAt);
+            var throwExceptionUntilXTriesDummeTask = new ThrowExceptionUntilXTriesDummeTask<System.IO.IOException>(stopThrowingExceptionsAt);
 
             var result = Repeat.Task(() => throwExceptionUntilXTriesDummeTask.DoSomething())
                  .WithPing(() => tried++)

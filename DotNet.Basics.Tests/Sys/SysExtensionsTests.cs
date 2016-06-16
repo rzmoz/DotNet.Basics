@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using DotNet.Basics.Sys;
 using FluentAssertions;
 using NUnit.Framework;
@@ -19,7 +18,7 @@ namespace DotNet.Basics.Tests.Sys
             const string myString = "sdfsfsfsdf";
             using (var stream = myString.ToStream())
             {
-                var result = new StreamReader(stream).ReadToEnd();
+                var result = new System.IO.StreamReader(stream).ReadToEnd();
                 result.Should().Be(myString);
             }
         }

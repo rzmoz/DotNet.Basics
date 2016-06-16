@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
@@ -9,11 +8,11 @@ namespace DotNet.Basics.Sys
 {
     public static class SysExtensions
     {
-        public static Stream ToStream(this string str)
+        public static System.IO.Stream ToStream(this string str)
         {
             if (str == null) throw new ArgumentNullException(nameof(str));
-            MemoryStream stream = new MemoryStream();
-            StreamWriter writer = new StreamWriter(stream);
+            var stream = new System.IO.MemoryStream();
+            var writer = new System.IO.StreamWriter(stream);
             writer.Write(str);
             writer.Flush();
             stream.Position = 0;
@@ -120,8 +119,8 @@ namespace DotNet.Basics.Sys
         public static string GZipCompress(this string str)
         {
             var bytes = Encoding.UTF8.GetBytes(str);
-            using (var msi = new MemoryStream(bytes))
-            using (var mso = new MemoryStream())
+            using (var msi = new System.IO.MemoryStream(bytes))
+            using (var mso = new System.IO.MemoryStream())
             {
                 using (var gs = new GZipStream(mso, CompressionMode.Compress))
                 {
@@ -134,8 +133,8 @@ namespace DotNet.Basics.Sys
         public static string GZipDecompress(this string compressedString)
         {
             var bytes = Convert.FromBase64String(compressedString);
-            using (var msi = new MemoryStream(bytes))
-            using (var mso = new MemoryStream())
+            using (var msi = new System.IO.MemoryStream(bytes))
+            using (var mso = new System.IO.MemoryStream())
             {
                 using (var gs = new GZipStream(msi, CompressionMode.Decompress))
                 {

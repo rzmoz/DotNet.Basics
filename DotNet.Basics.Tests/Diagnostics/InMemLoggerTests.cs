@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DotNet.Basics.Diagnostics;
@@ -98,7 +97,7 @@ namespace DotNet.Basics.Tests.Diagnostics
         {
             var logger = new InMemLogger();
 
-            var innerEx = new IOException("Im Inner Exception");
+            var innerEx = new System.IO.IOException("Im Inner Exception");
             var ex = new ApplicationException("Im outer exception", innerEx);
             var timeStamp = new DateTime(2000, 01, 01, 01, 01, 01);
             logger.Log(timeStamp, null, LogLevel.Error, ex);
@@ -115,7 +114,7 @@ namespace DotNet.Basics.Tests.Diagnostics
         {
             var logger = new InMemLogger();
 
-            var innerEx = new IOException("Im Inner Exception");
+            var innerEx = new System.IO.IOException("Im Inner Exception");
             var ex = new ApplicationException("Im outer exception", innerEx);
             var timeStamp = new DateTime(2000, 01, 01, 01, 01, 01);
             var message = "Hello World!";

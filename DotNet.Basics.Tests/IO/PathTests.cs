@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using FluentAssertions;
@@ -26,7 +25,7 @@ namespace DotNet.Basics.Tests.IO
 
             var expectedP = p;
             if (expectedP.StartsWith("."))
-                expectedP = new DirectoryInfo(".").FullName.ToPath(path.IsFolder).Add(p.RemovePrefix(".\\")).FullName;
+                expectedP = ".".ToPath(path.IsFolder).Add(p.RemovePrefix(".\\")).FullName;
 
             path.FullName.Should().Be(expectedP);//no exceptions
         }
@@ -44,7 +43,7 @@ namespace DotNet.Basics.Tests.IO
         public void FullName_SysstemIoCompliance_RelativePathsAreResolvedToSame()
         {
             var relativePath = "myfile.txt";
-            var systemIo = new FileInfo(relativePath);
+            var systemIo = new System.IO.FileInfo(relativePath);
             var path = relativePath.ToPath();
 
             System.IO.Path.GetFullPath(path.FullName).Should().Be(systemIo.FullName);

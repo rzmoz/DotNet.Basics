@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using DotNet.Basics.IO;
 using FluentAssertions;
@@ -49,7 +48,7 @@ namespace DotNet.Basics.Tests.IO
                     identicalSubDir = identicalSubDir.ToDir(testDirName);
                 }
             }
-            catch (PathTooLongException)
+            catch (System.IO.PathTooLongException)
             {
                 identicalSubDir.CleanIfExists();
             }
@@ -69,7 +68,7 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         public void Parent_NameOnlySourceDir_PartenIsResolved()
         {
-            var currentDir = new DirectoryInfo(@".");
+            var currentDir = @".".ToDir();
             var dir = @"Parent_ParentDir_PartenIsResolved".ToDir();
 
             dir.Parent.FullName.Should().Be(currentDir.FullName);
@@ -306,7 +305,7 @@ namespace DotNet.Basics.Tests.IO
                     root = root.CreateSubdir(dirName);
                 }
             }
-            catch (PathTooLongException)
+            catch (System.IO.PathTooLongException)
             {
                 //we set it to one level up so were sure we can have test content
                 root = root.Parent;
