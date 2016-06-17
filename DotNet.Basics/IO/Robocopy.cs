@@ -15,7 +15,7 @@ namespace DotNet.Basics.IO
         private const string _includeSubfoldersOption = " /e ";
         private const string _moveOption = " /move ";
         private static string _fullPath = null;
-        private static readonly object _syncRoot = new Object();
+        private static readonly object _syncRoot = new object();
 
         /// <summary>
         /// http://ss64.com/nt/robocopy.html
@@ -32,6 +32,7 @@ namespace DotNet.Basics.IO
             if (string.IsNullOrWhiteSpace(filesToCopy) == false)
                 command += $" \"{filesToCopy}\" ";
             command += options ?? string.Empty;
+            command += " /np /ndl /nfl";//we don't want progress by default
             return CommandPrompt.Run(command, logger);
         }
 
@@ -45,7 +46,7 @@ namespace DotNet.Basics.IO
             if (targetDir == null) throw new ArgumentNullException(nameof(targetDir));
             if (string.IsNullOrEmpty(sourceFile)) throw new ArgumentException(nameof(sourceFile));
             var file = sourceFile.ToFile();
-            return Run(file.Directory.FullName, targetDir, file.Name, extraOptions, logger);
+            return Run(file.Directory.FullName, targetDir, file.Name, extraOptions ?? "/np", logger);
         }
 
         /// <summary>
@@ -96,7 +97,7 @@ namespace DotNet.Basics.IO
         private static string LookupRobocopy(params string[] searchPaths)
         {
             //see if robocopy is registered as an internal command
-            var exitCode = CommandPrompt.Run(_fileName);
+            var exitCode = CommandPrompt.Run(_fileName + " /njh /njs");
 
             //exit code means that robocopy actually ran which means we got it
             if (exitCode == 16)

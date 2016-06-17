@@ -32,5 +32,10 @@ namespace DotNet.Basics.Diagnostics
         {
             return DateTime.UtcNow;
         }
+
+        protected string FullFormat(LogEntry entry)
+        {
+            return $"{entry.Level}: {entry.Timestamp.ToString("yyyy/MM/dd_hh:mm:ss")} - {entry.Message}{Environment.NewLine}{entry.Exception}";
+        }
     }
 }

@@ -7,7 +7,7 @@ namespace DotNet.Basics.Sys
     {
         public static int Run(string commandString, ILogger logger = null)
         {
-            System.Console.WriteLine($"Command prompt invoked: {commandString}");
+            logger?.LogDebug($"Command prompt invoked: {commandString}");
 
             var si = new ProcessStartInfo("cmd.exe", $"/c {commandString}")
             {

@@ -1,4 +1,5 @@
-﻿using DotNet.Basics.IO;
+﻿using DotNet.Basics.Diagnostics;
+using DotNet.Basics.IO;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -32,6 +33,30 @@ namespace DotNet.Basics.Tests.IO
             var result = Robocopy.CopyFile(sourcefile.FullName, targetFile.Directory.FullName);
             result.Should().BeLessThan(8); //http://ss64.com/nt/robocopy-exit.html
             targetFile.Exists().Should().BeTrue("target file is copied");
+        }
+        [Test]
+        public void CopyDir_CopyDirSourceExists_DirIsCopied()
+        {
+            var source = "CopyDir_CopyDirSourceExists_DirIsCopied".ToDir("source");
+            var target = "CopyDir_CopyDirSourceExists_DirIsCopied".ToDir("target");
+            var sourceFile = source.ToFile("myfile.txt");
+            var targetFile = source.ToFile(sourceFile.Name);
+            var fileContent = "blavlsavlsdglsdflslfsdlfsdlfsd";
+            target.DeleteIfExists();
+            target.Exists().Should().BeFalse();
+
+            source.CreateIfNotExists();
+            fileContent.WriteAllText(sourceFile);
+            sourceFile.Exists().Should().BeTrue();
+
+            //act
+            var result = Robocopy.CopyDir(source.FullName, target.FullName, true);
+
+            //assert
+            result.Should().BeLessThan(8); //http://ss64.com/nt/robocopy-exit.html
+            target.Exists().Should().BeTrue();
+            targetFile.Exists().Should().BeTrue();
+            targetFile.ReadAllText().Should().Be(fileContent);
         }
     }
 }

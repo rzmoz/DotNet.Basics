@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace DotNet.Basics.Diagnostics
 {
-    public class ConsoleLogger : DotNetBasicsLogger
+    public class TraceLogger : DotNetBasicsLogger
     {
         protected override void Log(LogEntry entry)
         {
-            Console.WriteLine(FullFormat(entry));
+            Trace.WriteLine(FullFormat(entry));
         }
     }
 }
