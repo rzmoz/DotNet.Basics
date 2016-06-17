@@ -76,16 +76,21 @@ namespace DotNet.Basics.IO
             }
         }
 
-        public static bool Exists(Path path)
+        public static bool Exists(this Path path)
+        {
+            return Exists(path.FullName, path.IsFolder);
+        }
+
+        public static bool Exists(string path, bool isFolder)
         {
             if (path == null)
                 return false;
 
-            var method = path.IsFolder ? _dirInternalExists : _fileInternalExists;
+            var method = isFolder ? _dirInternalExists : _fileInternalExists;
 
             var @params = new object[]
             {
-                path.FullName
+                path
             };
 
             try
@@ -98,6 +103,7 @@ namespace DotNet.Basics.IO
                 throw e.InnerException;
             }
         }
+
 
         private static void EnsureLongPathsAreEnabled()
         {

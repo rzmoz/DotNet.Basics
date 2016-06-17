@@ -26,18 +26,24 @@ namespace DotNet.Basics.IO
             System.IO.Directory.CreateDirectory(path.FullName);
             Debug.WriteLine($"Created: {path.FullName}");
         }
-
-        public static bool Exists(this Path path)
-        {
-            if (path == null)
-                return false;
-            return SystemIoPath.Exists(path);
-        }
         
         public static bool DeleteIfExists(this Path path)
         {
             return DeleteIfExists(path, 30.Seconds());
         }
+
+        public static bool IsFolder(this string path)
+        {
+            if (path == null) throw new ArgumentNullException(nameof(path));
+
+            if (SystemIoPath.Exists(path, true))
+                return true;
+            if (SystemIoPath.Exists(path, false))
+                return false;
+
+            return path.EndsWith(PathDelimiterAsChar.Slash.ToString()) || path.EndsWith(PathDelimiterAsChar.Backslash.ToString());
+        }
+
         public static bool DeleteIfExists(this Path path, TimeSpan timeout)
         {
             if (path == null)

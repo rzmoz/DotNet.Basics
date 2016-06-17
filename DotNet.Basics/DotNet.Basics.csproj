@@ -73,6 +73,7 @@
     <Compile Include="Diagnostics\ProfileStates.cs" />
     <Compile Include="Ioc\IocContainer.cs" />
     <Compile Include="Ioc\IIocRegistrations.cs" />
+    <Compile Include="IO\PathDelimiterAsChar.cs" />
     <Compile Include="IO\DirExtensions.cs" />
     <Compile Include="IO\DirPath.cs" />
     <Compile Include="IO\FilePath.cs" />

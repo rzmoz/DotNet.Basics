@@ -9,6 +9,22 @@ namespace DotNet.Basics.Tests.IO
     public class PathExtensionsTests
     {
         [Test]
+        [TestCase("FOLDER_THAT_DOES_NOT_EXIST_WO_FOLDER_MARKER", false)]//folder that doesnt exist without marker
+        [TestCase("FOLDER_THAT_DOES_NOT_EXIST_WITH_FOLDER_MARKER//", true)]//folder that doesnt exist with marker
+        [TestCase("IsFolder_DetectIfFolder_FoldersAreDetected", true)]//folder that exists without marker
+        [TestCase("IsFolder_DetectIfFolder_FoldersAreDetected\\myfile.txt\\", false)]//file that exists with folder marker
+        public void IsFolder_DetectIfFolder_FoldersAreDetected(string input, bool expectedIsFolder)
+        {
+            var dir = "IsFolder_DetectIfFolder_FoldersAreDetected".ToDir();
+            dir.CreateIfNotExists();
+            "dummycontent".WriteAllText(dir.ToFile("myfile.txt"));
+
+            var path = input.ToPath();
+
+            path.IsFolder.Should().Be(expectedIsFolder);
+        }
+
+        [Test]
         [TestCase("Exists_TestPath_PathIsVerified", true)]//dir
         [TestCase("Exists_TestPath_PathIsVerified\\file.txt", false)]//file
         public void Exists_TestPath_PathIsVerified(string path, bool isFolder)

@@ -6,16 +6,13 @@ namespace DotNet.Basics.IO
 {
     public static class PathExtensions
     {
-        private const char _slashDelimiter = '/';
-        private const char _backslashDelimiter = '\\';
-
         public static PathDelimiter ToPathDelimiter(this char delimiter)
         {
             switch (delimiter)
             {
-                case _backslashDelimiter:
+                case PathDelimiterAsChar.Backslash:
                     return PathDelimiter.Backslash;
-                case _slashDelimiter:
+                case PathDelimiterAsChar.Slash:
                     return PathDelimiter.Slash;
                 default:
                     throw new NotSupportedException($"Path delimiter not supported: {delimiter}");
@@ -27,21 +24,20 @@ namespace DotNet.Basics.IO
             switch (pathDelimiter)
             {
                 case PathDelimiter.Backslash:
-                    return _backslashDelimiter;
+                    return PathDelimiterAsChar.Backslash;
                 case PathDelimiter.Slash:
-                    return _slashDelimiter;
+                    return PathDelimiterAsChar.Slash;
                 default:
                     throw new NotSupportedException($"Path delimiter not supported: {pathDelimiter}");
             }
         }
-        
-        
 
         public static Path ToPath(this string path, params string[] segments)
         {
             if (string.IsNullOrEmpty(path))
                 return null;
-            var isFolder = DetectIsFolder(segments.Length > 0 ? segments.Last() : path);
+
+            var pathToTest = segments.Length > 0 ? segments.Last() : path;
 
             var allSegments = new[] { path }.Concat(segments).ToArray();
 
@@ -51,7 +47,7 @@ namespace DotNet.Basics.IO
                 if (TryDetectDelimiter(segment, out delimiter))
                     break;
             }
-
+            var isFolder = pathToTest.IsFolder();
             return Create(allSegments, isFolder, delimiter);
         }
         public static Path ToPath(this string path, bool isFolder)
@@ -75,7 +71,7 @@ namespace DotNet.Basics.IO
                 if (string.IsNullOrWhiteSpace(pathSegment))
                     continue;
 
-                var split = pathSegment.Split(new[] { _slashDelimiter, _backslashDelimiter },
+                var split = pathSegment.Split(new[] { PathDelimiterAsChar.Slash, PathDelimiterAsChar.Backslash },
                     StringSplitOptions.RemoveEmptyEntries);
                 updatedSegments.AddRange(split);
             }
@@ -90,13 +86,7 @@ namespace DotNet.Basics.IO
             return new FilePath(pathSegments, delimiter);
         }
 
-        private static bool DetectIsFolder(string path)
-        {
-            if (string.IsNullOrWhiteSpace(path))
-                return false;
 
-            return path.EndsWith(_slashDelimiter.ToString()) || path.EndsWith(_backslashDelimiter.ToString());
-        }
 
         private static bool TryDetectDelimiter(string path, out PathDelimiter delimiter)
         {
@@ -106,8 +96,8 @@ namespace DotNet.Basics.IO
                 return false;
             }
 
-            var slashIndex = path.IndexOf(_slashDelimiter);
-            var backSlashIndex = path.IndexOf(_backslashDelimiter);
+            var slashIndex = path.IndexOf(PathDelimiterAsChar.Slash);
+            var backSlashIndex = path.IndexOf(PathDelimiterAsChar.Backslash);
 
             if (slashIndex < 0)
             {
