@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using static System.Boolean;
+
 
 namespace DotNet.Basics.IO
 {
-    internal static class SystemIoPath
+    public static class SystemIoPath
     {
         private static readonly MethodInfo _normalizePath;
         private static readonly MethodInfo _dirInternalExists;
@@ -96,7 +96,7 @@ namespace DotNet.Basics.IO
             try
             {
                 var result = method.Invoke(null, @params);
-                return Parse(result.ToString());
+                return Boolean.Parse(result.ToString());
             }
             catch (TargetInvocationException e)
             {
