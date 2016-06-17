@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.AccessControl;
+using System.Threading.Tasks;
 using DotNet.Basics.Collections;
 using DotNet.Basics.Sys;
 
@@ -107,7 +108,23 @@ namespace DotNet.Basics.IO
 
             try
             {
-                PowerShellConsole.CopyItem(source.FullName, target.FullName, force: true, recurse: includeSubfolders);
+                //depth first to find out quickly if we have long path exceptions - we want to fail early then
+                target.CreateIfNotExists();
+
+                if (includeSubfolders)
+                {
+                    Parallel.ForEach(source.GetDirectories(), dir =>
+                    {
+                        var nextTargetSubDir = target.ToDir(dir.Name);
+                        nextTargetSubDir.CreateIfNotExists();
+                        dir.CopyTo(nextTargetSubDir, includeSubfolders);
+                    });
+                }
+
+                Parallel.ForEach(source.GetFiles(), file =>
+                {
+                    file.CopyTo(target, overwrite: true);
+                });
             }
             catch (Exception e)
             {
@@ -126,7 +143,8 @@ namespace DotNet.Basics.IO
         {
             if (dir.Exists())
                 return;
-            PowerShellConsole.NewItem(dir.FullName, "Directory", false);
+
+            System.IO.Directory.CreateDirectory(dir.FullName);
             Debug.WriteLine($"Created: {dir.FullName}");
         }
 

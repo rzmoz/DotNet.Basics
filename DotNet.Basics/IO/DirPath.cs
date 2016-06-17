@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.AccessControl;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {
@@ -16,6 +17,11 @@ namespace DotNet.Basics.IO
             : base(pathSegments, true, delimiter)
         { }
 
+        /// <summary>
+        /// Returns a new Path where original and added paths are combined
+        /// </summary>
+        /// <param name="pathSegments"></param>
+        /// <returns></returns>
         public new DirPath Add(params string[] pathSegments)
         {
             var combinedSegments = AddSegments(pathSegments);
@@ -24,11 +30,13 @@ namespace DotNet.Basics.IO
 
         public DirPath[] GetDirectories(string searchPattern = null)
         {
-            return ToDirectoryInfo().GetDirectories(searchPattern ?? "*").Select(dir => dir.FullName.ToDir()).ToArray();
+            var subDirs = GetChildItems(new[] {new KeyValuePair<string, object>("Dir", null)},searchPattern);
+            return subDirs.Select(dir => dir.ToDir()).ToArray();
         }
         public FilePath[] GetFiles(string searchPattern = null)
         {
-            return ToDirectoryInfo().GetFiles(searchPattern ?? "*").Select(file => file.FullName.ToFile()).ToArray();
+            var subDirs = GetChildItems(new[] { new KeyValuePair<string, object>("File", null) }, searchPattern);
+            return subDirs.Select(dir => dir.ToFile()).ToArray();
         }
         public Path[] GetPaths(string searchPattern = null)
         {
@@ -38,6 +46,22 @@ namespace DotNet.Basics.IO
                      return fsi.FullName.ToDir();
                  return fsi.FullName.ToFile();
              }).ToArray();
+        }
+
+        private string[] GetChildItems(KeyValuePair<string, object>[] parameters, string searchPattern = null)
+        {
+            var cmdlet = new PowerShellCmdlet("Get-ChildItem")
+                .AddParameter("Path", FullName);
+
+            foreach (var parameter in parameters)
+                cmdlet.AddParameter(parameter.Key, parameter.Value);
+
+            if (searchPattern != null)
+                cmdlet.AddParameter("Include", searchPattern);
+
+            var result = PowerShellConsole.RunScript(cmdlet.ToScript());
+
+            return result.Select(dir => (string)((dynamic)dir).FullName.ToString()).ToArray();
         }
 
         public IEnumerable<DirPath> EnumerateDirectories(string searchPattern = null)

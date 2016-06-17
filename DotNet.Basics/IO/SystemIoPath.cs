@@ -2,52 +2,41 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using static System.Boolean;
 
 namespace DotNet.Basics.IO
 {
     internal static class SystemIoPath
     {
-        public static string GetFullPath(string path)
-        {
-            if (string.IsNullOrWhiteSpace(path))
-                return string.Empty;
+        private static readonly MethodInfo _normalizePath;
+        private static readonly MethodInfo _dirInternalExists;
+        private static readonly MethodInfo _fileInternalExists;
 
+        private static readonly int _maxPathLength = 32000;
+        private static readonly int _maxDirectoryLength = _maxPathLength - 12;
+
+        static SystemIoPath()
+        {
             EnsureLongPathsAreEnabled();
 
+            //init normalize path
             var type = typeof(System.IO.Path);
-
             string methodName = "NormalizePath";
-
-            var method = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
-                .Where(m => m.Name == methodName)
-                .OrderByDescending(m => m.GetParameters().Length)
-                .FirstOrDefault();
-
-            if (method == null)
+            _normalizePath = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+                                        .Where(m => m.Name == methodName)
+                                        .OrderByDescending(m => m.GetParameters().Length)
+                                        .FirstOrDefault();
+            if (_normalizePath == null)
                 throw new InvalidOperationException($"{methodName } not found in {type.FullName}");
 
-            var @params = new object[]
-            {
-                path,
-                true,
-                32000,
-                true
-            };
-
-            var result = method.Invoke(null, @params);
-            return result?.ToString();
+            //init internal exists
+            _dirInternalExists = InitInternalExists(typeof(System.IO.Directory));
+            _fileInternalExists = InitInternalExists(typeof(System.IO.File));
         }
 
-        public static bool Exists(Path path)
+        private static MethodInfo InitInternalExists(Type type)
         {
-            if (path == null)
-                return false;
-
-            EnsureLongPathsAreEnabled();
-
-            var type = path.IsFolder ? typeof(System.IO.Directory) : typeof(System.IO.File);
-
-            string methodName = "InternalExists";
+            var methodName = "InternalExists";
 
             var method = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
                 .Where(m => m.Name == methodName)
@@ -57,20 +46,64 @@ namespace DotNet.Basics.IO
             if (method == null)
                 throw new InvalidOperationException($"{methodName } not found in {type.FullName}");
 
+            return method;
+        }
+
+        public static string GetFullPath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return string.Empty;
+
+            var @params = new object[]
+            {
+                path,
+                true,
+                _maxPathLength,
+                true
+            };
+
+            try
+            {
+                var result = _normalizePath.Invoke(null, @params);
+                return result?.ToString();
+            }
+            catch (TargetInvocationException e)
+            {
+                if (e.InnerException is System.IO.PathTooLongException)
+                    throw new System.IO.PathTooLongException($"The specified path, file name, or both are too long. The fully qualified file name must be less than {_maxPathLength} characters, and the directory name must be less than {_maxDirectoryLength} characters");
+
+                throw e.InnerException;
+            }
+        }
+
+        public static bool Exists(Path path)
+        {
+            if (path == null)
+                return false;
+
+            var method = path.IsFolder ? _dirInternalExists : _fileInternalExists;
+
             var @params = new object[]
             {
                 path.FullName
             };
 
-            var result = method.Invoke(null, @params);
-            return Boolean.Parse(result.ToString());
+            try
+            {
+                var result = method.Invoke(null, @params);
+                return Parse(result.ToString());
+            }
+            catch (TargetInvocationException e)
+            {
+                throw e.InnerException;
+            }
         }
 
         private static void EnsureLongPathsAreEnabled()
         {
             var type = typeof(System.IO.Path);
-            type?.GetField("MaxPath", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue("MaxPath", 3200);
-            type?.GetField("MaxDirectoryLength", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue("MaxDirectoryLength", 3200);
+            type?.GetField("MaxPath", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue("MaxPath", _maxPathLength);
+            type?.GetField("MaxDirectoryLength", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue("MaxDirectoryLength", _maxPathLength);
         }
 
         private static IEnumerable<MethodInfo> GetMethods(string methodName)

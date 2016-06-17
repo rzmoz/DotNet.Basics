@@ -42,7 +42,7 @@ namespace DotNet.Basics.Tests.IO
             try
             {
                 //we keep adding sub folders until we reach our limit - whichever comes first
-                for (var level = 0; level < 100; level++)
+                for (var level = 0; level < 15; level++)
                 {
                     identicalSubDir.CreateIfNotExists();
                     identicalSubDir = identicalSubDir.ToDir(testDirName);
@@ -62,22 +62,20 @@ namespace DotNet.Basics.Tests.IO
             deleted.Should().BeTrue();
             rootTestdir.Exists().Should().BeFalse();
         }
-
-
-
+        
         [Test]
         public void Parent_NameOnlySourceDir_PartenIsResolved()
         {
             var currentDir = @".".ToDir();
-            var dir = @"Parent_ParentDir_PartenIsResolved".ToDir();
+            var dir = @"Parent_NameOnlySourceDir_PartenIsResolved".ToDir();
 
             dir.Parent.FullName.Should().Be(currentDir.FullName);
         }
 
         [Test]
-        public void Parent_FullSourceDir_PartenIsResolved()
+        public void Parent_FullSourceDir_ParenItsResolved()
         {
-            var parent = @"C:\Projects\Cloud.Services.SitecoreAsAService.CargoContainer\Code\Sitecore.Cloud.CargoContainer.Tests\bin\Debug".ToDir();
+            var parent = @"C:\Projects\dotnet.basics\DotNet.Basics.Tests\bin\Debug".ToDir();
             var dir = parent.ToDir("Parent_ParentDir_PartenIsResolved");
 
             dir.Parent.FullName.Should().Be(parent.FullName);
@@ -254,22 +252,13 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         public void ToDir_CombineToDir_FullNameIsCorrect()
         {
-            var actualDir = _testDirRoot.ToDir(_testDoubleDir);
-            const string expected = _testDirRoot + _testDoubleDir;
-
-            actualDir.FullName.Should().Be(expected);
-        }
-
-        [Test]
-        public void ToDir_CombineToDirectoryInfo_FullNameIsCorrect()
-        {
             var actual = _testDirRoot.ToDir(_testDoubleDir);
-            var expected = _testDirRoot + _testDoubleDir;
+            var expected = _testDirRoot + _testDoubleDir + actual.Delimiter.ToChar();
             actual.FullName.Should().Be(expected);
 
 
             actual = @"c:\BuildLibrary\Sitecore\Sitecore 8.0 rev. 141212".ToDir("Website");
-            expected = @"c:\BuildLibrary\Sitecore\Sitecore 8.0 rev. 141212\Website";
+            expected = @"c:\BuildLibrary\Sitecore\Sitecore 8.0 rev. 141212\Website\";
             actual.FullName.Should().Be(expected);
         }
 

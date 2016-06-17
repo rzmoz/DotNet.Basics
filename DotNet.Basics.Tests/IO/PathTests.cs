@@ -3,7 +3,6 @@ using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using FluentAssertions;
 using NUnit.Framework;
-using Path = DotNet.Basics.IO.Path;
 
 namespace DotNet.Basics.Tests.IO
 {
@@ -33,9 +32,10 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         public void Add_Immutable_AddShouldBeImmutable()
         {
-            var root = "root".ToPath();
-            root = root.Add("sazas");
-            root.RawName.Should().Be("root");
+            const string path = "root";
+            var root = path.ToPath();
+            root.Add("sazas");//no change to original path
+            root.RawName.Should().Be(path);
         }
 
 
@@ -61,14 +61,8 @@ namespace DotNet.Basics.Tests.IO
             var path = folder.ToPath();
 
             var parent = path.Parent;
-            try
-            {
-                parent.RawName.Should().Be(expectedParent);
-            }
-            catch (NullReferenceException)
-            {
-                parent.Should().BeNull();
-            }
+
+            parent.RawName.Should().Be(expectedParent??".".ToDir().FullName);
         }
 
         [Test]

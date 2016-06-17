@@ -22,35 +22,7 @@ namespace DotNet.Basics.Sys
                 .WithErrorAction(ActionPreference.SilentlyContinue); ;
             return RunScript(cmdlet.ToScript());
         }
-
-        public static object[] RenameItem(string path, string newName, bool force)
-        {
-            return RenameItem(path.ToEnumerable().ToArray(), newName, force);
-        }
-        public static object[] RenameItem(string[] paths, string newName, bool force)
-        {
-            var cmdlet = new PowerShellCmdlet("Rename-Item")
-                .AddParameter("Path", paths)
-                .AddParameter("NewName", newName)
-                .WithForce(force)
-                .WithErrorAction(ActionPreference.SilentlyContinue); ;
-            return RunScript(cmdlet.ToScript());
-        }
-
-        public static object[] NewItem(string path, string itemType, bool force)
-        {
-            return NewItem(path.ToEnumerable().ToArray(), itemType, force);
-        }
-        public static object[] NewItem(string[] paths, string itemType, bool force)
-        {
-            var cmdlet = new PowerShellCmdlet("New-Item")
-                .AddParameter("Path", paths)
-                .AddParameter("ItemType", itemType)
-                .WithForce(force)
-                .WithErrorAction(ActionPreference.SilentlyContinue); ;
-            return RunScript(cmdlet.ToScript());
-        }
-
+        
         public static object[] RemoveItem(string path, bool force, bool recurse)
         {
             return RemoveItem(path.ToEnumerable().ToArray(), force, recurse);

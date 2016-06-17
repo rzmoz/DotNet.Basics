@@ -15,6 +15,11 @@ namespace DotNet.Basics.IO
             : base(pathSegments, false, delimiter)
         { }
 
+        /// <summary>
+        /// Returns a new Path where original and added paths are combined
+        /// </summary>
+        /// <param name="pathSegments"></param>
+        /// <returns></returns>
         public new FilePath Add(params string[] pathSegments)
         {
             var combinedSegments = AddSegments(pathSegments);

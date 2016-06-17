@@ -23,7 +23,7 @@ namespace DotNet.Basics.IO
             if (path.IsFolder == false)
                 throw new PathException($"Can't create path because it's not a folder {path}", path);
 
-            PowerShellConsole.NewItem(path.FullName, "Directory", false);
+            System.IO.Directory.CreateDirectory(path.FullName);
             Debug.WriteLine($"Created: {path.FullName}");
         }
 

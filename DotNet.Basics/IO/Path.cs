@@ -31,16 +31,23 @@ namespace DotNet.Basics.IO
             get
             {
                 if (_segments.Length <= 1)
-                    return null;//no parent
-
+                {
+                    var fullPath = FullName.ToPath();
+                    return fullPath.Parent;
+                }
                 var allButLast = _segments.Reverse().Skip(1).Reverse().ToArray();
                 return new DirPath(allButLast, Delimiter);
             }
         }
 
+        /// <summary>
+        /// Returns a new Path where original and added paths are combined
+        /// </summary>
+        /// <param name="pathSegments"></param>
+        /// <returns></returns>
         public Path Add(params string[] pathSegments)
         {
-            var combinedSegments = AddSegments(Segments);
+            var combinedSegments = AddSegments(pathSegments);
             return new Path(combinedSegments, IsFolder, Delimiter);
         }
 
