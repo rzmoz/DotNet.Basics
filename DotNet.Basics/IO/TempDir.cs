@@ -14,7 +14,7 @@ namespace DotNet.Basics.IO
         }
 
         public string Prefix { get; }
-        public Path Root { get; }
+        public DirPath Root { get; }
 
         public void Dispose()
         {
