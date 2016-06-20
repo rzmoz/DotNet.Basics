@@ -86,7 +86,7 @@ namespace DotNet.Basics.Tests.IO
         public void CopyTo_IncludeSubDirectories_DirIsCopied()
         {
             const int dirDepth = 3;
-            var root = "cpyTo_InclSubDirs_DirIsCop".ToDir();
+            var root = "CopyTo_InclSubDirs_DirIsCop".ToDir();
             root.DeleteIfExists();
             var currentDir = CreateIdenticalSubdirs(root, dirDepth);
             "blaaaa".WriteAllText(currentDir, "myFile.txt");
@@ -162,22 +162,6 @@ namespace DotNet.Basics.Tests.IO
             rootTestdir.GetDirectories().Count().Should().Be(numOfTestDirs);
             rootTestdir.GetFiles().Count().Should().Be(1);
             rootTestdir.GetDirectories(testDirName).Count().Should().Be(0);//the identical named subfolder should be gone
-        }
-
-        [Test, Ignore("depends on rogue folder")]
-        public void ConsolidateIdenticalSubfolders()
-        {
-            //arrange
-            //we set up a folder with an identical named subfolder with dummy content
-            var rootTestdir = @"C:\Users\rar\AppData\Local\dftmp\Resources\e59b639c-1cde-479a-a572-389619020a60\directory\ScaaSTemp\Sitecore 7.5 rev. 140612_Andes".ToDir();
-
-            //act
-            rootTestdir.ConsolidateIdenticalSubfolders();
-
-            //assert
-            rootTestdir.GetDirectories().Count().Should().Be(3);
-            rootTestdir.GetFiles().Count().Should().Be(0);
-            rootTestdir.GetDirectories(rootTestdir.Name).Count().Should().Be(0);//the identical named subfolder should be gone
         }
 
         [Test]

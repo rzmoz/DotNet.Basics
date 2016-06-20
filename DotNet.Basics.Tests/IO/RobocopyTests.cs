@@ -16,11 +16,11 @@ namespace DotNet.Basics.Tests.IO
 
             var testFile = "blaa".WriteAllText(dir, "robocopyTestfile.text");
 
-            var exitCode = Robocopy.Move(testFile.Directory.FullName, testFile.Directory.FullName, testFile.Name);
+            var exitCode = Robocopy.MoveFiles(testFile.Directory.FullName, testFile.Directory.FullName, testFile.Name);
 
             exitCode.Should().Be(0);
         }
-
+        
         [Test]
         public void Copy_CopySingleFileSourceExists_FileIsCopied()
         {
