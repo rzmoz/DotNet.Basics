@@ -56,40 +56,20 @@ namespace DotNet.Basics.IO
             return new DirPath(combinedSegments, Delimiter);
         }
 
-        public DirPath[] GetDirectories(string searchPattern = null)
+        public DirPath[] GetDirectories(string searchPattern = null, bool recurse = false)
         {
-            var subDirs = GetChildItems(new[] { new KeyValuePair<string, object>("Dir", null) }, searchPattern);
-            return subDirs.Select(dir => dir.ToDir()).ToArray();
+            var dirs = PowerShellConsole.GetChildItem(FullName, recurse, searchPattern, "Dir");
+            return dirs.Select(dir => dir.ToDir()).ToArray();
         }
-        public FilePath[] GetFiles(string searchPattern = null)
+        public FilePath[] GetFiles(string searchPattern = null, bool recurse = false)
         {
-            var subDirs = GetChildItems(new[] { new KeyValuePair<string, object>("File", null) }, searchPattern);
-            return subDirs.Select(dir => dir.ToFile()).ToArray();
+            var dirs = PowerShellConsole.GetChildItem(FullName, recurse, searchPattern, "File");
+            return dirs.Select(dir => dir.ToFile()).ToArray();
         }
-        public Path[] GetPaths(string searchPattern = null)
+        public Path[] GetPaths(string searchPattern = null, bool recurse = false)
         {
-            return ToDirectoryInfo().GetFileSystemInfos(searchPattern ?? "*").Select<System.IO.FileSystemInfo, Path>(fsi =>
-             {
-                 if (fsi is System.IO.DirectoryInfo)
-                     return fsi.FullName.ToDir();
-                 return fsi.FullName.ToFile();
-             }).ToArray();
-        }
-
-        private string[] GetChildItems(KeyValuePair<string, object>[] parameters, string searchPattern = null)
-        {
-            var cmdlet = new PowerShellCmdlet("Get-ChildItem")
-                .AddParameter("Path", FullName);
-
-            foreach (var parameter in parameters)
-                cmdlet.AddParameter(parameter.Key, parameter.Value);
-
-            if (searchPattern != null)
-                cmdlet.AddParameter("Include", searchPattern);
-
-            var result = PowerShellConsole.RunScript(cmdlet.ToScript());
-
-            return result.Select(dir => (string)((dynamic)dir).FullName.ToString()).ToArray();
+            var dirs = PowerShellConsole.GetChildItem(FullName, recurse, searchPattern);
+            return dirs.Select(dir => dir.ToPath()).ToArray();
         }
 
         public IEnumerable<DirPath> EnumerateDirectories(string searchPattern = null)

@@ -10,6 +10,22 @@ namespace DotNet.Basics.Sys
 {
     public class PowerShellConsole
     {
+        public static string[] GetChildItem(string root, bool recurse, string filter = null, params string[] flags)
+        {
+            var cmdlet = new PowerShellCmdlet("Get-ChildItem")
+                .AddParameter("Path", root)
+                .WithRecurse(recurse);
+
+            if (filter != null)
+                cmdlet.AddParameter("Filter", filter);
+
+            foreach (var flag in flags)
+                cmdlet.AddParameter(flag);
+
+            var results = RunScript(cmdlet.ToScript());
+            return results.Select(dir => (string)((dynamic)dir).FullName.ToString()).ToArray();
+        }
+
         public static object[] CopyItem(string path, string destination, bool force, bool recurse)
         {
             return CopyItem(path.ToEnumerable().ToArray(), destination, force, recurse);

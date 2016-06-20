@@ -8,8 +8,6 @@ namespace DotNet.Basics.IO
 {
     public static class PathFileSystemExtensions
     {
-        
-
         public static bool DeleteIfExists(this Path path)
         {
             return DeleteIfExists(path, 30.Seconds());

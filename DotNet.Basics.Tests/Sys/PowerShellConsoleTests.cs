@@ -21,6 +21,48 @@ namespace DotNet.Basics.Tests.Sys
             result.Single().ToString().Should().Be(greeting);
         }
 
+
+        [Test]
+        public void GetChildItem_RecurseFalse_NothingIsFound()
+        {
+            var root = TestContext.CurrentContext.TestDirectory.ToDir("IO");
+            var childItems = PowerShellConsole.GetChildItem(root.FullName, false, null, "file");
+
+            childItems.Length.Should().Be(0);
+        }
+
+        [Test]
+        public void GetChildItem_Filter_ChildItemsAreFound()
+        {
+            var root = TestContext.CurrentContext.TestDirectory.ToDir("IO");
+            var exptectedFound = root.ToFile("TestSources", "Textfile1.txt");
+            var childItems = PowerShellConsole.GetChildItem(root.FullName, true, "*.txt");
+
+            childItems.Single().ToLower().Should().Be(exptectedFound.FullName.ToLower());
+        }
+
+        [Test]
+        public void GetChildItem_File_ChildItemsAreFound()
+        {
+            var root = TestContext.CurrentContext.TestDirectory.ToDir("IO");
+            var exptectedFound = root.ToFile("TestSources", "Textfile1.txt");
+            var childItems = PowerShellConsole.GetChildItem(root.FullName, true, null, "File");
+
+            childItems.Single().ToLower().Should().Be(exptectedFound.FullName.ToLower());
+        }
+
+
+        [Test]
+        public void GetChildItem_Dirs_ChildItemsAreFound()
+        {
+            var root = TestContext.CurrentContext.TestDirectory.ToDir("IO");
+            var exptectedFound = root.ToFile("TestSources");
+            var childItems = PowerShellConsole.GetChildItem(root.FullName, true, null, "Dir");
+
+            childItems.Single().ToLower().Should().Be(exptectedFound.FullName.ToLower());
+        }
+
+
         [Test]
         public void MoveItem_Folder_FolderIsMoved()
         {

@@ -27,7 +27,7 @@ namespace DotNet.Basics.Tests.IO
             var sourcefile = TestContext.CurrentContext.TestDirectory.ToFile("IO\\TestSources", "TextFile1.txt");
             sourcefile.Exists().Should().BeTrue("source file should exist");
 
-            var targetFile = TestContext.CurrentContext.TestDirectory.ToFile("IO\\TestTargets", sourcefile.Name);
+            var targetFile = TestContext.CurrentContext.TestDirectory.ToFile("Copy_CopySingleFileSourceExists_FileIsCopied", sourcefile.Name);
             targetFile.DeleteIfExists();
             targetFile.Exists().Should().BeFalse("target file should not exist before copy");
             var result = Robocopy.CopyFile(sourcefile.FullName, targetFile.Directory.FullName);
