@@ -5,6 +5,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using DotNet.Basics.Collections;
+using DotNet.Basics.IO;
 
 namespace DotNet.Basics.Sys
 {
@@ -12,6 +13,9 @@ namespace DotNet.Basics.Sys
     {
         public static string[] GetChildItem(string root, bool recurse, string filter = null, params string[] flags)
         {
+            if (SystemIoPath.Exists(root, true) == false)
+                return new string[0];
+
             var cmdlet = new PowerShellCmdlet("Get-ChildItem")
                 .AddParameter("Path", root)
                 .WithRecurse(recurse);

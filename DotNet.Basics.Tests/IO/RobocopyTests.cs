@@ -1,4 +1,5 @@
-﻿using DotNet.Basics.Diagnostics;
+﻿using System.Linq;
+using DotNet.Basics.Diagnostics;
 using DotNet.Basics.IO;
 using FluentAssertions;
 using NUnit.Framework;
@@ -22,6 +23,29 @@ namespace DotNet.Basics.Tests.IO
         }
 
         [Test]
+        public void MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved()
+        {
+            var sourceDir =
+                TestContext.CurrentContext.TestDirectory.ToDir(
+                    "MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved", "source");
+            var targetDir=
+                TestContext.CurrentContext.TestDirectory.ToDir(
+                    "MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved", "target");
+            var testSource = TestContext.CurrentContext.TestDirectory.ToDir("IO", "TestSources").FullName;
+            Robocopy.CopyDir(testSource, sourceDir.FullName, true, null, new ConsoleLogger());
+
+            sourceDir.Exists().Should().BeTrue(sourceDir.FullName);
+            targetDir.DeleteIfExists();
+            targetDir.Exists().Should().BeFalse(targetDir.FullName);
+
+            //act
+            Robocopy.MoveContent(sourceDir.FullName, targetDir.FullName, null, true, null, new ConsoleLogger());
+            sourceDir.GetPaths().Count().Should().Be(0);
+
+            targetDir.GetFiles().Single().Name.Should().Be("TextFile1.txt");
+        }
+
+        [Test]
         public void Copy_CopySingleFileSourceExists_FileIsCopied()
         {
             var sourcefile = TestContext.CurrentContext.TestDirectory.ToFile("IO\\TestSources", "TextFile1.txt");
@@ -34,6 +58,7 @@ namespace DotNet.Basics.Tests.IO
             result.Should().BeLessThan(8); //http://ss64.com/nt/robocopy-exit.html
             targetFile.Exists().Should().BeTrue("target file is copied");
         }
+
         [Test]
         public void CopyDir_CopyDirSourceExists_DirIsCopied()
         {
