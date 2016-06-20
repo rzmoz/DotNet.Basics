@@ -16,7 +16,7 @@ namespace DotNet.Basics.Tests.IO
 
             var testFile = "blaa".WriteAllText(dir, "robocopyTestfile.text");
 
-            var exitCode = Robocopy.MoveFiles(testFile.Directory.FullName, testFile.Directory.FullName, testFile.Name);
+            var exitCode = Robocopy.MoveContent(testFile.Directory.FullName, testFile.Directory.FullName, testFile.Name);
 
             exitCode.Should().Be(0);
         }

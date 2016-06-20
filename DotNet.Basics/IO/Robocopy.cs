@@ -69,11 +69,12 @@ namespace DotNet.Basics.IO
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static int MoveFiles(string sourceDir, string targetDir, string file = null, string extraOptions = null, ILogger logger = null)
+        public static int MoveContent(string sourceDir, string targetDir, string filter = null, bool recurse = false, string extraOptions = null, ILogger logger = null)
         {
-            if (string.IsNullOrEmpty(file))
-                return Run(sourceDir, targetDir, file, $"{_includeSubfoldersOption} {_moveOption} {extraOptions}");//move dir
-            return Run(sourceDir, targetDir, file, _moveOption, logger);
+            string options = $"{_moveOption} {extraOptions}";
+            if (recurse)
+                options = $"{_includeSubfoldersOption} {options}";
+            return Run(sourceDir, targetDir, filter, options, logger);
         }
 
         private static void Init(ILogger logger = null)
