@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
@@ -24,7 +23,7 @@ namespace DotNet.Basics.IO
         public string FullName => SystemIoPath.GetFullPath(RawName);
         public string NameWithoutExtension => System.IO.Path.GetFileNameWithoutExtension(Name);
         public string Extension => System.IO.Path.GetExtension(Name);
-        public DirPath Directory => IsFolder ? (DirPath)this : Parent;
+        public DirPath Directory => IsFolder ? this.ToDir() : Parent;
 
         public DirPath Parent
         {

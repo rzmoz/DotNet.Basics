@@ -8,19 +8,17 @@ namespace DotNet.Basics.IO
     {
         public static void CopyTo(this Path path, Path destination, bool overwrite = false)
         {
-            var info = destination as DirPath;
-            if (info == null)
-                path.CopyTo(destination as FilePath, overwrite);
+            if (destination.IsFolder)
+                path.CopyTo(destination.ToDir(), overwrite);
             else
-                path.CopyTo(info, overwrite);
+                path.CopyTo(destination.ToFile(), overwrite);
         }
 
         public static void CopyTo(this Path path, DirPath destination, bool overwrite = false)
         {
-            var sourceIsFolder = path is DirPath;
             destination.CreateIfNotExists();
 
-            if (sourceIsFolder)
+            if (path.IsFolder)
                 Robocopy.CopyDir(path.FullName, destination.FullName, true);
             else
                 PowerShellConsole.CopyItem(path.FullName, destination.FullName, force: false, recurse: false);
@@ -31,7 +29,5 @@ namespace DotNet.Basics.IO
                 throw new ArgumentException("You're trying to copy a folder to a file. You should archive it (zip it)");
             PowerShellConsole.CopyItem(path.FullName, destination.FullName, force: overwrite, recurse: false);
         }
-
-        
     }
 }

@@ -155,19 +155,7 @@ namespace DotNet.Basics.Tests.IO
             //assert
             path.NameWithoutExtension.Should().Be(expectedName);
         }
-
-
-        [Test, Ignore("Protocol should be added as explicit extension")]
-        [TestCase("\\\\", "myFolder/Myfolder2/", "\\\\myFolder\\Myfolder2\\")]//network folder
-        [TestCase("http://", "myFolder/Myfolder2/", "http://myFolder/Myfolder2/")]//uri
-        [TestCase(null, "\\\\myFolder\\Myfolder2\\", "\\\\myFolder\\Myfolder2\\")]//network folder
-        public void Ctor_Protocol_ProtocolIsPartOfPath(string protocol, string pathSegment, string expectedPath)
-        {
-            var path = protocol.ToPath().Add(pathSegment);
-            path.ToString().Should().Be(expectedPath);
-            path.ToString().Should().Be(path.RawName);
-        }
-
+        
         [Test]
         [TestCase("myFolder/DetectDelimiter/", PathDelimiter.Slash)]//delimiter detected
         [TestCase("myFolder\\DetectDelimiter\\", PathDelimiter.Backslash)]//delimiter detected

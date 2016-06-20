@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Management.Automation;
 using System.Security.AccessControl;
 using System.Threading.Tasks;
 using DotNet.Basics.Collections;
@@ -135,8 +136,17 @@ namespace DotNet.Basics.IO
 
         public static void CleanIfExists(this DirPath dir)
         {
-            if (dir == null) throw new ArgumentNullException(nameof(dir));
-            PowerShellConsole.RemoveItem($"{dir.FullName}\\*", force: true, recurse: true);
+            if (dir == null)
+                return;
+            try
+            {
+                PowerShellConsole.RemoveItem($"{dir.FullName}\\*", force: true, recurse: true);
+            }
+            catch (ItemNotFoundException)
+            {
+                //kill exceptions if not found
+            }
+
         }
 
         public static void CreateIfNotExists(this DirPath dir)

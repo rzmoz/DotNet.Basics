@@ -8,17 +8,17 @@ namespace DotNet.Basics.Tests.IO
     public class FileSystemInfoExtensionTests
     {
         [Test]
-        [TestCase(@".\io\testsources\", "CopyTo_IsDerivedTypeAgnostic_ItemIsCopiedNewFolder", @".\CopyTo_IsDerivedTypeAgnostic_ItemIsCopiedNewFolder", true, true)]
-        [TestCase(@".\io\testsources\textfile1.txt", "CopyTo_IsDerivedTypeAgnostic_ItemIsCopied", @".\CopyTo_IsDerivedTypeAgnostic_ItemIsCopied\textfile1.txt", false, true)]
-        [TestCase(@".\io\testsources\textfile1.txt", @"CopyTo_IsDerivedTypeAgnostic_ItemIsCopied\newfile.txt", @".\CopyTo_IsDerivedTypeAgnostic_ItemIsCopied\newfile.txt", false, false)]
-        public void CopyTo_IsDerivedTypeAgnostic_ItemIsCopied(string source, string destination, string expectedFinalPath, bool sourceIsFolder, bool destinationIsFolder)
+        [TestCase(@"io\testsources\", "CopyTo_IsPathTypeAgnostic_ItemIsCopied_NewFolder", @"CopyTo_IsPathTypeAgnostic_ItemIsCopied_NewFolder", true, true)]
+        [TestCase(@"io\testsources\textfile1.txt", "CopyTo_IsPathTypeAgnostic_ItemIsCopied_NewFolder", @"CopyTo_IsPathTypeAgnostic_ItemIsCopied_NewFolder\textfile1.txt", false, true)]
+        [TestCase(@"io\testsources\textfile1.txt", @"CopyTo_IsPathTypeAgnostic_ItemIsCopied_NewFolder\newfile.txt", @"CopyTo_IsPathTypeAgnostic_ItemIsCopied_NewFolder\newfile.txt", false, false)]
+        public void CopyTo_IsPathTypeAgnostic_ItemIsCopied(string source, string destination, string expectedFinalPath, bool sourceIsFolder, bool destinationIsFolder)
         {
-            var sourceFsi = source.ToPath(sourceIsFolder);
-            var destinationFsi = destination.ToPath(destinationIsFolder);
-            var expectedFinalPathFsi = expectedFinalPath.ToPath(sourceIsFolder);
+            var sourceFsi = TestContext.CurrentContext.TestDirectory.ToPath(sourceIsFolder, source);
+            var destinationFsi = TestContext.CurrentContext.TestDirectory.ToPath(destinationIsFolder, destination);
+            var expectedFinalPathFsi = TestContext.CurrentContext.TestDirectory.ToPath(sourceIsFolder, expectedFinalPath);
             destinationFsi.DeleteIfExists();
-            if (destinationIsFolder)
-                (destinationFsi as DirPath).CleanIfExists();
+            if (destinationFsi.IsFolder)
+                destinationFsi.ToDir().CleanIfExists();
 
             destinationFsi.Exists().Should().BeFalse("Desitnation Fsi");
             expectedFinalPathFsi.DeleteIfExists();
@@ -31,15 +31,15 @@ namespace DotNet.Basics.Tests.IO
             expectedFinalPathFsi.Exists().Should().BeTrue("Expected Final Path Fsi");
 
             //ensure content is copied
-            if (sourceIsFolder && destinationIsFolder)
+            if (sourceFsi.IsFolder && destinationFsi.IsFolder)
             {
-                foreach (var content in (sourceFsi as DirPath).EnumeratePaths())
+                foreach (var content in sourceFsi.ToDir().EnumeratePaths())
                 {
                     Path expectedDestinationContentFsi;
-                    if (content is DirPath)
-                        expectedDestinationContentFsi = (destinationFsi as DirPath).ToDir(content.Name);
+                    if (content.IsFolder)
+                        expectedDestinationContentFsi = destinationFsi.ToDir(content.Name);
                     else
-                        expectedDestinationContentFsi = (destinationFsi as DirPath).ToFile(content.Name);
+                        expectedDestinationContentFsi = destinationFsi.ToFile(content.Name);
                     expectedDestinationContentFsi.Exists().Should().BeTrue(content.FullName);
                 }
             }

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Management.Automation;
 using System.Security.AccessControl;
 using DotNet.Basics.Sys;
 
@@ -17,6 +19,32 @@ namespace DotNet.Basics.IO
             : base(pathSegments, true, delimiter)
         { }
 
+
+        public void CleanIfExists()
+        {
+            if (IsFolder == false)
+                throw new PathException($"Can't clean path because it's not a folder", this);
+            try
+            {
+                PowerShellConsole.RemoveItem($"{FullName}\\*", force: true, recurse: true);
+            }
+            catch (ItemNotFoundException)
+            {
+            }
+        }
+
+        public void CreateIfNotExists()
+        {
+            if (this.Exists())
+                return;
+
+            if (IsFolder == false)
+                throw new PathException($"Can't create path because it's not a folder {FullName}", this);
+
+            System.IO.Directory.CreateDirectory(FullName);
+            Debug.WriteLine($"Created: {FullName}");
+        }
+
         /// <summary>
         /// Returns a new Path where original and added paths are combined
         /// </summary>
@@ -30,7 +58,7 @@ namespace DotNet.Basics.IO
 
         public DirPath[] GetDirectories(string searchPattern = null)
         {
-            var subDirs = GetChildItems(new[] {new KeyValuePair<string, object>("Dir", null)},searchPattern);
+            var subDirs = GetChildItems(new[] { new KeyValuePair<string, object>("Dir", null) }, searchPattern);
             return subDirs.Select(dir => dir.ToDir()).ToArray();
         }
         public FilePath[] GetFiles(string searchPattern = null)

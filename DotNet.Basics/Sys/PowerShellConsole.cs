@@ -79,7 +79,12 @@ namespace DotNet.Basics.Sys
 
                     var error = errorsObject.BaseObject as ErrorRecord;
                     if (error != null)
-                        throw new ArgumentException(error.Exception.ToString());
+                    {
+                        if (error.Exception != null)
+                            throw error.Exception;
+                        throw new ArgumentException(error.ErrorDetails.Message);
+                    }
+
                     var errors = errorsObject.BaseObject as Collection<ErrorRecord>;
 
                     if (errors != null)

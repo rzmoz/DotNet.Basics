@@ -14,7 +14,7 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         public void ReadAllText_ReadTextFromFile_ContentIsRead()
         {
-            var testdir = "ReadAllTextAsync_ReadTextFromFile_ContentIsRead".ToDir();
+            var testdir = TestContext.CurrentContext.TestDirectory.ToDir("ReadAllTextAsync_ReadTextFromFile_ContentIsRead");
             testdir.CleanIfExists();
             var testFile = testdir.ToFile("blaaaah.txt");
 
@@ -30,7 +30,7 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         public void Delete_DeleteFile_FileIsDeleted()
         {
-            var testdir = "Delete_DeleteFile_FileIsDeleted".ToDir();
+            var testdir = TestContext.CurrentContext.TestDirectory.ToDir("Delete_DeleteFile_FileIsDeleted");
             testdir.CleanIfExists();
             var testFile = testdir.ToFile("blaaaah.txt");
             "blaa".WriteAllText(testFile);
@@ -45,7 +45,7 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         public void MoveTo_RenameFileInSameFolder_FileIsRenamed()
         {
-            var testdir = "MoveTo_RenameFileInSameFolder_FileIsRenamed".ToDir();
+            var testdir = TestContext.CurrentContext.TestDirectory.ToDir("MoveTo_RenameFileInSameFolder_FileIsRenamed");
             testdir.CleanIfExists();
             var sourceFile = testdir.ToFile("blaaOld.txt");
             var tagetFile = testdir.ToFile("blaaNew.txt");

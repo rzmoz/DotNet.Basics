@@ -11,7 +11,7 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         public void Init_FindRobocopyByDrive_RobocopyIsFound()
         {
-            var dir = @"Init_FindRobocopyByDrive_RobocopyIsFound".ToDir();
+            var dir = TestContext.CurrentContext.TestDirectory.ToDir(@"Init_FindRobocopyByDrive_RobocopyIsFound");
             dir.CleanIfExists();
 
             var testFile = "blaa".WriteAllText(dir, "robocopyTestfile.text");
@@ -20,14 +20,14 @@ namespace DotNet.Basics.Tests.IO
 
             exitCode.Should().Be(0);
         }
-        
+
         [Test]
         public void Copy_CopySingleFileSourceExists_FileIsCopied()
         {
-            var sourcefile = "IO\\TestSources".ToFile("TextFile1.txt");
+            var sourcefile = TestContext.CurrentContext.TestDirectory.ToFile("IO\\TestSources", "TextFile1.txt");
             sourcefile.Exists().Should().BeTrue("source file should exist");
 
-            var targetFile = "IO\\TestTargets".ToFile($"{sourcefile.Name}");
+            var targetFile = TestContext.CurrentContext.TestDirectory.ToFile("IO\\TestTargets", sourcefile.Name);
             targetFile.DeleteIfExists();
             targetFile.Exists().Should().BeFalse("target file should not exist before copy");
             var result = Robocopy.CopyFile(sourcefile.FullName, targetFile.Directory.FullName);
@@ -37,8 +37,8 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         public void CopyDir_CopyDirSourceExists_DirIsCopied()
         {
-            var source = "CopyDir_CopyDirSourceExists_DirIsCopied".ToDir("source");
-            var target = "CopyDir_CopyDirSourceExists_DirIsCopied".ToDir("target");
+            var source = TestContext.CurrentContext.TestDirectory.ToDir("CopyDir_CopyDirSourceExists_DirIsCopied", "source");
+            var target = TestContext.CurrentContext.TestDirectory.ToDir("CopyDir_CopyDirSourceExists_DirIsCopied", "target");
             var sourceFile = source.ToFile("myfile.txt");
             var targetFile = source.ToFile(sourceFile.Name);
             var fileContent = "blavlsavlsdglsdflslfsdlfsdlfsd";

@@ -15,11 +15,11 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("IsFolder_DetectIfFolder_FoldersAreDetected\\myfile.txt\\", false)]//file that exists with folder marker
         public void IsFolder_DetectIfFolder_FoldersAreDetected(string input, bool expectedIsFolder)
         {
-            var dir = "IsFolder_DetectIfFolder_FoldersAreDetected".ToDir();
+            var dir = TestContext.CurrentContext.TestDirectory.ToDir("IsFolder_DetectIfFolder_FoldersAreDetected");
             dir.CreateIfNotExists();
             "dummycontent".WriteAllText(dir.ToFile("myfile.txt"));
 
-            var path = input.ToPath();
+            var path = TestContext.CurrentContext.TestDirectory.ToPath(input);
 
             path.IsFolder.Should().Be(expectedIsFolder);
         }
@@ -29,17 +29,17 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("Exists_TestPath_PathIsVerified\\file.txt", false)]//file
         public void Exists_TestPath_PathIsVerified(string path, bool isFolder)
         {
-            Path p = null;
+            Path p;
             if (isFolder)
-                p = path.ToDir();
+                p = TestContext.CurrentContext.TestDirectory.ToDir(path);
             else
-                p = path.ToFile();
+                p = TestContext.CurrentContext.TestDirectory.ToFile(path);
 
             p.DeleteIfExists();
             p.Exists().Should().BeFalse(p.FullName);
 
             if (p.IsFolder)
-                p.CreateIfNotExists();
+                p.ToDir().CreateIfNotExists();
             else
                 "dummycontent".WriteAllText(p);
 

@@ -16,7 +16,7 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         public void DeleteIfExists_DirExists_DirIsDeleted()
         {
-            var dir = @"DeleteIfExists_DirExists_DirIsDeleted".ToDir();
+            var dir = TestContext.CurrentContext.TestDirectory.ToDir(@"DeleteIfExists_DirExists_DirIsDeleted");
 
             dir.CreateIfNotExists();
 
@@ -36,7 +36,7 @@ namespace DotNet.Basics.Tests.IO
             //we set up a folder with a really long name
             const string testDirName = "DeleteIfExists_DeleteLongNamedDir_DirIsDeleted";
 
-            var rootTestdir = @".\".ToDir(testDirName);
+            var rootTestdir = TestContext.CurrentContext.TestDirectory.ToDir(testDirName);
             rootTestdir.CleanIfExists();
             var identicalSubDir = rootTestdir;
             try
@@ -66,8 +66,8 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         public void Parent_NameOnlySourceDir_PartenIsResolved()
         {
-            var currentDir = @".".ToDir();
-            var dir = @"Parent_NameOnlySourceDir_PartenIsResolved".ToDir();
+            var currentDir = TestContext.CurrentContext.TestDirectory.ToDir();
+            var dir = TestContext.CurrentContext.TestDirectory.ToDir(@"Parent_NameOnlySourceDir_PartenIsResolved");
 
             dir.Parent.FullName.Should().Be(currentDir.FullName);
         }
@@ -86,7 +86,7 @@ namespace DotNet.Basics.Tests.IO
         public void CopyTo_IncludeSubDirectories_DirIsCopied()
         {
             const int dirDepth = 3;
-            var root = "CopyTo_InclSubDirs_DirIsCop".ToDir();
+            var root = TestContext.CurrentContext.TestDirectory.ToDir("CopyTo_InclSubDirs_DirIsCop");
             root.DeleteIfExists();
             var currentDir = CreateIdenticalSubdirs(root, dirDepth);
             "blaaaa".WriteAllText(currentDir, "myFile.txt");
@@ -109,7 +109,7 @@ namespace DotNet.Basics.Tests.IO
             //we set up a folder with an identical named subfolder with dummy content
             const string testDirName = "ConsolidateTestDir_ForLookDepthLimit";
 
-            var rootTestdir = @".\".ToDir(testDirName);
+            var rootTestdir = TestContext.CurrentContext.TestDirectory.ToDir(testDirName);
             rootTestdir.CleanIfExists();
 
             var currentDir = CreateIdenticalSubdirs(rootTestdir, 2);
@@ -143,7 +143,7 @@ namespace DotNet.Basics.Tests.IO
             //we set up a folder with an identical named subfolder with dummy content
             const string testDirName = "ConsolidateTestDir_WithReallyLongName";
 
-            var rootTestdir = @".\".ToDir(testDirName);
+            var rootTestdir = TestContext.CurrentContext.TestDirectory.ToDir(testDirName);
             rootTestdir.CleanIfExists();
 
             var currentDir = CreateIdenticalSubdirs(rootTestdir, 10);
@@ -168,7 +168,7 @@ namespace DotNet.Basics.Tests.IO
         public void CreateIfExists_CreateOptions_ExistingDirIsCleaned()
         {
             //arrange
-            var testDir = @"CreateIfExists_CreateOptions_ExistingDirIsCleaned".ToDir();
+            var testDir = TestContext.CurrentContext.TestDirectory.ToDir(@"CreateIfExists_CreateOptions_ExistingDirIsCleaned");
             @"bllll".WriteAllText(testDir, "myFile.txt");
 
             testDir.Exists().Should().BeTrue();
@@ -187,7 +187,7 @@ namespace DotNet.Basics.Tests.IO
         public void CreateIfExists_CreateOptions_ExistingDirIsNotCleaned()
         {
             //arrange
-            var testDir = @"CreateIfExists_CreateOptions_ExistingDirIsNotCleaned".ToDir();
+            var testDir = TestContext.CurrentContext.TestDirectory.ToDir(@"CreateIfExists_CreateOptions_ExistingDirIsNotCleaned");
             testDir.DeleteIfExists();
             @"bllll".WriteAllText(testDir, "myFile.txt");
 
@@ -206,7 +206,7 @@ namespace DotNet.Basics.Tests.IO
         public void CleanIfExists_DirDoesntExists_NoActionAndNoExceptions()
         {
             //arrange
-            var testDir = @"SOMETHINGTHAT DOESNT EXIST_BLAAAAAA".ToDir();
+            var testDir = TestContext.CurrentContext.TestDirectory.ToDir(@"SOMETHINGTHAT DOESNT EXIST_BLAAAAAA");
 
             //act
             testDir.CleanIfExists();
@@ -218,7 +218,7 @@ namespace DotNet.Basics.Tests.IO
         public void CleanIfExists_RemoveAllContentFromADir_DirIsCleaned()
         {
             //arrange
-            var testDir = @".\MyTestDir".ToDir();
+            var testDir = TestContext.CurrentContext.TestDirectory.ToDir(@"CleanIfExists_RemoveAllContentFromADir_DirIsCleaned");
             testDir.CreateIfNotExists();
 
             const int numOfTestFiles = 3;
@@ -271,7 +271,7 @@ namespace DotNet.Basics.Tests.IO
         {
             try
             {
-                //we keep adding sub folders until we reach our limit or ten levels - whichever comes first
+                //we keep adding sub folders until we reach our limit or max levels - whichever comes first
                 for (var level = 0; level < maxDepth; level++)
                 {
                     var dirName = level % 2 == 0 ? root.Name.ToLower() : root.Name.ToUpper();

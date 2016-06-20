@@ -1,4 +1,5 @@
-﻿using DotNet.Basics.Sys;
+﻿using DotNet.Basics.IO;
+using DotNet.Basics.Sys;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -11,7 +12,10 @@ namespace DotNet.Basics.Tests.Sys
         public void Run_ExitCode_ExitCodeIsReturned()
         {
             const int exitCode = 16;
-            var observedExitCode = CommandPrompt.Run($".\\DotNet.Basics.Tests.Console.exe {exitCode}");
+
+            var consolePath = TestContext.CurrentContext.TestDirectory.ToFile("DotNet.Basics.Tests.Console.exe");
+
+            var observedExitCode = CommandPrompt.Run($"{consolePath } {exitCode}");
             observedExitCode.Should().Be(exitCode);
         }
     }

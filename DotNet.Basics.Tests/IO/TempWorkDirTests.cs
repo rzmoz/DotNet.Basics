@@ -12,7 +12,7 @@ namespace DotNet.Basics.Tests.IO
         {
             Path dir = null;
 
-            using (var temp = new TempDir())
+            using (var temp = new TempDir("TempDirTest"))
             {
                 dir = temp.Root;
                 dir.Exists().Should().BeTrue();

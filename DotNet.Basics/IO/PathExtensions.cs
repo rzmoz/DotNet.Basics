@@ -37,8 +37,6 @@ namespace DotNet.Basics.IO
             if (string.IsNullOrEmpty(path))
                 return null;
 
-            var pathToTest = segments.Length > 0 ? segments.Last() : path;
-
             var allSegments = new[] { path }.Concat(segments).ToArray();
 
             PathDelimiter delimiter = PathDelimiter.Backslash;
@@ -47,17 +45,26 @@ namespace DotNet.Basics.IO
                 if (TryDetectDelimiter(segment, out delimiter))
                     break;
             }
-            var isFolder = pathToTest.IsFolder();
+
+            var asFolder = Create(allSegments, true, delimiter);
+            if (SystemIoPath.Exists(asFolder.FullName, true))
+                return asFolder;
+
+            if (SystemIoPath.Exists(asFolder.FullName, false))
+                return Create(allSegments, false, delimiter);
+
+            var pathSegmentWithFolderToken = segments.Length > 0 ? segments.Last() : path;
+            var isFolder = pathSegmentWithFolderToken.IsFolder();
             return Create(allSegments, isFolder, delimiter);
         }
-        public static Path ToPath(this string path, bool isFolder)
+        public static Path ToPath(this string path, bool isFolder, params string[] segments)
         {
             if (string.IsNullOrEmpty(path))
                 return null;
 
             PathDelimiter delimiter;
             TryDetectDelimiter(path, out delimiter);
-            return Create(new[] { path }, isFolder, delimiter);
+            return Create(new[] { path }, isFolder, delimiter).Add(segments);
         }
 
         public static string[] SplitSegments(this string[] pathSegments)

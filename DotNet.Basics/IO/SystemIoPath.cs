@@ -104,7 +104,6 @@ namespace DotNet.Basics.IO
             }
         }
 
-
         private static void EnsureLongPathsAreEnabled()
         {
             var type = typeof(System.IO.Path);
