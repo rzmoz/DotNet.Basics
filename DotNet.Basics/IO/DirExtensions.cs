@@ -28,7 +28,7 @@ namespace DotNet.Basics.IO
             sourceDirs.ForEach(dir => dir.CopyTo(target, includeSubfolders));
         }
 
-        public static DirPath CreateSubdir(this DirPath dir, string path)
+        public static DirPath CreateSubDir(this DirPath dir, string path)
         {
             var subDir = dir.Add(path);
             subDir.CreateIfNotExists();

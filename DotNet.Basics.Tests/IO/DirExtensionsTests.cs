@@ -92,7 +92,7 @@ namespace DotNet.Basics.Tests.IO
             "blaaaa".WriteAllText(currentDir, "myFile.txt");
 
             var targetRoot = (root.Name + "Target").ToDir();
-            var targetDir = targetRoot.CreateSubdir(root.Name);
+            var targetDir = targetRoot.CreateSubDir(root.Name);
             targetDir.DeleteIfExists();
             targetDir.Exists().Should().BeFalse();
 
@@ -275,7 +275,7 @@ namespace DotNet.Basics.Tests.IO
                 for (var level = 0; level < maxDepth; level++)
                 {
                     var dirName = level % 2 == 0 ? root.Name.ToLower() : root.Name.ToUpper();
-                    root = root.CreateSubdir(dirName);
+                    root = root.CreateSubDir(dirName);
                 }
             }
             catch (System.IO.PathTooLongException)
