@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Management.Automation;
+using System.Management.Automation.Runspaces;
 using DotNet.Basics.Collections;
 
 namespace DotNet.Basics.Sys
@@ -18,11 +20,10 @@ namespace DotNet.Basics.Sys
                 .AddParameter("Path", paths)
                 .AddParameter("Destination", destination)
                 .WithForce(force)
-                .WithRecurse(recurse)
-                .WithErrorAction(ActionPreference.SilentlyContinue); ;
+                .WithRecurse(recurse);
             return RunScript(cmdlet.ToScript());
         }
-        
+
         public static object[] RemoveItem(string path, bool force, bool recurse)
         {
             return RemoveItem(path.ToEnumerable().ToArray(), force, recurse);
@@ -32,8 +33,7 @@ namespace DotNet.Basics.Sys
             var cmdlet = new PowerShellCmdlet("Remove-Item")
                 .AddParameter("Path", paths)
                 .WithForce(force)
-                .WithRecurse(recurse)
-                .WithErrorAction(ActionPreference.SilentlyContinue);
+                .WithRecurse(recurse);
             return RunScript(cmdlet.ToScript());
         }
 
@@ -46,29 +46,50 @@ namespace DotNet.Basics.Sys
             var cmdlet = new PowerShellCmdlet("Move-Item")
                 .AddParameter("Path", paths)
                 .AddParameter("Destination", destination)
-                .WithForce(force)
-                .WithErrorAction(ActionPreference.SilentlyContinue);
+                .WithForce(force);
             return RunScript(cmdlet.ToScript());
         }
 
 
-        public static object[] RunScript(string script)
+        public static object[] RunScript(params string[] scripts)
         {
-            if (script == null) { throw new ArgumentNullException(nameof(script)); }
-            Debug.WriteLine($"Running script: {script}");
-            using (var ps = PowerShell.Create())
+            if (scripts == null) { throw new ArgumentNullException(nameof(scripts)); }
+
+
+            using (var runspace = RunspaceFactory.CreateRunspace())
             {
-                ps.AddScript(_bypassExecutionPolicy);
-                ps.AddScript(script);
+                runspace.Open();
 
-                return Run(ps);
+                var pipeline = runspace.CreatePipeline();
+                pipeline.Commands.AddScript(_bypassExecutionPolicy);
+                foreach (var script in scripts)
+                {
+                    Debug.WriteLine($"Adding script to ps pipeline: {script}");
+                    pipeline.Commands.AddScript(script);
+                }
+
+                var passThru = pipeline.Invoke();
+                runspace.Close();
+
+                if (pipeline.HadErrors)
+                {
+                    var errorsObject = pipeline.Error.Read() as PSObject;
+                    if (errorsObject == null)
+                        throw new ArgumentException("Something went wrong - Move-Item code should be reworked");
+
+                    var error = errorsObject.BaseObject as ErrorRecord;
+                    if (error != null)
+                        throw new ArgumentException(error.Exception.ToString());
+                    var errors = errorsObject.BaseObject as Collection<ErrorRecord>;
+
+                    if (errors != null)
+                    {
+                        var errorMessage = errors.Aggregate(string.Empty, (current, err) => current + (err.Exception.ToString() + Environment.NewLine));
+                        throw new ArgumentException(errorMessage);
+                    }
+                }
+                return passThru.Select(pt => pt.BaseObject).ToArray();
             }
-        }
-
-        private static object[] Run(PowerShell ps)
-        {
-            var passThrus = ps.Invoke();
-            return passThrus.Select(pt => pt.BaseObject).ToArray();
         }
 
         private const string _bypassExecutionPolicy = "Set-ExecutionPolicy Bypass -Scope Process";

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using FluentAssertions;
@@ -43,6 +44,20 @@ namespace DotNet.Basics.Tests.Sys
             targetDir.Exists().Should().BeTrue();
             targetFile.Exists().Should().BeTrue();
             targetFile.ReadAllText().Should().Be(dummyContent);
+        }
+
+        [Test]
+        public void MoveItem_SourceNotFound_ExceptionIsThrown()
+        {
+            var sourceDir = TestContext.CurrentContext.TestDirectory.ToDir("SOMETHINGTHATDOESNTEXIST");
+            var targetDir = TestContext.CurrentContext.TestDirectory.ToDir($"{sourceDir.Name}EITHER");
+            sourceDir.DeleteIfExists();
+
+            //act
+            Action action = ()=> PowerShellConsole.MoveItem(sourceDir.FullName, targetDir.FullName, true);
+            
+            //assert
+            action.ShouldThrow<ArgumentException>();
         }
     }
 }
