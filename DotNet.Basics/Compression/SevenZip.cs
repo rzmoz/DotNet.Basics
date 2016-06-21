@@ -24,6 +24,7 @@ namespace DotNet.Basics.Compression
             if (overwrite == false && archivePath.ToPath().Exists())
                 throw new System.IO.IOException($"Target archive path already exists: {archivePath}. Set overwrite to true to ignore");
 
+            archivePath.ToPath().DeleteIfExists();
             return ExecuteSevenZip("a", $"\"{archivePath}\"", $"\"{sourceDirPath.ToDir().FullName}\\*\"", "-tzip", "-mx3", "-mmt");
         }
 
@@ -48,7 +49,7 @@ namespace DotNet.Basics.Compression
         {
             using (var fsDst = new System.IO.FileStream(path, System.IO.FileMode.CreateNew, System.IO.FileAccess.Write))
                 fsDst.Write(bytes, 0, bytes.Length);
-            
+
         }
     }
 }
