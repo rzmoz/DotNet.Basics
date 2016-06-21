@@ -25,23 +25,24 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         public void MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved()
         {
-            var sourceDir =
-                TestContext.CurrentContext.TestDirectory.ToDir(
-                    "MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved", "source");
-            var targetDir=
-                TestContext.CurrentContext.TestDirectory.ToDir(
-                    "MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved", "target");
+            var emptyDir = TestContext.CurrentContext.TestDirectory.ToDir("MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved", "empty");
+            var sourceDir = TestContext.CurrentContext.TestDirectory.ToDir("MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved", "source");
+            var targetDir = TestContext.CurrentContext.TestDirectory.ToDir("MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved", "target");
             var testSource = TestContext.CurrentContext.TestDirectory.ToDir("IO", "TestSources").FullName;
             Robocopy.CopyDir(testSource, sourceDir.FullName, true, null, new ConsoleLogger());
-
+            emptyDir.CreateIfNotExists();
+            emptyDir.CleanIfExists();
+            emptyDir.GetPaths().Length.Should().Be(0);//empty dir
             sourceDir.Exists().Should().BeTrue(sourceDir.FullName);
             targetDir.DeleteIfExists();
             targetDir.Exists().Should().BeFalse(targetDir.FullName);
 
             //act
             Robocopy.MoveContent(sourceDir.FullName, targetDir.FullName, null, true, null, new ConsoleLogger());
-            sourceDir.GetPaths().Count().Should().Be(0);
+            Robocopy.MoveContent(emptyDir.FullName, targetDir.FullName, null, true, null, new ConsoleLogger());//move empty dir  to ensure target dir is not cleaned
 
+            //assert
+            sourceDir.GetPaths().Count().Should().Be(0);
             targetDir.GetFiles().Single().Name.Should().Be("TextFile1.txt");
         }
 

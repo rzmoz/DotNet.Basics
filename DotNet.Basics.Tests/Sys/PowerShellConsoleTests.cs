@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Management.Automation;
+using System.Runtime.Serialization;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using FluentAssertions;
@@ -72,7 +73,7 @@ namespace DotNet.Basics.Tests.Sys
             var sourceFile = sourceDir.ToFile("Myfile.txt");
             var targetDir = TestContext.CurrentContext.TestDirectory.ToDir("MoveItem_Folder_FolderIsMoved_Target");
             var targetFile = targetDir.ToFile(sourceFile.Name);
-
+            
             targetDir.DeleteIfExists();
             sourceDir.CreateIfNotExists();
             sourceDir.CleanIfExists();
@@ -83,7 +84,7 @@ namespace DotNet.Basics.Tests.Sys
 
             //act
             PowerShellConsole.MoveItem(sourceDir.FullName, targetDir.FullName, true);
-
+            
             //assert
             sourceDir.Exists().Should().BeFalse();
             targetDir.Exists().Should().BeTrue();

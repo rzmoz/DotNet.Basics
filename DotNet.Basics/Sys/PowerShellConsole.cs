@@ -95,7 +95,7 @@ namespace DotNet.Basics.Sys
                 {
                     var errorsObject = pipeline.Error.Read() as PSObject;
                     if (errorsObject == null)
-                        throw new ArgumentException("Something went wrong - Move-Item code should be reworked");
+                        throw new ArgumentException("Something went wrong - Script should be reworked");
 
                     var error = errorsObject.BaseObject as ErrorRecord;
                     if (error != null)
