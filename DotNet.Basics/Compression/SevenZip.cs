@@ -16,7 +16,7 @@ namespace DotNet.Basics.Compression
 
         public int ExtractToDirectory(string archivePath, string targetDirPath)
         {
-            return ExecuteSevenZip("x", $"\"{archivePath}\"", $"\"-o{targetDirPath.ToDir().FullName}\"", "*", "-r");
+            return ExecuteSevenZip("x", $"\"{archivePath}\"", $"\"-o{targetDirPath.ToDir().FullName}\"", "*", "-r", "aoa");
         }
 
         public int CreateFromDirectory(string sourceDirPath, string archivePath, bool overwrite = false)
