@@ -40,7 +40,7 @@ namespace DotNet.Basics.Diagnostics
             return _entries.Where(entry => entry.Level == logLevel).ToList();
         }
 
-        public IReadOnlyCollection<LogEntry> Entries => _entries;
+        public IReadOnlyCollection<LogEntry> Entries => _entries.ToList();
 
         public void Clear()
         {
