@@ -73,7 +73,7 @@ namespace DotNet.Basics.Tests.Net
         }
 
 
-        [Test]
+        [Test, Ignore("DNS proxies to 200")]
         public void ExecuteAsync_FailedRequest_NoExceptions()
         {
             const string uri = "http://this.domain.does.not.exist/Something";
@@ -99,7 +99,7 @@ namespace DotNet.Basics.Tests.Net
             var restClient = new DotNet.Basics.Net.RestClient(httpTransport);
             var request = new RestRequest("http://myserver.com/string");
             //act 
-            var restResponse = await restClient.ExecuteAsync<string>(request,ResponseFormatting.TrimQuotesWhenContentIsString).ConfigureAwait(false);
+            var restResponse = await restClient.ExecuteAsync<string>(request, ResponseFormatting.TrimQuotesWhenContentIsString).ConfigureAwait(false);
             //assert
             restResponse.Content.Should().Be(connectionString.Trim('\"'));
         }
