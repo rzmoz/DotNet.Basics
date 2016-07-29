@@ -19,7 +19,7 @@ namespace DotNet.Basics.Tests.Net
         [Test]
         public void FromJson_SimpleType_TypeIsDeSerialized()
         {
-            const string connectionStringsJson = @"{""ConnectionStrings"":{""core"":""user id=sc;password=Sitecore123;Data Source=t0hmavsbyz.database.windows.net;Database=Sc72_Core"",""master"":""user id=sc;password=Sitecore123;Data Source=t0hmavsbyz.database.windows.net;Database=Sc72_Master"",""web"":""user id=sc;password=Sitecore123;Data Source=t0hmavsbyz.database.windows.net;Database=Sc72_Web""}}";
+            const string connectionStringsJson = @"{""ConnectionStrings"":{""core"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbc"",""master"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbm"",""web"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbk""}}";
 
             var dto = _serializer.FromJson<ConnectionStringsDto>(connectionStringsJson);
 
@@ -29,7 +29,7 @@ namespace DotNet.Basics.Tests.Net
         [Test]
         public void ConvertTo_ConvertToString_TypeIsDeSerialized()
         {
-            const string connectionStringsJson = @"{""ConnectionStrings"":{""core"":""user id=sc;password=Sitecore123;Data Source=t0hmavsbyz.database.windows.net;Database=Sc72_Core"",""master"":""user id=sc;password=Sitecore123;Data Source=t0hmavsbyz.database.windows.net;Database=Sc72_Master"",""web"":""user id=sc;password=Sitecore123;Data Source=t0hmavsbyz.database.windows.net;Database=Sc72_Web""}}";
+            const string connectionStringsJson = @"{""ConnectionStrings"":{""core"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbc"",""master"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbm"",""web"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbk""}}";
 
             var rawstring = _serializer.ConvertTo<string>(connectionStringsJson);
 
@@ -39,10 +39,10 @@ namespace DotNet.Basics.Tests.Net
         [Test]
         public void Serialize_ConvertToString_TypeIsDeSerialized()
         {
-            const string connectionStringsJson = @"{""ConnectionStrings"":{""core"":""user id=sc;password=Sitecore123;Data Source=t0hmavsbyz.database.windows.net;Database=Sc72_Core"",""master"":""user id=sc;password=Sitecore123;Data Source=t0hmavsbyz.database.windows.net;Database=Sc72_Master"",""web"":""user id=sc;password=Sitecore123;Data Source=t0hmavsbyz.database.windows.net;Database=Sc72_Web""}}";
+            const string connectionStringsJson = @"{""ConnectionStrings"":{""core"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbc"",""master"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbm"",""web"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbk""}}";
             var dto = new ConnectionStringsDto
             {
-                ConnectionStrings = new Dictionary<string, string> { { "core", "user id=sc;password=Sitecore123;Data Source=t0hmavsbyz.database.windows.net;Database=Sc72_Core" }, { "master", "user id=sc;password=Sitecore123;Data Source=t0hmavsbyz.database.windows.net;Database=Sc72_Master" }, { "web", "user id=sc;password=Sitecore123;Data Source=t0hmavsbyz.database.windows.net;Database=Sc72_Web" } }
+                ConnectionStrings = new Dictionary<string, string> { { "core", "user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbc" }, { "master", "user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbm" }, { "web", "user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbk" } }
             };
 
             var serialized = _serializer.Serialize(dto);

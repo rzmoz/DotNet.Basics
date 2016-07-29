@@ -73,7 +73,8 @@ namespace DotNet.Basics.Tests.Net
         }
 
 
-        [Test, Ignore("DNS proxies to 200")]
+        /*
+        [Test]
         public void ExecuteAsync_FailedRequest_NoExceptions()
         {
             const string uri = "http://this.domain.does.not.exist/Something";
@@ -85,7 +86,7 @@ namespace DotNet.Basics.Tests.Net
             System.Action action = () => { var result = client.ExecuteAsync<string>(request).Result; };
 
             action.ShouldThrow<RestRequestException>().WithInnerException<HttpRequestException>().Which.Request.Uri.ToString().Should().Be(uri);
-        }
+        }*/
 
         [Test]
         public async Task ExecuteAsync_ResponseGottenAndQuotesStripped_ShouldDeserializeString()

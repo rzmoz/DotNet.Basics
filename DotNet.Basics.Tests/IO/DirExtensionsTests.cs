@@ -241,8 +241,8 @@ namespace DotNet.Basics.Tests.IO
             actual.FullName.Should().Be(expected);
 
 
-            actual = @"c:\BuildLibrary\Sitecore\Sitecore 8.0 rev. 141212".ToDir("Website");
-            expected = @"c:\BuildLibrary\Sitecore\Sitecore 8.0 rev. 141212\Website\";
+            actual = @"c:\BuildLibrary\Folder\Module 2.0.1".ToDir("Website");
+            expected = @"c:\BuildLibrary\Folder\Module 2.0.1\Website\";
             actual.FullName.Should().Be(expected);
         }
 
