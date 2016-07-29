@@ -6,7 +6,7 @@
         <title>$title$</title>
         <authors>rzmoz</authors>
         <owners>rzmoz</owners>
-        <licenseUrl>http://www.gnu.org/licenses/lgpl.txt</licenseUrl>
+        <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
         <projectUrl>https://bitbucket.org/rzmoz/dotnet.basics/</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Syntactical sugar for .NET</description>
