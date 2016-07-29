@@ -67,6 +67,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -93,6 +94,10 @@
     <Compile Include="IO\SystemIoPathTests.cs" />
     <Compile Include="IO\TempDirTests.cs" />
     <Compile Include="IO\TempWorkDirTests.cs" />
+    <Compile Include="Net\RestClientTests.cs" />
+    <Compile Include="Net\JsonSerializerTests.cs" />
+    <Compile Include="Net\RestRequestTests.cs" />
+    <Compile Include="Net\RestResponseTests.cs" />
     <Compile Include="Sys\CommandPromptTests.cs" />
     <Compile Include="Diagnostics\InMemoryTraceListener.cs" />
     <Compile Include="Ioc\TestHelpers\IMyType.cs" />
