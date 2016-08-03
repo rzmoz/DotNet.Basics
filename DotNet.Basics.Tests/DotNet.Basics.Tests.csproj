@@ -69,6 +69,7 @@
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -94,10 +95,10 @@
     <Compile Include="IO\SystemIoPathTests.cs" />
     <Compile Include="IO\TempDirTests.cs" />
     <Compile Include="IO\TempWorkDirTests.cs" />
-    <Compile Include="Net\RestClientTests.cs" />
-    <Compile Include="Net\JsonSerializerTests.cs" />
-    <Compile Include="Net\RestRequestTests.cs" />
-    <Compile Include="Net\RestResponseTests.cs" />
+    <Compile Include="RestClient\RestClientTests.cs" />
+    <Compile Include="RestClient\JsonSerializerTests.cs" />
+    <Compile Include="RestClient\RestRequestTests.cs" />
+    <Compile Include="RestClient\RestResponseTests.cs" />
     <Compile Include="Sys\CommandPromptTests.cs" />
     <Compile Include="Diagnostics\InMemoryTraceListener.cs" />
     <Compile Include="Ioc\TestHelpers\IMyType.cs" />
@@ -137,6 +138,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DotNet.Basics.RestClient\DotNet.Basics.RestClient.csproj">
+      <Project>{1ca4342d-efa1-4709-96bd-22f5e700d1ba}</Project>
+      <Name>DotNet.Basics.RestClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DotNet.Basics.Tests.Console\DotNet.Basics.Tests.Console.csproj">
       <Project>{391cf41a-e1c9-4670-b1b5-c92fddc0fb3d}</Project>
       <Name>DotNet.Basics.Tests.Console</Name>

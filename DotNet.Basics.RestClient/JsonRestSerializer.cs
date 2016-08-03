@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Web.Script.Serialization;
 
-namespace DotNet.Basics.Net
+namespace DotNet.Basics.RestClient
 {
-    public class JsonSerializer
+    public class JsonRestSerializer
     {
         private readonly JavaScriptSerializer _serializer;
 
-        public JsonSerializer()
+        public JsonRestSerializer()
         {
             _serializer = new JavaScriptSerializer();
         }

@@ -2,7 +2,7 @@
 using System.Net.Http;
 using System.Runtime.Serialization;
 
-namespace DotNet.Basics.Net
+namespace DotNet.Basics.RestClient
 {
     public class RestRequestException : Exception
     {

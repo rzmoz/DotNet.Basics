@@ -49,7 +49,6 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -93,17 +92,6 @@
     <Compile Include="IO\IoExtensions.cs" />
     <Compile Include="IO\SystemIoPath.cs" />
     <Compile Include="IO\TempDir.cs" />
-    <Compile Include="Net\HttpClientTransport.cs" />
-    <Compile Include="Net\IHttpTransport.cs" />
-    <Compile Include="Net\IRestClient.cs" />
-    <Compile Include="Net\IRestRequest.cs" />
-    <Compile Include="Net\IRestResponse.cs" />
-    <Compile Include="Net\RestClient.cs" />
-    <Compile Include="Net\ResponseFormatting.cs" />
-    <Compile Include="Net\JsonSerializer.cs" />
-    <Compile Include="Net\RestRequest.cs" />
-    <Compile Include="Net\RestRequestException.cs" />
-    <Compile Include="Net\RestResponse.cs" />
     <Compile Include="Sys\CommandPrompt.cs" />
     <Compile Include="Pipelines\EagerBindStep.cs" />
     <Compile Include="Pipelines\LazyBindStep.cs" />

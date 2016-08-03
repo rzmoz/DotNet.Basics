@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Http;
 
-namespace DotNet.Basics.Net
+namespace DotNet.Basics.RestClient
 {
     public interface IRestResponse<out T> : IRestResponse
     {

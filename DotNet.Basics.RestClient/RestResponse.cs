@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace DotNet.Basics.Net
+namespace DotNet.Basics.RestClient
 {
     public class RestResponse<T> : IRestResponse<T>
     {
@@ -20,7 +20,7 @@ namespace DotNet.Basics.Net
 
             StatusCode = HttpResponseMessage.StatusCode;
             ResponseContent = HttpResponseMessage.Content?.ReadAsStringAsync().Result;
-            var serializer = new JsonSerializer();
+            var serializer = new JsonRestSerializer();
 
             RawContent = serializer.ConvertTo<string>(ResponseContent);
 

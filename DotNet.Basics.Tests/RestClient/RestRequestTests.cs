@@ -1,10 +1,10 @@
 ﻿using System.Net.Http;
 using System.Text;
-using DotNet.Basics.Net;
+using DotNet.Basics.RestClient;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace DotNet.Basics.Tests.Net
+namespace DotNet.Basics.Tests.RestClient
 {
     [TestFixture]
     internal class RestRequestTests

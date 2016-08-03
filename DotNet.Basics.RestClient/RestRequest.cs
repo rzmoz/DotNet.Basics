@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace DotNet.Basics.Net
+namespace DotNet.Basics.RestClient
 {
     public class RestRequest : IRestRequest
     {

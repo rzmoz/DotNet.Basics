@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
-using DotNet.Basics.Net;
+using DotNet.Basics.RestClient;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace DotNet.Basics.Tests.Net
+namespace DotNet.Basics.Tests.RestClient
 {
     [TestFixture]
     public class JsonSerializerTests
     {
-        private JsonSerializer _serializer;
+        private JsonRestSerializer _serializer;
 
         [SetUp]
         public void SetUpFixture()
         {
-            _serializer = new JsonSerializer();
+            _serializer = new JsonRestSerializer();
         }
 
         [Test]
