@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web.Script.Serialization;
 
-namespace DotNet.Basics.RestClient
+namespace DotNet.Basics.Rest
 {
     public class JsonRestSerializer
     {

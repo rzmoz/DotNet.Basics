@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace DotNet.Basics.RestClient
+namespace DotNet.Basics.Rest
 {
     public interface IRestClient
     {

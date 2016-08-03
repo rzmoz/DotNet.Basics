@@ -2,18 +2,18 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace DotNet.Basics.RestClient
+namespace DotNet.Basics.Rest
 {
-    public class JsonRestClient : IRestClient
+    public class RestClient : IRestClient
     {
         private readonly IHttpTransport _transport;
 
-        public JsonRestClient(IHttpTransport transport)
+        public RestClient(IHttpTransport transport)
         {
             _transport = transport;
         }
 
-        public JsonRestClient()
+        public RestClient()
             : this(new HttpClientTransport())
         {
         }

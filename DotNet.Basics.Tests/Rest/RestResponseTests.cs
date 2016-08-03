@@ -3,11 +3,11 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using DotNet.Basics.RestClient;
+using DotNet.Basics.Rest;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace DotNet.Basics.Tests.RestClient
+namespace DotNet.Basics.Tests.Rest
 {
     [TestFixture]
     public class RestResponseTests
@@ -17,7 +17,7 @@ namespace DotNet.Basics.Tests.RestClient
         {
             var request = new RestRequest("http://www.dr.dk", HttpMethod.Get);
 
-            IRestClient client = new JsonRestClient();
+            IRestClient client = new RestClient();
 
             var response = await client.ExecuteAsync<string>(request);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -31,7 +31,7 @@ namespace DotNet.Basics.Tests.RestClient
             var request = new RestRequest("http://dr.dk/");
 
 
-            IRestClient client = new JsonRestClient();
+            IRestClient client = new RestClient();
 
             var response = await client.ExecuteAsync<string>(request);
             var result = response.ToString();

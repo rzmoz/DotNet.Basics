@@ -6,12 +6,12 @@ using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using DotNet.Basics.RestClient;
+using DotNet.Basics.Rest;
 using FluentAssertions;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace DotNet.Basics.Tests.RestClient
+namespace DotNet.Basics.Tests.Rest
 {
     [TestFixture]
     public class RestClientTests
@@ -31,7 +31,7 @@ namespace DotNet.Basics.Tests.RestClient
             {
                 Content = new StringContent("something", Encoding.UTF8, "my/content")
             };
-            var client = new JsonRestClient();
+            var client = new RestClient();
 
             var response = await client.ExecuteAsync<string>(request).ConfigureAwait(false);
 
@@ -43,7 +43,7 @@ namespace DotNet.Basics.Tests.RestClient
         public void ExecuteTAsync_ResponseBodyNotProperValueTo_ExceptionIsThrown()
         {
             var request = new RestRequest("http://dr.dk/", HttpMethod.Get);
-            var client = new JsonRestClient();
+            var client = new RestClient();
 
             Func<Task> action = async () => await client.ExecuteAsync<int>(request).ConfigureAwait(false);
 
@@ -54,7 +54,7 @@ namespace DotNet.Basics.Tests.RestClient
         public async Task ExecuteTAsync_ValidRquest_RequestIsRecieved()
         {
             var request = new RestRequest("http://dr.dk/", HttpMethod.Get);
-            var client = new JsonRestClient();
+            var client = new RestClient();
 
             var response = await client.ExecuteAsync<string>(request).ConfigureAwait(false);
 
@@ -65,7 +65,7 @@ namespace DotNet.Basics.Tests.RestClient
         public async Task ExecuteAsync_ValidRquest_RequestIsRecieved()
         {
             var request = new RestRequest("http://dr.dk/", HttpMethod.Get);
-            var client = new JsonRestClient();
+            var client = new RestClient();
 
             var response = await client.ExecuteAsync<string>(request).ConfigureAwait(false);
 
@@ -81,7 +81,7 @@ namespace DotNet.Basics.Tests.RestClient
 
             var request = new RestRequest(uri);
 
-            IRestClient client = new DotNet.Basics.Net.JsonRestClient();
+            IRestClient client = new RestClient();
 
             System.Action action = () => { var result = client.ExecuteAsync<string>(request).Result; };
 
@@ -97,7 +97,7 @@ namespace DotNet.Basics.Tests.RestClient
             var httpTransport = Substitute.For<IHttpTransport>();
 
             httpTransport.SendRequestAsync(Arg.Any<IRestRequest>()).Returns(GetHttpResponseMessageTask(connectionString));
-            var restClient = new JsonRestClient(httpTransport);
+            var restClient = new RestClient(httpTransport);
             var request = new RestRequest("http://myserver.com/string");
             //act 
             var restResponse = await restClient.ExecuteAsync<string>(request, ResponseFormatting.TrimQuotesWhenContentIsString).ConfigureAwait(false);
@@ -112,7 +112,7 @@ namespace DotNet.Basics.Tests.RestClient
             var httpTransport = Substitute.For<IHttpTransport>();
 
             httpTransport.SendRequestAsync(Arg.Any<IRestRequest>()).Returns(GetHttpResponseMessageTask(string.Empty));
-            var restClient = new JsonRestClient(httpTransport);
+            var restClient = new RestClient(httpTransport);
             var request = new RestRequest("http://myserver.com/string");
             //act 
             var restResponse = await restClient.ExecuteAsync<string>(request).ConfigureAwait(false);
@@ -133,7 +133,7 @@ namespace DotNet.Basics.Tests.RestClient
             var httpTransport = Substitute.For<IHttpTransport>();
             var serializedClient = _serializer.Serialize(client);
             httpTransport.SendRequestAsync(Arg.Any<IRestRequest>()).Returns(GetHttpResponseMessageTask(serializedClient));
-            var restClient = new JsonRestClient(httpTransport);
+            var restClient = new RestClient(httpTransport);
             var request = new RestRequest("http://myserver.com/clients/1");
             //act 
             var restResponse = await restClient.ExecuteAsync<TestClient>(request).ConfigureAwait(false);
@@ -155,7 +155,7 @@ namespace DotNet.Basics.Tests.RestClient
                 throw new WebException("Exception thrown");
             });
             var restRequest = new RestRequest(uri);
-            var jsonRestClient = new JsonRestClient(httpTransport);
+            var jsonRestClient = new RestClient(httpTransport);
             //act
             System.Action action = () => { var result = jsonRestClient.ExecuteAsync(restRequest).Result; };
             //assert

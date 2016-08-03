@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.RestClient
+﻿namespace DotNet.Basics.Rest
 {
     public enum ResponseFormatting
     {

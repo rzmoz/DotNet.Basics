@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{CF5747AC
 		RC.Params.json = RC.Params.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.RestClient", "DotNet.Basics.RestClient\DotNet.Basics.RestClient.csproj", "{1CA4342D-EFA1-4709-96BD-22F5E700D1BA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.Rest", "DotNet.Basics.Rest\DotNet.Basics.Rest.csproj", "{1CA4342D-EFA1-4709-96BD-22F5E700D1BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

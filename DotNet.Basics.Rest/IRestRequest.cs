@@ -2,7 +2,7 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 
-namespace DotNet.Basics.RestClient
+namespace DotNet.Basics.Rest
 {
     public interface IRestRequest
     {
