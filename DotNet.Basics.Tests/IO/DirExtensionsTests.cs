@@ -91,7 +91,7 @@ namespace DotNet.Basics.Tests.IO
             var currentDir = CreateIdenticalSubdirs(root, dirDepth);
             "blaaaa".WriteAllText(currentDir, "myFile.txt");
 
-            var targetRoot = (root.Name + "Target").ToDir();
+            var targetRoot = TestContext.CurrentContext.TestDirectory.ToDir(root.Name + "Target");
             var targetDir = targetRoot.CreateSubDir(root.Name);
             targetDir.DeleteIfExists();
             targetDir.Exists().Should().BeFalse();
