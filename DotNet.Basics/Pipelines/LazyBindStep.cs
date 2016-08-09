@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+
 
 
 namespace DotNet.Basics.Pipelines
@@ -15,7 +15,7 @@ namespace DotNet.Basics.Pipelines
             DisplayName = step.DisplayName;
         }
 
-        public override async Task RunAsync(T args, ILogger logger)
+        public override async Task RunAsync(T args, IPipelineLogger logger)
         {
             var step = Container.GetInstance<TStep>();
             DisplayName = step.DisplayName;

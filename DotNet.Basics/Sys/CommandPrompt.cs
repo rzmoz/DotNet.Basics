@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using Microsoft.Extensions.Logging;
+using NLog;
 
 namespace DotNet.Basics.Sys
 {
@@ -7,7 +7,10 @@ namespace DotNet.Basics.Sys
     {
         public static int Run(string commandString, ILogger logger = null)
         {
-            logger?.LogDebug($"Command prompt invoked: {commandString}");
+            if (logger == null)
+                logger = LogManager.GetCurrentClassLogger();
+
+            logger?.Trace($"Command prompt invoked: {commandString}");
 
             var si = new ProcessStartInfo("cmd.exe", $"/c {commandString}")
             {
@@ -23,13 +26,13 @@ namespace DotNet.Basics.Sys
             {
                 console.Start();
 
-                logger?.LogTrace(console.StandardOutput.ReadToEnd());
+                logger?.Trace(console.StandardOutput.ReadToEnd());
                 var error = console.StandardError.ReadToEnd();
                 if (error.Length > 0)
-                    logger?.LogError(error);
+                    logger?.Error(error);
 
                 var exitCode = console.ExitCode;
-                logger?.LogTrace($"ExitCode:{exitCode}");
+                logger?.Debug($"ExitCode:{exitCode}");
                 console.Close();
                 return exitCode;
             }

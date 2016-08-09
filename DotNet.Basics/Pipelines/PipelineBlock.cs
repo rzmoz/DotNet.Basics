@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Pipelines
 {
@@ -26,7 +25,7 @@ namespace DotNet.Basics.Pipelines
             return this;
         }
 
-        public void AddSteps(params Func<T, ILogger, Task>[] asyncFunc)
+        public void AddSteps(params Func<T, IPipelineLogger, Task>[] asyncFunc)
         {
             AddSteps(asyncFunc.Select(af => (PipelineStep<T>)(new EagerBindStep<T>(af))).ToArray());
         }

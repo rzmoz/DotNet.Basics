@@ -1,19 +1,14 @@
 ﻿using System.Linq;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
-using Microsoft.Extensions.Logging;
+using NLog;
 
 namespace DotNet.Basics.Compression
 {
     public class SevenZip
     {
-        private readonly ILogger _logger;
-
-        public SevenZip(ILogger logger = null)
-        {
-            _logger = logger;
-        }
-
+        private static readonly ILogger _logger = LogManager.GetCurrentClassLogger();
+        
         public int ExtractToDirectory(string archivePath, string targetDirPath)
         {
             return ExecuteSevenZip("x", $"\"{archivePath}\"", $"\"-o{targetDirPath.ToDir().FullName}\"", "*", "-r", "aoa");

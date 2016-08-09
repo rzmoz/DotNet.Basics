@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
+using NLog;
 using System.Threading.Tasks;
-using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Ioc;
 using DotNet.Basics.Pipelines;
 using DotNet.Basics.Sys;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 
 namespace DotNet.Basics.Tests.Pipelines
@@ -24,28 +22,7 @@ namespace DotNet.Basics.Tests.Pipelines
             _container.Register<ClassThatIncrementArgsDependOn>();
         }
 
-        [Test]
-        public async Task Ctor_Logger_LoggerIsLoggedTo()
-        {
-            var logger = new InMemLogger();
-            const string message = "MyMessage";
-            var pipeline = new Pipeline();
 
-            pipeline.AddBlock((args, l) => l.LogInformation(message),
-                            (args, l) => l.LogInformation(message),
-                            (args, l) => l.LogInformation(message)
-            );
-
-            await Task.Delay(100.MilliSeconds()).ConfigureAwait(false);
-            logger.Get(LogLevel.Information).Count.Should().Be(0);//ensure task isn't started until runner starts
-
-            var runner = new PipelineRunner(_container, logger);
-
-            await runner.RunAsync(pipeline).ConfigureAwait(false);
-
-            logger.Get(LogLevel.Information).All(e => e.Message == message).Should().BeTrue();
-
-        }
 
         [Test]
         public async Task DisplayName_DisplayNameIsSet_DisplayNameIsUsed()
@@ -136,39 +113,19 @@ namespace DotNet.Basics.Tests.Pipelines
         }
 
         [Test]
-        [TestCase(LogLevel.Debug)]
-        [TestCase(LogLevel.Trace)]
-        [TestCase(LogLevel.Information)]
-        [TestCase(LogLevel.Warning)]
-        [TestCase(LogLevel.Error)]
-        [TestCase(LogLevel.Critical)]
-        public async Task RunAsync_Result_FinishedWitEntryLogged(LogLevel logLevel)
+        public async Task RunAsync_Result_FinishedWitEntryLogged()
         {
-            var pipeline = new Pipeline<EventArgs<int>>();
-            pipeline.AddBlock((args, log) => { log.Log("Entry logged", logLevel); });
-            var logger = new InMemLogger();
-
-            var result = await new PipelineRunner().RunAsync(pipeline, logger: logger).ConfigureAwait(false);
-
-            foreach (LogLevel value in Enum.GetValues(typeof(LogLevel)))
+            foreach (LogLevel logLevel in LogLevel.AllLoggingLevels)
             {
-                var found = logger.Get(value).Any();
+                var pipeline = new Pipeline<EventArgs<int>>();
+                pipeline.AddBlock((args, log) => { log.Log(logLevel, "Entry logged"); });
 
-                if (logLevel == LogLevel.Trace)
-                    logger.Get(logLevel).Count.Should().Be(7);
-                else if (value == LogLevel.Trace)
-                    logger.Get(value).Count.Should().Be(6);
+                var result = await new PipelineRunner().RunAsync(pipeline).ConfigureAwait(false);
 
-                if (value == logLevel)
-                    found.Should().BeTrue(value.ToName());
-                else if (value != LogLevel.Trace)
-                    found.Should().BeFalse(value.ToName());
-
-
-                if (logLevel < LogLevel.Error && logLevel != LogLevel.None)
-                    result.Success.Should().BeTrue($"{logLevel.ToName()} success: {result.Success}");
+                if (logLevel < LogLevel.Error)
+                    result.Success.Should().BeTrue($"{logLevel.Name} success: {result.Success}");
                 else
-                    result.Success.Should().BeFalse($"{logLevel.ToName()} success: {result.Success}");
+                    result.Success.Should().BeFalse($"{logLevel.Name} success: {result.Success}");
             }
         }
 

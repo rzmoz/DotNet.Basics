@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using DotNet.Basics.Diagnostics;
 using DotNet.Basics.IO;
 using FluentAssertions;
 using NUnit.Framework;
@@ -29,7 +28,7 @@ namespace DotNet.Basics.Tests.IO
             var sourceDir = TestContext.CurrentContext.TestDirectory.ToDir("MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved", "source");
             var targetDir = TestContext.CurrentContext.TestDirectory.ToDir("MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved", "target");
             var testSource = TestContext.CurrentContext.TestDirectory.ToDir("IO", "TestSources").FullName;
-            Robocopy.CopyDir(testSource, sourceDir.FullName, true, null, new ConsoleLogger());
+            Robocopy.CopyDir(testSource, sourceDir.FullName, true, null);
             emptyDir.CreateIfNotExists();
             emptyDir.CleanIfExists();
             emptyDir.GetPaths().Length.Should().Be(0);//empty dir
@@ -38,8 +37,8 @@ namespace DotNet.Basics.Tests.IO
             targetDir.Exists().Should().BeFalse(targetDir.FullName);
 
             //act
-            Robocopy.MoveContent(sourceDir.FullName, targetDir.FullName, null, true, null, new ConsoleLogger());
-            Robocopy.MoveContent(emptyDir.FullName, targetDir.FullName, null, true, null, new ConsoleLogger());//move empty dir  to ensure target dir is not cleaned
+            Robocopy.MoveContent(sourceDir.FullName, targetDir.FullName, null, true, null);
+            Robocopy.MoveContent(emptyDir.FullName, targetDir.FullName, null, true, null);//move empty dir  to ensure target dir is not cleaned
 
             //assert
             sourceDir.GetPaths().Count().Should().Be(0);

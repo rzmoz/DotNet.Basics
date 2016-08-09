@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using DotNet.Basics.Ioc;
-using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Pipelines
 {
@@ -12,7 +11,7 @@ namespace DotNet.Basics.Pipelines
             DisplayName = GetType().Name;
         }
 
-        public abstract Task RunAsync(T args, ILogger logger);
+        public abstract Task RunAsync(T args, IPipelineLogger logger);
 
         public virtual void Init()
         {

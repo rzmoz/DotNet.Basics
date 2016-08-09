@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using DotNet.Basics.Sys;
-using Microsoft.Extensions.Logging;
+using NLog;
 
 namespace DotNet.Basics.IO
 {
@@ -22,10 +22,12 @@ namespace DotNet.Basics.IO
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static int Run(string source, string target, string filesToCopy = null, string options = null, ILogger logger = null)
+        public static int Run(string source, string target, string filesToCopy = null, string options = null)
         {
             if (source == null) { throw new ArgumentNullException(nameof(source)); }
             if (target == null) { throw new ArgumentNullException(nameof(target)); }
+
+            var logger = LogManager.GetCurrentClassLogger();
 
             Init(logger);
             var command = $"{_fullPath} \"{source.RemoveSuffix('\\')}\" \"{target.RemoveSuffix('\\')}\" ";
@@ -41,12 +43,12 @@ namespace DotNet.Basics.IO
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static int CopyFile(string sourceFile, string targetDir, string extraOptions = null, ILogger logger = null)
+        public static int CopyFile(string sourceFile, string targetDir, string extraOptions = null)
         {
             if (targetDir == null) throw new ArgumentNullException(nameof(targetDir));
             if (string.IsNullOrEmpty(sourceFile)) throw new ArgumentException(nameof(sourceFile));
             var file = sourceFile.ToFile();
-            return Run(file.Directory.FullName, targetDir, file.Name, extraOptions ?? "/np", logger);
+            return Run(file.Directory.FullName, targetDir, file.Name, extraOptions ?? "/np");
         }
 
         /// <summary>
@@ -54,14 +56,14 @@ namespace DotNet.Basics.IO
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static int CopyDir(string sourceDir, string targetDir, bool includeSubFolders = false, string extraOptions = null, ILogger logger = null)
+        public static int CopyDir(string sourceDir, string targetDir, bool includeSubFolders = false, string extraOptions = null)
         {
             var options = string.Empty;
             if (includeSubFolders)
                 options = _includeSubfoldersOption;
             if (string.IsNullOrWhiteSpace(extraOptions) == false)
                 options += $" {extraOptions}";//space in front of options
-            return Run(sourceDir, targetDir, null, options, logger);
+            return Run(sourceDir, targetDir, null, options);
         }
 
         /// <summary>
@@ -69,12 +71,12 @@ namespace DotNet.Basics.IO
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static int MoveContent(string sourceDir, string targetDir, string filter = null, bool recurse = false, string extraOptions = null, ILogger logger = null)
+        public static int MoveContent(string sourceDir, string targetDir, string filter = null, bool recurse = false, string extraOptions = null)
         {
             string options = $"{_moveOption} {extraOptions}";
             if (recurse)
                 options = $"{_includeSubfoldersOption} {options}";
-            return Run(sourceDir, targetDir, filter, options, logger);
+            return Run(sourceDir, targetDir, filter, options);
         }
 
         private static void Init(ILogger logger = null)
@@ -91,7 +93,7 @@ namespace DotNet.Basics.IO
                 };
 
                 _fullPath = LookupRobocopy(lookforPaths);
-                logger?.LogDebug("Robocopy found at: " + _fullPath);
+                logger?.Debug("Robocopy found at: " + _fullPath);
             }
         }
 
