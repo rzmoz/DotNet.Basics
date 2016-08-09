@@ -10,7 +10,6 @@
     <projectUrl>https://github.com/rzmoz/DotNet.Basics</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Syntactical sugar for .NET.</description>
-    <releaseNotes>Replaced logging with NLog - breaking change</releaseNotes>
   </metadata>
   <files>
   </files>

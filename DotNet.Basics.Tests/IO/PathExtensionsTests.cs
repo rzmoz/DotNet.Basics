@@ -47,6 +47,40 @@ namespace DotNet.Basics.Tests.IO
         }
 
         [Test]
+        [TestCase("http://",true)]
+        [TestCase("http:/", false)]
+        [TestCase("http://folder", false)]//
+        public void IsProtocol_ProtocolIsDetected(string path, bool expected)
+        {
+            path.IsProtocol().Should().Be(expected);
+        }
+        [Test]
+        [TestCase("http://", true)]
+        [TestCase("http:/", false)]
+        [TestCase("http://folder", true)]//
+        public void HasProtocol_ProtocolIsDetected(string path, bool expected)
+        {
+            path.HasProtocol().Should().Be(expected);
+        }
+
+        [Test]
+        public void SplitSplitSegments_UriSUpport_UriIsSPlitProperly()
+        {
+            var segments = new[]
+            {
+                "http://localhost:80/",
+                "myfile.aspx"
+            };
+
+            var split = segments.SplitToSegments();
+
+            split.Length.Should().Be(3);
+            split[0].Should().Be("http://");
+            split[1].Should().Be("localhost:80");
+            split[2].Should().Be("myfile.aspx");
+        }
+
+        [Test]
         [TestCase(PathDelimiter.Slash, '/')]
         [TestCase(PathDelimiter.Backslash, '\\')]
         public void ToChar_DelimiterToChar_DelimiterIsConverted(PathDelimiter delimiter, char expectedChar)
@@ -89,6 +123,16 @@ namespace DotNet.Basics.Tests.IO
             refPath = refPath.TrimStart(pathDelimiter.ToChar());
             path.RawName.Should().Be(refPath);
         }
+
+
+        [Test]
+        [TestCase("http://localhost/", "myFolder/myFile.html")]//url
+        public void ToPath_Uris_PathIsGenerated(string pt1, string pt2)
+        {
+            var path = pt1.ToPath(pt2);
+            path.FullName.Should().Be("http://localhost/myFolder/myFile.html");
+        }
+
 
         [Test]
         [TestCase("mypath", false)]//file

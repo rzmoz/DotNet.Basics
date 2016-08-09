@@ -2,32 +2,37 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using DotNet.Basics.IO;
 
 namespace DotNet.Basics.Rest
 {
     public class RestRequest : IRestRequest
     {
-        private const string _urlFormat = "{0}://{1}/{2}";
-
-        public RestRequest(string hostUrl)
-            : this(hostUrl, HttpMethod.Get)
+        public RestRequest(string uri)
+            : this(uri,HttpMethod.Get)
+        {
+        }
+        public RestRequest(Uri uri)
+            : this(uri, HttpMethod.Get)
         {
         }
 
-        public RestRequest(string hostUrl, string pathAndQuery)
-            : this(ConcatenateHostUrlAndPathAndQuery(hostUrl, pathAndQuery))
+        public RestRequest(string baseUrl, string pathAndQuery)
+            : this(baseUrl.ToPath("/" + pathAndQuery).FullName)
         {
         }
 
-        public RestRequest(string protocol, string domain, string pathAndQuery, HttpMethod method)
-            : this(string.Format(_urlFormat, protocol, domain, pathAndQuery), method)
+        public RestRequest(string scheme, string authority, string pathAndQuery, HttpMethod method)
+            : this(new Uri($"{scheme}://{authority}/{pathAndQuery}"), method)
         {
-            if (protocol == null) throw new ArgumentNullException(nameof(protocol));
-            if (domain == null) throw new ArgumentNullException(nameof(domain));
-            if (pathAndQuery == null) throw new ArgumentNullException(nameof(pathAndQuery));
+
         }
 
         public RestRequest(string hostUrl, HttpMethod method)
+            : this(new HttpRequestMessage(method, hostUrl))
+        {
+        }
+        public RestRequest(Uri hostUrl, HttpMethod method)
             : this(new HttpRequestMessage(method, hostUrl))
         {
         }
