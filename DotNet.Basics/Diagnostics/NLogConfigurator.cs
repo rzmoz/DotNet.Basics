@@ -5,11 +5,15 @@ using NLog.Targets;
 
 namespace DotNet.Basics.Diagnostics
 {
-    public class LoggingConfigurationBuilder : IDisposable
+
+    /// <summary>
+    /// https://en.wikipedia.org/wiki/Builder_pattern
+    /// </summary>
+    public class NLogConfigurator : IDisposable
     {
         private readonly LoggingConfiguration _config;
-        
-        public LoggingConfigurationBuilder(LoggingConfiguration config = null)
+
+        public NLogConfigurator(LoggingConfiguration config = null)
         {
             _config = config ?? new LoggingConfiguration();
         }
@@ -38,7 +42,7 @@ namespace DotNet.Basics.Diagnostics
             var rule = new LoggingRule(loggerNamePattern, logMinimumLevel, logMaximumLevel, target);
             _config.LoggingRules.Add(rule);
         }
-        
+
         public void Build()
         {
             LogManager.Configuration = _config;

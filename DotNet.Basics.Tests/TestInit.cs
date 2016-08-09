@@ -10,7 +10,7 @@ namespace DotNet.Basics.Tests
         [OneTimeSetUp]
         public void RunBeforeAnyTests()
         {
-            using (var logConfig = new LoggingConfigurationBuilder())
+            using (var logConfig = new NLogConfigurator())
             {
 
                 logConfig.AddTarget(new ConsoleTarget("Console"));

@@ -64,7 +64,7 @@
     </Compile>
     <Compile Include="Compression\SevenZip.cs" />
     <Compile Include="Diagnostics\TargetExtensions.cs" />
-    <Compile Include="Diagnostics\LoggingConfigurationBuilder.cs" />
+    <Compile Include="Diagnostics\NLogConfigurator.cs" />
     <Compile Include="Diagnostics\ProfileFormatter.cs" />
     <Compile Include="Diagnostics\DurationFormattingUnit.cs" />
     <Compile Include="Diagnostics\ProfileStates.cs" />
