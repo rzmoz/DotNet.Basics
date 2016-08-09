@@ -100,6 +100,7 @@
     <Compile Include="Rest\RestRequest.cs" />
     <Compile Include="Rest\RestRequestException.cs" />
     <Compile Include="Rest\RestResponse.cs" />
+    <Compile Include="Rest\UriExtensions.cs" />
     <Compile Include="Sys\CommandPrompt.cs" />
     <Compile Include="Pipelines\EagerBindStep.cs" />
     <Compile Include="Pipelines\LazyBindStep.cs" />

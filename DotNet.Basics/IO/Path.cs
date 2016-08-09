@@ -9,7 +9,7 @@ namespace DotNet.Basics.IO
 
         protected Path(string[] pathSegments, bool isFolder, PathDelimiter delimiter)
         {
-            _segments = pathSegments.SplitSegments();
+            _segments = pathSegments.SplitToSegments();
             IsFolder = isFolder;
             Delimiter = delimiter;
         }
@@ -55,7 +55,7 @@ namespace DotNet.Basics.IO
             if (pathSegments == null)
                 return Segments;
 
-            var splitNewSegments = pathSegments.SplitSegments();
+            var splitNewSegments = pathSegments.SplitToSegments();
             if (splitNewSegments.Length == 0)
                 return Segments;
 
@@ -71,8 +71,13 @@ namespace DotNet.Basics.IO
         public string ToString(PathDelimiter delimiter)
         {
             var path = string.Empty;
-            foreach (var pathToken in Segments)
-                path += $"{pathToken}{delimiter.ToChar()}";
+            foreach (var segment in Segments)
+            {
+                if (segment.IsProtocol())
+                    path += segment;
+                else
+                    path += $"{segment}{delimiter.ToChar()}";
+            }
 
             if (IsFolder == false)
                 path = path.RemoveSuffix(delimiter.ToChar());

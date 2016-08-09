@@ -72,6 +72,9 @@ namespace DotNet.Basics.IO
                 if (e.InnerException is System.IO.PathTooLongException)
                     throw new System.IO.PathTooLongException($"The specified path, file name, or both are too long. The fully qualified file name must be less than {_maxPathLength} characters, and the directory name must be less than {_maxDirectoryLength} characters");
 
+                //we don't support uris so it's just returned as is
+                if (e.InnerException is ArgumentException && e.InnerException.Message.Equals("URI formats are not supported.", StringComparison.OrdinalIgnoreCase))
+                    return path;
                 throw e.InnerException;
             }
         }
@@ -96,7 +99,7 @@ namespace DotNet.Basics.IO
             try
             {
                 var result = method.Invoke(null, @params);
-                return Boolean.Parse(result.ToString());
+                return bool.Parse(result.ToString());
             }
             catch (TargetInvocationException e)
             {

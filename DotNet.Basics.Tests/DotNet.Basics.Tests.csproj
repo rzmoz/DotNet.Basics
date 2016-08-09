@@ -98,6 +98,7 @@
     <Compile Include="Rest\JsonSerializerTests.cs" />
     <Compile Include="Rest\RestRequestTests.cs" />
     <Compile Include="Rest\RestResponseTests.cs" />
+    <Compile Include="Rest\UriTtests.cs" />
     <Compile Include="Sys\CommandPromptTests.cs" />
     <Compile Include="Ioc\TestHelpers\IMyType.cs" />
     <Compile Include="Ioc\TestHelpers\MyType1.cs" />

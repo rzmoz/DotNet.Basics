@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace DotNet.Basics.IO
 {
     public static class PathExtensions
     {
+        private static readonly string _protocolPattern = @"^([a-zA-Z]+://)";
+        private static readonly Regex _protocolRegex = new Regex(_protocolPattern, RegexOptions.Compiled);
+
         public static PathDelimiter ToPathDelimiter(this char delimiter)
         {
             switch (delimiter)
@@ -39,19 +43,37 @@ namespace DotNet.Basics.IO
 
             var allSegments = new[] { path }.Concat(segments).ToArray();
 
-            PathDelimiter delimiter = PathDelimiter.Backslash;
-            foreach (var segment in allSegments)
+            var uriTry = string.Join(string.Empty, allSegments);
+            bool isUri = false;
+            try
             {
-                if (TryDetectDelimiter(segment, out delimiter))
-                    break;
+                new Uri(uriTry);//will fail if not uri
+                isUri = true;
+            }
+            catch (UriFormatException)
+            {
             }
 
-            var asFolder = Create(allSegments, true, delimiter);
-            if (SystemIoPath.Exists(asFolder.FullName, true))
-                return asFolder;
+            PathDelimiter delimiter = PathDelimiter.Backslash;
+            if (isUri)
+            {
+                delimiter = PathDelimiter.Slash;
+            }
+            else
+            {
+                foreach (var segment in allSegments)
+                {
+                    if (TryDetectDelimiter(segment, out delimiter))
+                        break;
+                }
 
-            if (SystemIoPath.Exists(asFolder.FullName, false))
-                return Create(allSegments, false, delimiter);
+                var asFolder = Create(allSegments, true, delimiter);
+                if (SystemIoPath.Exists(asFolder.FullName, true))
+                    return asFolder;
+
+                if (SystemIoPath.Exists(asFolder.FullName, false))
+                    return Create(allSegments, false, delimiter);
+            }
 
             var pathSegmentWithFolderToken = segments.Length > 0 ? segments.Last() : path;
             var isFolder = pathSegmentWithFolderToken.IsFolder();
@@ -67,7 +89,18 @@ namespace DotNet.Basics.IO
             return Create(new[] { path }, isFolder, delimiter).Add(segments);
         }
 
-        public static string[] SplitSegments(this string[] pathSegments)
+        public static bool HasProtocol(this string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return false;
+            return _protocolRegex.IsMatch(path);
+        }
+        public static bool IsProtocol(this string path)
+        {
+            return path?.EndsWith("://") ?? false;
+        }
+
+        public static string[] SplitToSegments(this string[] pathSegments)
         {
             if (pathSegments == null)
                 return new string[0];
@@ -78,9 +111,21 @@ namespace DotNet.Basics.IO
                 if (string.IsNullOrWhiteSpace(pathSegment))
                     continue;
 
-                var split = pathSegment.Split(new[] { PathDelimiterAsChar.Slash, PathDelimiterAsChar.Backslash },
+                var toBesplit = pathSegment;
+
+                //extract protocol if present
+                var protocolMatch = _protocolRegex.Match(toBesplit);
+                if (protocolMatch.Success)
+                {
+                    var capture = protocolMatch.Captures[0].Value;
+
+                    updatedSegments.Add(capture);
+                    toBesplit = toBesplit.Substring(capture.Length);//remove protocol
+                }
+
+                var splits = toBesplit.Split(new[] { PathDelimiterAsChar.Slash, PathDelimiterAsChar.Backslash },
                     StringSplitOptions.RemoveEmptyEntries);
-                updatedSegments.AddRange(split);
+                updatedSegments.AddRange(splits);
             }
 
             return updatedSegments.ToArray();
@@ -92,8 +137,6 @@ namespace DotNet.Basics.IO
                 return new DirPath(pathSegments, delimiter);
             return new FilePath(pathSegments, delimiter);
         }
-
-
 
         private static bool TryDetectDelimiter(string path, out PathDelimiter delimiter)
         {
