@@ -30,11 +30,11 @@ namespace DotNet.Basics.Rest
             : this(uri, HttpMethod.Get)
         {
         }
-        public RestRequest(Uri baseUri, Uri relativeUri)
+        public RestRequest(Uri baseUri, string relativeUri)
             : this(new Uri(baseUri, relativeUri), HttpMethod.Get)
         {
         }
-        public RestRequest(Uri baseUri, Uri relativeUri, HttpMethod method)
+        public RestRequest(Uri baseUri, string relativeUri, HttpMethod method)
             : this(new Uri(baseUri, relativeUri), method)
         {
         }
