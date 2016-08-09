@@ -21,9 +21,7 @@ namespace DotNet.Basics.Tests.Pipelines
             _container = new IocContainer();
             _container.Register<ClassThatIncrementArgsDependOn>();
         }
-
-
-
+        
         [Test]
         public async Task DisplayName_DisplayNameIsSet_DisplayNameIsUsed()
         {

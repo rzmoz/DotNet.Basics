@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Pipelines;
-using NLog;
 
 namespace DotNet.Basics.Tests.Pipelines
 {

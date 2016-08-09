@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using DotNet.Basics.Ioc;
 using DotNet.Basics.Pipelines;
 using DotNet.Basics.Sys;
 using FluentAssertions;
@@ -10,7 +9,7 @@ namespace DotNet.Basics.Tests.Pipelines
     [TestFixture]
     public class PipelineBlockTests
     {
-        
+
         [SetUp]
         public void SetUp()
         {

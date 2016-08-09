@@ -1,6 +1,8 @@
 ﻿using System.Linq;
+using DotNet.Basics.Diagnostics;
 using DotNet.Basics.IO;
 using FluentAssertions;
+using NLog.Targets;
 using NUnit.Framework;
 
 namespace DotNet.Basics.Tests.IO
