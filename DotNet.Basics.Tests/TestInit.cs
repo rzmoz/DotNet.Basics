@@ -1,4 +1,5 @@
 ﻿using DotNet.Basics.Diagnostics;
+using NLog;
 using NLog.Targets;
 using NUnit.Framework;
 
@@ -8,11 +9,11 @@ namespace DotNet.Basics.Tests
     public class TestInit
     {
         [OneTimeSetUp]
-        public void RunBeforeAnyTests()
+        public void OneTimeSetUp()
         {
+            LogManager.ThrowExceptions = true;
             using (var logConfig = new NLogConfigurator())
             {
-
                 logConfig.AddTarget(new ConsoleTarget("Console"));
                 logConfig.Build();
             }
