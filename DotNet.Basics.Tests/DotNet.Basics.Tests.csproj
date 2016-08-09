@@ -138,10 +138,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DotNet.Basics.Rest\DotNet.Basics.Rest.csproj">
-      <Project>{1ca4342d-efa1-4709-96bd-22f5e700d1ba}</Project>
-      <Name>DotNet.Basics.Rest</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DotNet.Basics.Tests.Console\DotNet.Basics.Tests.Console.csproj">
       <Project>{391cf41a-e1c9-4670-b1b5-c92fddc0fb3d}</Project>
       <Name>DotNet.Basics.Tests.Console</Name>
