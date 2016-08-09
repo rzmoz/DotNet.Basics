@@ -48,7 +48,10 @@ namespace DotNet.Basics.IO
             try
             {
                 new Uri(uriTry);//will fail if not uri
-                isUri = true;
+                isUri = path.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                        path.StartsWith("https://", StringComparison.OrdinalIgnoreCase)||
+                        path.StartsWith("ftp://", StringComparison.OrdinalIgnoreCase)||
+                        path.StartsWith("sftp://", StringComparison.OrdinalIgnoreCase);
             }
             catch (UriFormatException)
             {
