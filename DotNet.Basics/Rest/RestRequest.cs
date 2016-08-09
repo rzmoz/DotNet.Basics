@@ -9,23 +9,34 @@ namespace DotNet.Basics.Rest
     public class RestRequest : IRestRequest
     {
         public RestRequest(string uri)
-            : this(uri,HttpMethod.Get)
-        {
-        }
-        public RestRequest(Uri uri)
             : this(uri, HttpMethod.Get)
         {
         }
-
         public RestRequest(string baseUrl, string pathAndQuery)
-            : this(baseUrl.ToPath("/" + pathAndQuery).FullName)
+            : this(baseUrl.ToPath(pathAndQuery).FullName)
+        {
+        }
+        public RestRequest(string baseUrl, string pathAndQuery, HttpMethod method)
+            : this(baseUrl.ToPath(pathAndQuery).FullName, method)
         {
         }
 
         public RestRequest(string scheme, string authority, string pathAndQuery, HttpMethod method)
             : this(new Uri($"{scheme}://{authority}/{pathAndQuery}"), method)
         {
+        }
 
+        public RestRequest(Uri uri)
+            : this(uri, HttpMethod.Get)
+        {
+        }
+        public RestRequest(Uri baseUri, Uri relativeUri)
+            : this(new Uri(baseUri, relativeUri), HttpMethod.Get)
+        {
+        }
+        public RestRequest(Uri baseUri, Uri relativeUri, HttpMethod method)
+            : this(new Uri(baseUri, relativeUri), method)
+        {
         }
 
         public RestRequest(string hostUrl, HttpMethod method)
