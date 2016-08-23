@@ -42,8 +42,7 @@ namespace DotNet.Basics.IO
                 return null;
 
             var allSegments = new[] { path }.Concat(segments).ToArray();
-
-
+            
             var pathSegmentWithFolderToken = segments.Length > 0 ? segments.Last() : path;
             var detectedIsFolder = pathSegmentWithFolderToken.IsFolder();
 
@@ -52,8 +51,7 @@ namespace DotNet.Basics.IO
 
             if (asPath.IsUri)
                 return asPath;
-
-
+            
             foreach (var segment in allSegments)
             {
                 PathDelimiter delimiter;

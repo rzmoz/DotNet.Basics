@@ -48,8 +48,19 @@ namespace DotNet.Basics.Tests.IO
         {
             var path = uri.ToPath();
             path.FullName.Should().Be(uri);
-
         }
+
+        [TestCase("http://localhost/", "myDir/")] //http dir
+        [TestCase("http://localhost/", "myFile")] //http file
+        [TestCase("https://localhost/", "myDir/")] //https dir
+        [TestCase("https://localhost/", "myFile")] //https file
+        public void FullName_Uri_ParsedPathIsUri(string uri,string segments)
+        {
+            var path = uri.ToPath(segments);
+            Action action = ()=> new Uri(path.FullName);
+            action.ShouldNotThrow<UriFormatException>();
+        }
+
 
 
         [Test]
