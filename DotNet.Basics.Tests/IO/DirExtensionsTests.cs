@@ -13,6 +13,16 @@ namespace DotNet.Basics.Tests.IO
         private const string _testDoubleDir = @"\testa\testb";
         private const string _testSingleDir = @"\testk\";
 
+        [TestCase("http://localhost/", "myDir/")] //http dir
+        [TestCase("https://localhost/", "myDir/")] //https dir
+        public void FullName_Uri_ParsedPathIsUri(string uri, string segment)
+        {
+            var path = uri.ToDir(segment);
+            Action action = () => new Uri(path.FullName);
+            action.ShouldNotThrow<UriFormatException>();
+            path.FullName.Should().Be(uri + segment);
+        }
+
         [Test]
         public void DeleteIfExists_DirExists_DirIsDeleted()
         {
@@ -62,7 +72,7 @@ namespace DotNet.Basics.Tests.IO
             deleted.Should().BeTrue();
             rootTestdir.Exists().Should().BeFalse();
         }
-        
+
         [Test]
         public void Parent_NameOnlySourceDir_PartenIsResolved()
         {

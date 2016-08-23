@@ -61,8 +61,6 @@ namespace DotNet.Basics.Tests.IO
             action.ShouldNotThrow<UriFormatException>();
         }
 
-
-
         [Test]
         public void Add_Immutable_AddShouldBeImmutable()
         {
