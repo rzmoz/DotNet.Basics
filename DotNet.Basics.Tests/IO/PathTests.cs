@@ -30,6 +30,29 @@ namespace DotNet.Basics.Tests.IO
         }
 
         [Test]
+        public void FullName_SystemIoCompliance_RelativePathsAreResolvedToSame()
+        {
+            var relativePath = "myfile.txt";
+            var systemIo = new System.IO.FileInfo(relativePath);
+            var path = relativePath.ToPath();
+
+            System.IO.Path.GetFullPath(path.FullName).Should().Be(systemIo.FullName);
+        }
+        [Test]
+
+        [TestCase("http://localhost/myDir/")] //http dir
+        [TestCase("http://localhost/myFile")] //http file
+        [TestCase("https://localhost/myDir/")] //https dir
+        [TestCase("https://localhost/myFile/")] //https file
+        public void FullName_Uri_UrisDontGetFileSystemAppended(string uri)
+        {
+            var path = uri.ToPath();
+            path.FullName.Should().Be(uri);
+
+        }
+
+
+        [Test]
         public void Add_Immutable_AddShouldBeImmutable()
         {
             const string path = "root";
@@ -37,19 +60,7 @@ namespace DotNet.Basics.Tests.IO
             root.Add("sazas");//no change to original path
             root.RawName.Should().Be(path);
         }
-
-
-        [Test]
-        public void FullName_SysstemIoCompliance_RelativePathsAreResolvedToSame()
-        {
-            var relativePath = "myfile.txt";
-            var systemIo = new System.IO.FileInfo(relativePath);
-            var path = relativePath.ToPath();
-
-            System.IO.Path.GetFullPath(path.FullName).Should().Be(systemIo.FullName);
-
-        }
-
+        
         [Test]
         [TestCase(@"myFolder\", null)]
         [TestCase(@"myParent\myFolder\", @"myParent\")]
@@ -135,7 +146,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("myFolder\\myFolder", "myFolder", true)]//folder without trailing delimiter
         [TestCase("myFolder\\myFile", "myFile", false)]//file without extension
         [TestCase("myFolder\\myFile.txt", "myFile.txt", false)]//file with extension
-        public void FullName_Parsing_NameIsParsed(string fullPath, string expectedName, bool isFolder)
+        public void RawName_Parsing_NameIsParsed(string fullPath, string expectedName, bool isFolder)
         {
             var path = fullPath.ToPath(isFolder);
 

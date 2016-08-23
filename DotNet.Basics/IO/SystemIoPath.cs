@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-
 namespace DotNet.Basics.IO
 {
     public static class SystemIoPath

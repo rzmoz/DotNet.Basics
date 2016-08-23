@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
@@ -6,21 +7,42 @@ namespace DotNet.Basics.IO
     public class Path
     {
         private readonly string[] _segments;
+        private readonly Func<string> _resolveFullName;
 
         protected Path(string[] pathSegments, bool isFolder, PathDelimiter delimiter)
         {
             _segments = pathSegments.SplitToSegments();
             IsFolder = isFolder;
             Delimiter = delimiter;
+            IsUri = false;
+
+            try
+            {
+                new Uri(RawName.Replace(PathDelimiterAsChar.Backslash, PathDelimiterAsChar.Slash));//will fail if not uri
+                IsUri = RawName.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                        RawName.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
+                        RawName.StartsWith("ftp://", StringComparison.OrdinalIgnoreCase) ||
+                        RawName.StartsWith("sftp://", StringComparison.OrdinalIgnoreCase);
+            }
+            catch (UriFormatException)
+            {
+                IsUri = false;
+            }
+
+            if (IsUri)
+                _resolveFullName = () => RawName;
+            else
+                _resolveFullName = () => SystemIoPath.GetFullPath(RawName);
         }
 
-        public string[] Segments => _segments;
         public bool IsFolder { get; }
         public PathDelimiter Delimiter { get; set; }
 
+        public string[] Segments => _segments;
+        public bool IsUri { get; }
         public string Name => Segments.Last();
         public string RawName => ToString(Delimiter);
-        public string FullName => SystemIoPath.GetFullPath(RawName);
+        public string FullName => _resolveFullName();
         public string NameWithoutExtension => System.IO.Path.GetFileNameWithoutExtension(Name);
         public string Extension => System.IO.Path.GetExtension(Name);
         public DirPath Directory => IsFolder ? this.ToDir() : Parent;

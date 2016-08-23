@@ -43,53 +43,45 @@ namespace DotNet.Basics.IO
 
             var allSegments = new[] { path }.Concat(segments).ToArray();
 
-            var uriTry = string.Join(string.Empty, allSegments);
-            bool isUri = false;
-            try
-            {
-                new Uri(uriTry);//will fail if not uri
-                isUri = path.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
-                        path.StartsWith("https://", StringComparison.OrdinalIgnoreCase)||
-                        path.StartsWith("ftp://", StringComparison.OrdinalIgnoreCase)||
-                        path.StartsWith("sftp://", StringComparison.OrdinalIgnoreCase);
-            }
-            catch (UriFormatException)
-            {
-            }
-
-            PathDelimiter delimiter = PathDelimiter.Backslash;
-            if (isUri)
-            {
-                delimiter = PathDelimiter.Slash;
-            }
-            else
-            {
-                foreach (var segment in allSegments)
-                {
-                    if (TryDetectDelimiter(segment, out delimiter))
-                        break;
-                }
-
-                var asFolder = Create(allSegments, true, delimiter);
-                if (SystemIoPath.Exists(asFolder.FullName, true))
-                    return asFolder;
-
-                if (SystemIoPath.Exists(asFolder.FullName, false))
-                    return Create(allSegments, false, delimiter);
-            }
 
             var pathSegmentWithFolderToken = segments.Length > 0 ? segments.Last() : path;
-            var isFolder = pathSegmentWithFolderToken.IsFolder();
-            return Create(allSegments, isFolder, delimiter);
+            var detectedIsFolder = pathSegmentWithFolderToken.IsFolder();
+
+            var asPath = Create(allSegments, detectedIsFolder);
+            asPath.Delimiter = asPath.IsUri ? PathDelimiter.Slash : PathDelimiter.Backslash;
+
+            if (asPath.IsUri)
+                return asPath;
+
+
+            foreach (var segment in allSegments)
+            {
+                PathDelimiter delimiter;
+                if (TryDetectDelimiter(segment, out delimiter))
+                {
+                    asPath.Delimiter = delimiter;
+                    break;
+                }
+            }
+
+            var asFolder = Create(allSegments, true);
+            if (SystemIoPath.Exists(asFolder.FullName, true))
+                return asFolder;
+
+            if (SystemIoPath.Exists(asFolder.FullName, false))
+                return Create(allSegments, false);
+            return asPath;
         }
         public static Path ToPath(this string path, bool isFolder, params string[] segments)
         {
             if (string.IsNullOrEmpty(path))
                 return null;
-
+            
+            var asPath = Create(new[] { path }, isFolder).Add(segments);
             PathDelimiter delimiter;
-            TryDetectDelimiter(path, out delimiter);
-            return Create(new[] { path }, isFolder, delimiter).Add(segments);
+            if (TryDetectDelimiter(path, out delimiter))
+                asPath.Delimiter = delimiter;
+            return asPath;
         }
 
         public static bool HasProtocol(this string path)
@@ -134,11 +126,11 @@ namespace DotNet.Basics.IO
             return updatedSegments.ToArray();
         }
 
-        private static Path Create(string[] pathSegments, bool isFolder, PathDelimiter delimiter)
+        private static Path Create(string[] pathSegments, bool isFolder)
         {
             if (isFolder)
-                return new DirPath(pathSegments, delimiter);
-            return new FilePath(pathSegments, delimiter);
+                return new DirPath(pathSegments);
+            return new FilePath(pathSegments);
         }
 
         private static bool TryDetectDelimiter(string path, out PathDelimiter delimiter)
