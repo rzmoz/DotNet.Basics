@@ -16,7 +16,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("https://localhost/", "myFile")] //https file
         public void FullName_Uri_ParsedPathIsUri(string uri, string segment)
         {
-            var path = uri.ToDir(segment);
+            var path = uri.ToFile(segment);
             Action action = () => new Uri(path.FullName);
             action.ShouldNotThrow<UriFormatException>();
             path.FullName.Should().Be(uri + segment);

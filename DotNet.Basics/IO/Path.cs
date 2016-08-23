@@ -18,7 +18,8 @@ namespace DotNet.Basics.IO
 
             try
             {
-                new Uri(RawName.Replace(PathDelimiterAsChar.Backslash, PathDelimiterAsChar.Slash));//will fail if not uri
+                var tryAsUri = RawName.Replace(PathDelimiterAsChar.Backslash, PathDelimiterAsChar.Slash);
+                new Uri(tryAsUri);//will fail if not uri
                 IsUri = RawName.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
                         RawName.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
                         RawName.StartsWith("ftp://", StringComparison.OrdinalIgnoreCase) ||
@@ -30,7 +31,10 @@ namespace DotNet.Basics.IO
             }
 
             if (IsUri)
+            {
+                Delimiter=PathDelimiter.Slash;
                 _resolveFullName = () => RawName;
+            }
             else
                 _resolveFullName = () => SystemIoPath.GetFullPath(RawName);
         }
