@@ -90,10 +90,12 @@
     <Compile Include="Pipelines\IPipelineLogger.cs" />
     <Compile Include="Pipelines\PipelineLogger.cs" />
     <Compile Include="Rest\HttpClientTransport.cs" />
+    <Compile Include="Rest\HttpContentExtensions.cs" />
     <Compile Include="Rest\IHttpTransport.cs" />
     <Compile Include="Rest\IRestClient.cs" />
     <Compile Include="Rest\IRestRequest.cs" />
     <Compile Include="Rest\IRestResponse.cs" />
+    <Compile Include="Rest\JsonContent.cs" />
     <Compile Include="Rest\JsonRestSerializer.cs" />
     <Compile Include="Rest\ResponseFormatting.cs" />
     <Compile Include="Rest\RestClient.cs" />
