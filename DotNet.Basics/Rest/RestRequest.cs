@@ -72,7 +72,11 @@ namespace DotNet.Basics.Rest
 
         public HttpRequestMessage HttpRequestMessage { get; }
 
-        public Uri Uri => HttpRequestMessage.RequestUri;
+        public Uri Uri
+        {
+            get { return HttpRequestMessage.RequestUri; }
+            set { HttpRequestMessage.RequestUri = value; }
+        }
 
         public HttpMethod Method
         {

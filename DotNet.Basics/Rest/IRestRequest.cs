@@ -6,10 +6,10 @@ namespace DotNet.Basics.Rest
 {
     public interface IRestRequest
     {
-        Uri Uri { get; }
-        HttpMethod Method { get; set; }
+        Uri Uri { get; set; }
         HttpRequestHeaders Headers { get; }
-        HttpContent Content { get; }
+        HttpMethod Method { get; set; }
+        HttpContent Content { get; set; }
         TimeSpan TimeOut { get; }
         HttpRequestMessage HttpRequestMessage { get; }
     }
