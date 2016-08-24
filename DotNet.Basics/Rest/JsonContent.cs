@@ -7,21 +7,30 @@ namespace DotNet.Basics.Rest
     {
         private static readonly JsonRestSerializer _serializer = new JsonRestSerializer();
 
-        public const string ContentType = "application/json";
+        private const string _cdefaultContentType = "application/json";
 
-        public JsonContent(string json) : base(json, Encoding.UTF8, ContentType)
-        {
-        }
-        public JsonContent(string json, Encoding encoding) : base(json, encoding, ContentType)
-        { }
-
-        public JsonContent(object content) : base(SerializeContent(content), Encoding.UTF8, ContentType)
+        public JsonContent(string json) : this(json, Encoding.UTF8)
         {
         }
 
-        public JsonContent(object content, Encoding encoding) : base(SerializeContent(content), encoding, ContentType)
+        public JsonContent(string json, Encoding encoding) : this(json, encoding, _cdefaultContentType)
         {
+        }
 
+        public JsonContent(string content, Encoding encoding, string mediaType) : base(content, encoding, mediaType)
+        {
+        }
+
+        public JsonContent(object content) : this(SerializeContent(content))
+        {
+        }
+
+        public JsonContent(object content, Encoding encoding) : this(SerializeContent(content), encoding)
+        {
+        }
+
+        public JsonContent(object content, Encoding encoding, string mediaType) : this(SerializeContent(content), encoding, mediaType)
+        {
         }
 
         private static string SerializeContent(object content)

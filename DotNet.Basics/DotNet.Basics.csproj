@@ -90,7 +90,6 @@
     <Compile Include="Pipelines\IPipelineLogger.cs" />
     <Compile Include="Pipelines\PipelineLogger.cs" />
     <Compile Include="Rest\HttpClientTransport.cs" />
-    <Compile Include="Rest\HttpContentExtensions.cs" />
     <Compile Include="Rest\IHttpTransport.cs" />
     <Compile Include="Rest\IRestClient.cs" />
     <Compile Include="Rest\IRestRequest.cs" />
