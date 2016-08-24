@@ -15,10 +15,12 @@ namespace DotNet.Basics.Rest
             Uri = requestUri;
             HttpResponseMessage = httpResponseMessage;
             StatusCode = 0;
+            ReasonPhrase = string.Empty;
             if (HttpResponseMessage == null)
                 return;
 
             StatusCode = HttpResponseMessage.StatusCode;
+            ReasonPhrase = HttpResponseMessage.ReasonPhrase;
             ResponseContent = HttpResponseMessage.Content?.ReadAsStringAsync().Result;
             var serializer = new JsonRestSerializer();
 
@@ -36,6 +38,7 @@ namespace DotNet.Basics.Rest
 
         public Uri Uri { get; }
         public HttpStatusCode StatusCode { get; }
+        public string ReasonPhrase { get; }
         public T Content { get; }
         public string RawContent { get; }
 

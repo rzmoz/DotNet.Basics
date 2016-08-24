@@ -12,6 +12,7 @@ namespace DotNet.Basics.Rest
     public interface IRestResponse
     {
         HttpStatusCode StatusCode { get; }
+        string ReasonPhrase { get; }
         string RawContent { get; }
         Uri Uri { get; }
         HttpResponseMessage HttpResponseMessage { get; }
