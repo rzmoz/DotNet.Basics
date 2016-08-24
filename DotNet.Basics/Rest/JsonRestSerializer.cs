@@ -25,7 +25,14 @@ namespace DotNet.Basics.Rest
 
         public string Serialize(object @object)
         {
-            if (@object == null) throw new ArgumentNullException(nameof(@object));
+            if (@object == null)
+                return "{}";
+
+            var asString = @object as string;
+            if(asString!=null)
+                if(string.IsNullOrWhiteSpace(asString))
+                    return "{}";
+            
             return _serializer.Serialize(@object);
         }
     }
