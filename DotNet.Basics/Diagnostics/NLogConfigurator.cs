@@ -2,6 +2,7 @@
 using NLog;
 using NLog.Config;
 using NLog.Targets;
+using NLog.Time;
 
 namespace DotNet.Basics.Diagnostics
 {
@@ -45,6 +46,12 @@ namespace DotNet.Basics.Diagnostics
 
         public void Build()
         {
+            Build(new FastUtcTimeSource());
+        }
+
+        public void Build(TimeSource timeSource)
+        {
+            TimeSource.Current = timeSource;
             LogManager.Configuration = _config;
         }
 
