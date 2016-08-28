@@ -6,6 +6,7 @@ using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Tasks
 {
+
     public class AtMostOnceTaskRunner
     {
         private readonly ICacheManager<string> _runningTasks;
@@ -21,32 +22,41 @@ namespace DotNet.Basics.Tasks
             _runningTasks = cacheManager;
         }
 
-        public async Task<bool> RunAsync(AtMostOnceTask task)
+        public string GetTaskValue(string id)
         {
-            return await RunAsync(task, 5.Seconds()).ConfigureAwait(false);
+            return _runningTasks.Get(id);
         }
-        public async Task<bool> RunAsync(AtMostOnceTask task, TimeSpan expirationTimeout)
-        {
-            if (task == null)
-                return false;
 
-            if (string.IsNullOrWhiteSpace(task.Id))
-                throw new ArgumentException($"Id not set in task. Was: {task.Id}");
+        public async Task<AtMostOnceTaskRunResult> RunAsync(string taskId, Func<Task> task)
+        {
+            return await RunAsync(taskId, task, string.Empty).ConfigureAwait(false);
+        }
+        public async Task<AtMostOnceTaskRunResult> RunAsync(string taskId, Func<Task> task, string cacheValue)
+        {
+            return await RunAsync(taskId, task, cacheValue, 5.Seconds()).ConfigureAwait(false);
+        }
+        public async Task<AtMostOnceTaskRunResult> RunAsync(string taskId, Func<Task> task, string cacheValue, TimeSpan expirationTimeout)
+        {
+            if (string.IsNullOrWhiteSpace(taskId))
+                throw new ArgumentException($"Id not set in task. Was: {taskId}");
+
+            if (task == null)
+                throw new ArgumentNullException(nameof(task));
 
             //if task is already running
-            if (_runningTasks.Get(task.Id) != null)
-                return false;
+            if (_runningTasks.Get(taskId) != null)
+                return new AtMostOnceTaskRunResult(taskId, false, "task is already running");
 
             //lock task for running
-            var item = new CacheItem<string>(task.Id, task.Id, ExpirationMode.Absolute, expirationTimeout);
+            var item = new CacheItem<string>(taskId, cacheValue ?? string.Empty, ExpirationMode.Absolute, expirationTimeout);
             var added = _runningTasks.Add(item);
 
             if (added == false)
-                return false;
+                return new AtMostOnceTaskRunResult(taskId, false, "failed to add task to scheduler");
 
             try
             {
-                var runningTask = task.Action.Invoke();
+                var runningTask = task.Invoke();
                 var refreshLockTokenSource = new CancellationTokenSource();
                 var refreshLockTask = Task.Factory.StartNew(async () =>
                 {
@@ -65,7 +75,7 @@ namespace DotNet.Basics.Tasks
             {
                 _runningTasks.Remove(item.Key);//release lock when done    
             }
-            return true;
+            return new AtMostOnceTaskRunResult(taskId, true, "task ran");
         }
     }
 }

@@ -129,8 +129,8 @@
     <Compile Include="Sys\PowerShellConsole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Collections\StringKeyDictionary.cs" />
-    <Compile Include="Tasks\AtMostOnceTask.cs" />
     <Compile Include="Tasks\AtMostOnceTaskRunner.cs" />
+    <Compile Include="Tasks\AtMostOnceTaskRunResult.cs" />
     <Compile Include="Tasks\CountLoopBreakPredicate.cs" />
     <Compile Include="Sys\EnumClass.cs" />
     <Compile Include="Sys\EnumExtensions.cs" />
