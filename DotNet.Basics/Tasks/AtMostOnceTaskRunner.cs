@@ -1,57 +1,41 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
-using CacheManager.Core;
-using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Tasks
 {
     public class AtMostOnceTaskRunner
     {
-        private readonly ICacheManager<string> _runningTasks;
+        private readonly ConcurrentDictionary<string, BackgroundTask> _scheduler;
 
-        //defaults to in mem cache manager for in-proc support. Use distributed cache for out-of-proc support
         public AtMostOnceTaskRunner()
-            : this(CacheFactory.Build<string>(p => p.WithSystemRuntimeCacheHandle()))
         {
+            _scheduler = new ConcurrentDictionary<string, BackgroundTask>();
         }
 
-        public AtMostOnceTaskRunner(ICacheManager<string> cacheManager)
+        public string GetProperty(string taskId, string key)
         {
-            _runningTasks = cacheManager;
-        }
-
-        public string GetTaskValue(string id)
-        {
-            return _runningTasks.Get(id);
+            BackgroundTask outTask;
+            string outProperty;
+            if (_scheduler.TryGetValue(taskId, out outTask))
+                if (outTask.Properties.TryGetValue(key, out outProperty))
+                    return outProperty;
+            return null;
         }
 
         public bool IsRunning(string taskId)
         {
-            return _runningTasks.Get(taskId) != null;
+            BackgroundTask outTask;
+            return _scheduler.TryGetValue(taskId, out outTask);
         }
 
-        public async Task<AtMostOnceTaskRunResult> RunAsync(string taskId, Func<CancellationToken, Task> task)
+        public AtMostOnceTaskRunResult StartTask(string taskId, Func<CancellationToken, Task> task)
         {
-            return await RunAsync(taskId, task, string.Empty, CancellationToken.None).ConfigureAwait(false);
+            return StartTask(taskId, task, CancellationToken.None);
         }
-        public async Task<AtMostOnceTaskRunResult> RunAsync(string taskId, Func<CancellationToken, Task> task, TimeSpan taskTimeout)
-        {
-            return await RunAsync(taskId, task, string.Empty, CancellationToken.None, taskTimeout).ConfigureAwait(false);
-        }
-        public async Task<AtMostOnceTaskRunResult> RunAsync(string taskId, Func<CancellationToken, Task> task, CancellationToken ct)
-        {
-            return await RunAsync(taskId, task, string.Empty, ct).ConfigureAwait(false);
-        }
-        public async Task<AtMostOnceTaskRunResult> RunAsync(string taskId, Func<CancellationToken, Task> task, CancellationToken ct, TimeSpan taskTimeout)
-        {
-            return await RunAsync(taskId, task, string.Empty, ct, taskTimeout).ConfigureAwait(false);
-        }
-        public async Task<AtMostOnceTaskRunResult> RunAsync(string taskId, Func<CancellationToken, Task> task, string cacheValue, CancellationToken ct)
-        {
-            return await RunAsync(taskId, task, cacheValue, ct, 5.Seconds()).ConfigureAwait(false);
-        }
-        public async Task<AtMostOnceTaskRunResult> RunAsync(string taskId, Func<CancellationToken, Task> task, string cacheValue, CancellationToken ct, TimeSpan taskTimeout)
+
+        public AtMostOnceTaskRunResult StartTask(string taskId, Func<CancellationToken, Task> task, CancellationToken ct)
         {
             if (string.IsNullOrWhiteSpace(taskId))
                 throw new ArgumentException($"Id not set in task. Was: {taskId}");
@@ -60,39 +44,19 @@ namespace DotNet.Basics.Tasks
                 throw new ArgumentNullException(nameof(task));
 
             //if task is already running
-            if (_runningTasks.Get(taskId) != null)
+            if (IsRunning(taskId))
                 return new AtMostOnceTaskRunResult(taskId, false, "task is already running");
 
             //lock task for running
-            var item = new CacheItem<string>(taskId, cacheValue ?? string.Empty, ExpirationMode.Absolute, taskTimeout);
-            var added = _runningTasks.Add(item);
-
+            var bgTask = new BackgroundTask(taskId, task, _scheduler);
+            var added = _scheduler.TryAdd(taskId, bgTask);
             if (added == false)
-                return new AtMostOnceTaskRunResult(taskId, false, "failed to add task to scheduler");
+                return new AtMostOnceTaskRunResult(taskId, false, "failed to add task");
 
-            try
-            {
-                var runningTask = task.Invoke(ct);
-                var refreshLockTokenSource = new CancellationTokenSource();
-                var refreshLockTask = Task.Factory.StartNew(async () =>
-                {
-                    while (true)
-                    {
-                        var refreshInterval = (int)(taskTimeout.Ticks / (2.0 / 3.0));
-                        // ReSharper disable once MethodSupportsCancellation
-                        await Task.Delay(TimeSpan.FromTicks(refreshInterval)).ConfigureAwait(false);
-                        _runningTasks.Update(taskId, id => id);
-                    }
-                }, ct);
+            //only start task if sucessfully added to scheduler
+            bgTask.StartAsync.Invoke(ct);
 
-                await Task.WhenAll(runningTask).ConfigureAwait(false);//wait til main task is completed
-                refreshLockTokenSource.Cancel();
-            }
-            finally
-            {
-                _runningTasks.Remove(item.Key);//release lock when done    
-            }
-            return new AtMostOnceTaskRunResult(taskId, true, "task ran");
+            return new AtMostOnceTaskRunResult(taskId, IsRunning(taskId), "task ran");
         }
     }
 }

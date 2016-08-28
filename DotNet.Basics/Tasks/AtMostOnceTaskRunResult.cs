@@ -2,14 +2,14 @@
 {
     public class AtMostOnceTaskRunResult
     {
-        public AtMostOnceTaskRunResult(string id, bool started, string reason = null)
+        public AtMostOnceTaskRunResult(string taskId, bool started, string reason = null)
         {
-            Id = id;
+            TaskId = taskId;
             Started = started;
             Reason = reason ?? string.Empty;
         }
 
-        public string Id { get; }
+        public string TaskId { get; }
         public bool Started { get; }
         public string Reason { get; }
     }

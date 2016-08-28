@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,27 +11,75 @@ namespace DotNet.Basics.Tests.Tasks
     [TestFixture]
     public class AtMostOnceTaskRunnerTests
     {
-        public async Task RunAsync_IsRunning_TaskProgressIsDetected()
+        private AtMostOnceTaskRunner _runner;
+
+        [SetUp]
+        public void Setup()
         {
-            var ctSource = new CancellationTokenSource();
-            string id = "RunAsync_IsRunning_TaskProgressIsDetected";
-            var taskTimeOut = 100.Milliseconds();
-
-            var runner = new AtMostOnceTaskRunner();
-            var runResult = await runner.RunAsync(id, async (ct) =>
-            {
-                while (true)
-                    // ReSharper disable once MethodSupportsCancellation
-                    await Task.Delay(taskTimeOut).ConfigureAwait(false);
-            }, ctSource.Token, taskTimeOut).ConfigureAwait(false);
-
-            runResult.Started.Should().BeTrue("task started");
-            await Task.Delay(taskTimeOut + taskTimeOut + taskTimeOut).ConfigureAwait(false);//wait a couple of timeouts to ensure lock is renewing
-            runner.IsRunning(id).Should().BeTrue("task is running");
-            await Task.Delay(taskTimeOut.Add(50.Milliseconds())).ConfigureAwait(false);//wait till we're sure the lock has been released
-            runner.IsRunning(id).Should().BeFalse("task should been stopped");
+            _runner = new AtMostOnceTaskRunner();
         }
 
+        private async Task WaitTillFinished(AtMostOnceTaskRunner runner, string taskId)
+        {
+            while (runner.IsRunning(taskId))
+            {
+                System.Console.WriteLine($"task is running:{taskId}");
+                await Task.Delay(100.Milliseconds()).ConfigureAwait(false);
+            }
+        }
+
+        [Test]
+        public async Task StartTask_DetectTaskIsAlreadyunning_TaskIsRunOnce()
+        {
+            string taskId = "StartTask_TaskRun_TaskIsRunOnce";
+
+            int hitCount = 0;
+
+            Func<CancellationToken, Task> incrementTask = async (ct) =>
+            {
+                hitCount++;
+                await Task.Delay(1.Seconds(), ct).ConfigureAwait(false);
+            };
+
+            //try start task 10 times
+            foreach (var i in Enumerable.Range(1, 10))
+                _runner.StartTask(taskId, incrementTask);
+
+            await WaitTillFinished(_runner, taskId).ConfigureAwait(false);
+
+            hitCount.Should().Be(1);
+        }
+
+
+        [Test]
+        public async Task RunAsync_Cancellation_LongRunningTasksCanBeCancelled()
+        {
+            var taskDelay = 5.Seconds();
+            bool taskEndedNaturally = false;
+            Func<CancellationToken, Task> neverEndingTask = async (ct) =>
+            {
+                await Task.Delay(taskDelay, ct).ConfigureAwait(false);
+                taskEndedNaturally = true;
+            };
+
+            var ctSource = new CancellationTokenSource();
+            string taskId = "RunAsync_IsRunning_TaskProgressIsDetected";
+
+            var runner = new AtMostOnceTaskRunner();
+
+            var runResult = runner.StartTask(taskId, neverEndingTask, ctSource.Token);
+            runResult.Started.Should().BeTrue("task started");
+
+            runner.IsRunning(taskId).Should().BeTrue($"task is running");
+
+            //cancel task
+            ctSource.Cancel();
+
+            await WaitTillFinished(_runner, taskId).ConfigureAwait(false);
+            taskEndedNaturally.Should().BeFalse("task shouldve been cancelled");
+            runner.IsRunning(taskId).Should().BeFalse("task should have been stopped");
+        }
+        
 
         [Test]
         [TestCase(null)]
@@ -45,7 +92,7 @@ namespace DotNet.Basics.Tests.Tasks
             try
             {
                 var runner = new AtMostOnceTaskRunner();
-                await runner.RunAsync(taskId, async (ct) => { });
+                runner.StartTask(taskId, async (ct) => { });
             }
             catch (ArgumentNullException)
             {
@@ -57,58 +104,11 @@ namespace DotNet.Basics.Tests.Tasks
             }
             errorCaught.Should().BeTrue("empty task id should fail");
         }
-
-        [Test]
-        public async Task RunAsync_DetectRunningTask_TaskIsOnlyRunOnce()
-        {
-            var counter = 0;
-            Func<CancellationToken, Task> task = async (ct) =>
-            {
-                counter++;
-                await Task.Delay(500.Milliseconds()).ConfigureAwait(false);
-            };
-
-            var runner = new AtMostOnceTaskRunner();
-
-            var tasks = new List<Task>();
-
-            //run task many times
-            foreach (var i in Enumerable.Range(1, 20))
-                tasks.Add(runner.RunAsync("myId", task));
-
-            await Task.WhenAll(tasks.ToArray()).ConfigureAwait(false);
-            counter.Should().Be(1);
-        }
-
-        [Test]
-        public async Task RunAsync_TaskLockRelease_LockIsReleasedOnceDone()
-        {
-            const int runCount = 5;
-
-            var counter = 0;
-            Func<CancellationToken, Task> task = async (ct) =>
-            {
-                counter++;
-                await Task.Delay(100.Milliseconds()).ConfigureAwait(false);
-            };
-
-            var runner = new AtMostOnceTaskRunner();
-
-            //run task many times
-            foreach (var i in Enumerable.Range(1, runCount)) //outer sequence awaits til actual running tasks i done
-            {
-                var tasks = new List<Task>();
-                foreach (var j in Enumerable.Range(1, 10)) //add filler tasks to show they're still discarded
-                    tasks.Add(runner.RunAsync("myId", task));
-                await Task.WhenAll(tasks.ToArray()).ConfigureAwait(false);
-            }
-
-            counter.Should().Be(runCount);
-        }
-
+        
         [Test]
         public async Task RunAsync_Exception__LockIsReleasedOnTaskCrash()
         {
+            string taskId = "RunAsync_Exception__LockIsReleasedOnTaskCrash";
             const int runCount = 3;
 
             var counter = 0;
@@ -121,12 +121,12 @@ namespace DotNet.Basics.Tests.Tasks
 
             var runner = new AtMostOnceTaskRunner();
 
-            //run task many times
+            //run task multiple times
             foreach (var i in Enumerable.Range(1, runCount)) //outer sequence awaits til actual running tasks i done
             {
                 try
                 {
-                    await runner.RunAsync("myId", task).ConfigureAwait(false);
+                    runner.StartTask(taskId, task);
                 }
                 catch (ApplicationException)
                 {
@@ -135,30 +135,6 @@ namespace DotNet.Basics.Tests.Tasks
             }
 
             counter.Should().Be(runCount);
-        }
-
-        [Test]
-        public async Task RunAsync_LongrunningTask_LockIsRenewedWhenTaskRunsLong()
-        {
-            var timeout = 200.Milliseconds();
-
-            var counter = 0;
-            Func<CancellationToken, Task> task = async (ct) =>
-            {
-                counter++;
-                await Task.Delay(timeout + timeout + timeout); //task duration is 3 times longer than timeout
-            };
-
-            var runner = new AtMostOnceTaskRunner();
-            var tasks = new List<Task>();
-
-            //run task many times
-            foreach (var i in Enumerable.Range(1, 10))
-                tasks.Add(runner.RunAsync("myId", task));
-
-            await Task.WhenAll(tasks.ToArray()).ConfigureAwait(false);
-
-            counter.Should().Be(1);
         }
     }
 }
