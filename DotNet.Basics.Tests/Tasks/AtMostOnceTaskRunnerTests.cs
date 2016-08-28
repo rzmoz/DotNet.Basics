@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Tasks;
 using FluentAssertions;
@@ -11,6 +12,28 @@ namespace DotNet.Basics.Tests.Tasks
     [TestFixture]
     public class AtMostOnceTaskRunnerTests
     {
+        public async Task RunAsync_IsRunning_TaskProgressIsDetected()
+        {
+            var ctSource = new CancellationTokenSource();
+            string id = "RunAsync_IsRunning_TaskProgressIsDetected";
+            var taskTimeOut = 100.Milliseconds();
+
+            var runner = new AtMostOnceTaskRunner();
+            var runResult = await runner.RunAsync(id, async (ct) =>
+            {
+                while (true)
+                    // ReSharper disable once MethodSupportsCancellation
+                    await Task.Delay(taskTimeOut).ConfigureAwait(false);
+            }, ctSource.Token, taskTimeOut).ConfigureAwait(false);
+
+            runResult.Started.Should().BeTrue("task started");
+            await Task.Delay(taskTimeOut + taskTimeOut + taskTimeOut).ConfigureAwait(false);//wait a couple of timeouts to ensure lock is renewing
+            runner.IsRunning(id).Should().BeTrue("task is running");
+            await Task.Delay(taskTimeOut.Add(50.Milliseconds())).ConfigureAwait(false);//wait till we're sure the lock has been released
+            runner.IsRunning(id).Should().BeFalse("task should been stopped");
+        }
+
+
         [Test]
         [TestCase(null)]
         [TestCase("")]
@@ -22,7 +45,7 @@ namespace DotNet.Basics.Tests.Tasks
             try
             {
                 var runner = new AtMostOnceTaskRunner();
-                await runner.RunAsync(taskId, async () => { });
+                await runner.RunAsync(taskId, async (ct) => { });
             }
             catch (ArgumentNullException)
             {
@@ -39,7 +62,7 @@ namespace DotNet.Basics.Tests.Tasks
         public async Task RunAsync_DetectRunningTask_TaskIsOnlyRunOnce()
         {
             var counter = 0;
-            Func<Task> task = async () =>
+            Func<CancellationToken, Task> task = async (ct) =>
             {
                 counter++;
                 await Task.Delay(500.Milliseconds()).ConfigureAwait(false);
@@ -63,7 +86,7 @@ namespace DotNet.Basics.Tests.Tasks
             const int runCount = 5;
 
             var counter = 0;
-            Func<Task> task = async () =>
+            Func<CancellationToken, Task> task = async (ct) =>
             {
                 counter++;
                 await Task.Delay(100.Milliseconds()).ConfigureAwait(false);
@@ -89,7 +112,7 @@ namespace DotNet.Basics.Tests.Tasks
             const int runCount = 3;
 
             var counter = 0;
-            Func<Task> task = async () =>
+            Func<CancellationToken, Task> task = async (ct) =>
                {
                    counter++;
                    //crash task thread
@@ -120,7 +143,7 @@ namespace DotNet.Basics.Tests.Tasks
             var timeout = 200.Milliseconds();
 
             var counter = 0;
-            Func<Task> task = async () =>
+            Func<CancellationToken, Task> task = async (ct) =>
             {
                 counter++;
                 await Task.Delay(timeout + timeout + timeout); //task duration is 3 times longer than timeout

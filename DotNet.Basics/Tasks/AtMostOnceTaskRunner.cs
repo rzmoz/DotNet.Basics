@@ -6,7 +6,6 @@ using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Tasks
 {
-
     public class AtMostOnceTaskRunner
     {
         private readonly ICacheManager<string> _runningTasks;
@@ -27,15 +26,32 @@ namespace DotNet.Basics.Tasks
             return _runningTasks.Get(id);
         }
 
-        public async Task<AtMostOnceTaskRunResult> RunAsync(string taskId, Func<Task> task)
+        public bool IsRunning(string taskId)
         {
-            return await RunAsync(taskId, task, string.Empty).ConfigureAwait(false);
+            return _runningTasks.Get(taskId) != null;
         }
-        public async Task<AtMostOnceTaskRunResult> RunAsync(string taskId, Func<Task> task, string cacheValue)
+
+        public async Task<AtMostOnceTaskRunResult> RunAsync(string taskId, Func<CancellationToken, Task> task)
         {
-            return await RunAsync(taskId, task, cacheValue, 5.Seconds()).ConfigureAwait(false);
+            return await RunAsync(taskId, task, string.Empty, CancellationToken.None).ConfigureAwait(false);
         }
-        public async Task<AtMostOnceTaskRunResult> RunAsync(string taskId, Func<Task> task, string cacheValue, TimeSpan expirationTimeout)
+        public async Task<AtMostOnceTaskRunResult> RunAsync(string taskId, Func<CancellationToken, Task> task, TimeSpan taskTimeout)
+        {
+            return await RunAsync(taskId, task, string.Empty, CancellationToken.None, taskTimeout).ConfigureAwait(false);
+        }
+        public async Task<AtMostOnceTaskRunResult> RunAsync(string taskId, Func<CancellationToken, Task> task, CancellationToken ct)
+        {
+            return await RunAsync(taskId, task, string.Empty, ct).ConfigureAwait(false);
+        }
+        public async Task<AtMostOnceTaskRunResult> RunAsync(string taskId, Func<CancellationToken, Task> task, CancellationToken ct, TimeSpan taskTimeout)
+        {
+            return await RunAsync(taskId, task, string.Empty, ct, taskTimeout).ConfigureAwait(false);
+        }
+        public async Task<AtMostOnceTaskRunResult> RunAsync(string taskId, Func<CancellationToken, Task> task, string cacheValue, CancellationToken ct)
+        {
+            return await RunAsync(taskId, task, cacheValue, ct, 5.Seconds()).ConfigureAwait(false);
+        }
+        public async Task<AtMostOnceTaskRunResult> RunAsync(string taskId, Func<CancellationToken, Task> task, string cacheValue, CancellationToken ct, TimeSpan taskTimeout)
         {
             if (string.IsNullOrWhiteSpace(taskId))
                 throw new ArgumentException($"Id not set in task. Was: {taskId}");
@@ -48,7 +64,7 @@ namespace DotNet.Basics.Tasks
                 return new AtMostOnceTaskRunResult(taskId, false, "task is already running");
 
             //lock task for running
-            var item = new CacheItem<string>(taskId, cacheValue ?? string.Empty, ExpirationMode.Absolute, expirationTimeout);
+            var item = new CacheItem<string>(taskId, cacheValue ?? string.Empty, ExpirationMode.Absolute, taskTimeout);
             var added = _runningTasks.Add(item);
 
             if (added == false)
@@ -56,17 +72,18 @@ namespace DotNet.Basics.Tasks
 
             try
             {
-                var runningTask = task.Invoke();
+                var runningTask = task.Invoke(ct);
                 var refreshLockTokenSource = new CancellationTokenSource();
                 var refreshLockTask = Task.Factory.StartNew(async () =>
                 {
                     while (true)
                     {
-                        var refreshInterval = (int)(expirationTimeout.Ticks / (2.0 / 3.0));
-                        await Task.Delay(TimeSpan.FromTicks(refreshInterval), refreshLockTokenSource.Token).ConfigureAwait(false);
-                        _runningTasks.AddOrUpdate(item, id => id);
+                        var refreshInterval = (int)(taskTimeout.Ticks / (2.0 / 3.0));
+                        // ReSharper disable once MethodSupportsCancellation
+                        await Task.Delay(TimeSpan.FromTicks(refreshInterval)).ConfigureAwait(false);
+                        _runningTasks.Update(taskId, id => id);
                     }
-                }, refreshLockTokenSource.Token);
+                }, ct);
 
                 await Task.WhenAll(runningTask).ConfigureAwait(false);//wait til main task is completed
                 refreshLockTokenSource.Cancel();
