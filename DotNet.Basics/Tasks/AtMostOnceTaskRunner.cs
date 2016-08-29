@@ -51,12 +51,12 @@ namespace DotNet.Basics.Tasks
             var bgTask = new BackgroundTask(taskId, task, _scheduler);
             var added = _scheduler.TryAdd(taskId, bgTask);
             if (added == false)
-                return new AtMostOnceTaskRunResult(taskId, false, "failed to add task");
+                return new AtMostOnceTaskRunResult(taskId, false, "failed to add task to scheduler - please try again");
 
             //only start task if sucessfully added to scheduler
             bgTask.StartAsync.Invoke(ct);
 
-            return new AtMostOnceTaskRunResult(taskId, IsRunning(taskId), "task ran");
+            return new AtMostOnceTaskRunResult(taskId, true, "task started");
         }
     }
 }
