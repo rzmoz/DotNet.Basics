@@ -94,7 +94,15 @@ namespace DotNet.Basics.Rest
 
         public override string ToString()
         {
-            return HttpRequestMessage.ToString();
+            try
+            {
+                return $"{HttpRequestMessage}\r\n{HttpRequestMessage.Content?.ReadAsStringAsync().Result}";
+            }
+            catch (Exception)
+            {
+
+                return HttpRequestMessage.ToString();
+            }
         }
     }
 }
