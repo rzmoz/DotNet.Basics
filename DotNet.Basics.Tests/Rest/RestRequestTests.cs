@@ -22,7 +22,17 @@ namespace DotNet.Basics.Tests.Rest
         }
 
         [Test]
-        public void ToString_Debug_StringIsDebugFriendly()
+        public void ToString_Formatting_StringIsDebugFriendly()
+        {
+            var request = new RestRequest("http://dr.dk/mypath", HttpMethod.Put);
+
+            var result = request.ToString();
+
+            result.Should().StartWith("Method: PUT, RequestUri: 'http://dr.dk/mypath', Version: 1.1");
+        }
+
+        [Test]
+        public void ToString_FormattingWithcontent_StringIsDebugFriendly()
         {
             var request = new RestRequest("http://dr.dk/mypath", HttpMethod.Post);
             request.Headers.Add("MyHeader1", "HeaderValue1");
@@ -37,7 +47,6 @@ namespace DotNet.Basics.Tests.Rest
             result.Should().Contain("MyHeader2: HeaderValue2");
             result.Should().Contain("MyHeader3: HeaderValue3");
         }
-
 
         [Test]
         public void Uri_Get_IsSet()

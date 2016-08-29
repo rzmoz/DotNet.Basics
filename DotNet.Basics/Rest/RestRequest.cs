@@ -104,7 +104,7 @@ namespace DotNet.Basics.Rest
             }
             catch (Exception)
             {
-                return base.ToString();
+                return HttpRequestMessage.ToString();
             }
         }
     }

@@ -72,7 +72,7 @@ namespace DotNet.Basics.Rest
             }
             catch (Exception)
             {
-                return RawContent;
+                return HttpResponseMessage.ToString();
             }
         }
     }
