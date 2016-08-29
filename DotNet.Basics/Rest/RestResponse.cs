@@ -67,7 +67,7 @@ namespace DotNet.Basics.Rest
             {
                 var response = HttpResponseMessage.ToString();
                 if (HttpResponseMessage.Content != null)
-                    response += $"\r\n{Task.Run(() => HttpResponseMessage.Content.ReadAsStringAsync()).Result}";
+                    response += $"\r\n{HttpResponseMessage.Content.ReadAsStringAsync().Result}";
                 return response;
             }
             catch (Exception)
