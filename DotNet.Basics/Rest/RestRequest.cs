@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using DotNet.Basics.IO;
 
 namespace DotNet.Basics.Rest
@@ -95,17 +94,7 @@ namespace DotNet.Basics.Rest
 
         public override string ToString()
         {
-            try
-            {
-                var request = HttpRequestMessage.ToString();
-                if (HttpRequestMessage.Content != null)
-                    request += $"\r\n{HttpRequestMessage.Content.ReadAsStringAsync().Result}";
-                return request;
-            }
-            catch (Exception)
-            {
-                return HttpRequestMessage.ToString();
-            }
+            return HttpRequestMessage.ToString();
         }
     }
 }
