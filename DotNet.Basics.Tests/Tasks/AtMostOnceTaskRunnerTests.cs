@@ -11,26 +11,43 @@ namespace DotNet.Basics.Tests.Tasks
     [TestFixture]
     public class AtMostOnceTaskRunnerTests
     {
-        private AtMostOnceTaskRunner _runner;
-
-        [SetUp]
-        public void Setup()
+        [Test]
+        public async Task ExceptionThrown_GetExceptionsFromBgTasks_ExceptionsAreBubbled()
         {
-            _runner = new AtMostOnceTaskRunner();
-        }
+            string taskId = "ExceptionThrown_GetExceptionsFromBgTasks_ExceptionsAreBubbled";
+            Exception exceptionCaughtFromEvent = null;
+            string taskIdCaughtFromEvent = null;
 
-        private async Task WaitTillFinished(AtMostOnceTaskRunner runner, string taskId)
-        {
-            while (runner.IsRunning(taskId))
+            Exception exceptionCaughtFromCallBack = null;
+            string taskIdCaughtFromCallBack = null;
+            
+            var runner = new AtMostOnceTaskRunner();
+            runner.TaskFailed += (id, e) =>
+             {
+                 taskIdCaughtFromEvent = id;
+                 exceptionCaughtFromEvent = e;
+             };
+            runner.StartTask(taskId, ct =>
             {
-                System.Console.WriteLine($"task is running:{taskId}");
-                await Task.Delay(100.Milliseconds()).ConfigureAwait(false);
-            }
+                throw new ArgumentNullException();
+            }, (id, e) =>
+            {
+                taskIdCaughtFromCallBack = id;
+                exceptionCaughtFromCallBack = e;
+            });
+
+            await WaitTillFinished(runner, taskId).ConfigureAwait(false);
+            taskIdCaughtFromEvent.Should().Be(taskId);
+            exceptionCaughtFromEvent.Should().BeOfType<ArgumentNullException>();
+            taskIdCaughtFromCallBack.Should().Be(taskId);
+            exceptionCaughtFromCallBack.Should().BeOfType<ArgumentNullException>();
         }
+
 
         [Test]
         public async Task StartTask_DetectTaskIsAlreadyunning_TaskIsRunOnce()
         {
+            var runner = new AtMostOnceTaskRunner();
             string taskId = "StartTask_TaskRun_TaskIsRunOnce";
 
             int hitCount = 0;
@@ -43,9 +60,9 @@ namespace DotNet.Basics.Tests.Tasks
 
             //try start task 10 times
             foreach (var i in Enumerable.Range(1, 10))
-                _runner.StartTask(taskId, incrementTask);
+                runner.StartTask(taskId, incrementTask);
 
-            await WaitTillFinished(_runner, taskId).ConfigureAwait(false);
+            await WaitTillFinished(runner, taskId).ConfigureAwait(false);
 
             hitCount.Should().Be(1);
         }
@@ -75,11 +92,11 @@ namespace DotNet.Basics.Tests.Tasks
             //cancel task
             ctSource.Cancel();
 
-            await WaitTillFinished(_runner, taskId).ConfigureAwait(false);
+            await WaitTillFinished(runner, taskId).ConfigureAwait(false);
             taskEndedNaturally.Should().BeFalse("task shouldve been cancelled");
             runner.IsRunning(taskId).Should().BeFalse("task should have been stopped");
         }
-        
+
 
         [Test]
         [TestCase(null)]
@@ -104,7 +121,7 @@ namespace DotNet.Basics.Tests.Tasks
             }
             errorCaught.Should().BeTrue("empty task id should fail");
         }
-        
+
         [Test]
         public async Task RunAsync_Exception__LockIsReleasedOnTaskCrash()
         {
@@ -112,12 +129,6 @@ namespace DotNet.Basics.Tests.Tasks
             const int runCount = 3;
 
             var counter = 0;
-            Func<CancellationToken, Task> task = async (ct) =>
-               {
-                   counter++;
-                   //crash task thread
-                   throw new ApplicationException("Cowabungaa");
-               };
 
             var runner = new AtMostOnceTaskRunner();
 
@@ -126,15 +137,31 @@ namespace DotNet.Basics.Tests.Tasks
             {
                 try
                 {
-                    runner.StartTask(taskId, task);
+                    runner.StartTask(taskId, (ct) =>
+                    {
+                        counter++;
+                        //crash task thread
+                        throw new ApplicationException("Cowabungaa");
+                    });
                 }
                 catch (ApplicationException)
                 {
                     //ignore
                 }
+
+                await Task.Delay(100.Milliseconds()).ConfigureAwait(false);
             }
 
             counter.Should().Be(runCount);
+        }
+
+        private async Task WaitTillFinished(AtMostOnceTaskRunner runner, string taskId)
+        {
+            while (runner.IsRunning(taskId))
+            {
+                System.Console.WriteLine($"task is running:{taskId}");
+                await Task.Delay(100.Milliseconds()).ConfigureAwait(false);
+            }
         }
     }
 }
