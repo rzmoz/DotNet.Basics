@@ -6,17 +6,17 @@ namespace DotNet.Basics.Tasks
 {
     public class RepeaterTaskRunner
     {
-        public async Task<bool> RunAsync(RepeaterTask task)
+        public async Task<bool> RunAsync(RepeaterTask task, Func<Exception, bool> untilPredicate)
         {
             if (task == null)
                 return false;
 
-            if (task.UntilPredicate == null)
+            if (untilPredicate == null)
                 throw new NoStopConditionIsSetException("Task will potentially run forever. Set Until and consider adding WithTimeout and/or WithMaxTries");
-
+            
             Exception lastException = null;
-            task.CountLoopBreakPredicate?.Reset();
-            task.TimeoutLoopBreakPredicate?.Reset();
+            task.Options.CountLoopBreakPredicate?.Reset();
+            task.Options.TimeoutLoopBreakPredicate?.Reset();
 
             bool success;
             try//ensure finally is executed
@@ -27,32 +27,31 @@ namespace DotNet.Basics.Tasks
                     try
                     {
                         await task.Action.Invoke().ConfigureAwait(false);
-                        task.CountLoopBreakPredicate?.LoopCallback();
+                        task.Options.CountLoopBreakPredicate?.LoopCallback();
                         exceptionInLastLoop = null;
                     }
                     catch (Exception e)
                     {
                         lastException = e;
                         exceptionInLastLoop = e;
-                        task.CountLoopBreakPredicate?.LoopCallback();
+                        task.Options.CountLoopBreakPredicate?.LoopCallback();
                     }
 
-                    Pingback(task);
+                    Pingback(task.Options);
 
-                    if (task.UntilPredicate != null)
-                        if (task.UntilPredicate.Invoke(exceptionInLastLoop))
-                        {
-                            success = true;
-                            break;
-                        }
+                    if (untilPredicate.Invoke(exceptionInLastLoop))
+                    {
+                        success = true;
+                        break;
+                    }
 
-                    if (ShouldContinue(lastException, task) == false)
+                    if (ShouldContinue(lastException, task.Options) == false)
                     {
                         success = false;
                         break;
                     }
 
-                    await Task.Delay(task.RetryDelay).ConfigureAwait(false);
+                    await Task.Delay(task.Options.RetryDelay).ConfigureAwait(false);
 
                 } while (true);
             }
@@ -60,7 +59,7 @@ namespace DotNet.Basics.Tasks
             {
                 try
                 {
-                    task.Finally?.Invoke();//we don't catch exceptions here since it needs to float if any
+                    task.Options.Finally?.Invoke();//we don't catch exceptions here since it needs to float if any
                 }
                 catch (Exception e)
                 {
@@ -73,14 +72,14 @@ namespace DotNet.Basics.Tasks
             return success;
         }
 
-        private void Pingback(RepeaterTask task)
+        private void Pingback(RepeatOptions options)
         {
-            if (task.Ping == null)
+            if (options.Ping == null)
                 return;
 
             try
             {
-                task.Ping.Invoke();
+                options.Ping.Invoke();
             }
             catch (Exception e)
             {
@@ -88,21 +87,21 @@ namespace DotNet.Basics.Tasks
             }
         }
 
-        private bool ShouldContinue(Exception lastException, RepeaterTask task)
+        private bool ShouldContinue(Exception lastException, RepeatOptions options)
         {
-            bool shouldBreak = task.CountLoopBreakPredicate != null && task.CountLoopBreakPredicate.ShouldBreak() ||
-                               task.TimeoutLoopBreakPredicate != null && task.TimeoutLoopBreakPredicate.ShouldBreak();
+            bool breakPrematurely = options.CountLoopBreakPredicate != null && options.CountLoopBreakPredicate.ShouldBreak() ||
+                               options.TimeoutLoopBreakPredicate != null && options.TimeoutLoopBreakPredicate.ShouldBreak();
 
-            if (shouldBreak)
+            if (breakPrematurely)
             {
                 if (lastException == null)
                     return false;
 
-                if (task.IgnoreExceptionType == null)
+                if (options.IgnoreExceptionType == null)
                     throw lastException;
 
-                if (lastException.GetType().IsSubclassOf(task.IgnoreExceptionType) ||
-                    lastException.GetType() == task.IgnoreExceptionType)
+                if (lastException.GetType().IsSubclassOf(options.IgnoreExceptionType) ||
+                    lastException.GetType() == options.IgnoreExceptionType)
                     return false;
 
                 throw lastException;

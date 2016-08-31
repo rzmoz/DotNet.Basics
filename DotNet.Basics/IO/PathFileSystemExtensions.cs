@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Management.Automation;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
@@ -37,11 +36,13 @@ namespace DotNet.Basics.IO
             {
                 PowerShellConsole.RemoveItem(path.FullName, force: true, recurse: true);
             })
-            .IgnoreExceptionsOfType(typeof(ItemNotFoundException))
-            .WithTimeout(timeout)
-            .WithRetryDelay(2.Seconds())
-            .Until(() => path.Exists() == false)
-            .Now();
+            .WithOptions(o =>
+            {
+                o.Timeout = timeout;
+                o.RetryDelay = 2.Seconds();
+                o.IgnoreExceptionType = typeof(ItemNotFoundException);
+            })
+            .Until(() => path.Exists() == false);
 
             return path.Exists() == false;
         }

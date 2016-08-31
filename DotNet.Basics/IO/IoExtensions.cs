@@ -19,10 +19,12 @@ namespace DotNet.Basics.IO
 
             targetFile.ToFile().Directory.CreateIfNotExists();
             var result = Repeat.Task(() => PowerShellConsole.RunScript(outFileCmdlet.ToScript()))
-                .WithRetryDelay(1.Seconds())
-                .UntilNoExceptions()
-                .WithMaxTries(10)
-                .Now();
+                .WithOptions(o =>
+                {
+                    o.RetryDelay = 1.Seconds();
+                    o.MaxTries = 10;
+                })
+                .UntilNoExceptions();
 
             Debug.WriteLine($"Saved text to disk: {targetFile}");
             return targetFile.ToFile();
