@@ -15,7 +15,8 @@ namespace DotNet.Basics.Tasks.Repeating
 
         public static RunTask<RepeatOptions> TaskOnce(Func<CancellationToken, Task> task, RepeatOptions options = null)
         {
-            return _taskFactory.Create(async ct => await new OnceOnlyAsyncTask(task).RunAsync(ct).ConfigureAwait(false), options);
+            var onceOnlyTask = new OnceOnlyAsyncTask(task);
+            return _taskFactory.Create(onceOnlyTask.RunAsync, options);
         }
 
         public static RunTask<RepeatOptions> Task(Action task, RepeatOptions options = null)
@@ -25,7 +26,8 @@ namespace DotNet.Basics.Tasks.Repeating
 
         public static RunTask<RepeatOptions> TaskOnce(Action task, RepeatOptions options = null)
         {
-            return _taskFactory.Create(() => new OnceOnlySyncTask(task).Run(), options);
+            var onceOnlyTask = new OnceOnlySyncTask(task);
+            return _taskFactory.Create(onceOnlyTask.Run, options);
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DotNet.Basics.Tasks;
 using DotNet.Basics.Tasks.Repeating;
 using FluentAssertions;
 using NUnit.Framework;
@@ -236,7 +235,27 @@ namespace DotNet.Basics.Tests.Tasks
             })
                 .Until(() => false);
 
-            //means that the action has only been run once even though we waited 5 cyckes
+            //means that the action has only been run once even though we waited 5 cycles
+            doCounter.Should().Be(1);
+            pingCounter.Should().Be(maxTries);
+            //we never got a true result (the thing we were waiting for never succeeded)
+            result.Should().BeFalse();
+        }
+        [Test]
+        public void TaskOnceAsync_InvokeAndPingback_ActionsAreInvokedTheRightNumberOfTimes()
+        {
+            var doCounter = 0;
+            var pingCounter = 0;
+            const int maxTries = 5;
+            var result = Repeat.TaskOnce(async (ct) => { doCounter++; }, new RepeatOptions
+            {
+                Ping = () => { pingCounter++; },
+                RetryDelay = 10.Milliseconds(),
+                MaxTries = maxTries
+            })
+                .Until(() => false);
+
+            //means that the action has only been run once even though we waited 5 cycles
             doCounter.Should().Be(1);
             pingCounter.Should().Be(maxTries);
             //we never got a true result (the thing we were waiting for never succeeded)
