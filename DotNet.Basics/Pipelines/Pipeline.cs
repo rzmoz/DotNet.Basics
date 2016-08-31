@@ -41,12 +41,13 @@ namespace DotNet.Basics.Pipelines
         {
             var asyncFuncs = syncFunc.Select<Action<T, IPipelineLogger>, Func<T, IPipelineLogger, Task>>(f => (args, logger) =>
              {
-                 return Task.Run(() => f(args, logger));
+                 f(args, logger);
+                 return Task.CompletedTask;
              });
 
             return AddBlock(string.Empty, asyncFuncs.ToArray());
         }
-        
+
         public PipelineBlock<T> AddBlock(params PipelineStep<T>[] steps)
         {
             var block = CreateStepBlock();

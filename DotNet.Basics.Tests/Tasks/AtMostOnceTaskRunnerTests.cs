@@ -20,7 +20,7 @@ namespace DotNet.Basics.Tests.Tasks
 
             Exception exceptionCaughtFromCallBack = null;
             string taskIdCaughtFromCallBack = null;
-            
+
             var runner = new AtMostOnceTaskRunner();
             runner.TaskFailed += (id, e) =>
              {
@@ -102,14 +102,14 @@ namespace DotNet.Basics.Tests.Tasks
         [TestCase(null)]
         [TestCase("")]
         [TestCase("    ")]
-        public async Task RunAsync_TaskIdEmptyTask_ExceptionIsThrown(string taskId)
+        public void RunAsync_TaskIdEmptyTask_ExceptionIsThrown(string taskId)
         {
             var errorCaught = false;
 
             try
             {
                 var runner = new AtMostOnceTaskRunner();
-                runner.StartTask(taskId, async (ct) => { });
+                runner.StartTask(taskId, (ct) => Task.CompletedTask);
             }
             catch (ArgumentNullException)
             {
@@ -149,7 +149,7 @@ namespace DotNet.Basics.Tests.Tasks
                     //ignore
                 }
 
-                await Task.Delay(100.Milliseconds()).ConfigureAwait(false);
+                await Task.Delay(100.Milliseconds(), CancellationToken.None).ConfigureAwait(false);
             }
 
             counter.Should().Be(runCount);

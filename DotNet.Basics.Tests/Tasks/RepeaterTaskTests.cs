@@ -247,7 +247,7 @@ namespace DotNet.Basics.Tests.Tasks
             var doCounter = 0;
             var pingCounter = 0;
             const int maxTries = 5;
-            var result = Repeat.TaskOnce(async (ct) => await Task.Run(() => doCounter++, ct), new RepeatOptions
+            var result = Repeat.TaskOnce((ct) => { doCounter++; return Task.CompletedTask; }, new RepeatOptions
             {
                 Ping = () => { pingCounter++; },
                 RetryDelay = 10.Milliseconds(),

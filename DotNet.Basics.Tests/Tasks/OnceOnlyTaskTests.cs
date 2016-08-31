@@ -15,7 +15,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var counter = 0;
 
-            var onceOnlyAction = new OnceOnlyAsyncTask(async (ct) => counter++);
+            var onceOnlyAction = new OnceOnlyAsyncTask((ct) => { counter++; return Task.CompletedTask; });
             Action action = async () => await onceOnlyAction.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
             //invoke multiple times
@@ -29,7 +29,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var counter = 0;
 
-            var onceOnlyAction = new OnceOnlyAsyncTask(async (ct) => { counter++; throw new ArgumentException("buuh"); });
+            var onceOnlyAction = new OnceOnlyAsyncTask((ct) => { counter++; throw new ArgumentException("buuh"); });
             Action action = async () => await onceOnlyAction.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
             //invoke multiple times
@@ -37,7 +37,7 @@ namespace DotNet.Basics.Tests.Tasks
 
             counter.Should().Be(1);
         }
-        
+
         [Test]
         public void SyncTask_Run_ActionIsOnlyExecutedOnce()
         {

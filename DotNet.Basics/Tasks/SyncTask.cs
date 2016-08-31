@@ -18,7 +18,7 @@ namespace DotNet.Basics.Tasks
         public SyncTask(Action task, T options = default(T), string id = null) : base(options, id)
         {
             _syncTask = task;
-            _asyncTask = async () => await Task.Run(() => task.Invoke());
+            _asyncTask = () => { task.Invoke(); return Task.CompletedTask; };
         }
 
         public override void Run()

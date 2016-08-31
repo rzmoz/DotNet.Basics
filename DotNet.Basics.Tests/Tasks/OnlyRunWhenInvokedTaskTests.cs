@@ -13,7 +13,7 @@ namespace DotNet.Basics.Tests.Tasks
         public void AsyncTask_RunSync_IsOnlyRunOnceInvoked()
         {
             var voidVar = 0;
-            var task = new AsyncTask(async (ct) => voidVar++);
+            var task = new AsyncTask((ct) => { voidVar++; return Task.CompletedTask; });
             Action action = () => task.Run();
             action.ShouldThrow<NotSupportedException>();
         }
@@ -22,7 +22,7 @@ namespace DotNet.Basics.Tests.Tasks
         public async Task AsyncTask_RunAsync_IsOnlyRunOnceInvoked()
         {
             var started = false;
-            var task = new AsyncTask(async (ct) => { started = true; });
+            var task = new AsyncTask((ct) => { started = true; return Task.CompletedTask; });
             started.Should().BeFalse();
             await task.RunAsync().ConfigureAwait(false);
             started.Should().BeTrue();
