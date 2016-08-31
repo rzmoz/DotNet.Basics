@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace DotNet.Basics.Tasks
+namespace DotNet.Basics.Tasks.Repeating
 {
     public class RepeaterTaskRunner
     {
@@ -12,8 +12,8 @@ namespace DotNet.Basics.Tasks
                 return false;
 
             if (untilPredicate == null)
-                throw new NoStopConditionIsSetException("Task will potentially run forever. Set Until and consider adding WithTimeout and/or WithMaxTries");
-            
+                throw new ArgumentNullException(nameof(untilPredicate), $"Task will potentially run forever. Set untilPredicate and also consider adding timeout and maxtries to task options");
+
             Exception lastException = null;
             task.Options.CountLoopBreakPredicate?.Reset();
             task.Options.TimeoutLoopBreakPredicate?.Reset();

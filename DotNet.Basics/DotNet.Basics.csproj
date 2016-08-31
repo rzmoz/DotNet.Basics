@@ -134,13 +134,12 @@
     <Compile Include="Tasks\SyncTask.cs" />
     <Compile Include="Tasks\TaskFactory.cs" />
     <Compile Include="Tasks\TaskOptions.cs" />
-    <Compile Include="Tasks\NoStopConditionIsSetException.cs" />
-    <Compile Include="Tasks\Repeat.cs" />
+    <Compile Include="Tasks\Repeating\Repeat.cs" />
     <Compile Include="Sys\Observable.cs" />
     <Compile Include="Sys\SysExtensions.cs" />
-    <Compile Include="Tasks\RepeaterTaskExtensions.cs" />
-    <Compile Include="Tasks\RepeaterTaskRunner.cs" />
-    <Compile Include="Tasks\RepeatOptions.cs" />
+    <Compile Include="Tasks\Repeating\RepeaterTaskExtensions.cs" />
+    <Compile Include="Tasks\Repeating\RepeaterTaskRunner.cs" />
+    <Compile Include="Tasks\Repeating\RepeatOptions.cs" />
     <Compile Include="Tasks\RunTask.cs" />
     <Compile Include="Tasks\TimeoutLoopBreakPredicate.cs" />
     <Compile Include="Sys\TimeSpanExtensions.cs" />

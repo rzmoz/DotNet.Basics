@@ -1,7 +1,7 @@
 ﻿using System;
 using DotNet.Basics.Sys;
 
-namespace DotNet.Basics.Tasks
+namespace DotNet.Basics.Tasks.Repeating
 {
     public class RepeatOptions : TaskOptions
     {

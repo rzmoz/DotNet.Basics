@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace DotNet.Basics.Tasks
+namespace DotNet.Basics.Tasks.Repeating
 {
     public static class RepeaterTaskExtensions
     {
