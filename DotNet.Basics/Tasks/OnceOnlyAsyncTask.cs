@@ -12,7 +12,7 @@ namespace DotNet.Basics.Tasks
         {
             _task = async (ct) =>
             {
-                _task = async (ctx) => { };
+                _task = ctx => Task.CompletedTask;
                 await task.Invoke(ct).ConfigureAwait(false);
             };
         }
