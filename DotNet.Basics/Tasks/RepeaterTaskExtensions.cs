@@ -5,16 +5,16 @@ namespace DotNet.Basics.Tasks
 {
     public static class RepeaterTaskExtensions
     {
-        public static async Task<bool> UntilNoExceptionsAsync(this RepeaterTask task)
+        public static async Task<bool> UntilNoExceptionsAsync(this RunTask<RepeatOptions> task)
         {
             return await task.UntilAsync(e => e == null).ConfigureAwait(false);
         }
 
-        public static async Task<bool> UntilAsync(this RepeaterTask task, Func<bool> untilPredicate)
+        public static async Task<bool> UntilAsync(this RunTask<RepeatOptions> task, Func<bool> untilPredicate)
         {
             return await task.UntilAsync(e => untilPredicate()).ConfigureAwait(false);
         }
-        private static async Task<bool> UntilAsync(this RepeaterTask task, Func<Exception, bool> untilPredicate)
+        private static async Task<bool> UntilAsync(this RunTask<RepeatOptions> task, Func<Exception, bool> untilPredicate)
         {
             try
             {
@@ -27,17 +27,17 @@ namespace DotNet.Basics.Tasks
             }
         }
 
-        public static bool UntilNoExceptions(this RepeaterTask task)
+        public static bool UntilNoExceptions(this RunTask<RepeatOptions> task)
         {
             return task.Until(e => e == null);
         }
 
-        public static bool Until(this RepeaterTask task, Func<bool> untilPredicate)
+        public static bool Until(this RunTask<RepeatOptions> task, Func<bool> untilPredicate)
         {
             return task.Until(e => untilPredicate());
         }
 
-        private static bool Until(this RepeaterTask task, Func<Exception, bool> untilPredicate)
+        private static bool Until(this RunTask<RepeatOptions> task, Func<Exception, bool> untilPredicate)
         {
             try
             {

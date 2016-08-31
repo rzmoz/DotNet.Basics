@@ -6,7 +6,7 @@ namespace DotNet.Basics.Tasks
 {
     public class RepeaterTaskRunner
     {
-        public async Task<bool> RunAsync(RepeaterTask task, Func<Exception, bool> untilPredicate)
+        public async Task<bool> RunAsync(RunTask<RepeatOptions> task, Func<Exception, bool> untilPredicate)
         {
             if (task == null)
                 return false;
@@ -26,7 +26,7 @@ namespace DotNet.Basics.Tasks
                     Exception exceptionInLastLoop;
                     try
                     {
-                        await task.Action.Invoke().ConfigureAwait(false);
+                        await task.RunAsync().ConfigureAwait(false);
                         task.Options.CountLoopBreakPredicate?.LoopCallback();
                         exceptionInLastLoop = null;
                     }

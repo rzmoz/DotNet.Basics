@@ -3,7 +3,7 @@ using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Tasks
 {
-    public class RepeatOptions
+    public class RepeatOptions : TaskOptions
     {
         private uint? _maxTries;
         private TimeSpan? _timeout;
@@ -41,6 +41,5 @@ namespace DotNet.Basics.Tasks
 
         internal CountLoopBreakPredicate CountLoopBreakPredicate { get; private set; }
         internal TimeoutLoopBreakPredicate TimeoutLoopBreakPredicate { get; private set; }
-
     }
 }

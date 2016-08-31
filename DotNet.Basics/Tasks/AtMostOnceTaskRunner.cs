@@ -8,29 +8,19 @@ namespace DotNet.Basics.Tasks
 {
     public class AtMostOnceTaskRunner
     {
-        private readonly ConcurrentDictionary<string, BackgroundTask> _scheduler;
+        private readonly ConcurrentDictionary<string, AsyncTask> _scheduler;
 
         public delegate void TaskFailedEventHandler(string taskId, Exception e);
         public TaskFailedEventHandler TaskFailed;
 
         public AtMostOnceTaskRunner()
         {
-            _scheduler = new ConcurrentDictionary<string, BackgroundTask>();
-        }
-
-        public string GetProperty(string taskId, string key)
-        {
-            BackgroundTask outTask;
-            string outProperty;
-            if (_scheduler.TryGetValue(taskId, out outTask))
-                if (outTask.Properties.TryGetValue(key, out outProperty))
-                    return outProperty;
-            return null;
+            _scheduler = new ConcurrentDictionary<string, AsyncTask>();
         }
 
         public bool IsRunning(string taskId)
         {
-            BackgroundTask outTask;
+            AsyncTask outTask;
             return _scheduler.TryGetValue(taskId, out outTask);
         }
 
@@ -52,7 +42,7 @@ namespace DotNet.Basics.Tasks
                 return new AtMostOnceTaskRunResult(taskId, false, "task is already running");
 
             //lock task for running
-            var bgTask = new BackgroundTask(taskId, task);
+            var bgTask = new AsyncTask(task, id: taskId);
             var added = _scheduler.TryAdd(taskId, bgTask);
             if (added == false)
                 return new AtMostOnceTaskRunResult(taskId, false, "failed to add task to scheduler - please try again");
@@ -63,7 +53,7 @@ namespace DotNet.Basics.Tasks
             {
                 try
                 {
-                    await bgTask.StartAsync.Invoke(ct).ConfigureAwait(false);
+                    await bgTask.RunAsync(ct).ConfigureAwait(false);
                 }
                 catch (Exception e)
                 {
@@ -73,7 +63,7 @@ namespace DotNet.Basics.Tasks
                 finally
                 {
                     //make sure to unregister task when it's not running anymore
-                    ((IDictionary<string, BackgroundTask>)_scheduler).Remove(bgTask.Id);
+                    ((IDictionary<string, AsyncTask>)_scheduler).Remove(bgTask.Id);
                 }
             });
 

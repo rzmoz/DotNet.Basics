@@ -35,12 +35,11 @@ namespace DotNet.Basics.IO
             Repeat.Task(() =>
             {
                 PowerShellConsole.RemoveItem(path.FullName, force: true, recurse: true);
-            })
-            .WithOptions(o =>
+            }, new RepeatOptions
             {
-                o.Timeout = timeout;
-                o.RetryDelay = 2.Seconds();
-                o.IgnoreExceptionType = typeof(ItemNotFoundException);
+                Timeout = timeout,
+                RetryDelay = 2.Seconds(),
+                IgnoreExceptionType = typeof(ItemNotFoundException)
             })
             .Until(() => path.Exists() == false);
 

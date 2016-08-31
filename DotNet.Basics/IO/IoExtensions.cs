@@ -18,11 +18,11 @@ namespace DotNet.Basics.IO
             outFileCmdlet.AddParameter("NoNewline");
 
             targetFile.ToFile().Directory.CreateIfNotExists();
-            var result = Repeat.Task(() => PowerShellConsole.RunScript(outFileCmdlet.ToScript()))
-                .WithOptions(o =>
+            var result = Repeat.Task(() => PowerShellConsole.RunScript(outFileCmdlet.ToScript()),
+                new RepeatOptions
                 {
-                    o.RetryDelay = 1.Seconds();
-                    o.MaxTries = 10;
+                    RetryDelay = 1.Seconds(),
+                    MaxTries = 10
                 })
                 .UntilNoExceptions();
 
