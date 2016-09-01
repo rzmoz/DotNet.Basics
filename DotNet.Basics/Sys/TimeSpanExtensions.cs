@@ -61,7 +61,15 @@ namespace DotNet.Basics.Sys
         {
             return TimeSpan.FromMilliseconds(number);
         }
+        public static TimeSpan MilliSeconds(this uint number)
+        {
+            return TimeSpan.FromMilliseconds(number);
+        }
         public static TimeSpan Seconds(this int number)
+        {
+            return TimeSpan.FromSeconds(number);
+        }
+        public static TimeSpan Seconds(this uint number)
         {
             return TimeSpan.FromSeconds(number);
         }
@@ -69,7 +77,15 @@ namespace DotNet.Basics.Sys
         {
             return TimeSpan.FromMinutes(number);
         }
+        public static TimeSpan Minutes(this uint number)
+        {
+            return TimeSpan.FromMinutes(number);
+        }
         public static TimeSpan Hours(this int number)
+        {
+            return TimeSpan.FromHours(number);
+        }
+        public static TimeSpan Hours(this uint number)
         {
             return TimeSpan.FromHours(number);
         }
@@ -77,7 +93,15 @@ namespace DotNet.Basics.Sys
         {
             return TimeSpan.FromDays(number);
         }
+        public static TimeSpan Days(this uint number)
+        {
+            return TimeSpan.FromDays(number);
+        }
         public static TimeSpan Ticks(this int number)
+        {
+            return TimeSpan.FromTicks(number);
+        }
+        public static TimeSpan Ticks(this uint number)
         {
             return TimeSpan.FromTicks(number);
         }
