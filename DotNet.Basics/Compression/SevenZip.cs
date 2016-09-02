@@ -32,7 +32,7 @@ namespace DotNet.Basics.Compression
                 var temp7Zip32Dll = temp.Root.ToFile("7zxa.dll");
                 Extract(temp7Zip32Dll.FullName, CompressionResources._7zxa);
 
-                Debug.WriteLine($"7zip extracted to {temp.Root.FullName}");
+                Trace.WriteLine($"7zip extracted to {temp.Root.FullName}");
 
                 var paramsString = @params.Aggregate(string.Empty, (current, param) => current + $" {param}");
                 var script = $"{temp7ZExe.FullName} {command} {paramsString} -y";
@@ -44,7 +44,6 @@ namespace DotNet.Basics.Compression
         {
             using (var fsDst = new System.IO.FileStream(path, System.IO.FileMode.CreateNew, System.IO.FileAccess.Write))
                 fsDst.Write(bytes, 0, bytes.Length);
-
         }
     }
 }

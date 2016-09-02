@@ -83,7 +83,7 @@ namespace DotNet.Basics.Tasks
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e.ToString());
+                Trace.WriteLine(e.ToString());
             }
         }
 

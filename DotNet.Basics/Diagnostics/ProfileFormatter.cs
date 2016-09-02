@@ -10,7 +10,6 @@ namespace DotNet.Basics.Diagnostics
         {
             return Format(profile, p =>
             {
-
                 var output = $"finished in {profile.Duration.ToString(string.Empty, new CultureInfo("en-US"))}";
 
                 if (string.IsNullOrWhiteSpace(profile.Name) == false)

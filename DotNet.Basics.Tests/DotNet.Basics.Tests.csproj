@@ -121,7 +121,6 @@
     <Compile Include="Tasks\ThrowExceptionUntilXTriesDummeTask.cs" />
     <Compile Include="Tasks\RepeaterTaskTests.cs" />
     <Compile Include="Sys\TimeSpanExtensionsTests.cs" />
-    <Compile Include="TestInit.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Compression\myArchive.zip">

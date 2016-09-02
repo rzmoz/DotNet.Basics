@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
@@ -31,7 +30,7 @@ namespace DotNet.Basics.Sys
 
         public static object[] CopyItem(string path, string destination, bool force, bool recurse)
         {
-            return CopyItem(new [] { path }, destination, force, recurse);
+            return CopyItem(new[] { path }, destination, force, recurse);
         }
         public static object[] CopyItem(string[] paths, string destination, bool force, bool recurse)
         {
@@ -82,10 +81,7 @@ namespace DotNet.Basics.Sys
                 var pipeline = runspace.CreatePipeline();
                 pipeline.Commands.AddScript(_bypassExecutionPolicy);
                 foreach (var script in scripts)
-                {
-                    Debug.WriteLine($"Adding script to ps pipeline: {script}");
                     pipeline.Commands.AddScript(script);
-                }
 
                 var passThru = pipeline.Invoke();
                 runspace.Close();

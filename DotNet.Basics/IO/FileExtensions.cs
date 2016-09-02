@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using DotNet.Basics.Sys;
 
@@ -29,22 +28,11 @@ namespace DotNet.Basics.IO
         {
             if (targetFile == null) throw new ArgumentNullException(nameof(targetFile));
             if (sourceFile.FullName.Equals(targetFile.FullName, StringComparison.OrdinalIgnoreCase))
-            {
-                Debug.WriteLine($"MoveTo skipped. Source and target are the same: {sourceFile.FullName}");
                 return false;
-            }
-
             if (sourceFile.Exists() == false)
-            {
-                Debug.WriteLine($"MoveTo skipped. Source not found: {sourceFile.FullName}");
                 return false;
-            }
-
             if (overwrite == false && targetFile.ToFile().Exists())
-            {
-                Debug.WriteLine($"MoveTo skipped. Target already exists and overwrite is set to false: {targetFile}");
                 return false;
-            }
             targetFile.Directory.CreateIfNotExists();
             PowerShellConsole.MoveItem(sourceFile.FullName, targetFile.FullName, force: true);
             return targetFile.Exists();
@@ -72,7 +60,6 @@ namespace DotNet.Basics.IO
             if (source == null) throw new ArgumentNullException(nameof(source));
             target.Directory.CreateIfNotExists();
             PowerShellConsole.CopyItem(source.FullName, target.FullName, force: overwrite, recurse: false);
-            Debug.WriteLine($"{source.FullName} copied to: {target.FullName}");
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
 
@@ -25,8 +24,7 @@ namespace DotNet.Basics.IO
                     MaxTries = 10
                 })
                 .UntilNoExceptions();
-
-            Debug.WriteLine($"Saved text to disk: {targetFile}");
+            
             return targetFile.ToFile();
         }
         public static FilePath WriteAllText(this string content, Path targetPath, bool overwrite = false)

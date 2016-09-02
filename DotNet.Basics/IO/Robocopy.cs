@@ -25,7 +25,7 @@ namespace DotNet.Basics.IO
         {
             if (source == null) { throw new ArgumentNullException(nameof(source)); }
             if (target == null) { throw new ArgumentNullException(nameof(target)); }
-            
+
             Init();
             var command = $"{_fullPath} \"{source.RemoveSuffix('\\')}\" \"{target.RemoveSuffix('\\')}\" ";
             if (string.IsNullOrWhiteSpace(filesToCopy) == false)
@@ -90,7 +90,7 @@ namespace DotNet.Basics.IO
                 };
 
                 _fullPath = LookupRobocopy(lookforPaths);
-                Debug.WriteLine("Robocopy found at: " + _fullPath);
+                Trace.WriteLine($"Robocopy found at: {_fullPath}");
             }
         }
 
@@ -109,7 +109,7 @@ namespace DotNet.Basics.IO
                 foreach (var searchPath in searchPaths)
                 {
                     var lookFor = driveInfo.Name + searchPath.TrimStart('\\');
-                    Debug.WriteLine("Looking for robocopy in {0}", lookFor);
+                    Trace.WriteLine("Looking for robocopy in {0}", lookFor);
                     if (lookFor.ToFile().Exists())
                         return lookFor;
                 }

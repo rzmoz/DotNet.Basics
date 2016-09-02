@@ -46,16 +46,17 @@ namespace DotNet.Basics.Pipelines
 
             var pipelineName = pipeline.GetType().Name;
             Exception lastException = null;
+
             try
             {
-                Debug.WriteLine($"Pipeline starting:{pipelineName }");
+                Trace.WriteLine($"Pipeline starting:{pipelineName }");
                 PipelineStarting?.Invoke(pipelineName);
 
                 var blockCount = 0;
                 foreach (var block in pipeline.PipelineBlocks)
                 {
                     var blockName = string.IsNullOrWhiteSpace(block.Name) ? $"Block {blockCount++}" : block.Name;
-                    Debug.WriteLine($"Block starting:{blockName}");
+                    Trace.WriteLine($"Block starting:{blockName}");
                     BlockStarting?.Invoke(blockName);
 
                     await Task.WhenAll(block.Select(async step =>
@@ -64,28 +65,28 @@ namespace DotNet.Basics.Pipelines
                         step.Init();//must run before resolving step name for lazy bound steps
                         var stepName = string.IsNullOrWhiteSpace(step.DisplayName) ? step.GetType().Name : step.DisplayName;
 
-                        Debug.WriteLine($"Step starting:{stepName}");
+                        Trace.WriteLine($"Step starting:{stepName}");
                         StepStarting?.Invoke(stepName);
 
                         await step.RunAsync(args).ConfigureAwait(false);
 
-                        Debug.WriteLine($"Step ended:{stepName}");
+                        Trace.WriteLine($"Step ended:{stepName}");
                         StepEnded?.Invoke(stepName);
 
                     })).ConfigureAwait(false);
 
-                    Debug.WriteLine($"Block ended:{blockName}");
+                    Trace.WriteLine($"Block ended:{blockName}");
                     BlockEnded?.Invoke(blockName);
                 }
             }
             catch (Exception exc)
             {
                 lastException = exc;
-                Debug.WriteLine(exc.ToString());
+                Trace.WriteLine(exc.ToString());
             }
             finally
             {
-                Debug.WriteLine($"Pipeline ended:{pipelineName}");
+                Trace.WriteLine($"Pipeline ended:{pipelineName}");
                 PipelineEnded?.Invoke(pipelineName);
             }
 

@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace DotNet.Basics.Tasks
+﻿namespace DotNet.Basics.Tasks
 {
     public class CountLoopBreakPredicate
     {
@@ -27,7 +25,6 @@ namespace DotNet.Basics.Tasks
         public void LoopCallback()
         {
             _tryCount++;
-            Debug.WriteLine("Looping try {0}", _tryCount);
         }
     }
 }

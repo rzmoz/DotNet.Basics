@@ -6,7 +6,7 @@ namespace DotNet.Basics.Sys
     {
         public static int Run(string commandString)
         {
-            Debug.WriteLine($"Command prompt invoked: {commandString}");
+            Trace.WriteLine($"Command prompt invoked: {commandString}");
 
             var si = new ProcessStartInfo("cmd.exe", $"/c {commandString}")
             {
@@ -22,13 +22,13 @@ namespace DotNet.Basics.Sys
             {
                 console.Start();
 
-                Debug.WriteLine(console.StandardOutput.ReadToEnd());
+                Trace.WriteLine(console.StandardOutput.ReadToEnd());
                 var error = console.StandardError.ReadToEnd();
                 if (error.Length > 0)
-                    Debug.WriteLine($"[Error]: {error}");
+                    Trace.WriteLine($"[Error]: {error}");
 
                 var exitCode = console.ExitCode;
-                Debug.WriteLine($"ExitCode:{exitCode} returned from {commandString}");
+                Trace.WriteLine($"ExitCode:{exitCode} returned from {commandString}");
                 console.Close();
                 return exitCode;
             }

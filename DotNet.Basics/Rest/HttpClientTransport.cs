@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -17,12 +16,7 @@ namespace DotNet.Basics.Rest
                 Timeout = request.TimeOut
             };
 
-            var httpResponseMessage = await httpClient.SendAsync(request.HttpRequestMessage).ConfigureAwait(false);
-
-            Debug.Print(request.HttpRequestMessage.ToString());
-            Debug.Print(httpResponseMessage.ToString());
-
-            return httpResponseMessage;
+            return await httpClient.SendAsync(request.HttpRequestMessage).ConfigureAwait(false);
         }
     }
 }

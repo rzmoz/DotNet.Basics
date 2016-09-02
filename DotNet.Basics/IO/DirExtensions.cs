@@ -97,13 +97,13 @@ namespace DotNet.Basics.IO
         {
             if (source.Exists() == false)
             {
-                Debug.WriteLine("Source '{0}' not found. Aborting", source.FullName);
+                Trace.WriteLine($"Source '{source.FullName}' not found. Aborting");
                 return;
             }
 
             if (source.FullName.Equals(target.FullName, StringComparison.OrdinalIgnoreCase))
             {
-                Debug.WriteLine("Source and Target are the same '{0}'. Aborting", source.FullName);
+                Trace.WriteLine($"Source and Target are the same '{source.FullName}'. Aborting");
                 return;
             }
 
@@ -129,7 +129,7 @@ namespace DotNet.Basics.IO
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Fast copy failed - falling back to use robocopy\r\n{0}", e);
+                Trace.WriteLine($"Fast copy failed - falling back to use robocopy\r\n{e}");
                 Robocopy.CopyDir(source.FullName, target.FullName, includeSubFolders: includeSubfolders);
             }
         }
@@ -148,21 +148,11 @@ namespace DotNet.Basics.IO
             }
 
         }
-
-        public static void CreateIfNotExists(this DirPath dir)
-        {
-            if (dir.Exists())
-                return;
-
-            System.IO.Directory.CreateDirectory(dir.FullName);
-            Debug.WriteLine($"Created: {dir.FullName}");
-        }
-
+        
         public static void GrantAccess(this DirPath dir, string username, FileSystemRights fileSystemRights = FileSystemRights.FullControl)
         {
             if (dir.Exists() == false)
                 return;
-            Debug.WriteLine("Giving {0} user write access to: {1}", username, dir.FullName);
 
             DirectorySecurity directorySecurity = dir.GetAccessControl();
             CanonicalizeDacl(directorySecurity);

@@ -41,8 +41,14 @@ namespace DotNet.Basics.IO
             if (IsFolder == false)
                 throw new PathException($"Can't create path because it's not a folder {FullName}", this);
 
-            System.IO.Directory.CreateDirectory(FullName);
-            Debug.WriteLine($"Created: {FullName}");
+            try
+            {
+                System.IO.Directory.CreateDirectory(FullName);
+            }
+            catch (System.IO.IOException e)
+            {
+                Trace.WriteLine(e.ToString());
+            }
         }
 
         /// <summary>
