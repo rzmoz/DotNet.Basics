@@ -121,18 +121,18 @@
     <Compile Include="Sys\EnumClass.cs" />
     <Compile Include="Sys\EnumExtensions.cs" />
     <Compile Include="Sys\EventArgs.cs" />
+    <Compile Include="Tasks\ITask.cs" />
     <Compile Include="Tasks\OnceOnlyAsyncTask.cs" />
     <Compile Include="Tasks\OnceOnlySyncTask.cs" />
+    <Compile Include="Tasks\RunMode.cs" />
     <Compile Include="Tasks\SyncTask.cs" />
-    <Compile Include="Tasks\TaskFactory.cs" />
-    <Compile Include="Tasks\TaskOptions.cs" />
     <Compile Include="Tasks\Repeat.cs" />
     <Compile Include="Sys\Observable.cs" />
     <Compile Include="Sys\SysExtensions.cs" />
     <Compile Include="Tasks\RepeaterTaskExtensions.cs" />
     <Compile Include="Tasks\RepeaterTaskRunner.cs" />
     <Compile Include="Tasks\RepeatOptions.cs" />
-    <Compile Include="Tasks\RunTask.cs" />
+    <Compile Include="Tasks\TaskVessel.cs" />
     <Compile Include="Tasks\TimeoutLoopBreakPredicate.cs" />
     <Compile Include="Sys\TimeSpanExtensions.cs" />
   </ItemGroup>

@@ -6,28 +6,26 @@ namespace DotNet.Basics.Tasks
 {
     public static class Repeat
     {
-        private static readonly TaskFactory _taskFactory = new TaskFactory();
-
-        public static RunTask<RepeatOptions> Task(Func<CancellationToken, Task> task, RepeatOptions options = null)
+        public static TaskVessel<RepeatOptions> Task(Func<CancellationToken, Task> task, RepeatOptions options = null)
         {
-            return _taskFactory.Create(task, options);
+            return new TaskVessel<RepeatOptions>(new AsyncTask(task), options);
         }
 
-        public static RunTask<RepeatOptions> TaskOnce(Func<CancellationToken, Task> task, RepeatOptions options = null)
+        public static TaskVessel<RepeatOptions> TaskOnce(Func<CancellationToken, Task> task, RepeatOptions options = null)
         {
             var onceOnlyTask = new OnceOnlyAsyncTask(task);
-            return _taskFactory.Create(onceOnlyTask.RunAsync, options);
+            return new TaskVessel<RepeatOptions>(new AsyncTask(onceOnlyTask.RunAsync), options);
         }
 
-        public static RunTask<RepeatOptions> Task(Action task, RepeatOptions options = null)
+        public static TaskVessel<RepeatOptions> Task(Action task, RepeatOptions options = null)
         {
-            return _taskFactory.Create(task, options);
+            return new TaskVessel<RepeatOptions>(new SyncTask(task), options);
         }
 
-        public static RunTask<RepeatOptions> TaskOnce(Action task, RepeatOptions options = null)
+        public static TaskVessel<RepeatOptions> TaskOnce(Action task, RepeatOptions options = null)
         {
             var onceOnlyTask = new OnceOnlySyncTask(task);
-            return _taskFactory.Create(onceOnlyTask.Run, options);
+            return new TaskVessel<RepeatOptions>(new SyncTask(onceOnlyTask.Run), options);
         }
     }
 }

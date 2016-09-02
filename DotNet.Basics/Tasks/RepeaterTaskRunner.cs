@@ -6,17 +6,17 @@ namespace DotNet.Basics.Tasks
 {
     public class RepeaterTaskRunner
     {
-        public async Task<bool> RunAsync(RunTask<RepeatOptions> task, Func<Exception, bool> untilPredicate)
+        public async Task<bool> RunAsync(TaskVessel<RepeatOptions> vessel, Func<Exception, bool> untilPredicate)
         {
-            if (task == null)
+            if (vessel == null)
                 return false;
 
             if (untilPredicate == null)
                 throw new ArgumentNullException(nameof(untilPredicate), $"Task will potentially run forever. Set untilPredicate and also consider adding timeout and maxtries to task options");
 
             Exception lastException = null;
-            task.Options.CountLoopBreakPredicate?.Reset();
-            task.Options.TimeoutLoopBreakPredicate?.Reset();
+            vessel.Options.CountLoopBreakPredicate?.Reset();
+            vessel.Options.TimeoutLoopBreakPredicate?.Reset();
 
             bool success;
             try//ensure finally is executed
@@ -26,18 +26,18 @@ namespace DotNet.Basics.Tasks
                     Exception exceptionInLastLoop;
                     try
                     {
-                        await task.RunAsync().ConfigureAwait(false);
-                        task.Options.CountLoopBreakPredicate?.LoopCallback();
+                        await vessel.Task.RunAsync().ConfigureAwait(false);
+                        vessel.Options.CountLoopBreakPredicate?.LoopCallback();
                         exceptionInLastLoop = null;
                     }
                     catch (Exception e)
                     {
                         lastException = e;
                         exceptionInLastLoop = e;
-                        task.Options.CountLoopBreakPredicate?.LoopCallback();
+                        vessel.Options.CountLoopBreakPredicate?.LoopCallback();
                     }
 
-                    Pingback(task.Options);
+                    Pingback(vessel.Options);
 
                     if (untilPredicate.Invoke(exceptionInLastLoop))
                     {
@@ -45,13 +45,13 @@ namespace DotNet.Basics.Tasks
                         break;
                     }
 
-                    if (ShouldContinue(lastException, task.Options) == false)
+                    if (ShouldContinue(lastException, vessel.Options) == false)
                     {
                         success = false;
                         break;
                     }
 
-                    await Task.Delay(task.Options.RetryDelay).ConfigureAwait(false);
+                    await Task.Delay(vessel.Options.RetryDelay).ConfigureAwait(false);
 
                 } while (true);
             }
@@ -59,7 +59,7 @@ namespace DotNet.Basics.Tasks
             {
                 try
                 {
-                    task.Options.Finally?.Invoke();
+                    vessel.Options.Finally?.Invoke();
                 }
                 catch (Exception e)
                 {
