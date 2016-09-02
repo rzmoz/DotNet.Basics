@@ -50,7 +50,6 @@ namespace DotNet.Basics.IO
             return targetFile.Exists();
         }
 
-
         public static void CopyTo(this IEnumerable<FilePath> sourceFiles, DirPath targetDir, bool overwrite = false)
         {
             var paths = sourceFiles.Select(file => file.FullName).ToArray();

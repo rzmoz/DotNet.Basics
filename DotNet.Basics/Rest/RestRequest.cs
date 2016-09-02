@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using DotNet.Basics.IO;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Rest
 {
@@ -12,11 +12,11 @@ namespace DotNet.Basics.Rest
         {
         }
         public RestRequest(string baseUrl, string pathAndQuery)
-            : this(baseUrl.ToPath(pathAndQuery).FullName)
+            : this(CombineBaseUrlAndPathAndQuery(baseUrl, pathAndQuery))
         {
         }
         public RestRequest(string baseUrl, string pathAndQuery, HttpMethod method)
-            : this(baseUrl.ToPath(pathAndQuery).FullName, method)
+            : this(CombineBaseUrlAndPathAndQuery(baseUrl, pathAndQuery), method)
         {
         }
 
@@ -103,6 +103,13 @@ namespace DotNet.Basics.Rest
 
                 return HttpRequestMessage.ToString();
             }
+        }
+
+        private static string CombineBaseUrlAndPathAndQuery(string baseUrl, string pathAndQuery)
+        {
+            if (baseUrl == null) throw new ArgumentNullException(nameof(baseUrl));
+            if (pathAndQuery == null) throw new ArgumentNullException(nameof(pathAndQuery));
+            return baseUrl.EnsureSuffix('/') + pathAndQuery.RemovePrefix('/');
         }
     }
 }

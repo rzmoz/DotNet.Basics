@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-
-
 namespace DotNet.Basics.Pipelines
 {
     public class LazyBindStep<T, TStep> : PipelineStep<T>
@@ -15,11 +13,11 @@ namespace DotNet.Basics.Pipelines
             DisplayName = step.DisplayName;
         }
 
-        public override async Task RunAsync(T args, IPipelineLogger logger)
+        public override async Task RunAsync(T args)
         {
             var step = Container.GetInstance<TStep>();
             DisplayName = step.DisplayName;
-            await step.RunAsync(args, logger).ConfigureAwait(false);
+            await step.RunAsync(args).ConfigureAwait(false);
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using DotNet.Basics.Ioc;
-using NLog;
 
 namespace DotNet.Basics.Pipelines
 {
@@ -44,27 +44,18 @@ namespace DotNet.Basics.Pipelines
             if (args == null)
                 args = new TArgs();
 
-            //init Logger
-            var pipelineLogger = new PipelineLogger(LogManager.GetCurrentClassLogger());
-            var success = true;
-            pipelineLogger.EntryLogged += (e, logEntry) =>
-            {
-                if (logEntry.Level >= LogLevel.Error)
-                    success = false;
-            };
-
             var pipelineName = pipeline.GetType().Name;
-
+            Exception lastException = null;
             try
             {
-                pipelineLogger.Log(LogLevel.Trace, $"Pipeline starting:{pipelineName }");
+                Debug.WriteLine($"Pipeline starting:{pipelineName }");
                 PipelineStarting?.Invoke(pipelineName);
 
                 var blockCount = 0;
                 foreach (var block in pipeline.PipelineBlocks)
                 {
                     var blockName = string.IsNullOrWhiteSpace(block.Name) ? $"Block {blockCount++}" : block.Name;
-                    pipelineLogger.Trace($"Block starting:{blockName}");
+                    Debug.WriteLine($"Block starting:{blockName}");
                     BlockStarting?.Invoke(blockName);
 
                     await Task.WhenAll(block.Select(async step =>
@@ -73,31 +64,32 @@ namespace DotNet.Basics.Pipelines
                         step.Init();//must run before resolving step name for lazy bound steps
                         var stepName = string.IsNullOrWhiteSpace(step.DisplayName) ? step.GetType().Name : step.DisplayName;
 
-                        pipelineLogger.Debug($"Step starting:{stepName}");
+                        Debug.WriteLine($"Step starting:{stepName}");
                         StepStarting?.Invoke(stepName);
 
-                        await step.RunAsync(args, pipelineLogger).ConfigureAwait(false);
+                        await step.RunAsync(args).ConfigureAwait(false);
 
-                        pipelineLogger.Debug($"Step ended:{stepName}");
+                        Debug.WriteLine($"Step ended:{stepName}");
                         StepEnded?.Invoke(stepName);
 
                     })).ConfigureAwait(false);
 
-                    pipelineLogger.Debug($"Block ended:{blockName}");
+                    Debug.WriteLine($"Block ended:{blockName}");
                     BlockEnded?.Invoke(blockName);
                 }
             }
             catch (Exception exc)
             {
-                pipelineLogger.Error(exc.Message, exc);
+                lastException = exc;
+                Debug.WriteLine(exc.ToString());
             }
             finally
             {
-                pipelineLogger.Debug($"Pipeline ended:{pipelineName}");
+                Debug.WriteLine($"Pipeline ended:{pipelineName}");
                 PipelineEnded?.Invoke(pipelineName);
             }
 
-            return new PipelineResult<TArgs>(success, args);
+            return new PipelineResult<TArgs>(lastException, args);
         }
     }
 }

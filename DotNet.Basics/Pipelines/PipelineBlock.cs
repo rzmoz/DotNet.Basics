@@ -25,7 +25,7 @@ namespace DotNet.Basics.Pipelines
             return this;
         }
 
-        public void AddSteps(params Func<T, IPipelineLogger, Task>[] asyncFunc)
+        public void AddSteps(params Func<T, Task>[] asyncFunc)
         {
             AddSteps(asyncFunc.Select(af => (PipelineStep<T>)(new EagerBindStep<T>(af))).ToArray());
         }

@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.Tests.Console
+﻿namespace DotNet.Basics.TestsConsole
 {
     class Program
     {

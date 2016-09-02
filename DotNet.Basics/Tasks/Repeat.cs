@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DotNet.Basics.Tasks.Repeating
+namespace DotNet.Basics.Tasks
 {
     public static class Repeat
     {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using DotNet.Basics.Sys;
-using NLog;
 
 namespace DotNet.Basics.IO
 {
@@ -26,16 +25,14 @@ namespace DotNet.Basics.IO
         {
             if (source == null) { throw new ArgumentNullException(nameof(source)); }
             if (target == null) { throw new ArgumentNullException(nameof(target)); }
-
-            var logger = LogManager.GetCurrentClassLogger();
-
-            Init(logger);
+            
+            Init();
             var command = $"{_fullPath} \"{source.RemoveSuffix('\\')}\" \"{target.RemoveSuffix('\\')}\" ";
             if (string.IsNullOrWhiteSpace(filesToCopy) == false)
                 command += $" \"{filesToCopy}\" ";
             command += options ?? string.Empty;
             command += " /np /ndl /nfl";//we don't want progress by default
-            return CommandPrompt.Run(command, logger);
+            return CommandPrompt.Run(command);
         }
 
         /// <summary>
@@ -79,7 +76,7 @@ namespace DotNet.Basics.IO
             return Run(sourceDir, targetDir, filter, options);
         }
 
-        private static void Init(ILogger logger = null)
+        private static void Init()
         {
             if (_fullPath != null)
                 return;
@@ -93,7 +90,7 @@ namespace DotNet.Basics.IO
                 };
 
                 _fullPath = LookupRobocopy(lookforPaths);
-                logger?.Debug("Robocopy found at: " + _fullPath);
+                Debug.WriteLine("Robocopy found at: " + _fullPath);
             }
         }
 

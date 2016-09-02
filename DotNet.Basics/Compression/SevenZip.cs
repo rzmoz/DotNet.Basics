@@ -1,14 +1,12 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
-using NLog;
 
 namespace DotNet.Basics.Compression
 {
     public class SevenZip
     {
-        private static readonly ILogger _logger = LogManager.GetCurrentClassLogger();
-        
         public int ExtractToDirectory(string archivePath, string targetDirPath)
         {
             return ExecuteSevenZip("x", $"\"{archivePath}\"", $"\"-o{targetDirPath.ToDir().FullName}\"", "*", "-r", "aoa");
@@ -34,9 +32,11 @@ namespace DotNet.Basics.Compression
                 var temp7Zip32Dll = temp.Root.ToFile("7zxa.dll");
                 Extract(temp7Zip32Dll.FullName, CompressionResources._7zxa);
 
+                Debug.WriteLine($"7zip extracted to {temp.Root.FullName}");
+
                 var paramsString = @params.Aggregate(string.Empty, (current, param) => current + $" {param}");
                 var script = $"{temp7ZExe.FullName} {command} {paramsString} -y";
-                return CommandPrompt.Run(script, _logger);
+                return CommandPrompt.Run(script);
             }
         }
 

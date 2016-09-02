@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
-using DotNet.Basics.Collections;
 using DotNet.Basics.IO;
 
 namespace DotNet.Basics.Sys
@@ -32,7 +31,7 @@ namespace DotNet.Basics.Sys
 
         public static object[] CopyItem(string path, string destination, bool force, bool recurse)
         {
-            return CopyItem(path.ToEnumerable().ToArray(), destination, force, recurse);
+            return CopyItem(new [] { path }, destination, force, recurse);
         }
         public static object[] CopyItem(string[] paths, string destination, bool force, bool recurse)
         {
@@ -46,7 +45,7 @@ namespace DotNet.Basics.Sys
 
         public static object[] RemoveItem(string path, bool force, bool recurse)
         {
-            return RemoveItem(path.ToEnumerable().ToArray(), force, recurse);
+            return RemoveItem(new[] { path }, force, recurse);
         }
         public static object[] RemoveItem(string[] paths, bool force, bool recurse)
         {
@@ -59,7 +58,7 @@ namespace DotNet.Basics.Sys
 
         public static object[] MoveItem(string path, string destination, bool force)
         {
-            return MoveItem(path.ToEnumerable().ToArray(), destination, force);
+            return MoveItem(new[] { path }, destination, force);
         }
         public static object[] MoveItem(string[] paths, string destination, bool force)
         {

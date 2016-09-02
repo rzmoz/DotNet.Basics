@@ -42,6 +42,5 @@ namespace DotNet.Basics.IO
             var result = PowerShellConsole.RunScript(getContentCmdlet.ToScript());
             return result.FirstOrDefault()?.ToString();
         }
-
     }
 }

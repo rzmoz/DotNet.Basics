@@ -12,10 +12,10 @@ namespace DotNet.Basics.Tests.Pipelines
             DisplayName = "MyDisplayName";
         }
 
-        public override async Task RunAsync(EventArgs args, IPipelineLogger logger)
+        public override async Task RunAsync(EventArgs args)
         {
             await Task.Delay(1.MilliSeconds()).ConfigureAwait(false);//silence compiler warning
-            logger.Info($"Display name set to {DisplayName}");
+            Console.WriteLine($"Display name set to {DisplayName}");
         }
     }
 }

@@ -13,7 +13,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             const int exitCode = 16;
 
-            var consolePath = TestContext.CurrentContext.TestDirectory.ToFile("DotNet.Basics.Tests.Console.exe");
+            var consolePath = TestContext.CurrentContext.TestDirectory.ToFile("DotNet.Basics.TestsConsole.exe");
 
             var observedExitCode = CommandPrompt.Run($"{consolePath } {exitCode}");
             observedExitCode.Should().Be(exitCode);

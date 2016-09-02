@@ -6,11 +6,9 @@ namespace DotNet.Basics.IO
 {
     public class TempDir : IDisposable
     {
-
         private static readonly Random _random = new Random();
 
         private int _tempDirLength = 16;
-
 
         public TempDir(string dirPrefix = null)
             : this(System.IO.Path.GetTempPath().ToDir(), dirPrefix)
@@ -25,7 +23,6 @@ namespace DotNet.Basics.IO
             Root.CreateIfNotExists();
         }
 
-
         public string Prefix { get; }
         public DirPath Root { get; }
 
@@ -39,6 +36,11 @@ namespace DotNet.Basics.IO
 
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[_random.Next(s.Length)]).ToArray());
+        }
+
+        public override string ToString()
+        {
+            return $"{Root?.FullName}";
         }
     }
 }

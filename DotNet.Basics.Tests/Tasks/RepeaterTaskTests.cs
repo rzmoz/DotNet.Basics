@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DotNet.Basics.Tasks.Repeating;
+using DotNet.Basics.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 

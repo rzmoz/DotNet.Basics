@@ -1,6 +1,5 @@
-﻿using DotNet.Basics.Diagnostics;
-using NLog;
-using NLog.Targets;
+﻿using System;
+using System.Diagnostics;
 using NUnit.Framework;
 
 namespace DotNet.Basics.Tests
@@ -11,12 +10,7 @@ namespace DotNet.Basics.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            LogManager.ThrowExceptions = true;
-            using (var logConfig = new NLogConfigurator())
-            {
-                logConfig.AddTarget(new ConsoleTarget("Console"));
-                logConfig.Build();
-            }
+            Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using DotNet.Basics.Pipelines;
 using DotNet.Basics.Sys;
 
@@ -14,11 +15,11 @@ namespace DotNet.Basics.Tests.Pipelines
             DisplayName = "MyIncrementArgsStep";
         }
 
-        public override async Task RunAsync(EventArgs<int> args, IPipelineLogger logger)
+        public override async Task RunAsync(EventArgs<int> args)
         {
             await Task.Delay(1.MilliSeconds()).ConfigureAwait(false);//silence compiler warning
             args.Value = _classThatIncrementArgsDependOn.IncrementByOne(args.Value);
-            logger.Info($"Value is now: {args.Value}");
+            Console.WriteLine($"Value is now: {args.Value}");
         }
     }
 }

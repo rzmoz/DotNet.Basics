@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-
 namespace DotNet.Basics.Pipelines
 {
     public class Pipeline : Pipeline<EventArgs>
@@ -26,22 +25,22 @@ namespace DotNet.Basics.Pipelines
             var block = CreateStepBlock(blockName);
             return block;
         }
-        public PipelineBlock<T> AddBlock(string blockName, params Func<T, IPipelineLogger, Task>[] asyncFunc)
+        public PipelineBlock<T> AddBlock(string blockName, params Func<T, Task>[] asyncFunc)
         {
             var block = CreateStepBlock(blockName);
             block.AddSteps(asyncFunc);
             return block;
         }
-        public PipelineBlock<T> AddBlock(params Func<T, IPipelineLogger, Task>[] asyncFunc)
+        public PipelineBlock<T> AddBlock(params Func<T, Task>[] asyncFunc)
         {
             return AddBlock(string.Empty, asyncFunc);
         }
 
-        public PipelineBlock<T> AddBlock(params Action<T, IPipelineLogger>[] syncFunc)
+        public PipelineBlock<T> AddBlock(params Action<T>[] syncFunc)
         {
-            var asyncFuncs = syncFunc.Select<Action<T, IPipelineLogger>, Func<T, IPipelineLogger, Task>>(f => (args, logger) =>
+            var asyncFuncs = syncFunc.Select<Action<T>, Func<T, Task>>(f => (args) =>
              {
-                 f(args, logger);
+                 f(args);
                  return Task.CompletedTask;
              });
 

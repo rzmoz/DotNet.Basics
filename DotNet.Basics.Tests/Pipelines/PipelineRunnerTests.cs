@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using NLog;
 using System.Threading.Tasks;
 using DotNet.Basics.Ioc;
 using DotNet.Basics.Pipelines;
@@ -64,16 +63,16 @@ namespace DotNet.Basics.Tests.Pipelines
         public async Task RunAsync_AllInParallel_AllStepsAreRunInParallel()
         {
             var pipeline = new Pipeline<EventArgs<int>>();
-            pipeline.AddBlock(async (args, logger) => await Task.Delay(TimeSpan.FromSeconds(1)),
-                              async (args, logger) => await Task.Delay(TimeSpan.FromSeconds(1)),
-                              async (args, logger) => await Task.Delay(TimeSpan.FromSeconds(1)),
-                              async (args, logger) => await Task.Delay(TimeSpan.FromSeconds(1)),
-                              async (args, logger) => await Task.Delay(TimeSpan.FromSeconds(1)),
-                              async (args, logger) => await Task.Delay(TimeSpan.FromSeconds(1)),
-                              async (args, logger) => await Task.Delay(TimeSpan.FromSeconds(1)),
-                              async (args, logger) => await Task.Delay(TimeSpan.FromSeconds(1)),
-                              async (args, logger) => await Task.Delay(TimeSpan.FromSeconds(1)),
-                              async (args, logger) => await Task.Delay(TimeSpan.FromSeconds(1)));
+            pipeline.AddBlock(async (args) => await Task.Delay(TimeSpan.FromSeconds(1)),
+                              async (args) => await Task.Delay(TimeSpan.FromSeconds(1)),
+                              async (args) => await Task.Delay(TimeSpan.FromSeconds(1)),
+                              async (args) => await Task.Delay(TimeSpan.FromSeconds(1)),
+                              async (args) => await Task.Delay(TimeSpan.FromSeconds(1)),
+                              async (args) => await Task.Delay(TimeSpan.FromSeconds(1)),
+                              async (args) => await Task.Delay(TimeSpan.FromSeconds(1)),
+                              async (args) => await Task.Delay(TimeSpan.FromSeconds(1)),
+                              async (args) => await Task.Delay(TimeSpan.FromSeconds(1)),
+                              async (args) => await Task.Delay(TimeSpan.FromSeconds(1)));
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -90,8 +89,8 @@ namespace DotNet.Basics.Tests.Pipelines
             var task1Called = false;
             var task2Called = false;
             var pipeline = new Pipeline<EventArgs<int>>();
-            pipeline.AddBlock(async (args, logger) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200)); });
-            pipeline.AddBlock(async (args, logger) =>
+            pipeline.AddBlock(async (args) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200)); });
+            pipeline.AddBlock(async (args) =>
             {
                 await Task.Delay(0).ConfigureAwait(false);
                 if (task1Called == false)
@@ -109,23 +108,7 @@ namespace DotNet.Basics.Tests.Pipelines
             task1Called.Should().BeTrue();
             task2Called.Should().BeTrue();
         }
-
-        [Test]
-        public async Task RunAsync_Result_FinishedWitEntryLogged()
-        {
-            foreach (LogLevel logLevel in LogLevel.AllLoggingLevels)
-            {
-                var pipeline = new Pipeline<EventArgs<int>>();
-                pipeline.AddBlock((args, log) => { log.Log(logLevel, "Entry logged"); });
-
-                var result = await new PipelineRunner().RunAsync(pipeline).ConfigureAwait(false);
-
-                if (logLevel < LogLevel.Error)
-                    result.Success.Should().BeTrue($"{logLevel.Name} success: {result.Success}");
-                else
-                    result.Success.Should().BeFalse($"{logLevel.Name} success: {result.Success}");
-            }
-        }
+        
 
         [Test]
         public async Task RunAsync_PassArgs_ArgsArePassedInPipeline()

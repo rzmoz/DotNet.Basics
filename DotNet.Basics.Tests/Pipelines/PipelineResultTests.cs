@@ -11,7 +11,7 @@ namespace DotNet.Basics.Tests.Pipelines
         [Test]
         public void Ctor_NoArgs_Ar()
         {
-            var result = new PipelineResult<EventArgs>(success: true);
+            var result = new PipelineResult<EventArgs>();
 
             result.Args.Should().NotBeNull();
             result.Args.Should().BeOfType(typeof(EventArgs));

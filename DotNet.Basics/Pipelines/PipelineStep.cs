@@ -11,7 +11,7 @@ namespace DotNet.Basics.Pipelines
             DisplayName = GetType().Name;
         }
 
-        public abstract Task RunAsync(T args, IPipelineLogger logger);
+        public abstract Task RunAsync(T args);
 
         public virtual void Init()
         {

@@ -4,13 +4,13 @@ namespace DotNet.Basics.Pipelines
 {
     public class PipelineResult<T> where T : EventArgs, new()
     {
-        public PipelineResult(bool success, T args = null)
+        public PipelineResult(Exception lastException = null, T args = null)
         {
-            Success = success;
+            LastException = lastException;
             Args = args ?? new T();
         }
 
         public T Args { get; private set; }
-        public bool Success { get; }
+        public Exception LastException { get; }
     }
 }

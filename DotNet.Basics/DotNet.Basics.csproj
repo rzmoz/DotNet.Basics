@@ -33,10 +33,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.3.7\lib\net45\NLog.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="SimpleInjector, Version=3.2.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
       <HintPath>..\packages\SimpleInjector.3.2.2\lib\net45\SimpleInjector.dll</HintPath>
       <Private>True</Private>
@@ -65,8 +61,6 @@
       <DependentUpon>CompressionResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Compression\SevenZip.cs" />
-    <Compile Include="Diagnostics\TargetExtensions.cs" />
-    <Compile Include="Diagnostics\NLogConfigurator.cs" />
     <Compile Include="Diagnostics\ProfileFormatter.cs" />
     <Compile Include="Diagnostics\DurationFormattingUnit.cs" />
     <Compile Include="Diagnostics\ProfileStates.cs" />
@@ -89,8 +83,6 @@
     <Compile Include="IO\IoExtensions.cs" />
     <Compile Include="IO\SystemIoPath.cs" />
     <Compile Include="IO\TempDir.cs" />
-    <Compile Include="Pipelines\IPipelineLogger.cs" />
-    <Compile Include="Pipelines\PipelineLogger.cs" />
     <Compile Include="Rest\HttpClientTransport.cs" />
     <Compile Include="Rest\IHttpTransport.cs" />
     <Compile Include="Rest\IRestClient.cs" />
@@ -134,12 +126,12 @@
     <Compile Include="Tasks\SyncTask.cs" />
     <Compile Include="Tasks\TaskFactory.cs" />
     <Compile Include="Tasks\TaskOptions.cs" />
-    <Compile Include="Tasks\Repeating\Repeat.cs" />
+    <Compile Include="Tasks\Repeat.cs" />
     <Compile Include="Sys\Observable.cs" />
     <Compile Include="Sys\SysExtensions.cs" />
-    <Compile Include="Tasks\Repeating\RepeaterTaskExtensions.cs" />
-    <Compile Include="Tasks\Repeating\RepeaterTaskRunner.cs" />
-    <Compile Include="Tasks\Repeating\RepeatOptions.cs" />
+    <Compile Include="Tasks\RepeaterTaskExtensions.cs" />
+    <Compile Include="Tasks\RepeaterTaskRunner.cs" />
+    <Compile Include="Tasks\RepeatOptions.cs" />
     <Compile Include="Tasks\RunTask.cs" />
     <Compile Include="Tasks\TimeoutLoopBreakPredicate.cs" />
     <Compile Include="Sys\TimeSpanExtensions.cs" />
