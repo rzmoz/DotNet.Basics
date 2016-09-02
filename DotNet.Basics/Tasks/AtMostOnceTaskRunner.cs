@@ -42,7 +42,7 @@ namespace DotNet.Basics.Tasks
                 return new AtMostOnceTaskRunResult(false, "task is already running");
 
             //lock task for running
-            var bgTask = new AsyncTask(task, id: taskId);
+            var bgTask = new AsyncTask(task);
             var added = _scheduler.TryAdd(taskId, bgTask);
             if (added == false)
                 return new AtMostOnceTaskRunResult(false, "failed to add task to scheduler - please try again");
@@ -57,13 +57,13 @@ namespace DotNet.Basics.Tasks
                 }
                 catch (Exception e)
                 {
-                    TaskFailed?.Invoke(bgTask.Id, e);
-                    taskFailedCallback?.Invoke(bgTask.Id, e);
+                    TaskFailed?.Invoke(taskId, e);
+                    taskFailedCallback?.Invoke(taskId, e);
                 }
                 finally
                 {
                     //make sure to unregister task when it's not running anymore
-                    ((IDictionary<string, AsyncTask>)_scheduler).Remove(bgTask.Id);
+                    ((IDictionary<string, AsyncTask>)_scheduler).Remove(taskId);
                 }
             });
 

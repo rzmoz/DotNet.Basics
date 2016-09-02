@@ -59,12 +59,12 @@ namespace DotNet.Basics.Tasks
             {
                 try
                 {
-                    task.Options.Finally?.Invoke();//we don't catch exceptions here since it needs to float if any
+                    task.Options.Finally?.Invoke();
                 }
                 catch (Exception e)
                 {
                     if (lastException == null)
-                        throw e;
+                        throw;
                     throw new AggregateException(lastException, e);
                 }
             }

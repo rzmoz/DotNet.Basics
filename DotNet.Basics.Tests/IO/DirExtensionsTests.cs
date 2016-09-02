@@ -156,7 +156,7 @@ namespace DotNet.Basics.Tests.IO
             var rootTestdir = TestContext.CurrentContext.TestDirectory.ToDir(testDirName);
             rootTestdir.CleanIfExists();
 
-            var currentDir = CreateIdenticalSubdirs(rootTestdir, 10);
+            var currentDir = CreateIdenticalSubdirs(rootTestdir, 3);
 
             const int numOfTestDirs = 3;
 

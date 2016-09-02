@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Linq;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {
     public class TempDir : IDisposable
     {
-        private static readonly Random _random = new Random();
-
         private int _tempDirLength = 16;
 
         public TempDir(string dirPrefix = null)
@@ -32,10 +29,10 @@ namespace DotNet.Basics.IO
         }
         private string TempName(int length)
         {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-            return new string(Enumerable.Repeat(chars, length)
-              .Select(s => s[_random.Next(s.Length)]).ToArray());
+            var random = Guid.NewGuid().ToString("N");
+            while (random.Length < length)
+                random = string.Concat(random, Guid.NewGuid().ToString("N"));
+            return random.Substring(0, length);
         }
 
         public override string ToString()

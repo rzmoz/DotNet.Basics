@@ -6,7 +6,7 @@ namespace DotNet.Basics.Tasks
 {
     public class AsyncTask : AsyncTask<TaskOptions>
     {
-        public AsyncTask(Func<CancellationToken, Task> task, TaskOptions options = null, string id = null) : base(task, options, id)
+        public AsyncTask(Func<CancellationToken, Task> task, TaskOptions options = null) : base(task, options)
         {
         }
     }
@@ -14,7 +14,7 @@ namespace DotNet.Basics.Tasks
     {
         private readonly Func<CancellationToken, Task> _asyncTask;
 
-        public AsyncTask(Func<CancellationToken, Task> task, T options = default(T), string id = null) : base(options, id)
+        public AsyncTask(Func<CancellationToken, Task> task, T options = default(T)) : base(options)
         {
             if (task == null) throw new ArgumentNullException(nameof(task));
             _asyncTask = task;
@@ -22,7 +22,7 @@ namespace DotNet.Basics.Tasks
 
         public override void Run()
         {
-            throw new NotSupportedException($"Async tasks can't be run synchronously reliably. Id:{Id}");
+            throw new NotSupportedException($"Your're trying to run an async task synchronously. Use RunAsync");
         }
 
         public override async Task RunAsync(CancellationToken ct = new CancellationToken())
