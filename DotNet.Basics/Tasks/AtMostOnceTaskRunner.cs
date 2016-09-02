@@ -39,13 +39,13 @@ namespace DotNet.Basics.Tasks
 
             //if task is already running
             if (IsRunning(taskId))
-                return new AtMostOnceTaskRunResult(taskId, false, "task is already running");
+                return new AtMostOnceTaskRunResult(false, "task is already running");
 
             //lock task for running
             var bgTask = new AsyncTask(task, id: taskId);
             var added = _scheduler.TryAdd(taskId, bgTask);
             if (added == false)
-                return new AtMostOnceTaskRunResult(taskId, false, "failed to add task to scheduler - please try again");
+                return new AtMostOnceTaskRunResult(false, "failed to add task to scheduler - please try again");
 
             //only start task if sucessfully added to scheduler
             //we dont await completion and don't pass a cancellation token since it's important that exception handling is always performed
@@ -67,7 +67,7 @@ namespace DotNet.Basics.Tasks
                 }
             });
 
-            return new AtMostOnceTaskRunResult(taskId, true, "task started");
+            return new AtMostOnceTaskRunResult(true, "task started");
         }
     }
 }
