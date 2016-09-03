@@ -3,7 +3,7 @@ using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Tasks
 {
-    public class RepeatOptions
+    public sealed class RepeatOptions : TaskOptions
     {
         private uint? _maxTries;
         private TimeSpan? _timeout;

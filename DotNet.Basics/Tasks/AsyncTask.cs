@@ -8,11 +8,14 @@ namespace DotNet.Basics.Tasks
     {
         private readonly Func<CancellationToken, Task> _asyncTask;
 
-        public AsyncTask(Func<CancellationToken, Task> task)
+        public AsyncTask(Func<CancellationToken, Task> task, string id = null)
         {
             if (task == null) throw new ArgumentNullException(nameof(task));
             _asyncTask = task;
+            Id = id ?? string.Empty;
         }
+
+        public string Id { get; }
 
         public void Run()
         {

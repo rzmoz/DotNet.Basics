@@ -16,31 +16,24 @@ namespace DotNet.Basics.Tests.Tasks
         {
             string taskId = "ExceptionThrown_GetExceptionsFromBgTasks_ExceptionsAreBubbled";
             Exception exceptionCaughtFromEvent = null;
+            string runIdIdCaughtFromEvent = null;
             string taskIdCaughtFromEvent = null;
 
-            Exception exceptionCaughtFromCallBack = null;
-            string taskIdCaughtFromCallBack = null;
-
             var runner = new AtMostOnceTaskRunner();
-            runner.TaskFailed += (id, e) =>
-             {
-                 taskIdCaughtFromEvent = id;
-                 exceptionCaughtFromEvent = e;
-             };
-            runner.StartTask(taskId, ct =>
+            runner.TaskEnded += (id, runId, e) =>
+              {
+                  taskIdCaughtFromEvent = id;
+                  exceptionCaughtFromEvent = e;
+              };
+            await runner.StartTaskAsync(taskId, ct =>
             {
                 throw new ArgumentNullException();
-            }, (id, e) =>
-            {
-                taskIdCaughtFromCallBack = id;
-                exceptionCaughtFromCallBack = e;
             });
 
             await WaitTillFinished(runner, taskId).ConfigureAwait(false);
             taskIdCaughtFromEvent.Should().Be(taskId);
+            runIdIdCaughtFromEvent.Should().NotBeNull();
             exceptionCaughtFromEvent.Should().BeOfType<ArgumentNullException>();
-            taskIdCaughtFromCallBack.Should().Be(taskId);
-            exceptionCaughtFromCallBack.Should().BeOfType<ArgumentNullException>();
         }
 
 
@@ -60,7 +53,7 @@ namespace DotNet.Basics.Tests.Tasks
 
             //try start task 10 times
             foreach (var i in Enumerable.Range(1, 10))
-                runner.StartTask(taskId, incrementTask);
+                await runner.StartTaskAsync(taskId, incrementTask, CancellationToken.None).ConfigureAwait(false);
 
             await WaitTillFinished(runner, taskId).ConfigureAwait(false);
 
@@ -72,6 +65,7 @@ namespace DotNet.Basics.Tests.Tasks
         public async Task RunAsync_Cancellation_LongRunningTasksCanBeCancelled()
         {
             var taskDelay = 5.Seconds();
+            bool taskStarted = false;
             bool taskEndedNaturally = false;
             Func<CancellationToken, Task> neverEndingTask = async (ct) =>
             {
@@ -83,9 +77,12 @@ namespace DotNet.Basics.Tests.Tasks
             string taskId = "RunAsync_IsRunning_TaskProgressIsDetected";
 
             var runner = new AtMostOnceTaskRunner();
+            runner.TaskStarted += (id, runId, started) => { taskStarted = started; };
 
-            var runResult = runner.StartTask(taskId, neverEndingTask, ctSource.Token);
-            runResult.Started.Should().BeTrue("task started");
+            await runner.StartTaskAsync(taskId, neverEndingTask, ctSource.Token);
+
+            while (taskStarted == false)
+                await Task.Delay(50.Milliseconds()).ConfigureAwait(false);
 
             runner.IsRunning(taskId).Should().BeTrue($"task is running");
 
@@ -102,14 +99,14 @@ namespace DotNet.Basics.Tests.Tasks
         [TestCase(null)]
         [TestCase("")]
         [TestCase("    ")]
-        public void RunAsync_TaskIdEmptyTask_ExceptionIsThrown(string taskId)
+        public async Task RunAsync_TaskIdEmptyTask_ExceptionIsThrown(string taskId)
         {
             var errorCaught = false;
 
             try
             {
                 var runner = new AtMostOnceTaskRunner();
-                runner.StartTask(taskId, (ct) => Task.CompletedTask);
+                await runner.StartTaskAsync(taskId, (ct) => Task.CompletedTask).ConfigureAwait(false);
             }
             catch (ArgumentNullException)
             {
@@ -137,12 +134,12 @@ namespace DotNet.Basics.Tests.Tasks
             {
                 try
                 {
-                    runner.StartTask(taskId, (ct) =>
+                    await runner.StartTaskAsync(taskId, (ct) =>
                     {
                         counter++;
                         //crash task thread
                         throw new ApplicationException("Cowabungaa");
-                    });
+                    }).ConfigureAwait(false);
                 }
                 catch (ApplicationException)
                 {

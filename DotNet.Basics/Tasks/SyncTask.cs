@@ -9,11 +9,14 @@ namespace DotNet.Basics.Tasks
         private readonly Action _syncTask;
         private readonly Func<Task> _asyncTask;
 
-        public SyncTask(Action task)
+        public SyncTask(Action task, string id = null)
         {
             _syncTask = task;
             _asyncTask = () => { task.Invoke(); return Task.CompletedTask; };
+            Id = id ?? string.Empty;
         }
+
+        public string Id { get; }
 
         public void Run()
         {

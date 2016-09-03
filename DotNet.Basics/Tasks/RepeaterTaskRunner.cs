@@ -14,11 +14,14 @@ namespace DotNet.Basics.Tasks
             if (untilPredicate == null)
                 throw new ArgumentNullException(nameof(untilPredicate), $"Task will potentially run forever. Set untilPredicate and also consider adding timeout and maxtries to task options");
 
+            var options = vessel.Options ?? new RepeatOptions();
+            
             Exception lastException = null;
-            vessel.Options.CountLoopBreakPredicate?.Reset();
-            vessel.Options.TimeoutLoopBreakPredicate?.Reset();
+            options.CountLoopBreakPredicate?.Reset();
+            options.TimeoutLoopBreakPredicate?.Reset();
 
             bool success;
+
             try//ensure finally is executed
             {
                 do
@@ -27,14 +30,14 @@ namespace DotNet.Basics.Tasks
                     try
                     {
                         await vessel.Task.RunAsync().ConfigureAwait(false);
-                        vessel.Options.CountLoopBreakPredicate?.LoopCallback();
+                        options.CountLoopBreakPredicate?.LoopCallback();
                         exceptionInLastLoop = null;
                     }
                     catch (Exception e)
                     {
                         lastException = e;
                         exceptionInLastLoop = e;
-                        vessel.Options.CountLoopBreakPredicate?.LoopCallback();
+                        options.CountLoopBreakPredicate?.LoopCallback();
                     }
 
                     Pingback(vessel.Options);
@@ -50,8 +53,8 @@ namespace DotNet.Basics.Tasks
                         success = false;
                         break;
                     }
-
-                    await Task.Delay(vessel.Options.RetryDelay).ConfigureAwait(false);
+                    
+                    await Task.Delay(options.RetryDelay).ConfigureAwait(false);
 
                 } while (true);
             }
@@ -59,7 +62,7 @@ namespace DotNet.Basics.Tasks
             {
                 try
                 {
-                    vessel.Options.Finally?.Invoke();
+                    options.Finally?.Invoke();
                 }
                 catch (Exception e)
                 {
