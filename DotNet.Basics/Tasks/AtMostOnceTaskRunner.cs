@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks
 {
-    public class AtMostOnceTaskRunner : TaskRunner<TaskOptions>
+    public class AtMostOnceTaskRunner : TaskRunner
     {
         public async Task StartTaskAsync(string taskId, Func<CancellationToken, Task> task)
         {
@@ -13,7 +13,9 @@ namespace DotNet.Basics.Tasks
 
         public async Task StartTaskAsync(string taskId, Func<CancellationToken, Task> task, CancellationToken ct)
         {
-            await RunAsync(new AsyncTask(task, taskId), runAsSingleton: false, runInBackground: true).ConfigureAwait(false);
+            if (taskId == null) throw new ArgumentNullException(nameof(taskId));
+            if (string.IsNullOrWhiteSpace(taskId)) throw new ArgumentException(nameof(taskId));
+            await RunAsync(new AsyncTask(task, taskId), ct, runAsSingleton: true, runInBackground: true).ConfigureAwait(false);
         }
     }
 }

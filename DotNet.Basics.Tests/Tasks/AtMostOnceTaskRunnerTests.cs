@@ -23,6 +23,7 @@ namespace DotNet.Basics.Tests.Tasks
             runner.TaskEnded += (id, runId, e) =>
               {
                   taskIdCaughtFromEvent = id;
+                  runIdIdCaughtFromEvent = runId;
                   exceptionCaughtFromEvent = e;
               };
             await runner.StartTaskAsync(taskId, ct =>
