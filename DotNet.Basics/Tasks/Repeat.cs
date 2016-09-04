@@ -6,26 +6,26 @@ namespace DotNet.Basics.Tasks
 {
     public static class Repeat
     {
-        public static TaskVessel<RepeatOptions> Task(Func<CancellationToken, Task> task, RepeatOptions options = null)
+        public static RepeaterTask Task(Func<CancellationToken, Task> task)
         {
-            return new TaskVessel<RepeatOptions>(new AsyncTask(task), options);
+            return new RepeaterTask(task);
         }
 
-        public static TaskVessel<RepeatOptions> TaskOnce(Func<CancellationToken, Task> task, RepeatOptions options = null)
+        public static RepeaterTask TaskOnce(Func<CancellationToken, Task> task)
         {
             var onceOnlyTask = new OnceOnlyAsyncTask(task);
-            return new TaskVessel<RepeatOptions>(new AsyncTask(onceOnlyTask.RunAsync), options);
+            return new RepeaterTask(onceOnlyTask.RunAsync);
         }
 
-        public static TaskVessel<RepeatOptions> Task(Action task, RepeatOptions options = null)
+        public static RepeaterTask Task(Action task)
         {
-            return new TaskVessel<RepeatOptions>(new SyncTask(task), options);
+            return new RepeaterTask(task);
         }
 
-        public static TaskVessel<RepeatOptions> TaskOnce(Action task, RepeatOptions options = null)
+        public static RepeaterTask TaskOnce(Action task)
         {
             var onceOnlyTask = new OnceOnlySyncTask(task);
-            return new TaskVessel<RepeatOptions>(new SyncTask(onceOnlyTask.Run), options);
+            return new RepeaterTask(onceOnlyTask.Run);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Tasks;
 using FluentAssertions;
@@ -12,19 +12,20 @@ namespace DotNet.Basics.Tests.Tasks
         [Test]
         public void AsyncTask_RunSync_IsOnlyRunOnceInvoked()
         {
-            var voidVar = 0;
-            var task = new AsyncTask((ct) => { voidVar++; return Task.CompletedTask; });
-            Action action = () => task.Run();
-            action.ShouldThrow<NotSupportedException>();
+            var taskRun = false;
+            var task = new ManagedTask(ct => { taskRun = true; return Task.CompletedTask; });
+            taskRun.Should().BeFalse();
+            task.Run();
+            taskRun.Should().BeTrue();
         }
 
         [Test]
         public async Task AsyncTask_RunAsync_IsOnlyRunOnceInvoked()
         {
             var started = false;
-            var task = new AsyncTask((ct) => { started = true; return Task.CompletedTask; });
+            var task = new ManagedTask(ct => { started = true; return Task.CompletedTask; });
             started.Should().BeFalse();
-            await task.RunAsync().ConfigureAwait(false);
+            await task.RunAsync(CancellationToken.None).ConfigureAwait(false);
             started.Should().BeTrue();
         }
 
@@ -32,7 +33,7 @@ namespace DotNet.Basics.Tests.Tasks
         public async Task SyncTask_RunAsync_ExceptionIsThrown()
         {
             var started = false;
-            var syncTask = new SyncTask(() => started = true);
+            var syncTask = new ManagedTask(() => started = true);
             started.Should().BeFalse();
             await syncTask.RunAsync();
             started.Should().BeTrue();
@@ -42,7 +43,7 @@ namespace DotNet.Basics.Tests.Tasks
         public void SyncTask_RunSync_IsOnlyRunOnceInvoked()
         {
             var started = false;
-            var syncTask = new SyncTask(() => started = true);
+            var syncTask = new ManagedTask(() => started = true);
             started.Should().BeFalse();
             syncTask.Run();
             started.Should().BeTrue();

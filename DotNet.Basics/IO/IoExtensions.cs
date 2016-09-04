@@ -17,14 +17,14 @@ namespace DotNet.Basics.IO
             outFileCmdlet.AddParameter("NoNewline");
 
             targetFile.ToFile().Directory.CreateIfNotExists();
-            var result = Repeat.Task(() => PowerShellConsole.RunScript(outFileCmdlet.ToScript()),
-                new RepeatOptions
+            var result = Repeat.Task(() => PowerShellConsole.RunScript(outFileCmdlet.ToScript()))
+                .WithOptions(o =>
                 {
-                    RetryDelay = 1.Seconds(),
-                    MaxTries = 10
+                    o.RetryDelay = 1.Seconds();
+                    o.MaxTries = 10;
                 })
                 .UntilNoExceptions();
-            
+
             return targetFile.ToFile();
         }
         public static FilePath WriteAllText(this string content, Path targetPath, bool overwrite = false)

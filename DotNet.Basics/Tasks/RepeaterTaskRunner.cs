@@ -6,16 +6,17 @@ namespace DotNet.Basics.Tasks
 {
     public class RepeaterTaskRunner
     {
-        public async Task<bool> RunAsync(TaskVessel<RepeatOptions> vessel, Func<Exception, bool> untilPredicate)
+        public async Task<bool> RunAsync(ManagedTask task, Func<Exception, bool> untilPredicate, RepeatOptions options = null)
         {
-            if (vessel == null)
+            if (task == null)
                 return false;
 
             if (untilPredicate == null)
                 throw new ArgumentNullException(nameof(untilPredicate), $"Task will potentially run forever. Set untilPredicate and also consider adding timeout and maxtries to task options");
 
-            var options = vessel.Options ?? new RepeatOptions();
-            
+            if (options == null)
+                options = new RepeatOptions();
+
             Exception lastException = null;
             options.CountLoopBreakPredicate?.Reset();
             options.TimeoutLoopBreakPredicate?.Reset();
@@ -29,7 +30,7 @@ namespace DotNet.Basics.Tasks
                     Exception exceptionInLastLoop;
                     try
                     {
-                        await vessel.Task.RunAsync().ConfigureAwait(false);
+                        await task.RunAsync().ConfigureAwait(false);
                         options.CountLoopBreakPredicate?.LoopCallback();
                         exceptionInLastLoop = null;
                     }
@@ -40,7 +41,7 @@ namespace DotNet.Basics.Tasks
                         options.CountLoopBreakPredicate?.LoopCallback();
                     }
 
-                    Pingback(vessel.Options);
+                    Pingback(options);
 
                     if (untilPredicate.Invoke(exceptionInLastLoop))
                     {
@@ -48,12 +49,12 @@ namespace DotNet.Basics.Tasks
                         break;
                     }
 
-                    if (ShouldContinue(lastException, vessel.Options) == false)
+                    if (ShouldContinue(lastException, options) == false)
                     {
                         success = false;
                         break;
                     }
-                    
+
                     await Task.Delay(options.RetryDelay).ConfigureAwait(false);
 
                 } while (true);

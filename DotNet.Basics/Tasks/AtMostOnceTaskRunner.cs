@@ -15,7 +15,7 @@ namespace DotNet.Basics.Tasks
         {
             if (taskId == null) throw new ArgumentNullException(nameof(taskId));
             if (string.IsNullOrWhiteSpace(taskId)) throw new ArgumentException(nameof(taskId));
-            await RunAsync(new AsyncTask(task, taskId), ct, runAsSingleton: true, runInBackground: true).ConfigureAwait(false);
+            await RunAsync(new ManagedTask(task, taskId), ct, runAsSingleton: true, runInBackground: true).ConfigureAwait(false);
         }
     }
 }

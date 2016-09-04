@@ -12,13 +12,13 @@ namespace DotNet.Basics.Tests.Tasks
         [Test]
         public void Task_WithFinallyNoExceptionInAction_ExceptionInfinallyIsFloated()
         {
-            Action action = () => Repeat.Task(async () => await Task.Delay(10.Milliseconds()),
-                new RepeatOptions
+            Action action = () => Repeat.Task(async () => await Task.Delay(10.Milliseconds()))
+                .WithOptions(o =>
                 {
-                    MaxTries = 2,
-                    Finally = () => { throw new System.IO.IOException("doh"); }
+                    o.MaxTries = 2;
+                    o.Finally = () => { throw new System.IO.IOException("doh"); };
                 })
-                                        .UntilNoExceptions();
+                .UntilNoExceptions();
 
             action.ShouldThrow<System.IO.IOException>();
         }
@@ -26,13 +26,11 @@ namespace DotNet.Basics.Tests.Tasks
         [Test]
         public void Task_WithFinallyExInBothFinallyAndAction_ExceptionsAreFloated()
         {
-            Action action = () => Repeat.Task(() =>
+            Action action = () => Repeat.Task(() => { throw new ApplicationException(); })
+           .WithOptions(o =>
            {
-               throw new ApplicationException(); //run action that throw exception
-           }, new RepeatOptions
-           {
-               MaxTries = 2,
-               Finally = () => { throw new System.IO.IOException("doh"); }
+               o.MaxTries = 2;
+               o.Finally = () => { throw new System.IO.IOException("doh"); };
            })
            .UntilNoExceptions();
 
@@ -47,14 +45,12 @@ namespace DotNet.Basics.Tests.Tasks
 
             try
             {
-                var result = Repeat.Task(() =>
-               {
-                   throw new ApplicationException();//run action that throw exception
-               }, new RepeatOptions
-               {
-                   MaxTries = 2,
-                   Finally = () => { @finally = true; }
-               })
+                var result = Repeat.Task(() => { throw new ApplicationException(); })
+                    .WithOptions(o =>
+                    {
+                        o.MaxTries = 2;
+                        o.Finally = () => { @finally = true; };
+                    })
                .UntilNoExceptions();
 
                 result.Should().BeFalse();
@@ -73,13 +69,13 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var doCounter = 0;
             const int until = 5;
-            var result = await Repeat.Task(() => { doCounter++; throw new System.IO.IOException("buuh"); }
-            , new RepeatOptions
-            {
-                RetryDelay = 10.Milliseconds(),
-                MaxTries = until,
-                IgnoreExceptionType = typeof(System.IO.IOException)
-            })
+            var result = await Repeat.Task(() => { doCounter++; throw new System.IO.IOException("buuh"); })
+                .WithOptions(o =>
+                    {
+                        o.RetryDelay = 10.Milliseconds();
+                        o.MaxTries = until;
+                        o.IgnoreExceptionType = typeof(System.IO.IOException);
+                    })
                 .UntilAsync(() => false).ConfigureAwait(false);
 
             result.Should().BeFalse();
@@ -96,13 +92,13 @@ namespace DotNet.Basics.Tests.Tasks
             {
                 doCounter++;
                 throw new System.IO.IOException("buuh");
-            }, new RepeatOptions
-            {
-                RetryDelay = 10.Milliseconds(),
-                MaxTries = until
-
             })
-                .Until(() => false);
+            .WithOptions(o =>
+            {
+                o.RetryDelay = 10.Milliseconds();
+                o.MaxTries = until;
+            })
+            .Until(() => false);
 
 
             runTask.ShouldThrow<System.IO.IOException>();
@@ -117,11 +113,11 @@ namespace DotNet.Basics.Tests.Tasks
             var pinged = 0;
             const int until = 5;
 
-            var result = await Repeat.Task(() => { invoked++; },
-                new RepeatOptions
+            var result = await Repeat.Task(() => { invoked++; })
+                .WithOptions(o =>
                 {
-                    RetryDelay = 10.Milliseconds(),
-                    Ping = () => pinged++
+                    o.RetryDelay = 10.Milliseconds();
+                    o.Ping = () => pinged++;
                 })
                 .UntilAsync(() => invoked == until).ConfigureAwait(false);
 
@@ -138,10 +134,11 @@ namespace DotNet.Basics.Tests.Tasks
 
             var throwExceptionUntilXTriesDummeTask = new ThrowExceptionUntilXTriesDummeTask<System.IO.IOException>(stopThrowingExceptionsAt);
 
-            var result = Repeat.Task(() => throwExceptionUntilXTriesDummeTask.DoSomething(), new RepeatOptions
-            {
-                Ping = () => tried++
-            })
+            var result = Repeat.Task(() => throwExceptionUntilXTriesDummeTask.DoSomething())
+                .WithOptions(o =>
+                {
+                    o.Ping = () => tried++;
+                })
                 .UntilNoExceptions();
 
             tried.Should().Be(stopThrowingExceptionsAt + 1);
@@ -152,10 +149,11 @@ namespace DotNet.Basics.Tests.Tasks
         public void Task_TimeOut_ActionTimesOut()
         {
             var doCounter = 0;
-            var result = Repeat.Task(() => { doCounter++; }, new RepeatOptions
-            {
-                Timeout = 1.Seconds()
-            })
+            var result = Repeat.Task(() => { doCounter++; })
+                .WithOptions(o =>
+                {
+                    o.Timeout = 1.Seconds();
+                })
                 .Until(() => false);
 
             //means that the action has been run a couple of times - we don't know the exact number since it depends on cpu time slots
@@ -168,11 +166,12 @@ namespace DotNet.Basics.Tests.Tasks
         public void Task_TimeOutWithNoUntil_ActionTimesOut()
         {
             var doCounter = 0;
-            var result = Repeat.Task(() => { doCounter++; }, new RepeatOptions
-            {
-                RetryDelay = 100.Milliseconds(),
-                Timeout = 1.Seconds()
-            })
+            var result = Repeat.Task(() => { doCounter++; })
+                .WithOptions(o =>
+                {
+                    o.RetryDelay = 100.Milliseconds();
+                    o.Timeout = 1.Seconds();
+                })
                 .Until(() => false);
 
             //means that the action has been run a couple of times - we don't know the exact number since it depends on cpu time slots
@@ -187,11 +186,12 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var doCounter = 0;
             const int maxTries = 5;
-            var result = Repeat.Task(() => { doCounter++; }, new RepeatOptions
-            {
-                RetryDelay = 10.Milliseconds(),
-                MaxTries = maxTries
-            })
+            var result = Repeat.Task(() => { doCounter++; })
+                .WithOptions(o =>
+                {
+                    o.RetryDelay = 10.Milliseconds();
+                    o.MaxTries = maxTries;
+                })
                 .Until(() => false);
 
             //means that the action reached max tries and quit
@@ -206,12 +206,13 @@ namespace DotNet.Basics.Tests.Tasks
             var doCounter = 0;
             var pingCounter = 0;
             const int maxTries = 5;
-            var result = Repeat.Task(() => { doCounter++; }, new RepeatOptions
-            {
-                Ping = () => { pingCounter++; },
-                RetryDelay = 10.Milliseconds(),
-                MaxTries = maxTries
-            })
+            var result = Repeat.Task(() => { doCounter++; })
+                .WithOptions(o =>
+                {
+                    o.Ping = () => { pingCounter++; };
+                    o.RetryDelay = 10.Milliseconds();
+                    o.MaxTries = maxTries;
+                })
                 .Until(() => false);
 
             //means that the action has only been run once even though we waited 5 cyckes
@@ -227,12 +228,13 @@ namespace DotNet.Basics.Tests.Tasks
             var doCounter = 0;
             var pingCounter = 0;
             const int maxTries = 5;
-            var result = Repeat.TaskOnce(() => { doCounter++; }, new RepeatOptions
-            {
-                Ping = () => { pingCounter++; },
-                RetryDelay = 10.Milliseconds(),
-                MaxTries = maxTries
-            })
+            var result = Repeat.TaskOnce(() => { doCounter++; })
+                .WithOptions(o =>
+                {
+                    o.Ping = () => { pingCounter++; };
+                    o.RetryDelay = 10.Milliseconds();
+                    o.MaxTries = maxTries;
+                })
                 .Until(() => false);
 
             //means that the action has only been run once even though we waited 5 cycles
@@ -247,12 +249,13 @@ namespace DotNet.Basics.Tests.Tasks
             var doCounter = 0;
             var pingCounter = 0;
             const int maxTries = 5;
-            var result = Repeat.TaskOnce((ct) => { doCounter++; return Task.CompletedTask; }, new RepeatOptions
-            {
-                Ping = () => { pingCounter++; },
-                RetryDelay = 10.Milliseconds(),
-                MaxTries = maxTries
-            })
+            var result = Repeat.TaskOnce((ct) => { doCounter++; return Task.CompletedTask; })
+                .WithOptions(o =>
+                {
+                    o.Ping = () => { pingCounter++; };
+                    o.RetryDelay = 10.Milliseconds();
+                    o.MaxTries = maxTries;
+                })
                 .Until(() => false);
 
             //means that the action has only been run once even though we waited 5 cycles

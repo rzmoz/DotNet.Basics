@@ -9,11 +9,10 @@ namespace DotNet.Basics.Tasks
     {
         private static readonly ConcurrentDictionary<string, Func<CancellationToken, Task>> _singletonScheduler;
 
-        public delegate void TaskStartedEventHandler(string taskId, string runId, bool started);
-        public delegate void TaskEndedEventHandler(string taskId, string runId, Exception lastException);
+        public delegate void TaskEventHandler(string taskId, string runId, Exception lastException);
 
-        public TaskStartedEventHandler TaskStarted;
-        public TaskEndedEventHandler TaskEnded;
+        public TaskEventHandler TaskStarted;
+        public TaskEventHandler TaskEnded;
 
         static TaskRunner()
         {
@@ -25,7 +24,7 @@ namespace DotNet.Basics.Tasks
             return _singletonScheduler.ContainsKey(taskId);
         }
 
-        protected async Task RunAsync(ITask task, CancellationToken ct = default(CancellationToken), bool runAsSingleton = false, bool runInBackground = false)
+        protected async Task RunAsync(ManagedTask task, CancellationToken ct = default(CancellationToken), bool runAsSingleton = false, bool runInBackground = false)
         {
             var runId = Guid.NewGuid().ToString("N");
             
@@ -49,9 +48,9 @@ namespace DotNet.Basics.Tasks
             TaskEnded?.Invoke(task.Id, runId, null);
         }
 
-        protected ITask InBackground(ITask task, string runId, CancellationToken ct)
+        private ManagedTask InBackground(ManagedTask task, string runId, CancellationToken ct)
         {
-            return new SyncTask(() =>
+            return new ManagedTask(() =>
             {
                 //dont wait and dont cancel outer task in itself to ensure the actual task gets a chance to cancel on its own
                 Task.Run(async () =>
@@ -70,20 +69,20 @@ namespace DotNet.Basics.Tasks
             }, task.Id);
         }
 
-        protected ITask AsSingleton(ITask task, CancellationToken ct)
+        private ManagedTask AsSingleton(ManagedTask task, CancellationToken ct)
         {
             if (task == null) throw new ArgumentNullException(nameof(task));
 
             //if task is already running
             if (IsRunning(task.Id))
-                return new SyncTask(() => { }, task.Id);
+                return new ManagedTask(() => { }, task.Id);
 
             //try to lock task for running
             var added = _singletonScheduler.TryAdd(task.Id, task.RunAsync);
             if (added == false)
-                return new SyncTask(() => { }, task.Id);
+                return new ManagedTask(() => { }, task.Id);
 
-            return new AsyncTask(async ctx =>
+            return new ManagedTask(async ctx =>
             {
                 try
                 {
