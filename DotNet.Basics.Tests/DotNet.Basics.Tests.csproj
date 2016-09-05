@@ -74,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppSettings\AppSettingsTests.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\StringKeyDictionaryTests.cs" />
     <Compile Include="Compression\SevenZipTests.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Sys\TimeSpanExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="Compression\myArchive.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -78,7 +78,7 @@ namespace DotNet.Basics.Tests.Tasks
             string taskId = "RunAsync_IsRunning_TaskProgressIsDetected";
 
             var runner = new AtMostOnceTaskRunner();
-            runner.TaskStarted += (id, runId, started) => { taskStarted = started; };
+            runner.TaskStarted += (id, runId, e) => { taskStarted = true; };
 
             await runner.StartTaskAsync(taskId, neverEndingTask, ctSource.Token);
 

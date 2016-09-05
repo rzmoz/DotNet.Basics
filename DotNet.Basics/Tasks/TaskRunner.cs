@@ -27,7 +27,7 @@ namespace DotNet.Basics.Tasks
         protected async Task RunAsync(ManagedTask task, CancellationToken ct = default(CancellationToken), bool runAsSingleton = false, bool runInBackground = false)
         {
             var runId = Guid.NewGuid().ToString("N");
-            
+
             if (runAsSingleton)
                 task = AsSingleton(task, ct);
 
@@ -37,7 +37,7 @@ namespace DotNet.Basics.Tasks
 
             try
             {
-                TaskStarted?.Invoke(task.Id, runId, true);
+                TaskStarted?.Invoke(task.Id, runId, null);
                 await task.RunAsync(ct).ConfigureAwait(false);
             }
             catch (Exception e)

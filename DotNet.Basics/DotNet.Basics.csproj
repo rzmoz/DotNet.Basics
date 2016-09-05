@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppSettings\RequiredAppSettingFoundException.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Compression\CompressionResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -96,6 +97,9 @@
     <Compile Include="Rest\RestRequestException.cs" />
     <Compile Include="Rest\RestResponse.cs" />
     <Compile Include="Rest\UriExtensions.cs" />
+    <Compile Include="AppSettings\AppSetting.cs" />
+    <Compile Include="AppSettings\ConfigurationManagerAppSettingsProvider.cs" />
+    <Compile Include="AppSettings\IAppSettingsProvider.cs" />
     <Compile Include="Sys\CommandPrompt.cs" />
     <Compile Include="Pipelines\EagerBindStep.cs" />
     <Compile Include="Pipelines\LazyBindStep.cs" />
