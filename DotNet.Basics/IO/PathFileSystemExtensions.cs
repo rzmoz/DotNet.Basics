@@ -32,7 +32,7 @@ namespace DotNet.Basics.IO
             if (path.Exists() == false)
                 return true;
 
-            Repeat.Task(() =>
+            TaskHub.Repeat(() =>
             {
                 PowerShellConsole.RemoveItem(path.FullName, force: true, recurse: true);
             })

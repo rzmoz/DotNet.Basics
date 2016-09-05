@@ -15,7 +15,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var counter = 0;
 
-            var onceOnlyAction = new OnceOnlyAsyncTask((ct) => { counter++; return Task.CompletedTask; });
+            var onceOnlyAction = new OnceOnlyTask((ct) => { counter++; return Task.CompletedTask; });
             Action action = async () => await onceOnlyAction.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
             //invoke multiple times
@@ -29,7 +29,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var counter = 0;
 
-            var onceOnlyAction = new OnceOnlyAsyncTask((ct) => { counter++; throw new ArgumentException("buuh"); });
+            var onceOnlyAction = new OnceOnlyTask((ct) => { counter++; throw new ArgumentException("buuh"); });
             Action action = async () => await onceOnlyAction.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
             //invoke multiple times
@@ -43,7 +43,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var counter = 0;
 
-            var onceOnlyAction = new OnceOnlySyncTask(() => counter++);
+            var onceOnlyAction = new OnceOnlyTask(() => counter++);
             Action action = onceOnlyAction.Run;
 
             //invoke multiple times
@@ -57,7 +57,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var counter = 0;
 
-            var onceOnlyAction = new OnceOnlySyncTask(() => { counter++; throw new ArgumentException("buuh"); });
+            var onceOnlyAction = new OnceOnlyTask(() => { counter++; throw new ArgumentException("buuh"); });
             Action action = onceOnlyAction.Run;
 
             //invoke multiple times

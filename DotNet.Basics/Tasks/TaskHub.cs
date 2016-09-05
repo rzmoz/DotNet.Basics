@@ -4,27 +4,27 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks
 {
-    public static class Repeat
+    public static class TaskHub
     {
-        public static RepeaterTask Task(Func<CancellationToken, Task> task)
+        public static RepeaterTask Repeat(Func<CancellationToken, Task> task)
         {
             return new RepeaterTask(task);
         }
 
-        public static RepeaterTask TaskOnce(Func<CancellationToken, Task> task)
+        public static RepeaterTask RepeatOnce(Func<CancellationToken, Task> task)
         {
-            var onceOnlyTask = new OnceOnlyAsyncTask(task);
+            var onceOnlyTask = new OnceOnlyTask(task);
             return new RepeaterTask(onceOnlyTask.RunAsync);
         }
 
-        public static RepeaterTask Task(Action task)
+        public static RepeaterTask Repeat(Action task)
         {
             return new RepeaterTask(task);
         }
 
-        public static RepeaterTask TaskOnce(Action task)
+        public static RepeaterTask RepeatOnce(Action task)
         {
-            var onceOnlyTask = new OnceOnlySyncTask(task);
+            var onceOnlyTask = new OnceOnlyTask(task);
             return new RepeaterTask(onceOnlyTask.Run);
         }
     }

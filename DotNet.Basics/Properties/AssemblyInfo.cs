@@ -34,4 +34,3 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("3.1.6")]
 [assembly: AssemblyFileVersion("3.1.6")]
 [assembly: AssemblyInformationalVersion("3.1.6+269.377fbb5bd39a4020a197ab72df23c326817e222c")]
-[assembly: InternalsVisibleTo("DotNet.Basics.Tests")]
