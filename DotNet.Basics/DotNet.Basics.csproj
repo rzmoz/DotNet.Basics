@@ -135,7 +135,7 @@
     <Compile Include="Tasks\RepeaterTaskRunner.cs" />
     <Compile Include="Tasks\RepeatOptions.cs" />
     <Compile Include="Tasks\SingletonTask.cs" />
-    <Compile Include="Tasks\TaskHub.cs" />
+    <Compile Include="Tasks\Repeat.cs" />
     <Compile Include="Tasks\TimeoutLoopBreakPredicate.cs" />
     <Compile Include="Sys\TimeSpanExtensions.cs" />
   </ItemGroup>

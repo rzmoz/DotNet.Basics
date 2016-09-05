@@ -12,7 +12,7 @@ namespace DotNet.Basics.Tests.Tasks
         [Test]
         public void Task_WithFinallyNoExceptionInAction_ExceptionInfinallyIsFloated()
         {
-            Action action = () => TaskHub.Repeat(async () => await Task.Delay(10.Milliseconds()))
+            Action action = () => Repeat.Task(async () => await Task.Delay(10.Milliseconds()))
                 .WithOptions(o =>
                 {
                     o.MaxTries = 2;
@@ -26,7 +26,7 @@ namespace DotNet.Basics.Tests.Tasks
         [Test]
         public void Task_WithFinallyExInBothFinallyAndAction_ExceptionsAreFloated()
         {
-            Action action = () => TaskHub.Repeat(() => { throw new ApplicationException(); })
+            Action action = () => Repeat.Task(() => { throw new ApplicationException(); })
            .WithOptions(o =>
            {
                o.MaxTries = 2;
@@ -45,7 +45,7 @@ namespace DotNet.Basics.Tests.Tasks
 
             try
             {
-                var result = TaskHub.Repeat(() => { throw new ApplicationException(); })
+                var result = Repeat.Task(() => { throw new ApplicationException(); })
                     .WithOptions(o =>
                     {
                         o.MaxTries = 2;
@@ -69,7 +69,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var doCounter = 0;
             const int until = 5;
-            var result = await TaskHub.Repeat(() => { doCounter++; throw new System.IO.IOException("buuh"); })
+            var result = await Repeat.Task(() => { doCounter++; throw new System.IO.IOException("buuh"); })
                 .WithOptions(o =>
                     {
                         o.RetryDelay = 10.Milliseconds();
@@ -88,7 +88,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var doCounter = 0;
             const int until = 5;
-            Action runTask = () => TaskHub.Repeat(() =>
+            Action runTask = () => Repeat.Task(() =>
             {
                 doCounter++;
                 throw new System.IO.IOException("buuh");
@@ -113,7 +113,7 @@ namespace DotNet.Basics.Tests.Tasks
             var pinged = 0;
             const int until = 5;
 
-            var result = await TaskHub.Repeat(() => { invoked++; })
+            var result = await Repeat.Task(() => { invoked++; })
                 .WithOptions(o =>
                 {
                     o.RetryDelay = 10.Milliseconds();
@@ -134,7 +134,7 @@ namespace DotNet.Basics.Tests.Tasks
 
             var throwExceptionUntilXTriesDummeTask = new ThrowExceptionUntilXTriesDummeTask<System.IO.IOException>(stopThrowingExceptionsAt);
 
-            var result = TaskHub.Repeat(() => throwExceptionUntilXTriesDummeTask.DoSomething())
+            var result = Repeat.Task(() => throwExceptionUntilXTriesDummeTask.DoSomething())
                 .WithOptions(o =>
                 {
                     o.Ping = () => tried++;
@@ -149,7 +149,7 @@ namespace DotNet.Basics.Tests.Tasks
         public void Task_TimeOut_ActionTimesOut()
         {
             var doCounter = 0;
-            var result = TaskHub.Repeat(() => { doCounter++; })
+            var result = Repeat.Task(() => { doCounter++; })
                 .WithOptions(o =>
                 {
                     o.Timeout = 1.Seconds();
@@ -166,7 +166,7 @@ namespace DotNet.Basics.Tests.Tasks
         public void Task_TimeOutWithNoUntil_ActionTimesOut()
         {
             var doCounter = 0;
-            var result = TaskHub.Repeat(() => { doCounter++; })
+            var result = Repeat.Task(() => { doCounter++; })
                 .WithOptions(o =>
                 {
                     o.RetryDelay = 100.Milliseconds();
@@ -186,7 +186,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var doCounter = 0;
             const int maxTries = 5;
-            var result = TaskHub.Repeat(() => { doCounter++; })
+            var result = Repeat.Task(() => { doCounter++; })
                 .WithOptions(o =>
                 {
                     o.RetryDelay = 10.Milliseconds();
@@ -206,7 +206,7 @@ namespace DotNet.Basics.Tests.Tasks
             var doCounter = 0;
             var pingCounter = 0;
             const int maxTries = 5;
-            var result = TaskHub.Repeat(() => { doCounter++; })
+            var result = Repeat.Task(() => { doCounter++; })
                 .WithOptions(o =>
                 {
                     o.Ping = () => { pingCounter++; };
@@ -228,7 +228,7 @@ namespace DotNet.Basics.Tests.Tasks
             var doCounter = 0;
             var pingCounter = 0;
             const int maxTries = 5;
-            var result = TaskHub.RepeatOnce(() => { doCounter++; })
+            var result = Repeat.TaskOnce(() => { doCounter++; })
                 .WithOptions(o =>
                 {
                     o.Ping = () => { pingCounter++; };
@@ -249,7 +249,7 @@ namespace DotNet.Basics.Tests.Tasks
             var doCounter = 0;
             var pingCounter = 0;
             const int maxTries = 5;
-            var result = TaskHub.RepeatOnce(ct => { doCounter++; return Task.CompletedTask; })
+            var result = Repeat.TaskOnce(ct => { doCounter++; return Task.CompletedTask; })
                 .WithOptions(o =>
                 {
                     o.Ping = () => { pingCounter++; };

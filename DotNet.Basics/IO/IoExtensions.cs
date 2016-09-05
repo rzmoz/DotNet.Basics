@@ -17,7 +17,7 @@ namespace DotNet.Basics.IO
             outFileCmdlet.AddParameter("NoNewline");
 
             targetFile.ToFile().Directory.CreateIfNotExists();
-            var result = TaskHub.Repeat(() => PowerShellConsole.RunScript(outFileCmdlet.ToScript()))
+            var result = Repeat.Task(() => PowerShellConsole.RunScript(outFileCmdlet.ToScript()))
                 .WithOptions(o =>
                 {
                     o.RetryDelay = 1.Seconds();
