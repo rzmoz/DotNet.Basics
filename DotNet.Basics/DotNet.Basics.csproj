@@ -54,6 +54,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppSettings\AppSettingsValidator.cs" />
+    <Compile Include="AppSettings\IAppSetting.cs" />
     <Compile Include="AppSettings\RequiredAppSettingFoundException.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Compression\CompressionResources.Designer.cs">

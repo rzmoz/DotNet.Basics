@@ -2,7 +2,7 @@
 
 namespace DotNet.Basics.AppSettings
 {
-    public class AppSetting<T>
+    public class AppSetting<T> : IAppSetting
     {
         private readonly IAppSettingsProvider _appSettingsProvider;
 

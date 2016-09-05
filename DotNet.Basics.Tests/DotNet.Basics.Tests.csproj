@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppSettings\AppSettingsTests.cs" />
+    <Compile Include="AppSettings\AppSettingsValidator.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\StringKeyDictionaryTests.cs" />
     <Compile Include="Compression\SevenZipTests.cs" />
