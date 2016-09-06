@@ -7,9 +7,9 @@ using DotNet.Basics.Ioc;
 
 namespace DotNet.Basics.Tests.Ioc.TestHelpers
 {
-    public class MyRegistrations : IIocRegistrations
+    public class MyRegistrations : ISimpleRegistrations
     {
-        public void RegisterIn(IocContainer container)
+        public void RegisterIn(SimpleContainer container)
         {
             container.Register<IMyType, MyType1>();
         }

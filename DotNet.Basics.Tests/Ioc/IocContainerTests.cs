@@ -13,12 +13,12 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void Ctor_Registrations_RegistrationsAreRegistered()
         {
-            var containerWitoutRegistrations = new IocContainer();
+            var containerWitoutRegistrations = new SimpleContainer();
 
             Action getWithoutRegistrions = () => { var mytype = containerWitoutRegistrations.GetInstance<IMyType>(); };
             getWithoutRegistrions.ShouldThrow<ActivationException>();
 
-            var containerWithRegistrations = new IocContainer(new MyRegistrations());
+            var containerWithRegistrations = new SimpleContainer(new MyRegistrations());
             var myResolvedType= containerWithRegistrations.GetInstance<IMyType>();
             myResolvedType.GetType().Should().Be<MyType1>();
         }
@@ -26,7 +26,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void GetInstance_Singleton_InstanceIsResolved()
         {
-            using (var container = new IocContainer())
+            using (var container = new SimpleContainer())
             {
                 const int before = 1;
                 const int update = 5;
@@ -51,7 +51,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void GetInstance_ByInterface_InstanceIsResolved()
         {
-            using (var container = new IocContainer())
+            using (var container = new SimpleContainer())
             {
                 container.Register<IMyType, MyType1>();
                 container.Verify();
@@ -67,7 +67,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Test]
         public void GetInstance_UnregisteredDefaultConstructor_InstanceIsResolved()
         {
-            using (var container = new IocContainer())
+            using (var container = new SimpleContainer())
             {
                 var resolvedByImplementation = container.GetInstance<MyType1>();
 

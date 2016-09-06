@@ -67,8 +67,8 @@
     <Compile Include="Diagnostics\ProfileFormatter.cs" />
     <Compile Include="Diagnostics\DurationFormattingUnit.cs" />
     <Compile Include="Diagnostics\ProfileStates.cs" />
-    <Compile Include="Ioc\IocContainer.cs" />
-    <Compile Include="Ioc\IIocRegistrations.cs" />
+    <Compile Include="Ioc\SimpleContainer.cs" />
+    <Compile Include="Ioc\ISimpleRegistrations.cs" />
     <Compile Include="IO\PathDelimiterAsChar.cs" />
     <Compile Include="IO\DirExtensions.cs" />
     <Compile Include="IO\DirPath.cs" />

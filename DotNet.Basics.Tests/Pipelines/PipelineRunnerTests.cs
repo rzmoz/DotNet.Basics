@@ -12,12 +12,12 @@ namespace DotNet.Basics.Tests.Pipelines
     [TestFixture]
     public class PipelineRunnerTests
     {
-        private IocContainer _container;
+        private SimpleContainer _container;
 
         [SetUp]
         public void SetUp()
         {
-            _container = new IocContainer();
+            _container = new SimpleContainer();
             _container.Register<ClassThatIncrementArgsDependOn>();
         }
         

@@ -3,10 +3,9 @@ using SimpleInjector;
 
 namespace DotNet.Basics.Ioc
 {
-    public class IocContainer : Container
+    public class SimpleContainer : Container
     {
-        public IocContainer(params IIocRegistrations[] registrations)
-            : base()
+        public SimpleContainer(params ISimpleRegistrations[] registrations)
         {
             Options.AllowOverridingRegistrations = true;
             registrations?.ForEach(r => r.RegisterIn(this));

@@ -8,7 +8,7 @@ namespace DotNet.Basics.Pipelines
 {
     public class PipelineRunner
     {
-        private readonly IocContainer _container;
+        private readonly SimpleContainer _container;
 
         public event PipelineEventHandler PipelineStarting;
         public event PipelineEventHandler PipelineEnded;
@@ -24,9 +24,9 @@ namespace DotNet.Basics.Pipelines
         {
         }
 
-        public PipelineRunner(IocContainer container)
+        public PipelineRunner(SimpleContainer container)
         {
-            _container = container ?? new IocContainer();
+            _container = container ?? new SimpleContainer();
         }
 
         public async Task<PipelineResult<TArgs>> RunAsync<TTaskPipeline, TArgs>(TArgs args = null)
