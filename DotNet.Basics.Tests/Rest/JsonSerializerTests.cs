@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using DotNet.Basics.Rest;
 using FluentAssertions;
+using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace DotNet.Basics.Tests.Rest
@@ -9,20 +9,12 @@ namespace DotNet.Basics.Tests.Rest
     [TestFixture]
     public class JsonSerializerTests
     {
-        private JsonRestSerializer _serializer;
-
-        [SetUp]
-        public void SetUpFixture()
-        {
-            _serializer = new JsonRestSerializer();
-        }
-
         [Test]
         public void FromJson_SimpleType_TypeIsDeSerialized()
         {
             const string connectionStringsJson = @"{""ConnectionStrings"":{""core"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbc"",""master"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbm"",""web"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbk""}}";
 
-            var dto = _serializer.FromJson<ConnectionStringsDto>(connectionStringsJson);
+            var dto = JsonConvert.DeserializeObject<ConnectionStringsDto>(connectionStringsJson);
 
             dto.ConnectionStrings.Count.Should().Be(3);
         }
@@ -32,7 +24,7 @@ namespace DotNet.Basics.Tests.Rest
         {
             const string connectionStringsJson = @"{""ConnectionStrings"":{""core"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbc"",""master"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbm"",""web"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbk""}}";
 
-            var rawstring = _serializer.ConvertTo<string>(connectionStringsJson);
+            var rawstring = JsonConvert.SerializeObject(connectionStringsJson);
 
             rawstring.Should().Be(connectionStringsJson);
         }
@@ -46,7 +38,7 @@ namespace DotNet.Basics.Tests.Rest
                 ConnectionStrings = new Dictionary<string, string> { { "core", "user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbc" }, { "master", "user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbm" }, { "web", "user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbk" } }
             };
 
-            var serialized = _serializer.Serialize(dto);
+            var serialized = JsonConvert.SerializeObject(dto);
 
             serialized.Should().Be(connectionStringsJson);
         }
@@ -64,7 +56,7 @@ namespace DotNet.Basics.Tests.Rest
                 TimeStamp = timestamp
             };
 
-            var serialized = _serializer.Serialize(dto);
+            var serialized = JsonConvert.SerializeObject(dto);
 
             serialized.Should().Be(json);
         }
@@ -74,7 +66,7 @@ namespace DotNet.Basics.Tests.Rest
         {
             const string json = @"{}";
             
-            var serialized = _serializer.Serialize(null);
+            var serialized = JsonConvert.SerializeObject(null);
 
             serialized.Should().Be(json);
         }
@@ -87,7 +79,7 @@ namespace DotNet.Basics.Tests.Rest
         {
             const string json = @"{}";
 
-            var serialized = _serializer.Serialize(content);
+            var serialized = JsonConvert.SerializeObject(content);
 
             serialized.Should().Be(json);
         }

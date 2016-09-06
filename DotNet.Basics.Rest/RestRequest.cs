@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Rest
 {
@@ -109,7 +108,7 @@ namespace DotNet.Basics.Rest
         {
             if (baseUrl == null) throw new ArgumentNullException(nameof(baseUrl));
             if (pathAndQuery == null) throw new ArgumentNullException(nameof(pathAndQuery));
-            return baseUrl.EnsureSuffix('/') + pathAndQuery.RemovePrefix('/');
+            return baseUrl.TrimEnd('/') + "/" + pathAndQuery.TrimStart('/');
         }
     }
 }

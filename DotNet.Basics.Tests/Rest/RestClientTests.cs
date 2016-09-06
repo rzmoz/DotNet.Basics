@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DotNet.Basics.Rest;
 using FluentAssertions;
+using Newtonsoft.Json;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -16,14 +17,6 @@ namespace DotNet.Basics.Tests.Rest
     [TestFixture]
     public class RestClientTests
     {
-        private JsonRestSerializer _serializer;
-
-        [SetUp]
-        public void SetUp()
-        {
-            _serializer = new JsonRestSerializer();
-        }
-
         [Test]
         public async Task ExecuteTAsync_ContentType_ContentTypeIsAddedToContent()
         {
@@ -131,7 +124,7 @@ namespace DotNet.Basics.Tests.Rest
             };
 
             var httpTransport = Substitute.For<IHttpTransport>();
-            var serializedClient = _serializer.Serialize(client);
+            var serializedClient = JsonConvert.SerializeObject(client);
             httpTransport.SendRequestAsync(Arg.Any<IRestRequest>()).Returns(GetHttpResponseMessageTask(serializedClient));
             var restClient = new RestClient(httpTransport);
             var request = new RestRequest("http://myserver.com/clients/1");

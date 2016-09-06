@@ -1,9 +1,12 @@
 {
-	"version.assembly":"3.5.1",
+	"version.assembly":"4.0.0",
 	"version.prerelease":"",
 	"sln.path": "DotNet.Basics.sln",
 	"test.assemblies":"*.tests.dll",
 	"nuget.targets": [
-    { "path": "DotNet.Basics\\DotNet.Basics.csproj" }
+    {
+      "path": "DotNet.Basics\\DotNet.Basics.csproj",
+      "path": "DotNet.Basics.Rest\\DotNet.Basics.Rest.csproj" 
+    }
 	]	
 }

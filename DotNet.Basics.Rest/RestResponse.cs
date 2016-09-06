@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace DotNet.Basics.Rest
 {
@@ -21,18 +22,15 @@ namespace DotNet.Basics.Rest
             StatusCode = HttpResponseMessage.StatusCode;
             ReasonPhrase = HttpResponseMessage.ReasonPhrase;
             ResponseContent = HttpResponseMessage.Content?.ReadAsStringAsync().Result;
-            var serializer = new JsonRestSerializer();
 
-            RawContent = serializer.ConvertTo<string>(ResponseContent);
+            RawContent = JsonConvert.SerializeObject(ResponseContent);
 
             if (typeof(T) == typeof(string))
             {
                 if (responseFormatting == ResponseFormatting.TrimQuotesWhenContentIsString)
                     ResponseContent = TrimQuotesInString(ResponseContent);
-                Content = serializer.ConvertTo<T>(ResponseContent);
             }
-            else
-                Content = serializer.FromJson<T>(ResponseContent);
+            Content = JsonConvert.DeserializeObject<T>(ResponseContent);
         }
 
         public Uri Uri { get; }
