@@ -1,122 +1,111 @@
 ﻿using System;
-using System.Management.Automation.Language;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks
 {
     public class ManagedTask
     {
-        protected Action SyncTask { get; }
-        protected Func<Task> AsyncTask { get; }
+        private readonly Action<string> _syncTask;
+        private readonly Func<string, Task> _asyncTask;
 
-        public delegate void TaskStartingEventHandler(string taskId, string runId, bool started, string reason);
-        public delegate void TaskEndedEventHandler(string taskId, string runId, Exception lastException);
+        public delegate void TaskStartedEventHandler(string taskId, string runId);
+        public delegate void TaskNotStartedEventHandler(string taskId, string runId, string reason);
+        public delegate void TaskFailedEventHandler(string taskId, string runId, Exception lastException);
+        public delegate void TaskEndedEventHandler(string taskId, string runId);
 
-        public event TaskStartingEventHandler TaskStarting;
+        public event TaskStartedEventHandler TaskStarted;
+        public event TaskNotStartedEventHandler TaskNotStarted;
+        public event TaskFailedEventHandler TaskFailed;
         public event TaskEndedEventHandler TaskEnded;
 
-
-        public ManagedTask(Action task)
+        public ManagedTask(Action<string> task)
             : this(string.Empty, task)
         {
         }
 
-        public ManagedTask(string id, Action task)
-            : this(id, task, () =>
-             {
-                 task.Invoke();
-                 return Task.CompletedTask;
-             })
+        public ManagedTask(string id, Action<string> task)
+            : this(id, task, runId =>
+            {
+                task.Invoke(runId);
+                return Task.CompletedTask;
+            })
         {
         }
 
-        public ManagedTask(Func<Task> task)
+        public ManagedTask(Func<string, Task> task)
             : this(string.Empty, task)
         {
         }
 
-        public ManagedTask(string id, Func<Task> task)
-            : this(id, () =>
-              {
-                  var asyncTask = task.Invoke();
-                  asyncTask.Wait();
-              }, task)
+        public ManagedTask(string id, Func<string, Task> task)
+            : this(id, runId =>
+            {
+                var asyncTask = task.Invoke(runId);
+                asyncTask.Wait();
+            }, task)
         {
         }
 
-
-        public ManagedTask(Action syncTask, Func<Task> asyncTask)
+        public ManagedTask(Action<string> syncTask, Func<string, Task> asyncTask)
             : this(null, syncTask, asyncTask)
         {
         }
 
-        public ManagedTask(string id, Action syncTask, Func<Task> asyncTask)
+        public ManagedTask(string id, Action<string> syncTask, Func<string, Task> asyncTask)
         {
             if (syncTask == null) throw new ArgumentNullException(nameof(syncTask));
             if (asyncTask == null) throw new ArgumentNullException(nameof(asyncTask));
-            SyncTask = syncTask;
-            AsyncTask = asyncTask;
+            _syncTask = syncTask;
+            _asyncTask = asyncTask;
             Id = id ?? string.Empty;
         }
 
         public string Id { get; }
 
-        internal string GetNewRunId()
+        internal virtual bool TryPreconditionsMet(string runId, out string reason)
         {
-            return Guid.NewGuid().ToString("N");
+            reason = "";
+            return true;
         }
 
-        public virtual void Run()
+        internal virtual void Run(string runId = null)
         {
-            var runId = GetNewRunId();
-
             try
             {
-                FireTaskStarting(Id, runId, true, null);
-                SyncTask();
-                FireTaskEnded(Id, runId, null);
+                TaskStarted?.Invoke(Id, runId);
+                _syncTask(runId ?? string.Empty);
+                TaskEnded?.Invoke(Id, runId);
             }
             catch (Exception e)
             {
                 var asAggrE = e;
-                while (asAggrE is AggregateException)
+                while (asAggrE is AggregateException && asAggrE.InnerException != null)
                     asAggrE = asAggrE.InnerException;
 
-                FireTaskEnded(Id, runId, asAggrE);
+                TaskFailed?.Invoke(Id, runId, asAggrE);
                 throw;
             }
         }
 
-        public virtual async Task RunAsync()
+        internal virtual async Task RunAsync(string runId = null)
         {
-            var runId = GetNewRunId();
-
             try
             {
-                FireTaskStarting(Id, runId, true, null);
-                await AsyncTask().ConfigureAwait(false);
-                FireTaskEnded(Id, runId, null);
+                TaskStarted?.Invoke(Id, runId);
+
+                await _asyncTask(runId ?? string.Empty).ConfigureAwait(false);
+
+                TaskEnded?.Invoke(Id, runId);
             }
             catch (Exception e)
             {
                 var asAggrE = e;
-                while (asAggrE is AggregateException)
+                while (asAggrE is AggregateException && asAggrE.InnerException != null)
                     asAggrE = asAggrE.InnerException;
-                
-                FireTaskEnded(Id, runId, asAggrE);
+
+                TaskFailed?.Invoke(Id, runId, asAggrE);
                 throw;
             }
-        }
-
-        protected void FireTaskStarting(string taskId, string runId, bool taskWillStart, string reason)
-        {
-            TaskStarting?.Invoke(taskId, runId, taskWillStart, reason);
-        }
-
-        protected void FireTaskEnded(string taskId, string runId, Exception lastException)
-        {
-            TaskEnded?.Invoke(taskId, runId, lastException);
         }
     }
 }

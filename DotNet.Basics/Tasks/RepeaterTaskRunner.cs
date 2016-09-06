@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks
 {
-    public class RepeaterTaskRunner
+    public class RepeaterTaskRunner : ManagedTaskRunner
     {
         public async Task<bool> RunAsync(ManagedTask task, Func<Exception, bool> untilPredicate, RepeatOptions options = null)
         {
@@ -27,22 +27,22 @@ namespace DotNet.Basics.Tasks
             {
                 do
                 {
-                    Exception exceptionInLastLoop=null;
+                    Exception exceptionInLastLoop = null;
                     try
                     {
-                        await task.RunAsync().ConfigureAwait(false);
+                        await RunAsync(task).ConfigureAwait(false);
                     }
                     catch (Exception e)
                     {
                         lastException = e;
                         exceptionInLastLoop = e;
-                        
+
                     }
                     finally
                     {
                         options.CountLoopBreakPredicate?.LoopCallback();
                     }
-                    
+
                     if (untilPredicate.Invoke(exceptionInLastLoop))
                     {
                         success = true;
@@ -74,6 +74,7 @@ namespace DotNet.Basics.Tasks
                     throw new AggregateException(lastException, e);
                 }
             }
+
 
             return success;
         }

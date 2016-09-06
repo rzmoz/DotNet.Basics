@@ -9,15 +9,17 @@ namespace DotNet.Basics.Tests.Tasks
     [TestFixture]
     public class ManagedTaskTests
     {
+        private readonly ManagedTaskRunner _taskRunner = new ManagedTaskRunner();
+
         [Test]
         public void Run_SyncTask_TaskIsRun()
         {
             var taskRan = false;
 
-            var task = new ManagedTask(() => taskRan = true);
+            var task = new ManagedTask(rid => taskRan = true);
 
             taskRan.Should().BeFalse();
-            task.Run();
+            _taskRunner.Run(task);
             taskRan.Should().BeTrue();
         }
         [Test]
@@ -25,14 +27,14 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var taskRan = false;
 
-            var task = new ManagedTask(async () =>
+            var task = new ManagedTask(async rid =>
             {
                 await VoidTaskAsync();//ensure async execution
                 taskRan = true;
             });
 
             taskRan.Should().BeFalse();
-            task.Run();
+            _taskRunner.Run(task);
             taskRan.Should().BeTrue();
         }
         [Test]
@@ -40,10 +42,10 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var taskRan = false;
 
-            var task = new ManagedTask(() => taskRan = true);
+            var task = new ManagedTask(rid => taskRan = true);
 
             taskRan.Should().BeFalse();
-            await task.RunAsync().ConfigureAwait(false);
+            await _taskRunner.RunAsync(task).ConfigureAwait(false);
             taskRan.Should().BeTrue();
         }
         [Test]
@@ -51,14 +53,14 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var taskRan = false;
 
-            var task = new ManagedTask(async () =>
+            var task = new ManagedTask(async rid =>
             {
                 await VoidTaskAsync();//ensure async execution
                 taskRan = true;
             });
 
             taskRan.Should().BeFalse();
-            await task.RunAsync().ConfigureAwait(false);
+            await _taskRunner.RunAsync(task).ConfigureAwait(false);
             taskRan.Should().BeTrue();
         }
 

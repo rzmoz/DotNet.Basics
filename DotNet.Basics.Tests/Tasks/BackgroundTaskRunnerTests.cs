@@ -17,11 +17,10 @@ namespace DotNet.Basics.Tests.Tasks
 
             await AssertTaskAsync(taskId, bgRunner =>
             {
-                bgRunner.Start(taskId, () =>
-                 {
-                     throw new ArgumentNullException();
-
-                 }, true);
+                bgRunner.Start(taskId, (Action<string>)(rid =>
+                     {
+                         throw new ArgumentNullException();
+                     }), true);
             }).ConfigureAwait(false);
         }
         [Test]
@@ -31,7 +30,7 @@ namespace DotNet.Basics.Tests.Tasks
 
             await AssertTaskAsync(taskId, bgRunner =>
              {
-                 bgRunner.Start(taskId, () =>
+                 bgRunner.Start(taskId, rid =>
                  {
                      throw new ArgumentNullException();
                  }, true);
@@ -48,17 +47,17 @@ namespace DotNet.Basics.Tests.Tasks
             bool taskEnded = false;
 
             var bgRunner = new BackgroundTaskRunner();
-            bgRunner.TaskStarting += (tid, rid, started, reason) =>
-            {
-                taskRan = true;
-                lastTaskId = tid;
-                lastRunId = rid;
-            };
-            bgRunner.TaskEnded += (tid, rid, e) =>
-            {
-                lastException = e;
-                taskEnded = true;
-            };
+            bgRunner.TaskStarted += (tid, rid) =>
+             {
+                 taskRan = true;
+                 lastTaskId = tid;
+                 lastRunId = rid;
+             };
+            bgRunner.TaskFailed += (tid, rid, e) =>
+              {
+                  lastException = e;
+                  taskEnded = true;
+              };
 
             startTaskCallback(bgRunner);
 

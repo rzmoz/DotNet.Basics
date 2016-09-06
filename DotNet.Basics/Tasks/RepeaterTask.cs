@@ -6,32 +6,32 @@ namespace DotNet.Basics.Tasks
 {
     public class RepeaterTask : ManagedTask
     {
-        public RepeaterTask(Action task) : base(task)
+        public RepeaterTask(Action<string> task) : base(task)
         {
             Options = new RepeatOptions();
         }
 
-        public RepeaterTask(string id, Action task) : base(id, task)
+        public RepeaterTask(string id, Action<string> task) : base(id, task)
         {
             Options = new RepeatOptions();
         }
 
-        public RepeaterTask(Func<Task> task) : base(task)
+        public RepeaterTask(Func<string, Task> task) : base(task)
         {
             Options = new RepeatOptions();
         }
 
-        public RepeaterTask(string id, Func<Task> task) : base(id, task)
+        public RepeaterTask(string id, Func<string, Task> task) : base(id, task)
         {
             Options = new RepeatOptions();
         }
 
-        public RepeaterTask(Action syncTask, Func<Task> asyncTask) : base(syncTask, asyncTask)
+        public RepeaterTask(Action<string> syncTask, Func<string, Task> asyncTask) : base(syncTask, asyncTask)
         {
             Options = new RepeatOptions();
         }
 
-        public RepeaterTask(string id, Action syncTask, Func<Task> asyncTask) : base(id, syncTask, asyncTask)
+        public RepeaterTask(string id, Action<string> syncTask, Func<string, Task> asyncTask) : base(id, syncTask, asyncTask)
         {
             Options = new RepeatOptions();
         }

@@ -7,20 +7,20 @@ namespace DotNet.Basics.Tasks
     public class SingletonTask : ManagedTask
     {
         private static readonly ConcurrentDictionary<string, string> _singletonScheduler = new ConcurrentDictionary<string, string>();
-        
-        public SingletonTask(string id, Action task) : base(id, task)
+
+        public SingletonTask(string id, Action<string> task) : base(id, task)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
             if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException(nameof(id));
         }
-        
-        public SingletonTask(string id, Func<Task> task) : base(id, task)
+
+        public SingletonTask(string id, Func<string, Task> task) : base(id, task)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
             if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException(nameof(id));
         }
-        
-        public SingletonTask(string id, Action syncTask, Func<Task> asyncTask) : base(id, syncTask, asyncTask)
+
+        public SingletonTask(string id, Action<string> syncTask, Func<string, Task> asyncTask) : base(id, syncTask, asyncTask)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
             if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException(nameof(id));
@@ -31,28 +31,20 @@ namespace DotNet.Basics.Tasks
             return _singletonScheduler.ContainsKey(Id);
         }
 
-        public override void Run()
+        internal override bool TryPreconditionsMet(string runId, out string reason)
         {
-            var runId = GetNewRunId();
+            var added = _singletonScheduler.TryAdd(Id, runId ?? string.Empty);
+            reason = added
+                ? $"Task sucessfully added to scheduler::{Id}"
+                : $"Task is already running:{Id}";
+            return added;
+        }
 
-            //try to lock task for running
-            var added = _singletonScheduler.TryAdd(Id, runId);
-            if (added == false)
-            {
-                FireTaskStarting(Id, null, false, "Task is already running");
-                return;
-            }
-
+        internal override void Run(string runId = null)
+        {
             try
             {
-                FireTaskStarting(Id, runId, true, "Task is starting");
-                SyncTask();
-                FireTaskEnded(Id, runId, null);
-            }
-            catch (Exception e)
-            {
-                FireTaskEnded(Id, runId, e);
-                throw;
+                base.Run(runId ?? string.Empty);
             }
             finally
             {
@@ -61,28 +53,11 @@ namespace DotNet.Basics.Tasks
             }
         }
 
-        public override async Task RunAsync()
+        internal override async Task RunAsync(string runId = null)
         {
-            var runId = GetNewRunId();
-
-            //try to lock task for running
-            var added = _singletonScheduler.TryAdd(Id, runId);
-            if (added == false)
-            {
-                FireTaskStarting(Id, null, false, "Task is already running");
-                return;
-            }
-
             try
             {
-                FireTaskStarting(Id, runId, true, "Task is starting");
-                await AsyncTask().ConfigureAwait(false);
-                FireTaskEnded(Id, runId, null);
-            }
-            catch (Exception e)
-            {
-                FireTaskEnded(Id, runId, e);
-                throw;
+                await base.RunAsync(runId ?? string.Empty).ConfigureAwait(false);
             }
             finally
             {

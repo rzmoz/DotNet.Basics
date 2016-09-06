@@ -6,67 +6,43 @@ namespace DotNet.Basics.Tasks
 {
     public class BackgroundTask : ManagedTask
     {
-        public BackgroundTask(Action task) : base(task)
+        public BackgroundTask(Action<string> task) : base(task)
         {
         }
 
-        public BackgroundTask(string id, Action task) : base(id, task)
+        public BackgroundTask(string id, Action<string> task) : base(id, task)
         {
         }
 
-        public BackgroundTask(Func<Task> task) : base(task)
+        public BackgroundTask(Func<string, Task> task) : base(task)
         {
         }
 
-        public BackgroundTask(string id, Func<Task> task) : base(id, task)
+        public BackgroundTask(string id, Func<string, Task> task) : base(id, task)
         {
         }
 
-        public BackgroundTask(Action syncTask, Func<Task> asyncTask) : base(syncTask, asyncTask)
+        public BackgroundTask(Action<string> syncTask, Func<string, Task> asyncTask) : base(syncTask, asyncTask)
         {
         }
 
-        public BackgroundTask(string id, Action syncTask, Func<Task> asyncTask) : base(id, syncTask, asyncTask)
+        public BackgroundTask(string id, Action<string> syncTask, Func<string, Task> asyncTask) : base(id, syncTask, asyncTask)
         {
         }
 
-        public override void Run()
+        internal override void Run(string runId = null)
         {
             Task.Run(() =>
             {
-                var runId = GetNewRunId();
-                try
-                {
-                    FireTaskStarting(Id, runId, true, "Task is starting");
-                    SyncTask();
-                    FireTaskEnded(Id, runId, null);
-                }
-                catch (Exception e)
-                {
-                    FireTaskEnded(Id, runId, e);
-                    throw;
-                }
-
+                base.Run(runId ?? string.Empty);
             }, CancellationToken.None);
         }
 
-        public override Task RunAsync()
+        internal override Task RunAsync(string runId = null)
         {
             Task.Run(async () =>
             {
-                var runId = GetNewRunId();
-                try
-                {
-                    FireTaskStarting(Id, runId, true, "Task is starting");
-                    await AsyncTask().ConfigureAwait(false);
-                    FireTaskEnded(Id, runId, null);
-                }
-                catch (Exception e)
-                {
-                    FireTaskEnded(Id, runId, e);
-                    throw;
-                }
-
+                await base.RunAsync(runId ?? string.Empty).ConfigureAwait(false);
             }, CancellationToken.None);
             return Task.CompletedTask;
         }

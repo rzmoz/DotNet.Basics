@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNet.Basics.Collections;
 using DotNet.Basics.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
@@ -11,6 +12,8 @@ namespace DotNet.Basics.Tests.Tasks
     [TestFixture]
     public class SingletonTaskTests
     {
+        private readonly ManagedTaskRunner _taskRunner = new ManagedTaskRunner();
+
         [Test]
         public void ExceptionThrown_GetExceptions_ExceptionsAreBubbled()
         {
@@ -18,13 +21,13 @@ namespace DotNet.Basics.Tests.Tasks
 
             bool taskRan = false;
 
-            var task = new SingletonTask(taskID, () =>
+            var task = new SingletonTask(taskID, rid =>
              {
                  taskRan = true;
                  throw new ArgumentNullException();
              });
 
-            Action action = () => task.Run();
+            Action action = () => _taskRunner.Run(task);
 
             action.ShouldThrow<ArgumentNullException>();
             taskRan.Should().BeTrue();
@@ -37,15 +40,14 @@ namespace DotNet.Basics.Tests.Tasks
 
             int hitCount = 0;
 
-            var task = new SingletonTask(taskId, async () =>
+            var task = new SingletonTask(taskId, async rid =>
              {
                  hitCount++;
                  await Task.Delay(1.Seconds()).ConfigureAwait(false);
              });
 
             //try start task 10 times
-            foreach (var i in Enumerable.Range(1, 10))
-                task.RunAsync();//don't await task so it runs multiple times
+            Enumerable.Range(1, 10).ForEach(i => _taskRunner.RunAsync(task));//don't await task so it runs multiple times
 
             await WaitTillFinished(task).ConfigureAwait(false);
 
@@ -57,27 +59,18 @@ namespace DotNet.Basics.Tests.Tasks
         {
             string taskId = "RunAsync_Cancellation_LongRunningTasksCanBeCancelled";
 
-            bool taskEndedNaturally = false;
+            bool taskRan = false;
             var taskDelay = 5.Seconds();
 
             var ctSource = new CancellationTokenSource();
 
-            var task = new SingletonTask(taskId, async () =>
+            var task = new SingletonTask(taskId, async rid =>
              {
                  await Task.Delay(taskDelay, ctSource.Token).ConfigureAwait(false);
-                 taskEndedNaturally = true;
+                 taskRan = true;
              });
-
-
-            bool taskStarted = false;
-
-
-            task.TaskStarting += (id, runId, started, reasons) => { taskStarted = started; };
-
-            task.RunAsync();//don't await task finish
-
-            while (taskStarted == false)
-                await Task.Delay(50.Milliseconds(), CancellationToken.None).ConfigureAwait(false);
+            
+            _taskRunner.RunAsync(task);//don't await task finish
 
             task.IsRunning().Should().BeTrue($"task is running");
 
@@ -85,7 +78,7 @@ namespace DotNet.Basics.Tests.Tasks
             ctSource.Cancel();
 
             await WaitTillFinished(task).ConfigureAwait(false);
-            taskEndedNaturally.Should().BeFalse("task shouldve been cancelled");
+            taskRan.Should().BeFalse("task shouldve been cancelled");
             task.IsRunning().Should().BeFalse("task should have been stopped");
         }
 
@@ -98,8 +91,8 @@ namespace DotNet.Basics.Tests.Tasks
             var errorCaught = false;
             try
             {
-                var task = new SingletonTask(taskId, () => Task.CompletedTask);
-                await task.RunAsync().ConfigureAwait(false);
+                var task = new SingletonTask(taskId, rid => Task.CompletedTask);
+                await _taskRunner.RunAsync(task).ConfigureAwait(false);
             }
             catch (ArgumentNullException)
             {
@@ -119,7 +112,7 @@ namespace DotNet.Basics.Tests.Tasks
             const int runCount = 3;
             var counter = 0;
 
-            var runner = new SingletonTask(taskId, () =>
+            var task = new SingletonTask(taskId, rid =>
              {
                  counter++;
                  //crash task thread
@@ -131,7 +124,7 @@ namespace DotNet.Basics.Tests.Tasks
             {
                 try
                 {
-                    await runner.RunAsync().ConfigureAwait(false);
+                    await _taskRunner.RunAsync(task).ConfigureAwait(false);
                 }
                 catch (ApplicationException)
                 {

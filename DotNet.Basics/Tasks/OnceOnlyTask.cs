@@ -1,54 +1,53 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks
 {
     public class OnceOnlyTask : ManagedTask
     {
-        public OnceOnlyTask(Action task) : this(string.Empty, task)
+        public OnceOnlyTask(Action<string> task) : this(string.Empty, task)
         {
         }
 
-        public OnceOnlyTask(string id, Action task) : base(id, (Action)OnceOnlySyncTask.Create(task).Run)
+        public OnceOnlyTask(string id, Action<string> task) : base(id, (Action<string>)OnceOnlySyncTask.Create(task).Run)
         {
         }
 
-        public OnceOnlyTask(Func<Task> task) : this(string.Empty, OnceOnlyAsyncTask.Create(task).RunAsync)
+        public OnceOnlyTask(Func<string, Task> task) : this(string.Empty, OnceOnlyAsyncTask.Create(task).RunAsync)
         {
         }
 
-        public OnceOnlyTask(string id, Func<Task> task) : base(id, OnceOnlyAsyncTask.Create(task).RunAsync)
+        public OnceOnlyTask(string id, Func<string, Task> task) : base(id, OnceOnlyAsyncTask.Create(task).RunAsync)
         {
         }
 
-        public OnceOnlyTask(Action syncTask, Func<Task> asyncTask) : this(string.Empty, syncTask, asyncTask)
+        public OnceOnlyTask(Action<string> syncTask, Func<string, Task> asyncTask) : this(string.Empty, syncTask, asyncTask)
         {
         }
 
-        public OnceOnlyTask(string id, Action syncTask, Func<Task> asyncTask) : base(id, OnceOnlySyncTask.Create(syncTask).Run, OnceOnlyAsyncTask.Create(asyncTask).RunAsync)
+        public OnceOnlyTask(string id, Action<string> syncTask, Func<string, Task> asyncTask) : base(id, OnceOnlySyncTask.Create(syncTask).Run, OnceOnlyAsyncTask.Create(asyncTask).RunAsync)
         {
         }
 
         private class OnceOnlySyncTask
         {
-            private OnceOnlySyncTask(Action task)
+            private OnceOnlySyncTask(Action<string> task)
             {
-                _task = () =>
+                _task = runId =>
                 {
-                    _task = () => { };
-                    task.Invoke();
+                    _task = rid => { };
+                    task.Invoke(runId);
                 };
             }
 
-            private Action _task;
+            private Action<string> _task;
 
-            public void Run()
+            public void Run(string runId)
             {
-                _task.Invoke();
+                _task.Invoke(runId);
             }
 
-            public static OnceOnlySyncTask Create(Action task)
+            public static OnceOnlySyncTask Create(Action<string> task)
             {
                 return new OnceOnlySyncTask(task);
             }
@@ -56,23 +55,23 @@ namespace DotNet.Basics.Tasks
 
         private class OnceOnlyAsyncTask
         {
-            private Func<Task> _task;
+            private Func<string, Task> _task;
 
-            private OnceOnlyAsyncTask(Func<Task> task)
+            private OnceOnlyAsyncTask(Func<string, Task> task)
             {
-                _task = async () =>
+                _task = async runId =>
                 {
-                    _task = () => Task.CompletedTask;
-                    await task.Invoke().ConfigureAwait(false);
+                    _task = rid => Task.CompletedTask;
+                    await task.Invoke(runId).ConfigureAwait(false);
                 };
             }
 
-            public async Task RunAsync()
+            public async Task RunAsync(string runId)
             {
-                await _task.Invoke().ConfigureAwait(false);
+                await _task.Invoke(runId).ConfigureAwait(false);
             }
 
-            public static OnceOnlyAsyncTask Create(Func<Task> task)
+            public static OnceOnlyAsyncTask Create(Func<string, Task> task)
             {
                 return new OnceOnlyAsyncTask(task);
             }

@@ -4,37 +4,33 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks
 {
-    public class BackgroundTaskRunner
+    public class BackgroundTaskRunner : ManagedTaskRunner
     {
-        public event ManagedTask.TaskStartingEventHandler TaskStarting;
-        public event ManagedTask.TaskEndedEventHandler TaskEnded;
-
-        public void Start(Action task, bool asSingleton = false)
+        public void Start(Action<string> task, bool asSingleton = false)
         {
             Start(null, task, asSingleton);
         }
-        public void Start(string id, Action task, bool asSingleton = false)
+        public void Start(string id, Action<string> task, bool asSingleton = false)
         {
-            Start(new ManagedTask(id, task), asSingleton);
-        }
-
-        public void Start(Func<Task> task, bool asSingleton = false)
-        {
-            Start(null, task, asSingleton);
-        }
-        public void Start(string id, Func<Task> task, bool asSingleton = false)
-        {
-            Start(new ManagedTask(id, task), asSingleton);
-        }
-
-        private void Start(ManagedTask task, bool asSingleton)
-        {
+            var mTtask = new ManagedTask(id, task);
             if (asSingleton)
-                task = new SingletonTask(task.Id, task.Run, task.RunAsync);
-            task = new BackgroundTask(task.Id, task.Run, task.RunAsync);
-            task.TaskStarting += (tid, rid, started, reason) => { TaskStarting?.Invoke(tid, rid, started, reason); };
-            task.TaskEnded += (tid, rid, e) => { TaskEnded?.Invoke(tid, rid, e); };
-            task.RunAsync().Wait(CancellationToken.None);
+                mTtask = new SingletonTask(mTtask.Id, (Action<string>)mTtask.Run);
+            mTtask = new BackgroundTask(mTtask.Id, (Action<string>)mTtask.Run);
+            Run(mTtask);
         }
+
+        public void Start(Func<string, Task> task, bool asSingleton = false)
+        {
+            Start(null, task, asSingleton);
+        }
+        public void Start(string id, Func<string, Task> task, bool asSingleton = false)
+        {
+            var mTtask = new ManagedTask(id, task);
+            if (asSingleton)
+                mTtask = new SingletonTask(mTtask.Id, mTtask.RunAsync);
+            mTtask = new BackgroundTask(mTtask.Id, mTtask.RunAsync);
+            RunAsync(mTtask).Wait(CancellationToken.None);
+        }
+
     }
 }

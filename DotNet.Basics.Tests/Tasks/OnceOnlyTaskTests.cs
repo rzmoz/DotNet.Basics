@@ -10,13 +10,16 @@ namespace DotNet.Basics.Tests.Tasks
     [TestFixture]
     public class OnceOnlyTaskTests
     {
+        private readonly ManagedTaskRunner _taskRunner = new ManagedTaskRunner();
+
+
         [Test]
         public void AsyncTask_Run_ActionIsOnlyExecutedOnce()
         {
             var counter = 0;
 
-            var onceOnlyAction = new OnceOnlyTask(() => { counter++; return Task.CompletedTask; });
-            Action action = async () => await onceOnlyAction.RunAsync().ConfigureAwait(false);
+            var onceOnlyAction = new OnceOnlyTask(rid => { counter++; return Task.CompletedTask; });
+            Action action = async () => await _taskRunner.RunAsync(onceOnlyAction).ConfigureAwait(false);
 
             //invoke multiple times
             Run(action, 5);
@@ -29,8 +32,8 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var counter = 0;
 
-            var onceOnlyAction = new OnceOnlyTask(() => { counter++; throw new ArgumentException("buuh"); });
-            Action action = async () => await onceOnlyAction.RunAsync().ConfigureAwait(false);
+            var onceOnlyAction = new OnceOnlyTask(rid => { counter++; throw new ArgumentException("buuh"); });
+            Action action = async () => await _taskRunner.RunAsync(onceOnlyAction).ConfigureAwait(false);
 
             //invoke multiple times
             Run(action, 5);
@@ -43,8 +46,8 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var counter = 0;
 
-            var onceOnlyAction = new OnceOnlyTask(() => counter++);
-            Action action = onceOnlyAction.Run;
+            var onceOnlyAction = new OnceOnlyTask(rid => counter++);
+            Action action = () => _taskRunner.Run(onceOnlyAction);
 
             //invoke multiple times
             Run(action, 5);
@@ -57,8 +60,8 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var counter = 0;
 
-            var onceOnlyAction = new OnceOnlyTask(() => { counter++; throw new ArgumentException("buuh"); });
-            Action action = () => onceOnlyAction.Run();
+            var onceOnlyAction = new OnceOnlyTask(rid => { counter++; throw new ArgumentException("buuh"); });
+            Action action = () => _taskRunner.Run(onceOnlyAction);
 
             //invoke multiple times
             Run(action, 5);
