@@ -9,9 +9,8 @@ namespace DotNet.Basics.Rest
     {
         private const char _stringQuote = '\"';
 
-        private readonly IJsonSerializer _serializer = new JsonSerializer();
-
-        public RestResponse(Uri requestUri, HttpResponseMessage httpResponseMessage = null, ResponseFormatting responseFormatting = ResponseFormatting.Raw)
+        public RestResponse(Uri requestUri, HttpResponseMessage httpResponseMessage = null,
+            ResponseFormatting responseFormatting = ResponseFormatting.Raw)
         {
             Exception = null;
             Uri = requestUri;
@@ -23,18 +22,22 @@ namespace DotNet.Basics.Rest
 
             StatusCode = HttpResponseMessage.StatusCode;
             ReasonPhrase = HttpResponseMessage.ReasonPhrase;
-            ResponseContent = HttpResponseMessage.Content?.ReadAsStringAsync().Result;
 
-            RawContent = _serializer.ConvertTo<string>(ResponseContent);
+            var content = HttpResponseMessage.Content?.ReadAsStringAsync().Result ?? string.Empty;
 
-            if (typeof(T) == typeof(string))
+            RawContent = TrimQuotesInString(content, responseFormatting);
+            try
             {
-                if (responseFormatting == ResponseFormatting.TrimQuotesWhenContentIsString)
-                    ResponseContent = TrimQuotesInString(ResponseContent);
-                Content = _serializer.ConvertTo<T>(ResponseContent);
+                if (typeof(T) == typeof(string))
+                    Content = (T)(object)RawContent;
+                else
+                    Content = JsonConvert.DeserializeObject<T>(RawContent);
             }
-            else
-                Content = _serializer.Deserialize<T>(ResponseContent);
+            catch (JsonReaderException)
+            {
+                Content = default(T);
+                throw new RestReaderException($"Failed to deserialize content to expected type: {typeof(T)}. Raw content was: {RawContent}");
+            }
         }
 
         public Uri Uri { get; }
@@ -46,11 +49,9 @@ namespace DotNet.Basics.Rest
         public Exception Exception { get; set; }
         public HttpResponseMessage HttpResponseMessage { get; }
 
-        private string ResponseContent { get; }
-
-        private string TrimQuotesInString(string responseContent)
+        private string TrimQuotesInString(string responseContent, ResponseFormatting formatting)
         {
-            if (string.IsNullOrEmpty(responseContent))
+            if (formatting == ResponseFormatting.Raw || string.IsNullOrEmpty(responseContent))
                 return responseContent;
 
             //ensure we trim away only a single quote in case the innner string has actual quotes

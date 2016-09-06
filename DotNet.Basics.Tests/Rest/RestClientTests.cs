@@ -35,12 +35,12 @@ namespace DotNet.Basics.Tests.Rest
         [Test]
         public void ExecuteTAsync_ResponseBodyNotProperValueTo_ExceptionIsThrown()
         {
-            var request = new RestRequest("http://dr.dk/", HttpMethod.Get);
+            var request = new RestRequest("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css", HttpMethod.Get);
             var client = new RestClient();
 
             Func<Task> action = async () => await client.ExecuteAsync<int>(request).ConfigureAwait(false);
 
-            action.ShouldThrow<JsonReaderException>();
+            action.ShouldThrow<RestReaderException>();
         }
 
         [Test]
@@ -156,7 +156,10 @@ namespace DotNet.Basics.Tests.Rest
         }
         private Task<HttpResponseMessage> GetHttpResponseMessageTask(string content)
         {
-            return Task.Factory.StartNew(() => new HttpResponseMessage { Content = new StringContent(content) });
+            return Task.FromResult(new HttpResponseMessage
+            {
+                Content = new StringContent(content)
+            });
         }
     }
 

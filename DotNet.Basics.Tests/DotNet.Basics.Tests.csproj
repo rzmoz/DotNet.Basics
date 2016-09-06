@@ -93,7 +93,6 @@
     <Compile Include="IO\TempDirTests.cs" />
     <Compile Include="IO\TempWorkDirTests.cs" />
     <Compile Include="Rest\RestClientTests.cs" />
-    <Compile Include="Rest\JsonSerializerTests.cs" />
     <Compile Include="Rest\RestRequestTests.cs" />
     <Compile Include="Rest\RestResponseTests.cs" />
     <Compile Include="Rest\UriTtests.cs" />

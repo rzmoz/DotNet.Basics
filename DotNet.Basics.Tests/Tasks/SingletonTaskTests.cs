@@ -45,7 +45,7 @@ namespace DotNet.Basics.Tests.Tasks
 
             //try start task 10 times
             foreach (var i in Enumerable.Range(1, 10))
-                task.RunAsync().ConfigureAwait(false);//don't await task so it runs multiple times
+                task.RunAsync();//don't await task so it runs multiple times
 
             await WaitTillFinished(task).ConfigureAwait(false);
 
