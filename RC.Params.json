@@ -1,10 +1,7 @@
 {
-  "version.assembly": "4.0.0",
+  "version.assembly": "4.1.0",
   "version.prerelease": "",
   "sln.path": "DotNet.Basics.sln",
   "test.assemblies": "*.tests.dll",
-  "nuget.targets": [
-    "DotNet.Basics\\DotNet.Basics.csproj",
-    "DotNet.Basics.Rest\\DotNet.Basics.Rest.csproj"
-  ]
+  "nuget.targets": [ "DotNet.Basics\\DotNet.Basics.csproj" ]
 }
