@@ -27,22 +27,22 @@ namespace DotNet.Basics.Tasks
             {
                 do
                 {
-                    Exception exceptionInLastLoop;
+                    Exception exceptionInLastLoop=null;
                     try
                     {
                         await task.RunAsync().ConfigureAwait(false);
-                        options.CountLoopBreakPredicate?.LoopCallback();
-                        exceptionInLastLoop = null;
                     }
                     catch (Exception e)
                     {
                         lastException = e;
                         exceptionInLastLoop = e;
+                        
+                    }
+                    finally
+                    {
                         options.CountLoopBreakPredicate?.LoopCallback();
                     }
-
-                    Pingback(options);
-
+                    
                     if (untilPredicate.Invoke(exceptionInLastLoop))
                     {
                         success = true;
@@ -54,6 +54,8 @@ namespace DotNet.Basics.Tasks
                         success = false;
                         break;
                     }
+
+                    RetryPingback(options);
 
                     await Task.Delay(options.RetryDelay).ConfigureAwait(false);
 
@@ -76,14 +78,14 @@ namespace DotNet.Basics.Tasks
             return success;
         }
 
-        private void Pingback(RepeatOptions options)
+        private void RetryPingback(RepeatOptions options)
         {
-            if (options.Ping == null)
+            if (options.PingOnRetry == null)
                 return;
 
             try
             {
-                options.Ping.Invoke();
+                options.PingOnRetry();
             }
             catch (Exception e)
             {
