@@ -249,7 +249,7 @@ namespace DotNet.Basics.Tests.Tasks
             var doCounter = 0;
             var pingCounter = 0;
             const int maxTries = 5;
-            var result = Repeat.TaskOnce(ct => { doCounter++; return Task.CompletedTask; })
+            var result = Repeat.TaskOnce(() => { doCounter++; return Task.CompletedTask; })
                 .WithOptions(o =>
                 {
                     o.Ping = () => { pingCounter++; };

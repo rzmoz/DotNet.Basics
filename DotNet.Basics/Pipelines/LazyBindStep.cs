@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DotNet.Basics.Pipelines
@@ -13,11 +14,11 @@ namespace DotNet.Basics.Pipelines
             DisplayName = step.DisplayName;
         }
 
-        public override async Task RunAsync(T args)
+        public override async Task RunAsync(T args, CancellationToken ct)
         {
             var step = Container.GetInstance<TStep>();
             DisplayName = step.DisplayName;
-            await step.RunAsync(args).ConfigureAwait(false);
+            await step.RunAsync(args, ct).ConfigureAwait(false);
         }
     }
 }

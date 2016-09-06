@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Pipelines;
@@ -12,7 +13,7 @@ namespace DotNet.Basics.Tests.Pipelines
             DisplayName = "MyDisplayName";
         }
 
-        public override async Task RunAsync(EventArgs args)
+        public override async Task RunAsync(EventArgs args, CancellationToken ct)
         {
             await Task.Delay(1.MilliSeconds()).ConfigureAwait(false);//silence compiler warning
             Console.WriteLine($"Display name set to {DisplayName}");

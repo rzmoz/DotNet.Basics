@@ -8,13 +8,9 @@ namespace DotNet.Basics.Collections
 {
     public static class CollectionExtensions
     {
-        public static async Task ParallelForEachAsync<T>(this IEnumerable<T> col, Func<T, CancellationToken, Task> forEachAction, CancellationToken ct = default(CancellationToken))
+        public static async Task ParallelForEachAsync<T>(this IEnumerable<T> col, Func<T, Task> forEachAction)
         {
-            var tasks = new List<Task>();
-
-            foreach (var item in col)
-                tasks.Add(forEachAction(item, ct));
-
+            var tasks = col.ForEach(forEachAction);
             await Task.WhenAll(tasks).ConfigureAwait(false);
         }
 

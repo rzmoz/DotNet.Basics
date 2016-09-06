@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Management.Automation.Language;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,7 +8,7 @@ namespace DotNet.Basics.Tasks
     public class ManagedTask
     {
         protected Action SyncTask { get; }
-        protected Func<CancellationToken, Task> AsyncTask { get; }
+        protected Func<Task> AsyncTask { get; }
 
         public delegate void TaskStartingEventHandler(string taskId, string runId, bool started, string reason);
         public delegate void TaskEndedEventHandler(string taskId, string runId, Exception lastException);
@@ -22,7 +23,7 @@ namespace DotNet.Basics.Tasks
         }
 
         public ManagedTask(string id, Action task)
-            : this(id, task, ct =>
+            : this(id, task, () =>
              {
                  task.Invoke();
                  return Task.CompletedTask;
@@ -30,27 +31,27 @@ namespace DotNet.Basics.Tasks
         {
         }
 
-        public ManagedTask(Func<CancellationToken, Task> task)
+        public ManagedTask(Func<Task> task)
             : this(string.Empty, task)
         {
         }
 
-        public ManagedTask(string id, Func<CancellationToken, Task> task)
+        public ManagedTask(string id, Func<Task> task)
             : this(id, () =>
               {
-                  var asyncTask = task.Invoke(CancellationToken.None);
+                  var asyncTask = task.Invoke();
                   asyncTask.Wait();
               }, task)
         {
         }
 
 
-        public ManagedTask(Action syncTask, Func<CancellationToken, Task> asyncTask)
+        public ManagedTask(Action syncTask, Func<Task> asyncTask)
             : this(null, syncTask, asyncTask)
         {
         }
 
-        public ManagedTask(string id, Action syncTask, Func<CancellationToken, Task> asyncTask)
+        public ManagedTask(string id, Action syncTask, Func<Task> asyncTask)
         {
             if (syncTask == null) throw new ArgumentNullException(nameof(syncTask));
             if (asyncTask == null) throw new ArgumentNullException(nameof(asyncTask));
@@ -78,24 +79,32 @@ namespace DotNet.Basics.Tasks
             }
             catch (Exception e)
             {
-                FireTaskEnded(Id, runId, e);
+                var asAggrE = e;
+                while (asAggrE is AggregateException)
+                    asAggrE = asAggrE.InnerException;
+
+                FireTaskEnded(Id, runId, asAggrE);
                 throw;
             }
         }
 
-        public virtual async Task RunAsync(CancellationToken ct = default(CancellationToken))
+        public virtual async Task RunAsync()
         {
             var runId = GetNewRunId();
 
             try
             {
                 FireTaskStarting(Id, runId, true, null);
-                await AsyncTask(ct).ConfigureAwait(false);
+                await AsyncTask().ConfigureAwait(false);
                 FireTaskEnded(Id, runId, null);
             }
             catch (Exception e)
             {
-                FireTaskEnded(Id, runId, e);
+                var asAggrE = e;
+                while (asAggrE is AggregateException)
+                    asAggrE = asAggrE.InnerException;
+                
+                FireTaskEnded(Id, runId, asAggrE);
                 throw;
             }
         }

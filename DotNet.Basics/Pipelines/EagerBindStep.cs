@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DotNet.Basics.Pipelines
@@ -13,7 +14,7 @@ namespace DotNet.Basics.Pipelines
             _actionAsync = actionAsync;
         }
 
-        public override async Task RunAsync(T args)
+        public override async Task RunAsync(T args, CancellationToken ct)
         {
             await _actionAsync.Invoke(args).ConfigureAwait(false);
         }

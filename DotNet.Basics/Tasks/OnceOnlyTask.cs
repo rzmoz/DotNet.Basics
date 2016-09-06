@@ -10,29 +10,29 @@ namespace DotNet.Basics.Tasks
         {
         }
 
-        public OnceOnlyTask(string id, Action task) : base(id, new OnceOnlySyncTask(task).Run)
+        public OnceOnlyTask(string id, Action task) : base(id, (Action)OnceOnlySyncTask.Create(task).Run)
         {
         }
 
-        public OnceOnlyTask(Func<CancellationToken, Task> task) : this(string.Empty, new OnceOnlyAsyncTask(task).RunAsync)
+        public OnceOnlyTask(Func<Task> task) : this(string.Empty, OnceOnlyAsyncTask.Create(task).RunAsync)
         {
         }
 
-        public OnceOnlyTask(string id, Func<CancellationToken, Task> task) : base(id, task)
+        public OnceOnlyTask(string id, Func<Task> task) : base(id, OnceOnlyAsyncTask.Create(task).RunAsync)
         {
         }
 
-        public OnceOnlyTask(Action syncTask, Func<CancellationToken, Task> asyncTask) : this(string.Empty, syncTask, asyncTask)
+        public OnceOnlyTask(Action syncTask, Func<Task> asyncTask) : this(string.Empty, syncTask, asyncTask)
         {
         }
 
-        public OnceOnlyTask(string id, Action syncTask, Func<CancellationToken, Task> asyncTask) : base(id, new OnceOnlySyncTask(syncTask).Run, new OnceOnlyAsyncTask(asyncTask).RunAsync)
+        public OnceOnlyTask(string id, Action syncTask, Func<Task> asyncTask) : base(id, OnceOnlySyncTask.Create(syncTask).Run, OnceOnlyAsyncTask.Create(asyncTask).RunAsync)
         {
         }
 
         private class OnceOnlySyncTask
         {
-            public OnceOnlySyncTask(Action task)
+            private OnceOnlySyncTask(Action task)
             {
                 _task = () =>
                 {
@@ -47,24 +47,34 @@ namespace DotNet.Basics.Tasks
             {
                 _task.Invoke();
             }
+
+            public static OnceOnlySyncTask Create(Action task)
+            {
+                return new OnceOnlySyncTask(task);
+            }
         }
 
         private class OnceOnlyAsyncTask
         {
-            private Func<CancellationToken, Task> _task;
+            private Func<Task> _task;
 
-            public OnceOnlyAsyncTask(Func<CancellationToken, Task> task)
+            private OnceOnlyAsyncTask(Func<Task> task)
             {
-                _task = async (ct) =>
+                _task = async () =>
                 {
-                    _task = ctx => Task.CompletedTask;
-                    await task.Invoke(ct).ConfigureAwait(false);
+                    _task = () => Task.CompletedTask;
+                    await task.Invoke().ConfigureAwait(false);
                 };
             }
 
-            public async Task RunAsync(CancellationToken ct = default(CancellationToken))
+            public async Task RunAsync()
             {
-                await _task.Invoke(ct).ConfigureAwait(false);
+                await _task.Invoke().ConfigureAwait(false);
+            }
+
+            public static OnceOnlyAsyncTask Create(Func<Task> task)
+            {
+                return new OnceOnlyAsyncTask(task);
             }
         }
     }

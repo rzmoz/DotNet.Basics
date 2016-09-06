@@ -6,12 +6,12 @@ namespace DotNet.Basics.Tasks
 {
     public static class Repeat
     {
-        public static RepeaterTask Task(Func<CancellationToken, Task> task)
+        public static RepeaterTask Task(Func<Task> task)
         {
             return new RepeaterTask(task);
         }
 
-        public static RepeaterTask TaskOnce(Func<CancellationToken, Task> task)
+        public static RepeaterTask TaskOnce(Func<Task> task)
         {
             var onceOnlyTask = new OnceOnlyTask(task);
             return new RepeaterTask(onceOnlyTask.RunAsync);
@@ -25,7 +25,7 @@ namespace DotNet.Basics.Tasks
         public static RepeaterTask TaskOnce(Action task)
         {
             var onceOnlyTask = new OnceOnlyTask(task);
-            return new RepeaterTask(onceOnlyTask.Run);
+            return new RepeaterTask((Action)onceOnlyTask.Run);
         }
     }
 }

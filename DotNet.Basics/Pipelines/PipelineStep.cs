@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Ioc;
 
@@ -11,7 +12,7 @@ namespace DotNet.Basics.Pipelines
             DisplayName = GetType().Name;
         }
 
-        public abstract Task RunAsync(T args);
+        public abstract Task RunAsync(T args, CancellationToken ct);
 
         public virtual void Init()
         {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks
@@ -15,13 +14,13 @@ namespace DotNet.Basics.Tasks
             if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException(nameof(id));
         }
         
-        public SingletonTask(string id, Func<CancellationToken, Task> task) : base(id, task)
+        public SingletonTask(string id, Func<Task> task) : base(id, task)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
             if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException(nameof(id));
         }
         
-        public SingletonTask(string id, Action syncTask, Func<CancellationToken, Task> asyncTask) : base(id, syncTask, asyncTask)
+        public SingletonTask(string id, Action syncTask, Func<Task> asyncTask) : base(id, syncTask, asyncTask)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
             if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException(nameof(id));
@@ -62,7 +61,7 @@ namespace DotNet.Basics.Tasks
             }
         }
 
-        public override async Task RunAsync(CancellationToken ct = new CancellationToken())
+        public override async Task RunAsync()
         {
             var runId = GetNewRunId();
 
@@ -77,7 +76,7 @@ namespace DotNet.Basics.Tasks
             try
             {
                 FireTaskStarting(Id, runId, true, "Task is starting");
-                await AsyncTask(ct).ConfigureAwait(false);
+                await AsyncTask().ConfigureAwait(false);
                 FireTaskEnded(Id, runId, null);
             }
             catch (Exception e)

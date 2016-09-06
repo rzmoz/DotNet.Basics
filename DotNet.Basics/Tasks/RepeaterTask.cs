@@ -16,22 +16,22 @@ namespace DotNet.Basics.Tasks
             Options = new RepeatOptions();
         }
 
-        public RepeaterTask(Func<CancellationToken, Task> task) : base(task)
+        public RepeaterTask(Func<Task> task) : base(task)
         {
             Options = new RepeatOptions();
         }
 
-        public RepeaterTask(string id, Func<CancellationToken, Task> task) : base(id, task)
+        public RepeaterTask(string id, Func<Task> task) : base(id, task)
         {
             Options = new RepeatOptions();
         }
 
-        public RepeaterTask(Action syncTask, Func<CancellationToken, Task> asyncTask) : base(syncTask, asyncTask)
+        public RepeaterTask(Action syncTask, Func<Task> asyncTask) : base(syncTask, asyncTask)
         {
             Options = new RepeatOptions();
         }
 
-        public RepeaterTask(string id, Action syncTask, Func<CancellationToken, Task> asyncTask) : base(id, syncTask, asyncTask)
+        public RepeaterTask(string id, Action syncTask, Func<Task> asyncTask) : base(id, syncTask, asyncTask)
         {
             Options = new RepeatOptions();
         }

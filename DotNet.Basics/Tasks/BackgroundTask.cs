@@ -14,19 +14,19 @@ namespace DotNet.Basics.Tasks
         {
         }
 
-        public BackgroundTask(Func<CancellationToken, Task> task) : base(task)
+        public BackgroundTask(Func<Task> task) : base(task)
         {
         }
 
-        public BackgroundTask(string id, Func<CancellationToken, Task> task) : base(id, task)
+        public BackgroundTask(string id, Func<Task> task) : base(id, task)
         {
         }
 
-        public BackgroundTask(Action syncTask, Func<CancellationToken, Task> asyncTask) : base(syncTask, asyncTask)
+        public BackgroundTask(Action syncTask, Func<Task> asyncTask) : base(syncTask, asyncTask)
         {
         }
 
-        public BackgroundTask(string id, Action syncTask, Func<CancellationToken, Task> asyncTask) : base(id, syncTask, asyncTask)
+        public BackgroundTask(string id, Action syncTask, Func<Task> asyncTask) : base(id, syncTask, asyncTask)
         {
         }
 
@@ -50,7 +50,7 @@ namespace DotNet.Basics.Tasks
             }, CancellationToken.None);
         }
 
-        public override Task RunAsync(CancellationToken ct = new CancellationToken())
+        public override Task RunAsync()
         {
             Task.Run(async () =>
             {
@@ -58,7 +58,7 @@ namespace DotNet.Basics.Tasks
                 try
                 {
                     FireTaskStarting(Id, runId, true, "Task is starting");
-                    await AsyncTask(ct).ConfigureAwait(false);
+                    await AsyncTask().ConfigureAwait(false);
                     FireTaskEnded(Id, runId, null);
                 }
                 catch (Exception e)

@@ -13,7 +13,7 @@ namespace DotNet.Basics.Tests.Tasks
         public void AsyncTask_RunSync_IsOnlyRunOnceInvoked()
         {
             var taskRun = false;
-            var task = new ManagedTask(ct => { taskRun = true; return Task.CompletedTask; });
+            var task = new ManagedTask(() => { taskRun = true; return Task.CompletedTask; });
             taskRun.Should().BeFalse();
             task.Run();
             taskRun.Should().BeTrue();
@@ -23,9 +23,9 @@ namespace DotNet.Basics.Tests.Tasks
         public async Task AsyncTask_RunAsync_IsOnlyRunOnceInvoked()
         {
             var started = false;
-            var task = new ManagedTask(ct => { started = true; return Task.CompletedTask; });
+            var task = new ManagedTask(() => { started = true; return Task.CompletedTask; });
             started.Should().BeFalse();
-            await task.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await task.RunAsync().ConfigureAwait(false);
             started.Should().BeTrue();
         }
 

@@ -37,15 +37,15 @@ namespace DotNet.Basics.Tests.Tasks
 
             int hitCount = 0;
 
-            var task = new SingletonTask(taskId, async ct =>
+            var task = new SingletonTask(taskId, async () =>
              {
                  hitCount++;
-                 await Task.Delay(1.Seconds(), ct).ConfigureAwait(false);
+                 await Task.Delay(1.Seconds()).ConfigureAwait(false);
              });
 
             //try start task 10 times
             foreach (var i in Enumerable.Range(1, 10))
-                task.RunAsync(CancellationToken.None).ConfigureAwait(false);//don't await task so it runs multiple times
+                task.RunAsync().ConfigureAwait(false);//don't await task so it runs multiple times
 
             await WaitTillFinished(task).ConfigureAwait(false);
 
@@ -60,22 +60,24 @@ namespace DotNet.Basics.Tests.Tasks
             bool taskEndedNaturally = false;
             var taskDelay = 5.Seconds();
 
-            var task = new SingletonTask(taskId, async (ct) =>
+            var ctSource = new CancellationTokenSource();
+
+            var task = new SingletonTask(taskId, async () =>
              {
-                 await Task.Delay(taskDelay, ct).ConfigureAwait(false);
+                 await Task.Delay(taskDelay, ctSource.Token).ConfigureAwait(false);
                  taskEndedNaturally = true;
              });
 
 
             bool taskStarted = false;
-            var ctSource = new CancellationTokenSource();
+
 
             task.TaskStarting += (id, runId, started, reasons) => { taskStarted = started; };
 
-            task.RunAsync(ctSource.Token);//don't await task finish
+            task.RunAsync();//don't await task finish
 
             while (taskStarted == false)
-                await Task.Delay(50.Milliseconds(), ctSource.Token).ConfigureAwait(false);
+                await Task.Delay(50.Milliseconds(), CancellationToken.None).ConfigureAwait(false);
 
             task.IsRunning().Should().BeTrue($"task is running");
 
@@ -96,8 +98,8 @@ namespace DotNet.Basics.Tests.Tasks
             var errorCaught = false;
             try
             {
-                var task = new SingletonTask(taskId, ct => Task.CompletedTask);
-                await task.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                var task = new SingletonTask(taskId, () => Task.CompletedTask);
+                await task.RunAsync().ConfigureAwait(false);
             }
             catch (ArgumentNullException)
             {
@@ -117,11 +119,11 @@ namespace DotNet.Basics.Tests.Tasks
             const int runCount = 3;
             var counter = 0;
 
-            var runner = new SingletonTask(taskId, (ct) =>
+            var runner = new SingletonTask(taskId, () =>
              {
                  counter++;
-                //crash task thread
-                throw new ApplicationException("Cowabungaa");
+                 //crash task thread
+                 throw new ApplicationException("Cowabungaa");
              });
 
             //run task multiple times
@@ -129,14 +131,14 @@ namespace DotNet.Basics.Tests.Tasks
             {
                 try
                 {
-                    await runner.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                    await runner.RunAsync().ConfigureAwait(false);
                 }
                 catch (ApplicationException)
                 {
                     //ignore
                 }
 
-                await Task.Delay(100.Milliseconds(), CancellationToken.None).ConfigureAwait(false);
+                await Task.Delay(100.Milliseconds()).ConfigureAwait(false);
             }
 
             counter.Should().Be(runCount);

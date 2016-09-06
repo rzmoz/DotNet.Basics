@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Pipelines;
 using DotNet.Basics.Sys;
@@ -15,7 +16,7 @@ namespace DotNet.Basics.Tests.Pipelines
             DisplayName = "MyIncrementArgsStep";
         }
 
-        public override async Task RunAsync(EventArgs<int> args)
+        public override async Task RunAsync(EventArgs<int> args, CancellationToken ct)
         {
             await Task.Delay(1.MilliSeconds()).ConfigureAwait(false);//silence compiler warning
             args.Value = _classThatIncrementArgsDependOn.IncrementByOne(args.Value);

@@ -25,10 +25,10 @@ namespace DotNet.Basics.Tests.Collections
             var profiler = new Profiler();
             profiler.Start();
 
-            await ones.ParallelForEachAsync(async (i, ct) =>
+            await ones.ParallelForEachAsync(async i =>
             {
                 results.Add(i + 1);
-                await Task.Delay(singleTaskDuration, CancellationToken.None);
+                await Task.Delay(singleTaskDuration);
             });
 
             profiler.Stop();
@@ -41,8 +41,6 @@ namespace DotNet.Basics.Tests.Collections
             //assert they were run in parallel
             profiler.Duration.Should().BeCloseTo(singleTaskDuration, 100);
         }
-
-
 
         [Test]
         public void ForEach_Func_ActionIsAppliedToallElementsInCol()

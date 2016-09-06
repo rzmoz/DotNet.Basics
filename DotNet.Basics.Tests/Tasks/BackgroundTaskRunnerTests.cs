@@ -31,11 +31,10 @@ namespace DotNet.Basics.Tests.Tasks
 
             await AssertTaskAsync(taskId, bgRunner =>
              {
-                 bgRunner.Start(taskId, ct =>
-                  {
-                      throw new ArgumentNullException();
-
-                  }, true);
+                 bgRunner.Start(taskId, () =>
+                 {
+                     throw new ArgumentNullException();
+                 }, true);
              }).ConfigureAwait(false);
         }
 

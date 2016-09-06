@@ -15,8 +15,8 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var counter = 0;
 
-            var onceOnlyAction = new OnceOnlyTask((ct) => { counter++; return Task.CompletedTask; });
-            Action action = async () => await onceOnlyAction.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            var onceOnlyAction = new OnceOnlyTask(() => { counter++; return Task.CompletedTask; });
+            Action action = async () => await onceOnlyAction.RunAsync().ConfigureAwait(false);
 
             //invoke multiple times
             Run(action, 5);
@@ -29,8 +29,8 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var counter = 0;
 
-            var onceOnlyAction = new OnceOnlyTask((ct) => { counter++; throw new ArgumentException("buuh"); });
-            Action action = async () => await onceOnlyAction.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            var onceOnlyAction = new OnceOnlyTask(() => { counter++; throw new ArgumentException("buuh"); });
+            Action action = async () => await onceOnlyAction.RunAsync().ConfigureAwait(false);
 
             //invoke multiple times
             Run(action, 5);
@@ -58,7 +58,7 @@ namespace DotNet.Basics.Tests.Tasks
             var counter = 0;
 
             var onceOnlyAction = new OnceOnlyTask(() => { counter++; throw new ArgumentException("buuh"); });
-            Action action = onceOnlyAction.Run;
+            Action action = () => onceOnlyAction.Run();
 
             //invoke multiple times
             Run(action, 5);
@@ -75,6 +75,10 @@ namespace DotNet.Basics.Tests.Tasks
                     action.Invoke();
                 }
                 catch (ArgumentException)
+                {
+                    //ignore
+                }
+                catch (AggregateException)
                 {
                     //ignore
                 }

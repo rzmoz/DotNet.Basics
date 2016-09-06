@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Collections;
 using DotNet.Basics.Ioc;
@@ -30,15 +31,15 @@ namespace DotNet.Basics.Pipelines
             _container = container ?? new SimpleContainer();
         }
 
-        public async Task<PipelineResult<TArgs>> RunAsync<TTaskPipeline, TArgs>(TArgs args = null)
+        public async Task<PipelineResult<TArgs>> RunAsync<TTaskPipeline, TArgs>(TArgs args = null, CancellationToken ct = default(CancellationToken))
             where TTaskPipeline : Pipeline<TArgs>, new()
             where TArgs : EventArgs, new()
         {
             var pipeline = new TTaskPipeline();
-            return await RunAsync<TArgs>(pipeline, args);
+            return await RunAsync<TArgs>(pipeline, args, ct);
         }
-        
-        public async Task<PipelineResult<TArgs>> RunAsync<TArgs>(Pipeline<TArgs> pipeline, TArgs args = null)
+
+        public async Task<PipelineResult<TArgs>> RunAsync<TArgs>(Pipeline<TArgs> pipeline, TArgs args = null, CancellationToken ct = default(CancellationToken))
             where TArgs : EventArgs, new()
         {
             if (args == null)
@@ -59,7 +60,7 @@ namespace DotNet.Basics.Pipelines
                     Trace.WriteLine($"Block starting:{blockName}");
                     BlockStarting?.Invoke(blockName);
 
-                    await block.ParallelForEachAsync(async (step, ct) =>
+                    await block.ParallelForEachAsync(async (step) =>
                     {
                         step.Container = _container;
                         step.Init();//must run before resolving step name for lazy bound steps
@@ -68,7 +69,7 @@ namespace DotNet.Basics.Pipelines
                         Trace.WriteLine($"Step starting:{stepName}");
                         StepStarting?.Invoke(stepName);
 
-                        await step.RunAsync(args).ConfigureAwait(false);
+                        await step.RunAsync(args, ct).ConfigureAwait(false);
 
                         Trace.WriteLine($"Step ended:{stepName}");
                         StepEnded?.Invoke(stepName);

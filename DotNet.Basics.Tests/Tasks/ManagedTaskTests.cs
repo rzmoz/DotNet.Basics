@@ -25,7 +25,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var taskRan = false;
 
-            var task = new ManagedTask(async ct =>
+            var task = new ManagedTask(async () =>
             {
                 await VoidTaskAsync();//ensure async execution
                 taskRan = true;
@@ -43,7 +43,7 @@ namespace DotNet.Basics.Tests.Tasks
             var task = new ManagedTask(() => taskRan = true);
 
             taskRan.Should().BeFalse();
-            await task.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await task.RunAsync().ConfigureAwait(false);
             taskRan.Should().BeTrue();
         }
         [Test]
@@ -51,14 +51,14 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var taskRan = false;
 
-            var task = new ManagedTask(async ct =>
+            var task = new ManagedTask(async () =>
             {
                 await VoidTaskAsync();//ensure async execution
                 taskRan = true;
             });
 
             taskRan.Should().BeFalse();
-            await task.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await task.RunAsync().ConfigureAwait(false);
             taskRan.Should().BeTrue();
         }
 
