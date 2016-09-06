@@ -6,18 +6,30 @@ namespace DotNet.Basics.Tasks
 {
     public class OnceOnlyTask : ManagedTask
     {
-        public OnceOnlyTask(Action task, string id = null) : base(new OnceOnlySyncTask(task).Run, id)
+        public OnceOnlyTask(Action task) : this(string.Empty, task)
         {
         }
 
-        public OnceOnlyTask(Func<CancellationToken, Task> task, string id = null) : base(new OnceOnlyAsyncTask(task).RunAsync, id)
+        public OnceOnlyTask(string id, Action task) : base(id, new OnceOnlySyncTask(task).Run)
         {
         }
 
-        public OnceOnlyTask(Action syncTask, Func<CancellationToken, Task> asyncTask, string id) : base(new OnceOnlySyncTask(syncTask).Run, new OnceOnlyAsyncTask(asyncTask).RunAsync, id)
+        public OnceOnlyTask(Func<CancellationToken, Task> task) : this(string.Empty, new OnceOnlyAsyncTask(task).RunAsync)
         {
         }
-        
+
+        public OnceOnlyTask(string id, Func<CancellationToken, Task> task) : base(id, task)
+        {
+        }
+
+        public OnceOnlyTask(Action syncTask, Func<CancellationToken, Task> asyncTask) : this(string.Empty, syncTask, asyncTask)
+        {
+        }
+
+        public OnceOnlyTask(string id, Action syncTask, Func<CancellationToken, Task> asyncTask) : base(id, new OnceOnlySyncTask(syncTask).Run, new OnceOnlyAsyncTask(asyncTask).RunAsync)
+        {
+        }
+
         private class OnceOnlySyncTask
         {
             public OnceOnlySyncTask(Action task)

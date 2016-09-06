@@ -17,11 +17,11 @@ namespace DotNet.Basics.Tests.Tasks
 
             await AssertTaskAsync(taskId, bgRunner =>
             {
-                bgRunner.Start(() =>
-                {
-                    throw new ArgumentNullException();
+                bgRunner.Start(taskId, () =>
+                 {
+                     throw new ArgumentNullException();
 
-                }, taskId, true);
+                 }, true);
             }).ConfigureAwait(false);
         }
         [Test]
@@ -31,11 +31,11 @@ namespace DotNet.Basics.Tests.Tasks
 
             await AssertTaskAsync(taskId, bgRunner =>
              {
-                 bgRunner.Start(ct =>
-                 {
-                     throw new ArgumentNullException();
+                 bgRunner.Start(taskId, ct =>
+                  {
+                      throw new ArgumentNullException();
 
-                 }, taskId, true);
+                  }, true);
              }).ConfigureAwait(false);
         }
 

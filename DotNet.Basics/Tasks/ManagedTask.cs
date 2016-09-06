@@ -16,25 +16,41 @@ namespace DotNet.Basics.Tasks
         public event TaskEndedEventHandler TaskEnded;
 
 
-        public ManagedTask(Action task, string id = null)
-            : this(task, ct =>
-            {
-                task.Invoke();
-                return Task.CompletedTask;
-            }, id)
+        public ManagedTask(Action task)
+            : this(string.Empty, task)
         {
         }
 
-        public ManagedTask(Func<CancellationToken, Task> task, string id = null)
-            : this(() =>
+        public ManagedTask(string id, Action task)
+            : this(id, task, ct =>
              {
-                 var asyncTask = task.Invoke(CancellationToken.None);
-                 asyncTask.Wait();
-             }, task, id)
+                 task.Invoke();
+                 return Task.CompletedTask;
+             })
         {
         }
 
-        public ManagedTask(Action syncTask, Func<CancellationToken, Task> asyncTask, string id)
+        public ManagedTask(Func<CancellationToken, Task> task)
+            : this(string.Empty, task)
+        {
+        }
+
+        public ManagedTask(string id, Func<CancellationToken, Task> task)
+            : this(id, () =>
+              {
+                  var asyncTask = task.Invoke(CancellationToken.None);
+                  asyncTask.Wait();
+              }, task)
+        {
+        }
+
+
+        public ManagedTask(Action syncTask, Func<CancellationToken, Task> asyncTask)
+            : this(null, syncTask, asyncTask)
+        {
+        }
+
+        public ManagedTask(string id, Action syncTask, Func<CancellationToken, Task> asyncTask)
         {
             if (syncTask == null) throw new ArgumentNullException(nameof(syncTask));
             if (asyncTask == null) throw new ArgumentNullException(nameof(asyncTask));

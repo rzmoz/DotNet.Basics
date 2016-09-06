@@ -18,11 +18,11 @@ namespace DotNet.Basics.Tests.Tasks
 
             bool taskRan = false;
 
-            var task = new SingletonTask(() =>
-            {
-                taskRan = true;
-                throw new ArgumentNullException();
-            }, taskID);
+            var task = new SingletonTask(taskID, () =>
+             {
+                 taskRan = true;
+                 throw new ArgumentNullException();
+             });
 
             Action action = () => task.Run();
 
@@ -37,11 +37,11 @@ namespace DotNet.Basics.Tests.Tasks
 
             int hitCount = 0;
 
-            var task = new SingletonTask(async ct =>
-            {
-                hitCount++;
-                await Task.Delay(1.Seconds(), ct).ConfigureAwait(false);
-            }, taskId);
+            var task = new SingletonTask(taskId, async ct =>
+             {
+                 hitCount++;
+                 await Task.Delay(1.Seconds(), ct).ConfigureAwait(false);
+             });
 
             //try start task 10 times
             foreach (var i in Enumerable.Range(1, 10))
@@ -60,11 +60,11 @@ namespace DotNet.Basics.Tests.Tasks
             bool taskEndedNaturally = false;
             var taskDelay = 5.Seconds();
 
-            var task = new SingletonTask(async (ct) =>
-            {
-                await Task.Delay(taskDelay, ct).ConfigureAwait(false);
-                taskEndedNaturally = true;
-            }, taskId);
+            var task = new SingletonTask(taskId, async (ct) =>
+             {
+                 await Task.Delay(taskDelay, ct).ConfigureAwait(false);
+                 taskEndedNaturally = true;
+             });
 
 
             bool taskStarted = false;
@@ -94,10 +94,9 @@ namespace DotNet.Basics.Tests.Tasks
         public async Task RunAsync_TaskIdEmptyTask_ExceptionIsThrown(string taskId)
         {
             var errorCaught = false;
-
             try
             {
-                var task = new SingletonTask(ct => Task.CompletedTask);
+                var task = new SingletonTask(taskId, ct => Task.CompletedTask);
                 await task.RunAsync(CancellationToken.None).ConfigureAwait(false);
             }
             catch (ArgumentNullException)
@@ -118,12 +117,12 @@ namespace DotNet.Basics.Tests.Tasks
             const int runCount = 3;
             var counter = 0;
 
-            var runner = new SingletonTask((ct) =>
-            {
-                counter++;
+            var runner = new SingletonTask(taskId, (ct) =>
+             {
+                 counter++;
                 //crash task thread
                 throw new ApplicationException("Cowabungaa");
-            }, taskId);
+             });
 
             //run task multiple times
             foreach (var i in Enumerable.Range(1, runCount)) //outer sequence awaits til actual running tasks i done

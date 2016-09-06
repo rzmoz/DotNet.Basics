@@ -6,15 +6,27 @@ namespace DotNet.Basics.Tasks
 {
     public class BackgroundTask : ManagedTask
     {
-        public BackgroundTask(Action task, string id = null) : base(task, id)
+        public BackgroundTask(Action task) : base(task)
         {
         }
 
-        public BackgroundTask(Func<CancellationToken, Task> task, string id = null) : base(task, id)
+        public BackgroundTask(string id, Action task) : base(id, task)
         {
         }
 
-        public BackgroundTask(Action syncTask, Func<CancellationToken, Task> asyncTask, string id) : base(syncTask, asyncTask, id)
+        public BackgroundTask(Func<CancellationToken, Task> task) : base(task)
+        {
+        }
+
+        public BackgroundTask(string id, Func<CancellationToken, Task> task) : base(id, task)
+        {
+        }
+
+        public BackgroundTask(Action syncTask, Func<CancellationToken, Task> asyncTask) : base(syncTask, asyncTask)
+        {
+        }
+
+        public BackgroundTask(string id, Action syncTask, Func<CancellationToken, Task> asyncTask) : base(id, syncTask, asyncTask)
         {
         }
 

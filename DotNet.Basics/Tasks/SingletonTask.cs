@@ -9,19 +9,19 @@ namespace DotNet.Basics.Tasks
     {
         private static readonly ConcurrentDictionary<string, string> _singletonScheduler = new ConcurrentDictionary<string, string>();
         
-        public SingletonTask(Action task, string id = null) : base(task, id)
+        public SingletonTask(string id, Action task) : base(id, task)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
             if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException(nameof(id));
         }
-
-        public SingletonTask(Func<CancellationToken, Task> task, string id = null) : base(task, id)
+        
+        public SingletonTask(string id, Func<CancellationToken, Task> task) : base(id, task)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
             if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException(nameof(id));
         }
-
-        public SingletonTask(Action syncTask, Func<CancellationToken, Task> asyncTask, string id) : base(syncTask, asyncTask, id)
+        
+        public SingletonTask(string id, Action syncTask, Func<CancellationToken, Task> asyncTask) : base(id, syncTask, asyncTask)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
             if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException(nameof(id));

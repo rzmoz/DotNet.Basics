@@ -9,20 +9,29 @@ namespace DotNet.Basics.Tasks
         public event ManagedTask.TaskStartingEventHandler TaskStarting;
         public event ManagedTask.TaskEndedEventHandler TaskEnded;
 
-        public void Start(Action task, string id = null, bool asSingleton = false)
+        public void Start(Action task, bool asSingleton = false)
         {
-            Start(new ManagedTask(task, id), asSingleton);
+            Start(null, task, asSingleton);
         }
-        public void Start(Func<CancellationToken, Task> task, string id = null, bool asSingleton = false)
+        public void Start(string id, Action task, bool asSingleton = false)
         {
-            Start(new ManagedTask(task, id), asSingleton);
+            Start(new ManagedTask(id, task), asSingleton);
+        }
+
+        public void Start(Func<CancellationToken, Task> task, bool asSingleton = false)
+        {
+            Start(null, task, asSingleton);
+        }
+        public void Start(string id ,Func<CancellationToken, Task> task, bool asSingleton = false)
+        {
+            Start(new ManagedTask(id, task), asSingleton);
         }
 
         private void Start(ManagedTask task, bool asSingleton)
         {
             if (asSingleton)
-                task = new SingletonTask(task.Run, task.RunAsync, task.Id);
-            task = new BackgroundTask(task.Run, task.RunAsync, task.Id);
+                task = new SingletonTask(task.Id, task.Run, task.RunAsync);
+            task = new BackgroundTask(task.Id, task.Run, task.RunAsync);
             task.TaskStarting += (tid, rid, started, reason) => { TaskStarting?.Invoke(tid, rid, started, reason); };
             task.TaskEnded += (tid, rid, e) => { TaskEnded?.Invoke(tid, rid, e); };
             task.Run();
