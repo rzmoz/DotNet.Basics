@@ -18,7 +18,8 @@ namespace DotNet.Basics.Tests.Ioc
             Action getWithoutRegistrions = () => { var mytype = containerWitoutRegistrations.GetInstance<IMyType>(); };
             getWithoutRegistrions.ShouldThrow<ActivationException>();
 
-            var containerWithRegistrations = new SimpleContainer(new MyRegistrations());
+            var containerWithRegistrations = new SimpleContainer();
+            containerWithRegistrations.Register(new MyRegistrations());
             var myResolvedType= containerWithRegistrations.GetInstance<IMyType>();
             myResolvedType.GetType().Should().Be<MyType1>();
         }

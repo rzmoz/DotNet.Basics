@@ -5,9 +5,13 @@ namespace DotNet.Basics.Ioc
 {
     public class SimpleContainer : Container
     {
-        public SimpleContainer(params ISimpleRegistrations[] registrations)
+        public SimpleContainer()
         {
             Options.AllowOverridingRegistrations = true;
+        }
+
+        public void Register(params ISimpleRegistrations[] registrations)
+        {
             registrations?.ForEach(r => r.RegisterIn(this));
         }
     }
