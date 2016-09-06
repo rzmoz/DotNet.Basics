@@ -114,9 +114,8 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Add_KeyDoesNotExist_ValueIsAdded()
         {
-            var kvCollection = new StringDictionary();
+            var kvCollection = new StringDictionary {{_myKey, _myValue}};
 
-            kvCollection.Add(_myKey, _myValue);
 
             kvCollection[_myKey].Should().Be(_myValue);
         }
@@ -141,7 +140,7 @@ namespace DotNet.Basics.Tests.Collections
             var kvc = new StringDictionary(new StringPair(_myKey, _myValue).ToEnumerable());
             var json = kvc.ToString();
 
-            json.Should().Be("[{\"Key\":\"myKey\",\"Value\":\"myValue\"}]");
+            json.Should().Be("[{\"myKey\":\"myValue\"}]");
         }
     }
 }

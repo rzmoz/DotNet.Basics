@@ -128,7 +128,7 @@ namespace DotNet.Basics.Collections
         
         public ICollection<string> Keys => _dic.Keys;
         public ICollection<TValue> Values => _dic.Values;
-
+        
         private string ResolvedKey(string key)
         {
             if (DictionaryKeyMode == DictionaryKeyMode.KeyCaseSensitive)
