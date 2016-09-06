@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace DotNet.Basics.Collections
 {
-    [DataContract]
     public sealed class StringPair
     {
         public StringPair() { }
@@ -17,9 +15,7 @@ namespace DotNet.Basics.Collections
             Value = value;
         }
 
-        [DataMember]
         public string Key { get; set; }
-        [DataMember]
         public string Value { get; set; }
 
         public static explicit operator StringPair(KeyValuePair<string, string> kvp)

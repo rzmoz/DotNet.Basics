@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace DotNet.Basics.Sys
 {
-    [DataContract]
     public class Observable<T>
     {
         private T _value;
@@ -45,13 +43,13 @@ namespace DotNet.Basics.Sys
 
         private void SetValue(T t)
         {
-            if (_notifyListeners && Updating != null)
-                Updating(this, new EventArgs<T>(_value));
+            if (_notifyListeners)
+                Updating?.Invoke(this, new EventArgs<T>(_value));
 
             _value = t;
 
-            if (_notifyListeners && Updated != null)
-                Updated(this, new EventArgs<T>(_value));
+            if (_notifyListeners)
+                Updated?.Invoke(this, new EventArgs<T>(_value));
         }
 
         private bool ValueTypeSetter(T t)
@@ -64,11 +62,11 @@ namespace DotNet.Basics.Sys
 
         private bool ReferenceTypeSetter(T t)
         {
-            //t will never be value type since this was decided in constructor
-            if (_value as object == null && t as object == null)
+            //it will never be value type since this was decided in constructor
+            if (_value == null && t == null)
                 return false;
 
-            if (_value as object != null && t as object != null && _value.Equals(t))
+            if (_value != null && t != null && _value.Equals(t))
                 return false;
 
             SetValue(t);

@@ -1,8 +1,5 @@
-﻿using System.Runtime.Serialization;
-
-namespace DotNet.Basics.Sys
+﻿namespace DotNet.Basics.Sys
 {
-    [DataContract]
     public abstract class EnumClass
     {
         private readonly string _value;
