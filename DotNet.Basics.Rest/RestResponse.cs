@@ -9,6 +9,8 @@ namespace DotNet.Basics.Rest
     {
         private const char _stringQuote = '\"';
 
+        private readonly IJsonSerializer _serializer = new JsonSerializer();
+
         public RestResponse(Uri requestUri, HttpResponseMessage httpResponseMessage = null, ResponseFormatting responseFormatting = ResponseFormatting.Raw)
         {
             Exception = null;
@@ -23,14 +25,16 @@ namespace DotNet.Basics.Rest
             ReasonPhrase = HttpResponseMessage.ReasonPhrase;
             ResponseContent = HttpResponseMessage.Content?.ReadAsStringAsync().Result;
 
-            RawContent = JsonConvert.SerializeObject(ResponseContent);
+            RawContent = _serializer.ConvertTo<string>(ResponseContent);
 
             if (typeof(T) == typeof(string))
             {
                 if (responseFormatting == ResponseFormatting.TrimQuotesWhenContentIsString)
                     ResponseContent = TrimQuotesInString(ResponseContent);
+                Content = _serializer.ConvertTo<T>(ResponseContent);
             }
-            Content = JsonConvert.DeserializeObject<T>(ResponseContent);
+            else
+                Content = _serializer.Deserialize<T>(ResponseContent);
         }
 
         public Uri Uri { get; }

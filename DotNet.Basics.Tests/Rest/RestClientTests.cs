@@ -40,7 +40,7 @@ namespace DotNet.Basics.Tests.Rest
 
             Func<Task> action = async () => await client.ExecuteAsync<int>(request).ConfigureAwait(false);
 
-            action.ShouldThrow<ArgumentException>();
+            action.ShouldThrow<JsonReaderException>();
         }
 
         [Test]

@@ -1,20 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using DotNet.Basics.Rest;
 using FluentAssertions;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using JsonSerializer = DotNet.Basics.Rest.JsonSerializer;
 
 namespace DotNet.Basics.Tests.Rest
 {
     [TestFixture]
     public class JsonSerializerTests
     {
+        private IJsonSerializer _serialiser;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _serialiser = new JsonSerializer();
+        }
+
         [Test]
         public void FromJson_SimpleType_TypeIsDeSerialized()
         {
             const string connectionStringsJson = @"{""ConnectionStrings"":{""core"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbc"",""master"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbm"",""web"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbk""}}";
 
-            var dto = JsonConvert.DeserializeObject<ConnectionStringsDto>(connectionStringsJson);
+            var dto = _serialiser.Deserialize<ConnectionStringsDto>(connectionStringsJson);
 
             dto.ConnectionStrings.Count.Should().Be(3);
         }
@@ -22,9 +32,9 @@ namespace DotNet.Basics.Tests.Rest
         [Test]
         public void ConvertTo_ConvertToString_TypeIsDeSerialized()
         {
-            const string connectionStringsJson = @"{""ConnectionStrings"":{""core"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbc"",""master"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbm"",""web"":""user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbk""}}";
+            const string connectionStringsJson = @"{'ConnectionStrings':{'core':'user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbc','master':'user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbm','web':'user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbk'}}";
 
-            var rawstring = JsonConvert.SerializeObject(connectionStringsJson);
+            var rawstring = _serialiser.Serialize(connectionStringsJson);
 
             rawstring.Should().Be(connectionStringsJson);
         }
@@ -38,7 +48,7 @@ namespace DotNet.Basics.Tests.Rest
                 ConnectionStrings = new Dictionary<string, string> { { "core", "user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbc" }, { "master", "user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbm" }, { "web", "user id=sc;password=pw123;Data Source=t0hmavsbyz.database.windows.net;Database=dbk" } }
             };
 
-            var serialized = JsonConvert.SerializeObject(dto);
+            var serialized = _serialiser.Serialize(dto);
 
             serialized.Should().Be(connectionStringsJson);
         }
@@ -48,15 +58,15 @@ namespace DotNet.Basics.Tests.Rest
         {
             var name = "myName";
             var timestamp = new DateTimeOffset(2001, 01, 01, 01, 01, 01, 0.Seconds()).DateTime;
-            
-            const string json = @"{""Name"":""myName"",""TimeStamp"":""\/Date(978282061000)\/""}";
+
+            const string json = @"{""Name"":""myName"",""TimeStamp"":""2001-01-01T01:01:01""}";
             var dto = new SimpleDto()
             {
                 Name = name,
                 TimeStamp = timestamp
             };
 
-            var serialized = JsonConvert.SerializeObject(dto);
+            var serialized = _serialiser.Serialize(dto);
 
             serialized.Should().Be(json);
         }
@@ -65,8 +75,8 @@ namespace DotNet.Basics.Tests.Rest
         public void Serialize_Null_TypeIsDeSerialized()
         {
             const string json = @"{}";
-            
-            var serialized = JsonConvert.SerializeObject(null);
+
+            var serialized = _serialiser.Serialize(null);
 
             serialized.Should().Be(json);
         }
@@ -79,7 +89,7 @@ namespace DotNet.Basics.Tests.Rest
         {
             const string json = @"{}";
 
-            var serialized = JsonConvert.SerializeObject(content);
+            var serialized = _serialiser.Serialize(content);
 
             serialized.Should().Be(json);
         }
