@@ -1,6 +1,6 @@
 ﻿namespace DotNet.Basics.Diagnostics
 {
-    public enum ProfileStates
+    public enum ProfilerStates
     {
         NotStarted,
         Running,

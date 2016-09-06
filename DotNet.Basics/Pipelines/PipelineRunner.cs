@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using DotNet.Basics.Collections;
 using DotNet.Basics.Ioc;
 
 namespace DotNet.Basics.Pipelines
@@ -36,8 +37,7 @@ namespace DotNet.Basics.Pipelines
             var pipeline = new TTaskPipeline();
             return await RunAsync<TArgs>(pipeline, args);
         }
-
-
+        
         public async Task<PipelineResult<TArgs>> RunAsync<TArgs>(Pipeline<TArgs> pipeline, TArgs args = null)
             where TArgs : EventArgs, new()
         {
@@ -59,7 +59,7 @@ namespace DotNet.Basics.Pipelines
                     Trace.WriteLine($"Block starting:{blockName}");
                     BlockStarting?.Invoke(blockName);
 
-                    await Task.WhenAll(block.Select(async step =>
+                    await block.ParallelForEachAsync(async (step, ct) =>
                     {
                         step.Container = _container;
                         step.Init();//must run before resolving step name for lazy bound steps
@@ -72,8 +72,7 @@ namespace DotNet.Basics.Pipelines
 
                         Trace.WriteLine($"Step ended:{stepName}");
                         StepEnded?.Invoke(stepName);
-
-                    })).ConfigureAwait(false);
+                    }).ConfigureAwait(false);
 
                     Trace.WriteLine($"Block ended:{blockName}");
                     BlockEnded?.Invoke(blockName);

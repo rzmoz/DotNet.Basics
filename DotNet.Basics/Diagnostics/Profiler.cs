@@ -2,16 +2,16 @@
 
 namespace DotNet.Basics.Diagnostics
 {
-    public class Profile
+    public class Profiler
     {
-        private readonly ProfileFormatter _formatter = new ProfileFormatter();
+        private readonly ProfilerFormatter _formatter = new ProfilerFormatter();
 
-        public Profile(string name = null)
+        public Profiler(string name = null)
             : this(name, DateTime.MinValue, DateTime.MinValue, isFinished: false)
         {
         }
 
-        public Profile(string name, DateTime startTime, DateTime endTime, bool isFinished = true)
+        public Profiler(string name, DateTime startTime, DateTime endTime, bool isFinished = true)
         {
             if (startTime > endTime)
                 throw new ArgumentException($"Start time has to be before end time. Start:{startTime} End:{endTime}");
@@ -20,7 +20,7 @@ namespace DotNet.Basics.Diagnostics
             Name = name ?? string.Empty;
             StartTime = startTime;
             EndTime = endTime;
-            State = ProfileStates.NotStarted;
+            State = ProfilerStates.NotStarted;
             if (isFinished)
             {
                 InternalStart(startTime);
@@ -33,7 +33,7 @@ namespace DotNet.Basics.Diagnostics
         public DateTime StartTime { get; private set; }
         public DateTime EndTime { get; private set; }
         public TimeSpan Duration => EndTime - StartTime;
-        public ProfileStates State { get; private set; }
+        public ProfilerStates State { get; private set; }
         public bool Start()
         {
             return Start(DateTime.UtcNow);
@@ -60,7 +60,7 @@ namespace DotNet.Basics.Diagnostics
             StartTime = start;
             InternalStart = Passive;
             InternalStop = ActiveStop;
-            State = ProfileStates.Running;
+            State = ProfilerStates.Running;
             return true;
         }
 
@@ -68,7 +68,7 @@ namespace DotNet.Basics.Diagnostics
         {
             EndTime = end;
             InternalStop = Passive;
-            State = ProfileStates.Finished;
+            State = ProfilerStates.Finished;
             return true;
         }
 

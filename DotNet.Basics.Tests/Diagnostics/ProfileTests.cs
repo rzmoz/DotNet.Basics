@@ -11,7 +11,7 @@ namespace DotNet.Basics.Tests.Diagnostics
         [Test]
         public void ToString_NotStarted_ToStringContainsStarted()
         {
-            var stats = new Profile("myStats");
+            var stats = new Profiler("myStats");
 
             var toString = stats.ToString();
 
@@ -22,7 +22,7 @@ namespace DotNet.Basics.Tests.Diagnostics
         public void ToString_Started_ToStringContainsFinished()
         {
             var time = new DateTime(2015, 10, 1, 12, 1, 1);
-            var stats = new Profile("myStats");
+            var stats = new Profiler("myStats");
 
             stats.Start(time);
 
@@ -33,7 +33,7 @@ namespace DotNet.Basics.Tests.Diagnostics
         public void ToString_Finished_ToStringContainsFinished()
         {
             var time = DateTime.UtcNow;
-            var stats = new Profile("myStats", time, time.AddDays(1));
+            var stats = new Profiler("myStats", time, time.AddDays(1));
 
             var toString = stats.ToString();
 
@@ -48,7 +48,7 @@ namespace DotNet.Basics.Tests.Diagnostics
             var start = DateTime.MinValue;
             var end = start.Add(difference);
 
-            var profile = new Profile();
+            var profile = new Profiler();
 
             //trace is not started so stop fails and duration is 0
             profile.Stop(end).Should().BeFalse();

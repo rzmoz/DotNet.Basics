@@ -61,9 +61,9 @@
       <DependentUpon>CompressionResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Compression\SevenZip.cs" />
-    <Compile Include="Diagnostics\ProfileFormatter.cs" />
+    <Compile Include="Diagnostics\ProfilerFormatter.cs" />
     <Compile Include="Diagnostics\DurationFormattingUnit.cs" />
-    <Compile Include="Diagnostics\ProfileStates.cs" />
+    <Compile Include="Diagnostics\ProfilerStates.cs" />
     <Compile Include="Ioc\SimpleContainer.cs" />
     <Compile Include="Ioc\ISimpleRegistrations.cs" />
     <Compile Include="IO\PathDelimiterAsChar.cs" />
@@ -103,7 +103,7 @@
     <Compile Include="Sys\CommandPrompt.cs" />
     <Compile Include="Pipelines\EagerBindStep.cs" />
     <Compile Include="Pipelines\LazyBindStep.cs" />
-    <Compile Include="Diagnostics\Profile.cs" />
+    <Compile Include="Diagnostics\Profiler.cs" />
     <Compile Include="Pipelines\PipelineBlock.cs" />
     <Compile Include="Pipelines\Pipeline.cs" />
     <Compile Include="Pipelines\PipelineResult.cs" />
