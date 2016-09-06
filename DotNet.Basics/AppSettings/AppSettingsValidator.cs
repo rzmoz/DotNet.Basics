@@ -21,7 +21,6 @@ namespace DotNet.Basics.AppSettings
         {
             foreach (var appSetting in _settings.Values)
             {
-
                 if (appSetting.Verify() == false)
                     yield return appSetting.Key;
             }

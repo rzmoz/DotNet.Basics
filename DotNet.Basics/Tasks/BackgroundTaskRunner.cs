@@ -6,8 +6,8 @@ namespace DotNet.Basics.Tasks
 {
     public class BackgroundTaskRunner
     {
-        public event ManagedTask.TaskStartingEventHandler Starting;
-        public event ManagedTask.TaskEndedEventHandler Ended;
+        public event ManagedTask.TaskStartingEventHandler TaskStarting;
+        public event ManagedTask.TaskEndedEventHandler TaskEnded;
 
         public void Start(Action task, string id = null, bool asSingleton = false)
         {
@@ -23,8 +23,8 @@ namespace DotNet.Basics.Tasks
             if (asSingleton)
                 task = new SingletonTask(task.Run, task.RunAsync, task.Id);
             task = new BackgroundTask(task.Run, task.RunAsync, task.Id);
-            task.Starting += (tid, rid, started, reason) => { Starting?.Invoke(tid, rid, started, reason); };
-            task.Ended += (tid, rid, e) => { Ended?.Invoke(tid, rid, e); };
+            task.TaskStarting += (tid, rid, started, reason) => { TaskStarting?.Invoke(tid, rid, started, reason); };
+            task.TaskEnded += (tid, rid, e) => { TaskEnded?.Invoke(tid, rid, e); };
             task.Run();
         }
     }

@@ -70,7 +70,7 @@ namespace DotNet.Basics.Tests.Tasks
             bool taskStarted = false;
             var ctSource = new CancellationTokenSource();
 
-            task.Starting += (id, runId, started, reasons) => { taskStarted = started; };
+            task.TaskStarting += (id, runId, started, reasons) => { taskStarted = started; };
 
             task.RunAsync(ctSource.Token);//don't await task finish
 

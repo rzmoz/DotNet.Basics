@@ -12,8 +12,8 @@ namespace DotNet.Basics.Tasks
         public delegate void TaskStartingEventHandler(string taskId, string runId, bool started, string reason);
         public delegate void TaskEndedEventHandler(string taskId, string runId, Exception lastException);
 
-        public event TaskStartingEventHandler Starting;
-        public event TaskEndedEventHandler Ended;
+        public event TaskStartingEventHandler TaskStarting;
+        public event TaskEndedEventHandler TaskEnded;
 
 
         public ManagedTask(Action task, string id = null)
@@ -86,12 +86,12 @@ namespace DotNet.Basics.Tasks
 
         protected void FireTaskStarting(string taskId, string runId, bool taskWillStart, string reason)
         {
-            Starting?.Invoke(taskId, runId, taskWillStart, reason);
+            TaskStarting?.Invoke(taskId, runId, taskWillStart, reason);
         }
 
         protected void FireTaskEnded(string taskId, string runId, Exception lastException)
         {
-            Ended?.Invoke(taskId, runId, lastException);
+            TaskEnded?.Invoke(taskId, runId, lastException);
         }
     }
 }

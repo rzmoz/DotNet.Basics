@@ -2,6 +2,24 @@
 
 namespace DotNet.Basics.AppSettings
 {
+    public class AppSetting : AppSetting<string>
+    {
+        public AppSetting(string key) : base(key)
+        {
+        }
+
+        public AppSetting(string key, bool required, string defaultValue) : base(key, required, defaultValue)
+        {
+        }
+
+        public AppSetting(string key, IAppSettingsProvider appSettingsProvider) : base(key, appSettingsProvider)
+        {
+        }
+
+        public AppSetting(string key, bool required, string defaultValue, IAppSettingsProvider appSettingsProvider) : base(key, required, defaultValue, appSettingsProvider)
+        {
+        }
+    }
     public class AppSetting<T> : IAppSetting
     {
         private readonly IAppSettingsProvider _appSettingsProvider;

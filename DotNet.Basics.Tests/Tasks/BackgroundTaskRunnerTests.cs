@@ -49,13 +49,13 @@ namespace DotNet.Basics.Tests.Tasks
             bool taskEnded = false;
 
             var bgRunner = new BackgroundTaskRunner();
-            bgRunner.Starting += (tid, rid, started, reason) =>
+            bgRunner.TaskStarting += (tid, rid, started, reason) =>
             {
                 taskRan = true;
                 lastTaskId = tid;
                 lastRunId = rid;
             };
-            bgRunner.Ended += (tid, rid, e) =>
+            bgRunner.TaskEnded += (tid, rid, e) =>
             {
                 lastException = e;
                 taskEnded = true;
