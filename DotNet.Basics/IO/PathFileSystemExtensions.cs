@@ -40,7 +40,7 @@ namespace DotNet.Basics.IO
                 {
                     o.Timeout = timeout;
                     o.RetryDelay = 2.Seconds();
-                    o.IgnoreExceptionType = typeof(ItemNotFoundException);
+                    o.DontRethrowOnTaskFailedType= typeof(ItemNotFoundException);
                 })
             .Until(() => path.Exists() == false);
 

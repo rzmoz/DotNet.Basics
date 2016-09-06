@@ -35,10 +35,21 @@ namespace DotNet.Basics.Tasks
             }
         }
 
-        public Action Ping { get; set; }
-        public Action Finally { get; set; }
-        public Type IgnoreExceptionType { get; set; }
+        /// <summary>
+        /// Will be invoked on every retry cycle
+        /// </summary>
+        public Action PingOnRetry { get; set; }
 
+        /// <summary>
+        /// Exceptions of this type will be ignored and task will finish with success even if these exceptions occur
+        /// </summary>
+        public Type DontRethrowOnTaskFailedType { get; set; }
+
+        /// <summary>
+        /// will always be invoked once on finish regardless of result
+        /// </summary>
+        public Action Finally { get; set; }
+        
         internal CountLoopBreakPredicate CountLoopBreakPredicate { get; private set; }
         internal TimeoutLoopBreakPredicate TimeoutLoopBreakPredicate { get; private set; }
     }

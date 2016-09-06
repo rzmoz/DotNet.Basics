@@ -10,9 +10,25 @@ namespace DotNet.Basics.Tests.Tasks
     public class RepeaterTaskTests
     {
         [Test]
-        public void Task_WithFinallyNoExceptionInAction_ExceptionInfinallyIsFloated()
+        public void Ping_Success_PingOnImmediateSucccess_PingIsOnlyCalledOnRetry()
         {
-            Action action = () => Repeat.Task(async () => await Task.Delay(10.Milliseconds()))
+            var pingWasCalled = false;
+            var taskRan = false;
+            Repeat.Task(() => { taskRan = true; })
+                .WithOptions(o =>
+                {
+                    o.PingOnRetry = () => pingWasCalled = true;
+                })
+                .UntilNoExceptions();
+
+            pingWasCalled.Should().BeFalse();
+            taskRan.Should().BeTrue();
+        }
+
+        [Test]
+        public void Finally_NoExceptionInAction_ExceptionInfinallyIsFloated()
+        {
+            Action action = () => Repeat.Task(() => { })
                 .WithOptions(o =>
                 {
                     o.MaxTries = 2;
@@ -24,7 +40,7 @@ namespace DotNet.Basics.Tests.Tasks
         }
 
         [Test]
-        public void Task_WithFinallyExInBothFinallyAndAction_ExceptionsAreFloated()
+        public void Finally_ExInBothFinallyAndAction_BothExceptionsAreFloated()
         {
             Action action = () => Repeat.Task(() => { throw new ApplicationException(); })
            .WithOptions(o =>
@@ -34,11 +50,11 @@ namespace DotNet.Basics.Tests.Tasks
            })
            .UntilNoExceptions();
 
-            action.ShouldThrow<AggregateException>();
+            action.ShouldThrow<AggregateException>().WithInnerException<ApplicationException>();
         }
 
         [Test]
-        public void Task_WithFinally_FinallyIsExecutedEvenThoughTaskNeverCompleted()
+        public void Finally_EarlyBreak_FinallyIsExecutedEvenThoughTaskNeverCompleted()
         {
             var @finally = false;
             var actionExceptionCaught = false;
@@ -65,7 +81,7 @@ namespace DotNet.Basics.Tests.Tasks
 
 
         [Test]
-        public async Task Task_IgnoreExceptionsEvenIfUntilIsNotReached_ActionIsInvokedFiveTimesAndNoExceptions()
+        public async Task DontRethrowOnTaskFailedType_NamedExceptionsWillBeThrownOnTaskEnd_TaskFails()
         {
             var doCounter = 0;
             const int until = 5;
@@ -74,7 +90,7 @@ namespace DotNet.Basics.Tests.Tasks
                     {
                         o.RetryDelay = 10.Milliseconds();
                         o.MaxTries = until;
-                        o.IgnoreExceptionType = typeof(System.IO.IOException);
+                        o.DontRethrowOnTaskFailedType = typeof(System.IO.IOException);
                     })
                 .UntilAsync(() => false).ConfigureAwait(false);
 
@@ -117,12 +133,12 @@ namespace DotNet.Basics.Tests.Tasks
                 .WithOptions(o =>
                 {
                     o.RetryDelay = 10.Milliseconds();
-                    o.Ping = () => pinged++;
+                    o.PingOnRetry = () => pinged++;
                 })
                 .UntilAsync(() => invoked == until).ConfigureAwait(false);
 
             invoked.Should().Be(until);
-            pinged.Should().Be(until);
+            pinged.Should().Be(until - 1);
             result.Should().BeTrue();
         }
 
@@ -137,11 +153,11 @@ namespace DotNet.Basics.Tests.Tasks
             var result = Repeat.Task(() => throwExceptionUntilXTriesDummeTask.DoSomething())
                 .WithOptions(o =>
                 {
-                    o.Ping = () => tried++;
+                    o.PingOnRetry = () => tried++;
                 })
                 .UntilNoExceptions();
 
-            tried.Should().Be(stopThrowingExceptionsAt + 1);
+            tried.Should().Be(stopThrowingExceptionsAt);
             result.Should().BeTrue();
         }
 
@@ -209,7 +225,7 @@ namespace DotNet.Basics.Tests.Tasks
             var result = Repeat.Task(() => { doCounter++; })
                 .WithOptions(o =>
                 {
-                    o.Ping = () => { pingCounter++; };
+                    o.PingOnRetry = () => { pingCounter++; };
                     o.RetryDelay = 10.Milliseconds();
                     o.MaxTries = maxTries;
                 })
@@ -217,7 +233,7 @@ namespace DotNet.Basics.Tests.Tasks
 
             //means that the action has only been run once even though we waited 5 cyckes
             doCounter.Should().Be(maxTries);
-            pingCounter.Should().Be(maxTries);
+            pingCounter.Should().Be(maxTries - 1);
             //we never got a true result (the thing we we'e waiting for never succeeded)
             result.Should().BeFalse();
         }
@@ -231,7 +247,7 @@ namespace DotNet.Basics.Tests.Tasks
             var result = Repeat.TaskOnce(() => { doCounter++; })
                 .WithOptions(o =>
                 {
-                    o.Ping = () => { pingCounter++; };
+                    o.PingOnRetry = () => { pingCounter++; };
                     o.RetryDelay = 10.Milliseconds();
                     o.MaxTries = maxTries;
                 })
@@ -239,7 +255,7 @@ namespace DotNet.Basics.Tests.Tasks
 
             //means that the action has only been run once even though we waited 5 cycles
             doCounter.Should().Be(1);
-            pingCounter.Should().Be(maxTries);
+            pingCounter.Should().Be(maxTries - 1);
             //we never got a true result (the thing we were waiting for never succeeded)
             result.Should().BeFalse();
         }
@@ -252,7 +268,7 @@ namespace DotNet.Basics.Tests.Tasks
             var result = Repeat.TaskOnce(() => { doCounter++; return Task.CompletedTask; })
                 .WithOptions(o =>
                 {
-                    o.Ping = () => { pingCounter++; };
+                    o.PingOnRetry = () => { pingCounter++; };
                     o.RetryDelay = 10.Milliseconds();
                     o.MaxTries = maxTries;
                 })
@@ -260,7 +276,7 @@ namespace DotNet.Basics.Tests.Tasks
 
             //means that the action has only been run once even though we waited 5 cycles
             doCounter.Should().Be(1);
-            pingCounter.Should().Be(maxTries);
+            pingCounter.Should().Be(maxTries - 1);
             //we never got a true result (the thing we were waiting for never succeeded)
             result.Should().BeFalse();
         }
