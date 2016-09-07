@@ -30,6 +30,11 @@ namespace DotNet.Basics.Tests.AppSettings
             AssertValueType<string>("sdfsfsdf");
         }
         [Test]
+        public void GetValue_Uri_ValueIsRightType()
+        {
+            AssertValueType<Uri>(new Uri("http://localhost/"));
+        }
+        [Test]
         public void GetValue_UShort_ValueIsRightType()
         {
             AssertValueType<ushort>(12312);

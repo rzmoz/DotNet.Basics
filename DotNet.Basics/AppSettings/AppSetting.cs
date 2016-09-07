@@ -105,6 +105,8 @@ namespace DotNet.Basics.AppSettings
                     return decimal.Parse(value);
                 case "System.Single":
                     return float.Parse(value);
+                case "System.Uri":
+                    return new Uri(value);
                 default:
                     throw new NotSupportedException($"App setting type not supported: {parseType}");
             }
