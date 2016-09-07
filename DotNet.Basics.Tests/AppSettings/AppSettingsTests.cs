@@ -20,7 +20,7 @@ namespace DotNet.Basics.Tests.AppSettings
             var key = "MissingKey";
             var setting = new AppSetting<string>(key);
             Action action = () => setting.GetValue();
-            action.ShouldThrow<RequiredAppSettingFoundException>().WithMessage(key);
+            action.ShouldThrow<RequiredAppSettingNotFoundException>().WithMessage(key);
         }
 
 

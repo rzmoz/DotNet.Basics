@@ -72,7 +72,7 @@ namespace DotNet.Basics.AppSettings
             if (Required == false)
                 return (T)Parse(DefaultValue?.ToString());
 
-            throw new RequiredAppSettingFoundException(Key);
+            throw new RequiredAppSettingNotFoundException(Key);
         }
 
         private object Parse(string value)

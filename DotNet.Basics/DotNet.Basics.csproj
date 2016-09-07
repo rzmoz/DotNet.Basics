@@ -52,7 +52,7 @@
   <ItemGroup>
     <Compile Include="AppSettings\AppSettingsValidator.cs" />
     <Compile Include="AppSettings\IAppSetting.cs" />
-    <Compile Include="AppSettings\RequiredAppSettingFoundException.cs" />
+    <Compile Include="AppSettings\RequiredAppSettingNotFoundException.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Compression\CompressionResources.Designer.cs">
       <AutoGen>True</AutoGen>
