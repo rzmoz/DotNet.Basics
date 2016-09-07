@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks
 {
-    public class RepeaterTaskRunner : ManagedTaskRunner
+    public class RepeaterTaskRunner : TaskRunner
     {
         public async Task<bool> RunAsync(ManagedTask task, Func<Exception, bool> untilPredicate, RepeatOptions options = null)
         {

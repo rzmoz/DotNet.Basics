@@ -5,6 +5,10 @@ namespace DotNet.Basics.Tasks
 {
     public class OnceOnlyTask : ManagedTask
     {
+        public OnceOnlyTask(ManagedTask task) : base(task)
+        {
+        }
+
         public OnceOnlyTask(Action<string> task) : this(string.Empty, task)
         {
         }
@@ -20,15 +24,7 @@ namespace DotNet.Basics.Tasks
         public OnceOnlyTask(string id, Func<string, Task> task) : base(id, OnceOnlyAsyncTask.Create(task).RunAsync)
         {
         }
-
-        public OnceOnlyTask(Action<string> syncTask, Func<string, Task> asyncTask) : this(string.Empty, syncTask, asyncTask)
-        {
-        }
-
-        public OnceOnlyTask(string id, Action<string> syncTask, Func<string, Task> asyncTask) : base(id, OnceOnlySyncTask.Create(syncTask).Run, OnceOnlyAsyncTask.Create(asyncTask).RunAsync)
-        {
-        }
-
+        
         private class OnceOnlySyncTask
         {
             private OnceOnlySyncTask(Action<string> task)

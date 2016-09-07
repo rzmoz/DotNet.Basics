@@ -12,7 +12,7 @@ namespace DotNet.Basics.Tests.Tasks
     [TestFixture]
     public class SingletonTaskTests
     {
-        private readonly ManagedTaskRunner _taskRunner = new ManagedTaskRunner();
+        private readonly TaskRunner _taskRunner = new TaskRunner();
 
         [Test]
         public void ExceptionThrown_GetExceptions_ExceptionsAreBubbled()

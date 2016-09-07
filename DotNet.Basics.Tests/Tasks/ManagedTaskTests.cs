@@ -9,7 +9,7 @@ namespace DotNet.Basics.Tests.Tasks
     [TestFixture]
     public class ManagedTaskTests
     {
-        private readonly ManagedTaskRunner _taskRunner = new ManagedTaskRunner();
+        private readonly TaskRunner _taskRunner = new TaskRunner();
 
         [Test]
         public void Run_SyncTask_TaskIsRun()

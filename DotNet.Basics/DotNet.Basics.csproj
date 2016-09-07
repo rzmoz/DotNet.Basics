@@ -130,7 +130,7 @@
     <Compile Include="Tasks\RepeaterTaskExtensions.cs" />
     <Compile Include="Tasks\RepeaterTaskRunner.cs" />
     <Compile Include="Tasks\RepeatOptions.cs" />
-    <Compile Include="Tasks\ManagedTaskRunner.cs" />
+    <Compile Include="Tasks\TaskRunner.cs" />
     <Compile Include="Tasks\SingletonTask.cs" />
     <Compile Include="Tasks\Repeat.cs" />
     <Compile Include="Tasks\TimeoutLoopBreakPredicate.cs" />

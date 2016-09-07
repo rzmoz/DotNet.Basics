@@ -9,7 +9,7 @@ namespace DotNet.Basics.Tests.Tasks
     [TestFixture]
     public class OnlyRunWhenInvokedTaskTests
     {
-        private readonly ManagedTaskRunner _taskRunner = new ManagedTaskRunner();
+        private readonly TaskRunner _taskRunner = new TaskRunner();
 
         [Test]
         public void AsyncTask_RunSync_IsOnlyRunOnceInvoked()

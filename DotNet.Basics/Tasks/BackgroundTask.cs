@@ -6,6 +6,10 @@ namespace DotNet.Basics.Tasks
 {
     public class BackgroundTask : ManagedTask
     {
+        public BackgroundTask(ManagedTask task) : base(task)
+        {
+        }
+
         public BackgroundTask(Action<string> task) : base(task)
         {
         }
@@ -21,15 +25,7 @@ namespace DotNet.Basics.Tasks
         public BackgroundTask(string id, Func<string, Task> task) : base(id, task)
         {
         }
-
-        public BackgroundTask(Action<string> syncTask, Func<string, Task> asyncTask) : base(syncTask, asyncTask)
-        {
-        }
-
-        public BackgroundTask(string id, Action<string> syncTask, Func<string, Task> asyncTask) : base(id, syncTask, asyncTask)
-        {
-        }
-
+        
         internal override void Run(string runId = null)
         {
             Task.Run(() =>

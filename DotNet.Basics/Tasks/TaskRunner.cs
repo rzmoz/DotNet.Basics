@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks
 {
-    public class ManagedTaskRunner
+    public class TaskRunner
     {
         public event ManagedTask.TaskStartedEventHandler TaskStarted;
         public event ManagedTask.TaskNotStartedEventHandler TaskNotStarted;
@@ -31,13 +31,8 @@ namespace DotNet.Basics.Tasks
             task.TaskFailed += TaskFailed;
             task.TaskEnded += TaskEnded;
             runId = Guid.NewGuid().ToString("N");
-            string reason;
-            if (task.TryPreconditionsMet(runId, out reason) == false)
-            {
-                TaskNotStarted?.Invoke(task.Id, runId, reason);
-                return false;
-            }
-            return true;
+            var preconditionReason = task.PreconditionsMet(runId);
+            return preconditionReason == null;
         }
     }
 }

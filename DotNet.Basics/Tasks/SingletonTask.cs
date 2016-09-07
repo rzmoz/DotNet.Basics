@@ -8,6 +8,13 @@ namespace DotNet.Basics.Tasks
     {
         private static readonly ConcurrentDictionary<string, string> _singletonScheduler = new ConcurrentDictionary<string, string>();
 
+        public SingletonTask(ManagedTask task) : base(task)
+        {
+            if (task == null) throw new ArgumentNullException(nameof(task));
+            if (task.Id == null) throw new ArgumentNullException(nameof(task.Id));
+            if (string.IsNullOrWhiteSpace(task.Id)) throw new ArgumentException(nameof(task.Id));
+        }
+
         public SingletonTask(string id, Action<string> task) : base(id, task)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
@@ -20,24 +27,15 @@ namespace DotNet.Basics.Tasks
             if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException(nameof(id));
         }
 
-        public SingletonTask(string id, Action<string> syncTask, Func<string, Task> asyncTask) : base(id, syncTask, asyncTask)
-        {
-            if (id == null) throw new ArgumentNullException(nameof(id));
-            if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException(nameof(id));
-        }
-
         public bool IsRunning()
         {
             return _singletonScheduler.ContainsKey(Id);
         }
 
-        internal override bool TryPreconditionsMet(string runId, out string reason)
+        internal override string PreconditionsMet(string runId)
         {
             var added = _singletonScheduler.TryAdd(Id, runId ?? string.Empty);
-            reason = added
-                ? $"Task sucessfully added to scheduler::{Id}"
-                : $"Task is already running:{Id}";
-            return added;
+            return added ? null : $"Task {Id} already started";
         }
 
         internal override void Run(string runId = null)

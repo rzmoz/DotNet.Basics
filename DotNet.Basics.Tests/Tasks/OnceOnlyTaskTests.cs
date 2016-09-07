@@ -10,7 +10,7 @@ namespace DotNet.Basics.Tests.Tasks
     [TestFixture]
     public class OnceOnlyTaskTests
     {
-        private readonly ManagedTaskRunner _taskRunner = new ManagedTaskRunner();
+        private readonly TaskRunner _taskRunner = new TaskRunner();
 
 
         [Test]
