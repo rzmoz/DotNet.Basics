@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Collections;
+using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
@@ -10,9 +11,9 @@ using NUnit.Framework;
 namespace DotNet.Basics.Tests.Tasks
 {
     [TestFixture]
-    public class SingletonTaskTests
+    public class SingletonTaskRunnerTests
     {
-        private readonly TaskRunner _taskRunner = new TaskRunner();
+        private readonly SingletonTaskRunner _taskRunner = new SingletonTaskRunner();
 
         [Test]
         public void ExceptionThrown_GetExceptions_ExceptionsAreBubbled()
@@ -21,13 +22,11 @@ namespace DotNet.Basics.Tests.Tasks
 
             bool taskRan = false;
 
-            var task = new SingletonTask(taskID, rid =>
-             {
-                 taskRan = true;
-                 throw new ArgumentNullException();
-             });
-
-            Action action = () => _taskRunner.Run(task);
+            Action action = () => _taskRunner.Run(taskID, rid =>
+            {
+                taskRan = true;
+                throw new ArgumentNullException();
+            });
 
             action.ShouldThrow<ArgumentNullException>();
             taskRan.Should().BeTrue();
@@ -40,16 +39,15 @@ namespace DotNet.Basics.Tests.Tasks
 
             int hitCount = 0;
 
-            var task = new SingletonTask(taskId, async rid =>
-             {
-                 hitCount++;
-                 await Task.Delay(1.Seconds()).ConfigureAwait(false);
-             });
-
             //try start task 10 times
-            Enumerable.Range(1, 10).ForEach(i => _taskRunner.RunAsync(task));//don't await task so it runs multiple times
-
-            await WaitTillFinished(task).ConfigureAwait(false);
+            await Enumerable.Range(1, 10).ParallelForEachAsync(async i =>
+                {
+                    await _taskRunner.RunAsync(taskId, async rid =>
+                    {
+                        hitCount++;
+                        await Task.Delay(1.Seconds()).ConfigureAwait(false);
+                    }).ConfigureAwait(false);
+                }).ConfigureAwait(false);
 
             hitCount.Should().Be(1);
         }
@@ -64,22 +62,22 @@ namespace DotNet.Basics.Tests.Tasks
 
             var ctSource = new CancellationTokenSource();
 
-            var task = new SingletonTask(taskId, async rid =>
-             {
-                 await Task.Delay(taskDelay, ctSource.Token).ConfigureAwait(false);
-                 taskRan = true;
-             });
-            
-            _taskRunner.RunAsync(task);//don't await task finish
+            _taskRunner.RunAsync(taskId, async rid =>
+            {
+                await Task.Delay(taskDelay, ctSource.Token).ConfigureAwait(false);
+                taskRan = true;
+            });//don't await task finish
 
-            task.IsRunning().Should().BeTrue($"task is running");
+            _taskRunner.IsRunning(taskId).Should().BeTrue($"task is running");
 
             //cancel task
             ctSource.Cancel();
 
-            await WaitTillFinished(task).ConfigureAwait(false);
+            while (_taskRunner.IsRunning(taskId))
+                await Task.Delay(100.Milliseconds(), CancellationToken.None).ConfigureAwait(false);
+
             taskRan.Should().BeFalse("task shouldve been cancelled");
-            task.IsRunning().Should().BeFalse("task should have been stopped");
+            _taskRunner.IsRunning(taskId).Should().BeFalse("task should have been stopped");
         }
 
         [Test]
@@ -91,8 +89,7 @@ namespace DotNet.Basics.Tests.Tasks
             var errorCaught = false;
             try
             {
-                var task = new SingletonTask(taskId, rid => Task.CompletedTask);
-                await _taskRunner.RunAsync(task).ConfigureAwait(false);
+                await _taskRunner.RunAsync(taskId, rid => Task.CompletedTask).ConfigureAwait(false);
             }
             catch (ArgumentNullException)
             {
@@ -109,40 +106,44 @@ namespace DotNet.Basics.Tests.Tasks
         public async Task RunAsync_Exception_LockIsReleasedOnTaskCrash()
         {
             string taskId = "RunAsync_Exception_LockIsReleasedOnTaskCrash";
-            const int runCount = 3;
+            const int runCount = 5;
             var counter = 0;
+            var taskDelay = 200.Milliseconds();
 
-            var task = new SingletonTask(taskId, rid =>
-             {
-                 counter++;
-                 //crash task thread
-                 throw new ApplicationException("Cowabungaa");
-             });
+            var expectedDuration = ((int)(taskDelay.TotalMilliseconds * runCount)).Milliseconds();
 
-            //run task multiple times
-            foreach (var i in Enumerable.Range(1, runCount)) //outer sequence awaits til actual running tasks i done
+            var profiler = new Profiler();
+            profiler.Start();
+            //run task multiple times in sequence
+            foreach (var i in Enumerable.Range(1, runCount))
             {
                 try
                 {
-                    await _taskRunner.RunAsync(task).ConfigureAwait(false);
+                    await _taskRunner.RunAsync(taskId, async rid =>
+                     {
+                         counter++;
+                         //do a longrunning task
+                         await LongRunningTask(taskDelay, 100000, new ApplicationException("Cowabunga"));
+                     }).ConfigureAwait(false);
                 }
                 catch (ApplicationException)
                 {
                     //ignore
                 }
-
-                await Task.Delay(100.Milliseconds()).ConfigureAwait(false);
             }
+            profiler.Stop();
 
+            profiler.Duration.Should().BeCloseTo(expectedDuration, 50);
             counter.Should().Be(runCount);
         }
 
-        private async Task WaitTillFinished(SingletonTask task)
+        private async Task LongRunningTask(TimeSpan delay, int loops, Exception eToBeThrown)
         {
-            while (task.IsRunning())
+            for (var i = 0; i < loops; i++)
             {
-                Console.WriteLine($"task is running:{task.Id}");
-                await Task.Delay(100.Milliseconds()).ConfigureAwait(false);
+                await Task.Delay(delay).ConfigureAwait(false);
+                if (eToBeThrown != null)
+                    throw eToBeThrown;
             }
         }
     }
