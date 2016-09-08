@@ -23,7 +23,7 @@ namespace DotNet.Basics.AppSettings
     public class AppSetting<T> : IAppSetting
     {
         private readonly IAppSettingsProvider _appSettingsProvider;
-        private readonly Func<string, T> _customParser;
+        private readonly Func<string, object> _parser;
 
         public AppSetting(string key)
             : this(key, new ConfigurationManagerAppSettingsProvider())
@@ -66,7 +66,10 @@ namespace DotNet.Basics.AppSettings
             Required = required;
             DefaultValue = defaultValue;
             _appSettingsProvider = appSettingsProvider;
-            _customParser = customParser;
+            if (customParser == null)
+                _parser = DefaultParse;
+            else
+                _parser = value => customParser(value);
         }
 
 
@@ -87,49 +90,46 @@ namespace DotNet.Basics.AppSettings
         {
             var value = _appSettingsProvider.Get(Key);
             if (value != null)
-                return (T)Parse(value);
+                return (T)_parser(value);
 
             if (Required == false)
-                return (T)Parse(DefaultValue?.ToString());
+                return (T)_parser(DefaultValue?.ToString());
 
             throw new RequiredAppSettingNotFoundException(Key);
         }
 
-        private object Parse(string value)
+        private object DefaultParse(object value)
         {
-            if (_customParser != null)
-                return _customParser(value);
-
-            var parseType = typeof(T).FullName;
-
+            if (value == null) throw new ArgumentNullException(nameof(value));
+            var parseType = value.GetType().FullName;
             switch (parseType)
             {
                 case "System.String":
                     return value;
                 case "System.Int16":
-                    return short.Parse(value);
+                    return short.Parse(value.ToString());
                 case "System.UInt16":
-                    return ushort.Parse(value);
+                    return ushort.Parse(value.ToString());
                 case "System.Int32":
-                    return int.Parse(value);
+                    return int.Parse(value.ToString());
                 case "System.UInt32":
-                    return uint.Parse(value);
+                    return uint.Parse(value.ToString());
                 case "System.Int64":
-                    return long.Parse(value);
+                    return long.Parse(value.ToString());
                 case "System.UInt64":
-                    return ulong.Parse(value);
+                    return ulong.Parse(value.ToString());
                 case "System.Boolean":
-                    return bool.Parse(value);
+                    return bool.Parse(value.ToString());
                 case "System.Double":
-                    return double.Parse(value);
+                    return double.Parse(value.ToString());
                 case "System.Byte":
-                    return byte.Parse(value);
+                    return byte.Parse(value.ToString());
                 case "System.Decimal":
-                    return decimal.Parse(value);
+                    return decimal.Parse(value.ToString());
                 case "System.Single":
-                    return float.Parse(value);
+                    return float.Parse(value.ToString());
                 case "System.Uri":
-                    return new Uri(value);
+                    return new Uri(value.ToString());
                 default:
                     throw new NotSupportedException($"App setting type not supported: {parseType}");
             }
