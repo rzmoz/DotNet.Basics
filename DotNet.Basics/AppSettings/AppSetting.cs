@@ -23,7 +23,7 @@ namespace DotNet.Basics.AppSettings
     public class AppSetting<T> : IAppSetting
     {
         private readonly IConfigurationManager _configurationManager;
-        private readonly Func<string, object> _parser;
+        private readonly Func<object, object> _parser;
 
         public AppSetting(string key)
             : this(key, new SystemConfigurationManager())
@@ -69,7 +69,7 @@ namespace DotNet.Basics.AppSettings
             if (customParser == null)
                 _parser = DefaultParse;
             else
-                _parser = value => customParser(value);
+                _parser = value => customParser(value?.ToString());
         }
 
 
@@ -93,7 +93,7 @@ namespace DotNet.Basics.AppSettings
                 return (T)_parser(value);
 
             if (Required == false)
-                return (T)_parser(DefaultValue?.ToString());
+                return (T)_parser(DefaultValue);
 
             throw new RequiredConfigurationNotSetException(Key);
         }

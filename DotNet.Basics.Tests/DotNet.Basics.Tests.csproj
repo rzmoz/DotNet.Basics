@@ -79,8 +79,9 @@
     <Compile Include="Collections\CollectionExtensionsTests.cs" />
     <Compile Include="Collections\StringKeyDictionaryTests.cs" />
     <Compile Include="Compression\SevenZipTests.cs" />
-    <Compile Include="Ioc\IocContainerTests.cs" />
+    <Compile Include="Ioc\SeimpleContainerTests.cs" />
     <Compile Include="Ioc\TestHelpers\MyRegistrations.cs" />
+    <Compile Include="Ioc\TestHelpers\TestSettingsProvider.cs" />
     <Compile Include="Ioc\TestHelpers\TypeWithValue.cs" />
     <Compile Include="IO\FileSystemInfoExtensionTests.cs" />
     <Compile Include="IO\FileTypeTests.cs" />

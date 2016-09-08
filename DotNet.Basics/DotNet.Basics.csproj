@@ -50,8 +50,9 @@
     <Reference Include="System.Runtime.Caching" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppSettings\AppSettingsValidator.cs" />
+    <Compile Include="AppSettings\AppSettingsProvider.cs" />
     <Compile Include="AppSettings\IAppSetting.cs" />
+    <Compile Include="AppSettings\IAppSettingsProvider.cs" />
     <Compile Include="AppSettings\RequiredConfigurationNotSetException.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Compression\CompressionResources.Designer.cs">

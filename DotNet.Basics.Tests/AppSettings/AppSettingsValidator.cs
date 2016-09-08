@@ -15,25 +15,30 @@ namespace DotNet.Basics.Tests.AppSettings
         [Test]
         public void Verify_RequiredKeys_RequiredKeysArePresent()
         {
-            var settingsValidator = new AppSettingsValidator();
-            settingsValidator.Register(new AppSetting<string>("RequiredKey"));
-            settingsValidator.GetRequiredKeysNotSet().Any().Should().BeFalse();
+            var validator = new AppSettingsProvider();
+            validator.Register(new AppSetting<string>("RequiredKey"));
+
+            Action action = () => validator.Verify();
+            action.ShouldNotThrow();
         }
         [Test]
         public void Verify_RequiredKeys_RequiredKeysAreMissing()
         {
             var missingKey = "MissingKey";
-            var settingsValidator = new AppSettingsValidator();
-            settingsValidator.Register(new AppSetting<string>(missingKey));
-            settingsValidator.GetRequiredKeysNotSet().Single().Should().Be(missingKey);
+            var validator = new AppSettingsProvider();
+            validator.Register(new AppSetting<string>(missingKey));
+
+            Action action = () => validator.Verify();
+            action.ShouldThrow<RequiredConfigurationNotSetException>().WithMessage(missingKey);
         }
 
         [Test]
         public void Verify_NotRequiredKeys_NotRequiredKeysArePresent()
         {
-            var settingsValidator = new AppSettingsValidator();
+            var settingsValidator = new AppSettingsProvider();
             settingsValidator.Register(new AppSetting<string>("MissingKey", false, null));
-            settingsValidator.GetRequiredKeysNotSet().Any().Should().BeFalse();
+            Action action = () => settingsValidator.Verify();
+            action.ShouldNotThrow();
         }
     }
 }
