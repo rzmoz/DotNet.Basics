@@ -30,7 +30,7 @@ namespace DotNet.Basics.Tasks
             task.TaskNotStarted += TaskNotStarted;
             task.TaskFailed += TaskFailed;
             task.TaskEnded += TaskEnded;
-            runId = Guid.NewGuid().ToString("N");
+            runId = $"[{Guid.NewGuid():N}]";
             var preconditionReason = task.PreconditionsMet(runId);
             return preconditionReason == null;
         }
