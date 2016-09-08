@@ -23,32 +23,52 @@ namespace DotNet.Basics.AppSettings
     public class AppSetting<T> : IAppSetting
     {
         private readonly IAppSettingsProvider _appSettingsProvider;
+        private readonly Func<string, T> _customParser;
 
         public AppSetting(string key)
             : this(key, new ConfigurationManagerAppSettingsProvider())
         {
         }
 
-        public AppSetting(string key, bool required, T defaultValue)
-            : this(key, required, defaultValue, new ConfigurationManagerAppSettingsProvider())
+        /***********************************************************************/
+        public AppSetting(string key, Func<string, T> customParser)
+            : this(key, customParser, new ConfigurationManagerAppSettingsProvider())
         {
         }
-
         public AppSetting(string key, IAppSettingsProvider appSettingsProvider)
             : this(key, true, default(T), appSettingsProvider)
         {
         }
+        public AppSetting(string key, bool required, T defaultValue)
+            : this(key, required, defaultValue, new ConfigurationManagerAppSettingsProvider())
+        {
+        }
+        /***********************************************************************/
+        public AppSetting(string key, Func<string, T> customParser, IAppSettingsProvider appSettingsProvider)
+            : this(key, true, default(T), customParser, appSettingsProvider)
+        {
+        }
+        public AppSetting(string key, bool required, T defaultValue, Func<string, T> customParser)
+            : this(key, required, defaultValue, customParser, new ConfigurationManagerAppSettingsProvider())
+        {
+        }
 
         public AppSetting(string key, bool required, T defaultValue, IAppSettingsProvider appSettingsProvider)
+            : this(key, required, defaultValue, null, appSettingsProvider)
         {
-
+        }
+        /***********************************************************************/
+        public AppSetting(string key, bool required, T defaultValue, Func<string, T> customParser, IAppSettingsProvider appSettingsProvider)
+        {
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (appSettingsProvider == null) throw new ArgumentNullException(nameof(appSettingsProvider));
             Key = key;
             Required = required;
             DefaultValue = defaultValue;
             _appSettingsProvider = appSettingsProvider;
+            _customParser = customParser;
         }
+
 
         public string Key { get; }
         public bool Required { get; }
@@ -63,7 +83,7 @@ namespace DotNet.Basics.AppSettings
             return Required == false;
         }
 
-        public T GetValue()
+        public virtual T GetValue()
         {
             var value = _appSettingsProvider.Get(Key);
             if (value != null)
@@ -77,6 +97,9 @@ namespace DotNet.Basics.AppSettings
 
         private object Parse(string value)
         {
+            if (_customParser != null)
+                return _customParser(value);
+
             var parseType = typeof(T).FullName;
 
             switch (parseType)

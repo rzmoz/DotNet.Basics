@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
 using DotNet.Basics.AppSettings;
 using FluentAssertions;
+using Newtonsoft.Json;
+using NSubstitute;
 using NUnit.Framework;
 
 namespace DotNet.Basics.Tests.AppSettings
@@ -8,6 +11,22 @@ namespace DotNet.Basics.Tests.AppSettings
     [TestFixture]
     public class AppSettingsTests
     {
+        [Test]
+        public void Ctor_CustomParserArray_ValueIsParsed()
+        {
+            var settingsProvider = Substitute.For<IAppSettingsProvider>();
+            settingsProvider.Get(Arg.Any<string>()).Returns("['1','2,','3']");
+
+            var setting = new AppSetting<string[]>("Ctor_CustomParserArray_ValueIsParsed", JsonConvert.DeserializeObject<string[]>, settingsProvider);
+
+            var parsed = setting.GetValue();
+
+            parsed.Length.Should().Be(3);
+            parsed.First().Should().Be("1");
+            parsed.Last().Should().Be("3");
+        }
+
+
         [Test]
         public void GetValue_RequiredIsSet_ValueIsRetrieved()
         {
@@ -22,7 +41,6 @@ namespace DotNet.Basics.Tests.AppSettings
             Action action = () => setting.GetValue();
             action.ShouldThrow<RequiredAppSettingNotFoundException>().WithMessage(key);
         }
-
 
         [Test]
         public void GetValue_String_ValueIsRightType()
