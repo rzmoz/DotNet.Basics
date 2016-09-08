@@ -8,7 +8,7 @@ namespace DotNet.Basics.Tests.Pipelines
 {
     public class PipelineStepWithDisplayNameSetStep : PipelineSection<EventArgs>
     {
-        public PipelineStepWithDisplayNameSetStep(string name) : base(name)
+        public PipelineStepWithDisplayNameSetStep() : base("ThisStepHasCustomName")
         {
         }
 

@@ -10,7 +10,7 @@ namespace DotNet.Basics.Tests.Pipelines
     {
         private readonly ClassThatIncrementArgsDependOn _classThatIncrementArgsDependOn;
 
-        public IncrementArgsStep(string name, ClassThatIncrementArgsDependOn classThatIncrementArgsDependOn) : base(name)
+        public IncrementArgsStep(ClassThatIncrementArgsDependOn classThatIncrementArgsDependOn) : base(null)
         {
             _classThatIncrementArgsDependOn = classThatIncrementArgsDependOn;
         }

@@ -5,13 +5,15 @@ using DotNet.Basics.Ioc;
 
 namespace DotNet.Basics.Pipelines
 {
-    public class Pipeline : Pipeline<EventArgs>
-    {
-    }
-
     public class Pipeline<T> : PipelineBlock<T> where T : EventArgs, new()
     {
-        public Pipeline(string name = null, SimpleContainer container = null) : base(name, container)
+        public Pipeline(string name = null) : this(name, null)
+        {
+        }
+        public Pipeline(SimpleContainer container) : this(null, container)
+        {
+        }
+        public Pipeline(string name, SimpleContainer container) : base(name ?? nameof(SectionType.Pipeline), container)
         {
         }
         protected override async Task InnerRunAsync(T args, CancellationToken ct)
@@ -20,7 +22,6 @@ namespace DotNet.Basics.Pipelines
             {
                 await section.RunAsync(args, ct).ConfigureAwait(false);
                 if (ct.IsCancellationRequested)
-
                     break;
             }
         }

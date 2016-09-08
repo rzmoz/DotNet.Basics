@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Pipelines
 {
-    public abstract class PipelineSection<T> where T : EventArgs
+    public abstract class PipelineSection<T> where T : EventArgs, new()
     {
         public delegate void SectionStartedEventHandler(SectionStartedEventArgs<T> args);
         public delegate void SectionEndedEventHandler(SectionEndedEventArgs<T> args);
@@ -20,12 +20,20 @@ namespace DotNet.Basics.Pipelines
         public string Name { get; protected set; }
         public abstract SectionType SectionType { get; }
 
-        public virtual void Init()
-        { }
+        public async Task<T> RunAsync(T args = null)
+        {
+            return await RunAsync(args, CancellationToken.None).ConfigureAwait(false);
+        }
 
+        public async Task<T> RunAsync(CancellationToken ct)
+        {
+            return await RunAsync(null, ct).ConfigureAwait(false);
+        }
         public async Task<T> RunAsync(T args, CancellationToken ct)
         {
             Exception exceptionEncountered = null;
+            if (args == null)
+                args = new T();
             try
             {
                 Init();
@@ -43,7 +51,7 @@ namespace DotNet.Basics.Pipelines
                 FireSectionEnded(new SectionEndedEventArgs<T>(Name, SectionType, args, ct.IsCancellationRequested, exceptionEncountered));
             }
         }
-
+        protected virtual void Init() { }
         protected abstract Task InnerRunAsync(T args, CancellationToken ct);
 
         protected void FireSectionStarted(SectionStartedEventArgs<T> args)

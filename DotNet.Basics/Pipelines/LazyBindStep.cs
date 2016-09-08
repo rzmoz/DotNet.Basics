@@ -16,9 +16,9 @@ namespace DotNet.Basics.Pipelines
             _getStep = getStep;
         }
 
-        public override SectionType SectionType=>SectionType.Step;
+        public override SectionType SectionType => SectionType.Step;
 
-        public override void Init()
+        protected override void Init()
         {
             var step = _getStep();
             Name = step.Name;

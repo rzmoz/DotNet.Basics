@@ -9,16 +9,10 @@ namespace DotNet.Basics.Tests.Pipelines
     [TestFixture]
     public class PipelineBlockTests
     {
-
-        [SetUp]
-        public void SetUp()
-        {
-        }
-
         [Test]
         public void Add_AddGenericSteps_StepsAreAdded()
         {
-            var stepBlock = new PipelineBlock<EventArgs<int>>()
+            var stepBlock = new PipelineBlock<EventArgs<int>>(null, null)
                 .AddStep<IncrementArgsStep>()
                 .AddStep<IncrementArgsStep>()
                 .AddStep<IncrementArgsStep>()

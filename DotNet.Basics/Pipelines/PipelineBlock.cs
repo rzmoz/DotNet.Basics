@@ -8,12 +8,12 @@ using DotNet.Basics.Ioc;
 
 namespace DotNet.Basics.Pipelines
 {
-    public class PipelineBlock<T> : PipelineSection<T>, IEnumerable<PipelineSection<T>> where T : EventArgs,new()
+    public class PipelineBlock<T> : PipelineSection<T>, IEnumerable<PipelineSection<T>> where T : EventArgs, new()
     {
         private readonly SimpleContainer _container;
         private readonly List<PipelineSection<T>> _subSections;
 
-        public PipelineBlock(string name = null, SimpleContainer container = null)
+        public PipelineBlock(string name, SimpleContainer container)
             : base(name)
         {
             _container = container ?? new SimpleContainer();
@@ -30,25 +30,30 @@ namespace DotNet.Basics.Pipelines
             return this;
         }
 
+        public PipelineBlock<T> AddStep(Func<T, CancellationToken, Task> step)
+        {
+            return AddStep(null, step);
+        }
+
         public PipelineBlock<T> AddStep(string name, Func<T, CancellationToken, Task> step)
         {
-            var eagerStep = new EagerBindStep<T>(name, step);
+            var eagerStep = new EagerBindStep<T>(name ?? $"{SectionType.Step} {_subSections.Count}", step);
             InitEvents(eagerStep);
             _subSections.Add(eagerStep);
             return this;
         }
-        public PipelineBlock<T> AddBlock(string name)
+
+        public PipelineBlock<T> AddBlock(params Func<T, CancellationToken, Task>[] steps)
         {
-            var block = new PipelineBlock<T>(name);
+            return AddBlock(null, steps);
+        }
+        public PipelineBlock<T> AddBlock(string name, params Func<T, CancellationToken, Task>[] steps)
+        {
+            var block = new PipelineBlock<T>(name ?? $"{SectionType.Block} {_subSections.Count}", _container);
+            steps.ForEach(step => block.AddStep(step));
             InitEvents(block);
             _subSections.Add(block);
             return block;
-        }
-        public PipelineBlock<T> AddSections(params PipelineSection<T>[] sections)
-        {
-            foreach (var section in sections)
-                _subSections.Add(section);
-            return this;
         }
 
         public override SectionType SectionType => SectionType.Block;
