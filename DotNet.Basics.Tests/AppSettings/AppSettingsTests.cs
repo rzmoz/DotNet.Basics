@@ -14,7 +14,7 @@ namespace DotNet.Basics.Tests.AppSettings
         [Test]
         public void Ctor_CustomParserArray_ValueIsParsed()
         {
-            var settingsProvider = Substitute.For<IAppSettingsProvider>();
+            var settingsProvider = Substitute.For<IConfigurationManager>();
             settingsProvider.Get(Arg.Any<string>()).Returns("['1','2,','3']");
 
             var setting = new AppSetting<string[]>("Ctor_CustomParserArray_ValueIsParsed", JsonConvert.DeserializeObject<string[]>, settingsProvider);
@@ -39,7 +39,7 @@ namespace DotNet.Basics.Tests.AppSettings
             var key = "MissingKey";
             var setting = new AppSetting<string>(key);
             Action action = () => setting.GetValue();
-            action.ShouldThrow<RequiredAppSettingNotFoundException>().WithMessage(key);
+            action.ShouldThrow<RequiredConfigurationNotSetException>().WithMessage(key);
         }
 
         [Test]

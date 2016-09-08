@@ -52,7 +52,7 @@
   <ItemGroup>
     <Compile Include="AppSettings\AppSettingsValidator.cs" />
     <Compile Include="AppSettings\IAppSetting.cs" />
-    <Compile Include="AppSettings\RequiredAppSettingNotFoundException.cs" />
+    <Compile Include="AppSettings\RequiredConfigurationNotSetException.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Compression\CompressionResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -83,8 +83,8 @@
     <Compile Include="IO\SystemIoPath.cs" />
     <Compile Include="IO\TempDir.cs" />
     <Compile Include="AppSettings\AppSetting.cs" />
-    <Compile Include="AppSettings\ConfigurationManagerAppSettingsProvider.cs" />
-    <Compile Include="AppSettings\IAppSettingsProvider.cs" />
+    <Compile Include="AppSettings\SystemConfigurationManager.cs" />
+    <Compile Include="AppSettings\IConfigurationManager.cs" />
     <Compile Include="Rest\HttpClientTransport.cs" />
     <Compile Include="Rest\IHttpTransport.cs" />
     <Compile Include="Rest\IRestClient.cs" />

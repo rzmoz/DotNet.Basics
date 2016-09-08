@@ -12,60 +12,60 @@ namespace DotNet.Basics.AppSettings
         {
         }
 
-        public AppSetting(string key, IAppSettingsProvider appSettingsProvider) : base(key, appSettingsProvider)
+        public AppSetting(string key, IConfigurationManager configurationManager) : base(key, configurationManager)
         {
         }
 
-        public AppSetting(string key, bool required, string defaultValue, IAppSettingsProvider appSettingsProvider) : base(key, required, defaultValue, appSettingsProvider)
+        public AppSetting(string key, bool required, string defaultValue, IConfigurationManager configurationManager) : base(key, required, defaultValue, configurationManager)
         {
         }
     }
     public class AppSetting<T> : IAppSetting
     {
-        private readonly IAppSettingsProvider _appSettingsProvider;
+        private readonly IConfigurationManager _configurationManager;
         private readonly Func<string, object> _parser;
 
         public AppSetting(string key)
-            : this(key, new ConfigurationManagerAppSettingsProvider())
+            : this(key, new SystemConfigurationManager())
         {
         }
 
         /***********************************************************************/
         public AppSetting(string key, Func<string, T> customParser)
-            : this(key, customParser, new ConfigurationManagerAppSettingsProvider())
+            : this(key, customParser, new SystemConfigurationManager())
         {
         }
-        public AppSetting(string key, IAppSettingsProvider appSettingsProvider)
-            : this(key, true, default(T), appSettingsProvider)
+        public AppSetting(string key, IConfigurationManager configurationManager)
+            : this(key, true, default(T), configurationManager)
         {
         }
         public AppSetting(string key, bool required, T defaultValue)
-            : this(key, required, defaultValue, new ConfigurationManagerAppSettingsProvider())
+            : this(key, required, defaultValue, new SystemConfigurationManager())
         {
         }
         /***********************************************************************/
-        public AppSetting(string key, Func<string, T> customParser, IAppSettingsProvider appSettingsProvider)
-            : this(key, true, default(T), customParser, appSettingsProvider)
+        public AppSetting(string key, Func<string, T> customParser, IConfigurationManager configurationManager)
+            : this(key, true, default(T), customParser, configurationManager)
         {
         }
         public AppSetting(string key, bool required, T defaultValue, Func<string, T> customParser)
-            : this(key, required, defaultValue, customParser, new ConfigurationManagerAppSettingsProvider())
+            : this(key, required, defaultValue, customParser, new SystemConfigurationManager())
         {
         }
 
-        public AppSetting(string key, bool required, T defaultValue, IAppSettingsProvider appSettingsProvider)
-            : this(key, required, defaultValue, null, appSettingsProvider)
+        public AppSetting(string key, bool required, T defaultValue, IConfigurationManager configurationManager)
+            : this(key, required, defaultValue, null, configurationManager)
         {
         }
         /***********************************************************************/
-        public AppSetting(string key, bool required, T defaultValue, Func<string, T> customParser, IAppSettingsProvider appSettingsProvider)
+        public AppSetting(string key, bool required, T defaultValue, Func<string, T> customParser, IConfigurationManager configurationManager)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
-            if (appSettingsProvider == null) throw new ArgumentNullException(nameof(appSettingsProvider));
+            if (configurationManager == null) throw new ArgumentNullException(nameof(configurationManager));
             Key = key;
             Required = required;
             DefaultValue = defaultValue;
-            _appSettingsProvider = appSettingsProvider;
+            _configurationManager = configurationManager;
             if (customParser == null)
                 _parser = DefaultParse;
             else
@@ -79,7 +79,7 @@ namespace DotNet.Basics.AppSettings
 
         public bool Verify()
         {
-            var value = _appSettingsProvider.Get(Key);
+            var value = _configurationManager.Get(Key);
             if (value != null)
                 return true;
 
@@ -88,14 +88,14 @@ namespace DotNet.Basics.AppSettings
 
         public virtual T GetValue()
         {
-            var value = _appSettingsProvider.Get(Key);
+            var value = _configurationManager.Get(Key);
             if (value != null)
                 return (T)_parser(value);
 
             if (Required == false)
                 return (T)_parser(DefaultValue?.ToString());
 
-            throw new RequiredAppSettingNotFoundException(Key);
+            throw new RequiredConfigurationNotSetException(Key);
         }
 
         private object DefaultParse(object value)

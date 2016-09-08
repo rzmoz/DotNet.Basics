@@ -1,6 +1,6 @@
 ﻿namespace DotNet.Basics.AppSettings
 {
-    public interface IAppSettingsProvider
+    public interface IConfigurationManager
     {
         string Get(string key);
     }

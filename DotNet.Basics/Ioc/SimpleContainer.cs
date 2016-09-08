@@ -14,5 +14,14 @@ namespace DotNet.Basics.Ioc
         {
             registrations?.ForEach(r => r.RegisterIn(this));
         }
+
+        public new void Verify()
+        {
+            base.Verify();
+        }
+        public new void Verify(VerificationOption vo)
+        {
+            base.Verify(vo);
+        }
     }
 }

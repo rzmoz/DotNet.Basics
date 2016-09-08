@@ -2,7 +2,7 @@
 
 namespace DotNet.Basics.AppSettings
 {
-    public class ConfigurationManagerAppSettingsProvider : IAppSettingsProvider
+    public class SystemConfigurationManager : IConfigurationManager
     {
         public string Get(string key)
         {
