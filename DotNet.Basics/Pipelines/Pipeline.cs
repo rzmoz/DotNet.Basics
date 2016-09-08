@@ -1,74 +1,29 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using DotNet.Basics.Ioc;
 
 namespace DotNet.Basics.Pipelines
 {
     public class Pipeline : Pipeline<EventArgs>
-    { }
-
-    public class Pipeline<T> : IEnumerable<PipelineBlock<T>> where T : EventArgs, new()
     {
-        private readonly IList<PipelineBlock<T>> _stepBlocks;
+    }
 
-        public Pipeline()
+    public class Pipeline<T> : PipelineBlock<T> where T : EventArgs, new()
+    {
+        public Pipeline(string name = null, SimpleContainer container = null) : base(name, container)
         {
-            _stepBlocks = new List<PipelineBlock<T>>();
         }
+        protected override async Task InnerRunAsync(T args, CancellationToken ct)
+        {
+            foreach (var section in SubSections)
+            {
+                await section.RunAsync(args, ct).ConfigureAwait(false);
+                if (ct.IsCancellationRequested)
 
-        public PipelineBlock<T>[] PipelineBlocks => _stepBlocks.ToArray();
-
-        public PipelineBlock<T> AddBlock(string blockName = null)
-        {
-            var block = CreateStepBlock(blockName);
-            return block;
+                    break;
+            }
         }
-        public PipelineBlock<T> AddBlock(string blockName, params Func<T, Task>[] asyncFunc)
-        {
-            var block = CreateStepBlock(blockName);
-            block.AddSteps(asyncFunc);
-            return block;
-        }
-        public PipelineBlock<T> AddBlock(params Func<T, Task>[] asyncFunc)
-        {
-            return AddBlock(string.Empty, asyncFunc);
-        }
-
-        public PipelineBlock<T> AddBlock(params Action<T>[] syncFunc)
-        {
-            var asyncFuncs = syncFunc.Select<Action<T>, Func<T, Task>>(f => (args) =>
-             {
-                 f(args);
-                 return Task.CompletedTask;
-             });
-
-            return AddBlock(string.Empty, asyncFuncs.ToArray());
-        }
-
-        public PipelineBlock<T> AddBlock(params PipelineStep<T>[] steps)
-        {
-            var block = CreateStepBlock();
-            block.AddSteps(steps);
-            return block;
-        }
-
-        private PipelineBlock<T> CreateStepBlock(string blockName = null)
-        {
-            var stepBlock = new PipelineBlock<T>(blockName);
-            _stepBlocks.Add(stepBlock);
-            return stepBlock;
-        }
-
-        public IEnumerator<PipelineBlock<T>> GetEnumerator()
-        {
-            return _stepBlocks.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        public override SectionType SectionType => SectionType.Pipeline;
     }
 }

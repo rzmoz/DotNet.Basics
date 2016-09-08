@@ -6,17 +6,17 @@ using DotNet.Basics.Pipelines;
 
 namespace DotNet.Basics.Tests.Pipelines
 {
-    public class PipelineStepWithDisplayNameSetStep : PipelineStep<EventArgs>
+    public class PipelineStepWithDisplayNameSetStep : PipelineSection<EventArgs>
     {
-        public PipelineStepWithDisplayNameSetStep()
+        public PipelineStepWithDisplayNameSetStep(string name) : base(name)
         {
-            DisplayName = "MyDisplayName";
         }
 
-        public override async Task RunAsync(EventArgs args, CancellationToken ct)
+        public override SectionType SectionType => SectionType.Step;
+        protected override async Task InnerRunAsync(EventArgs args, CancellationToken ct)
         {
-            await Task.Delay(1.MilliSeconds()).ConfigureAwait(false);//silence compiler warning
-            Console.WriteLine($"Display name set to {DisplayName}");
+            await Task.Delay(1.MilliSeconds(), ct).ConfigureAwait(false);//silence compiler warning
+            Console.WriteLine($"Display name set to {Name}");
         }
     }
 }

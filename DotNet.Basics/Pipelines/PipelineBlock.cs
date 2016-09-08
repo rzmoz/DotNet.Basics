@@ -1,46 +1,74 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using DotNet.Basics.Collections;
+using DotNet.Basics.Ioc;
 
 namespace DotNet.Basics.Pipelines
 {
-    public class PipelineBlock<T> : IEnumerable<PipelineStep<T>> where T : EventArgs, new()
+    public class PipelineBlock<T> : PipelineSection<T>, IEnumerable<PipelineSection<T>> where T : EventArgs,new()
     {
-        private readonly IList<PipelineStep<T>> _steps;
+        private readonly SimpleContainer _container;
+        private readonly List<PipelineSection<T>> _subSections;
 
-        public string Name { get; private set; }
-
-        public PipelineBlock(string name = null, params PipelineStep<T>[] step)
+        public PipelineBlock(string name = null, SimpleContainer container = null)
+            : base(name)
         {
-            Name = name ?? string.Empty;
-            _steps = new List<PipelineStep<T>>(step);
+            _container = container ?? new SimpleContainer();
+            _subSections = new List<PipelineSection<T>>();
         }
 
-        public PipelineBlock<T> AddStep<TStep>() where TStep : PipelineStep<T>
+        protected IReadOnlyCollection<PipelineSection<T>> SubSections => _subSections;
+
+        public PipelineBlock<T> AddStep<TStep>(string name = null) where TStep : PipelineSection<T>
         {
-            var step = new LazyBindStep<T, TStep>();
-            _steps.Add(step);
+            var lazyStep = new LazyBindStep<T, TStep>(name, _container.GetInstance<TStep>);
+            InitEvents(lazyStep);
+            _subSections.Add(lazyStep);
             return this;
         }
 
-        public void AddSteps(params Func<T, Task>[] asyncFunc)
+        public PipelineBlock<T> AddStep(string name, Func<T, CancellationToken, Task> step)
         {
-            AddSteps(asyncFunc.Select(af => (PipelineStep<T>)(new EagerBindStep<T>(af))).ToArray());
+            var eagerStep = new EagerBindStep<T>(name, step);
+            InitEvents(eagerStep);
+            _subSections.Add(eagerStep);
+            return this;
+        }
+        public PipelineBlock<T> AddBlock(string name)
+        {
+            var block = new PipelineBlock<T>(name);
+            InitEvents(block);
+            _subSections.Add(block);
+            return block;
+        }
+        public PipelineBlock<T> AddSections(params PipelineSection<T>[] sections)
+        {
+            foreach (var section in sections)
+                _subSections.Add(section);
+            return this;
         }
 
-        public void AddSteps(params PipelineStep<T>[] steps)
+        public override SectionType SectionType => SectionType.Block;
+
+        protected override async Task InnerRunAsync(T args, CancellationToken ct)
         {
-            foreach (var step in steps)
-                _steps.Add(step);
+            await
+                _subSections.ParallelForEachAsync(async section => await section.RunAsync(args, ct).ConfigureAwait(false))
+                    .ConfigureAwait(false);
         }
 
-        public PipelineStep<T>[] Steps => _steps.ToArray();
-
-        public IEnumerator<PipelineStep<T>> GetEnumerator()
+        private void InitEvents(PipelineSection<T> section)
         {
-            return _steps.GetEnumerator();
+            section.SectionStarted += FireSectionStarted;
+            section.SectionEnded += FireSectionEnded;
+        }
+
+        public IEnumerator<PipelineSection<T>> GetEnumerator()
+        {
+            return _subSections.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

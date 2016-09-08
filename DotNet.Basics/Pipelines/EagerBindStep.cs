@@ -4,19 +4,21 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Pipelines
 {
-    public class EagerBindStep<T> : PipelineStep<T> where T : EventArgs, new()
+    public class EagerBindStep<T> : PipelineSection<T> where T : EventArgs, new()
     {
-        private readonly Func<T, Task> _actionAsync;
+        private readonly Func<T, CancellationToken, Task> _step;
 
-        public EagerBindStep(Func<T, Task> actionAsync)
+        public EagerBindStep(string name, Func<T, CancellationToken, Task> step) : base(name)
         {
-            if (actionAsync == null) throw new ArgumentNullException(nameof(actionAsync));
-            _actionAsync = actionAsync;
+            if (step == null) throw new ArgumentNullException(nameof(step));
+            _step = step;
         }
 
-        public override async Task RunAsync(T args, CancellationToken ct)
+        public override SectionType SectionType => SectionType.Step;
+
+        protected override async Task InnerRunAsync(T args, CancellationToken ct)
         {
-            await _actionAsync.Invoke(args).ConfigureAwait(false);
+            await _step(args, ct).ConfigureAwait(false);
         }
     }
 }

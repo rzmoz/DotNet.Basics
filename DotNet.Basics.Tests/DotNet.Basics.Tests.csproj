@@ -105,7 +105,6 @@
     <Compile Include="Pipelines\IncrementArgsStep.cs" />
     <Compile Include="Pipelines\SimplePipeline.cs" />
     <Compile Include="Pipelines\PipelineBlockTests.cs" />
-    <Compile Include="Pipelines\PipelineResultTests.cs" />
     <Compile Include="Pipelines\PipelineRunnerTests.cs" />
     <Compile Include="Diagnostics\ProfileTests.cs" />
     <Compile Include="Pipelines\PipelineStepWithDisplayNameSetStep.cs" />
