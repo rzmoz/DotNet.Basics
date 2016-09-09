@@ -127,6 +127,7 @@
     <Compile Include="Tasks\ManagedTask.cs" />
     <Compile Include="Tasks\ManagedTaskEndedEventArgs.cs" />
     <Compile Include="Tasks\ManagedTaskEventArgs.cs" />
+    <Compile Include="Tasks\ManagedTaskFactory.cs" />
     <Compile Include="Tasks\OnceOnlyTask.cs" />
     <Compile Include="Tasks\RepeaterTask.cs" />
     <Compile Include="Sys\Observable.cs" />

@@ -20,53 +20,32 @@ namespace DotNet.Basics.Tasks
         {
         }
 
-        public ManagedTask(Action<string> task)
-            : this(string.Empty, task)
+        public ManagedTask(string id, Action<string> syncTask, Func<string, TaskEndedReason> preconditionsMet = null)
+            : this(id, syncTask, rid => { syncTask.Invoke(rid); return Task.CompletedTask; }, preconditionsMet)
         {
         }
 
-        public ManagedTask(string id, Action<string> task)
-            : this(id, task, runId =>
-            {
-                task.Invoke(runId);
-                return Task.CompletedTask;
-            }, null)
+        public ManagedTask(string id, Func<string, Task> asyncTask, Func<string, TaskEndedReason> preconditionsMet = null)
+            : this(id, rid => { asyncTask.Invoke(rid).Wait(); }, asyncTask, preconditionsMet)
         {
         }
 
-        public ManagedTask(Func<string, Task> task)
-            : this(string.Empty, task)
+        private ManagedTask(string id, Action<string> syncTask, Func<string, Task> asyncTask, Func<string, TaskEndedReason> preconditionsMet)
         {
-        }
-
-        public ManagedTask(string id, Func<string, Task> task)
-            : this(id, runId =>
-            {
-                var asyncTask = task.Invoke(runId);
-                asyncTask.Wait();
-            }, task, null)
-        {
-        }
-
-        private ManagedTask(string id, Action<string> syncTask, Func<string, Task> asyncTask,
-            Func<string, TaskEndedReason> preconditionsMet)
-        {
-            if (syncTask == null) throw new ArgumentNullException(nameof(syncTask));
-            if (asyncTask == null) throw new ArgumentNullException(nameof(asyncTask));
-
-            _syncTask = syncTask;
-            _asyncTask = asyncTask;
-            if (preconditionsMet == null)
-                preconditionsMet = rid => TaskEndedReason.AllGood;
-            _preconditionsMet = runId =>
-            {
-                var reason = preconditionsMet.Invoke(runId);
-                if (reason != TaskEndedReason.AllGood)
-                    FireTaskEnded(runId, reason, null);
-
-                return reason;
-            };
             Id = id ?? string.Empty;
+            _syncTask = syncTask ?? VoidSyncTask;
+            _asyncTask = asyncTask ?? VoidAsyncTask;
+            if (preconditionsMet == null)
+                _preconditionsMet = rid => TaskEndedReason.AllGood;
+            else
+                _preconditionsMet = runId =>
+                {
+                    var reason = preconditionsMet.Invoke(runId);
+                    if (reason != TaskEndedReason.AllGood)
+                        FireTaskEnded(runId, reason, null);
+
+                    return reason;
+                };
         }
 
         public string Id { get; }
@@ -122,6 +101,13 @@ namespace DotNet.Basics.Tasks
         protected void FireTaskEnded(string runId, TaskEndedReason reason, Exception e)
         {
             TaskEnded?.Invoke(new ManagedTaskEndedEventArgs(Id, runId, reason, e));
+        }
+
+        private void VoidSyncTask(string runId)
+        { }
+        private Task VoidAsyncTask(string runId)
+        {
+            return Task.CompletedTask;
         }
     }
 }

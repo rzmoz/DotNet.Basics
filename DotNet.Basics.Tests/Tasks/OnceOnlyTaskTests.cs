@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Tasks;
 using FluentAssertions;
@@ -11,14 +10,14 @@ namespace DotNet.Basics.Tests.Tasks
     public class OnceOnlyTaskTests
     {
         private readonly TaskRunner _taskRunner = new TaskRunner();
-
+        private readonly ManagedTaskFactory _taskFactory = new ManagedTaskFactory();
 
         [Test]
         public void AsyncTask_Run_ActionIsOnlyExecutedOnce()
         {
             var counter = 0;
 
-            var onceOnlyAction = new OnceOnlyTask(rid => { counter++; return Task.CompletedTask; });
+            var onceOnlyAction = _taskFactory.Create<OnceOnlyTask>(rid => { counter++; return Task.CompletedTask; });
             Action action = async () => await _taskRunner.RunAsync(onceOnlyAction).ConfigureAwait(false);
 
             //invoke multiple times
@@ -32,7 +31,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var counter = 0;
 
-            var onceOnlyAction = new OnceOnlyTask(rid => { counter++; throw new ArgumentException("buuh"); });
+            var onceOnlyAction = _taskFactory.Create<OnceOnlyTask>(rid => { counter++; throw new ArgumentException("buuh"); });
             Action action = async () => await _taskRunner.RunAsync(onceOnlyAction).ConfigureAwait(false);
 
             //invoke multiple times
@@ -46,7 +45,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var counter = 0;
 
-            var onceOnlyAction = new OnceOnlyTask(rid => counter++);
+            var onceOnlyAction = _taskFactory.Create<OnceOnlyTask>(rid => counter++);
             Action action = () => _taskRunner.Run(onceOnlyAction);
 
             //invoke multiple times
@@ -60,7 +59,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var counter = 0;
 
-            var onceOnlyAction = new OnceOnlyTask(rid => { counter++; throw new ArgumentException("buuh"); });
+            var onceOnlyAction = _taskFactory.Create<OnceOnlyTask>(rid => { counter++; throw new ArgumentException("buuh"); });
             Action action = () => _taskRunner.Run(onceOnlyAction);
 
             //invoke multiple times

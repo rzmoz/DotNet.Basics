@@ -5,72 +5,59 @@ namespace DotNet.Basics.Tasks
 {
     public class OnceOnlyTask : ManagedTask
     {
+        private Action<string> _syncTask;
+        private Func<string, Task> _asyncTask;
+
         public OnceOnlyTask(ManagedTask task) : base(task)
         {
+            _syncTask = rid =>
+            {
+                _syncTask = rd => { };
+                base.Run(rid);
+            };
+            _asyncTask = async runId =>
+             {
+                 _asyncTask = rid => Task.CompletedTask;
+                 await base.RunAsync(runId).ConfigureAwait(false);
+             };
         }
 
-        public OnceOnlyTask(Action<string> task) : this(string.Empty, task)
+        public OnceOnlyTask(string id, Action<string> syncTask, Func<string, TaskEndedReason> preconditionsMet = null) : base(id, syncTask, preconditionsMet)
         {
+            _syncTask = rid =>
+            {
+                _syncTask = rd => { };
+                base.Run(rid);
+            };
+            _asyncTask = async runId =>
+            {
+                _asyncTask = rid => Task.CompletedTask;
+                await base.RunAsync(runId).ConfigureAwait(false);
+            };
         }
 
-        public OnceOnlyTask(string id, Action<string> task) : base(id, (Action<string>)OnceOnlySyncTask.Create(task).Run)
+        public OnceOnlyTask(string id, Func<string, Task> asyncTask, Func<string, TaskEndedReason> preconditionsMet = null) : base(id, asyncTask, preconditionsMet)
         {
+            _syncTask = rid =>
+            {
+                _syncTask = rd => { };
+                base.Run(rid);
+            };
+            _asyncTask = async runId =>
+            {
+                _asyncTask = rid => Task.CompletedTask;
+                await base.RunAsync(runId).ConfigureAwait(false);
+            };
         }
 
-        public OnceOnlyTask(Func<string, Task> task) : this(string.Empty, OnceOnlyAsyncTask.Create(task).RunAsync)
+        internal override void Run(string runId)
         {
+            _syncTask(runId);
         }
 
-        public OnceOnlyTask(string id, Func<string, Task> task) : base(id, OnceOnlyAsyncTask.Create(task).RunAsync)
+        internal override async Task RunAsync(string runId)
         {
-        }
-        
-        private class OnceOnlySyncTask
-        {
-            private OnceOnlySyncTask(Action<string> task)
-            {
-                _task = runId =>
-                {
-                    _task = rid => { };
-                    task.Invoke(runId);
-                };
-            }
-
-            private Action<string> _task;
-
-            public void Run(string runId)
-            {
-                _task.Invoke(runId);
-            }
-
-            public static OnceOnlySyncTask Create(Action<string> task)
-            {
-                return new OnceOnlySyncTask(task);
-            }
-        }
-
-        private class OnceOnlyAsyncTask
-        {
-            private Func<string, Task> _task;
-
-            private OnceOnlyAsyncTask(Func<string, Task> task)
-            {
-                _task = async runId =>
-                {
-                    _task = rid => Task.CompletedTask;
-                    await task.Invoke(runId).ConfigureAwait(false);
-                };
-            }
-
-            public async Task RunAsync(string runId)
-            {
-                await _task.Invoke(runId).ConfigureAwait(false);
-            }
-
-            public static OnceOnlyAsyncTask Create(Func<string, Task> task)
-            {
-                return new OnceOnlyAsyncTask(task);
-            }
+            await _asyncTask(runId).ConfigureAwait(false);
         }
     }
 }

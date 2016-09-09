@@ -10,13 +10,14 @@ namespace DotNet.Basics.Tests.Tasks
     public class ManagedTaskTests
     {
         private readonly TaskRunner _taskRunner = new TaskRunner();
+        private readonly ManagedTaskFactory _taskFactory = new ManagedTaskFactory();
 
         [Test]
         public void Run_SyncTask_TaskIsRun()
         {
             var taskRan = false;
 
-            var task = new ManagedTask(rid => taskRan = true);
+            var task = _taskFactory.Create<ManagedTask>(rid => taskRan = true);
 
             taskRan.Should().BeFalse();
             _taskRunner.Run(task);
@@ -27,11 +28,11 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var taskRan = false;
 
-            var task = new ManagedTask(async rid =>
-            {
-                await VoidTaskAsync();//ensure async execution
+            var task = _taskFactory.Create<ManagedTask>(async rid =>
+        {
+            await VoidTaskAsync();//ensure async execution
                 taskRan = true;
-            });
+        });
 
             taskRan.Should().BeFalse();
             _taskRunner.Run(task);
@@ -42,7 +43,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var taskRan = false;
 
-            var task = new ManagedTask(rid => taskRan = true);
+            var task = _taskFactory.Create<ManagedTask>(rid => taskRan = true);
 
             taskRan.Should().BeFalse();
             await _taskRunner.RunAsync(task).ConfigureAwait(false);
@@ -53,7 +54,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var taskRan = false;
 
-            var task = new ManagedTask(async rid =>
+            var task = _taskFactory.Create<ManagedTask>(async rid =>
             {
                 await VoidTaskAsync();//ensure async execution
                 taskRan = true;

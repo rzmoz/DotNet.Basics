@@ -14,19 +14,11 @@ namespace DotNet.Basics.Tasks
         {
         }
 
-        public BackgroundTask(Action<string> task) : base(task)
+        public BackgroundTask(string id, Action<string> syncTask, Func<string, TaskEndedReason> preconditionsMet = null) : base(id, syncTask, preconditionsMet)
         {
         }
 
-        public BackgroundTask(string id, Action<string> task) : base(id, task)
-        {
-        }
-
-        public BackgroundTask(Func<string, Task> task) : base(task)
-        {
-        }
-
-        public BackgroundTask(string id, Func<string, Task> task) : base(id, task)
+        public BackgroundTask(string id, Func<string, Task> asyncTask, Func<string, TaskEndedReason> preconditionsMet = null) : base(id, asyncTask, preconditionsMet)
         {
         }
 

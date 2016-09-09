@@ -14,19 +14,20 @@ namespace DotNet.Basics.Tests.Tasks
     public class SingletonTaskRunnerTests
     {
         private readonly SingletonTaskRunner _taskRunner = new SingletonTaskRunner();
-
+        private readonly ManagedTaskFactory _taskFactory = new ManagedTaskFactory();
         [Test]
         public void ExceptionThrown_GetExceptions_ExceptionsAreBubbled()
         {
             var taskID = "ExceptionThrown_GetExceptions_ExceptionsAreBubbled";
-
             bool taskRan = false;
 
-            Action action = () => _taskRunner.Run(taskID, rid =>
+            var task = _taskFactory.Create<SingletonTask>(taskID, rid =>
             {
                 taskRan = true;
                 throw new ArgumentNullException();
             });
+
+            Action action = () => _taskRunner.Run(task);
 
             action.ShouldThrow<ArgumentNullException>();
             taskRan.Should().BeTrue();
@@ -36,17 +37,18 @@ namespace DotNet.Basics.Tests.Tasks
         public async Task StartTask_DetectTaskIsAlreadyRunning_TaskIsRunOnce()
         {
             string taskId = "StartTask_DetectTaskIsAlreadyRunning_TaskIsRunOnce";
-
             int hitCount = 0;
+
+            var task = _taskFactory.Create<SingletonTask>(taskId, async rid =>
+            {
+                hitCount++;
+                await Task.Delay(1.Seconds()).ConfigureAwait(false);
+            });
 
             //try start task 10 times
             await Enumerable.Range(1, 10).ParallelForEachAsync(async i =>
                 {
-                    await _taskRunner.RunAsync(taskId, async rid =>
-                    {
-                        hitCount++;
-                        await Task.Delay(1.Seconds()).ConfigureAwait(false);
-                    }).ConfigureAwait(false);
+                    await _taskRunner.RunAsync(task).ConfigureAwait(false);
                 }).ConfigureAwait(false);
 
             hitCount.Should().Be(1);
@@ -58,23 +60,28 @@ namespace DotNet.Basics.Tests.Tasks
             string taskId = "RunAsync_Cancellation_LongRunningTasksCanBeCancelled";
 
             bool taskRan = false;
-            var taskDelay = 5.Seconds();
-
             var ctSource = new CancellationTokenSource();
 
-            _taskRunner.RunAsync(taskId, async rid =>
+            var task = _taskFactory.Create<SingletonTask>(taskId, async rid =>
             {
-                await Task.Delay(taskDelay, ctSource.Token).ConfigureAwait(false);
+                while (ctSource.Token.IsCancellationRequested == false)
+                    await Task.Delay(50.Milliseconds(), CancellationToken.None).ConfigureAwait(false);
+                if (ctSource.Token.IsCancellationRequested)
+                    return;
                 taskRan = true;
-            });//don't await task finish
+            });
+
+            var runTask = _taskRunner.RunAsync(task);//don't await task finish
+
+            //ensure task has started
+            await Task.Delay(100.Milliseconds(), CancellationToken.None).ConfigureAwait(false);
 
             _taskRunner.IsRunning(taskId).Should().BeTrue($"task is running");
 
             //cancel task
             ctSource.Cancel();
 
-            while (_taskRunner.IsRunning(taskId))
-                await Task.Delay(100.Milliseconds(), CancellationToken.None).ConfigureAwait(false);
+            await Task.WhenAll(runTask).ConfigureAwait(false);
 
             taskRan.Should().BeFalse("task shouldve been cancelled");
             _taskRunner.IsRunning(taskId).Should().BeFalse("task should have been stopped");
@@ -84,12 +91,12 @@ namespace DotNet.Basics.Tests.Tasks
         [TestCase(null)]
         [TestCase("")]
         [TestCase("    ")]
-        public async Task RunAsync_TaskIdEmptyTask_ExceptionIsThrown(string taskId)
+        public void Create_TaskIdEmptyTask_ExceptionIsThrown(string taskId)
         {
             var errorCaught = false;
             try
             {
-                await _taskRunner.RunAsync(taskId, rid => Task.CompletedTask).ConfigureAwait(false);
+                _taskFactory.Create<SingletonTask>();
             }
             catch (ArgumentNullException)
             {
@@ -109,8 +116,14 @@ namespace DotNet.Basics.Tests.Tasks
             const int runCount = 5;
             var counter = 0;
             var taskDelay = 200.Milliseconds();
-
             var expectedDuration = ((int)(taskDelay.TotalMilliseconds * runCount)).Milliseconds();
+
+            var task = _taskFactory.Create<SingletonTask>(taskId, async rid =>
+            {
+                counter++;
+                //do a longrunning task
+                await LongRunningTask(taskDelay, 100000, new ApplicationException("Cowabunga"));
+            });
 
             var profiler = new Profiler();
             profiler.Start();
@@ -119,12 +132,7 @@ namespace DotNet.Basics.Tests.Tasks
             {
                 try
                 {
-                    await _taskRunner.RunAsync(taskId, async rid =>
-                     {
-                         counter++;
-                         //do a longrunning task
-                         await LongRunningTask(taskDelay, 100000, new ApplicationException("Cowabunga"));
-                     }).ConfigureAwait(false);
+                    await _taskRunner.RunAsync(task).ConfigureAwait(false);
                 }
                 catch (ApplicationException)
                 {

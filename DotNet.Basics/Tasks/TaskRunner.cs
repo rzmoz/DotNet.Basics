@@ -8,6 +8,13 @@ namespace DotNet.Basics.Tasks
         public event ManagedTask.ManagedTaskEventHandler TaskStarted;
         public event ManagedTask.ManagedTaskEndedEventHandler TaskEnded;
 
+        protected ManagedTaskFactory TaskFactory { get; }
+
+        public TaskRunner()
+        {
+            TaskFactory = new ManagedTaskFactory();
+        }
+
         public void Run(ManagedTask task)
         {
             string runId;

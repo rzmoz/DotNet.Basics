@@ -8,13 +8,13 @@ namespace DotNet.Basics.Tasks
     {
         public bool IsRunning(string id)
         {
-            return new BackgroundTask(id, rid => { }).IsRunning();
+            return TaskFactory.Create<BackgroundTask>(id).IsRunning();
         }
 
         public void StartAsSingleton(string id, Action<string> task)
         {
-            var sTask = new SingletonTask(id, task);
-            Run(new BackgroundTask(sTask));
+            var sTask = TaskFactory.Create<SingletonTask>(id, task);
+            Run(TaskFactory.Create<BackgroundTask>(sTask));
         }
 
         public void Start(Action<string> task)
@@ -23,14 +23,13 @@ namespace DotNet.Basics.Tasks
         }
         public void Start(string id, Action<string> task)
         {
-            var bgTask = new BackgroundTask(id, task);
+            var bgTask = TaskFactory.Create<BackgroundTask>(id, task);
             Run(bgTask);
         }
-
         public void StartAsSingleton(string id, Func<string, Task> task)
         {
-            var sTask = new SingletonTask(id, task);
-            RunAsync(new BackgroundTask(sTask)).Wait(CancellationToken.None);
+            var sTask = TaskFactory.Create<SingletonTask>(id, task);
+            RunAsync(TaskFactory.Create<BackgroundTask>(sTask)).Wait(CancellationToken.None);
         }
         public void Start(Func<string, Task> task)
         {
@@ -38,9 +37,8 @@ namespace DotNet.Basics.Tasks
         }
         public void Start(string id, Func<string, Task> task)
         {
-            var bgTask = new BackgroundTask(id, task);
+            var bgTask = TaskFactory.Create<BackgroundTask>(id, task);
             RunAsync(bgTask).Wait(CancellationToken.None);
         }
-
     }
 }

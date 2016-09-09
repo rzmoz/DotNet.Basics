@@ -10,22 +10,23 @@ namespace DotNet.Basics.Tests.Tasks
     public class OnlyRunWhenInvokedTaskTests
     {
         private readonly TaskRunner _taskRunner = new TaskRunner();
+        private readonly ManagedTaskFactory _taskFactory = new ManagedTaskFactory();
 
         [Test]
-        public void AsyncTask_RunSync_IsOnlyRunOnceInvoked()
+        public void AsyncTask_RunSync_OnlyRunWhenInvoked()
         {
             var taskRun = false;
-            var task = new ManagedTask(rid => { taskRun = true; return Task.CompletedTask; });
+            var task = _taskFactory.Create<ManagedTask>(rid => { taskRun = true; return Task.CompletedTask; });
             taskRun.Should().BeFalse();
             _taskRunner.Run(task);
             taskRun.Should().BeTrue();
         }
 
         [Test]
-        public async Task AsyncTask_RunAsync_IsOnlyRunOnceInvoked()
+        public async Task AsyncTask_RunAsync_OnlyRunWhenInvoked()
         {
             var started = false;
-            var task = new ManagedTask(rid => { started = true; return Task.CompletedTask; });
+            var task = _taskFactory.Create<ManagedTask>(rid => { started = true; return Task.CompletedTask; });
             started.Should().BeFalse();
             await _taskRunner.RunAsync(task).ConfigureAwait(false);
             started.Should().BeTrue();
@@ -35,17 +36,17 @@ namespace DotNet.Basics.Tests.Tasks
         public async Task SyncTask_RunAsync_ExceptionIsThrown()
         {
             var started = false;
-            var syncTask = new ManagedTask(rid => started = true);
+            var syncTask = _taskFactory.Create<ManagedTask>(rid => started = true);
             started.Should().BeFalse();
             await _taskRunner.RunAsync(syncTask).ConfigureAwait(false);
             started.Should().BeTrue();
         }
 
         [Test]
-        public void SyncTask_RunSync_IsOnlyRunOnceInvoked()
+        public void SyncTask_RunSync_OnlyRunWhenInvoked()
         {
             var started = false;
-            var syncTask = new ManagedTask(rid => started = true);
+            var syncTask = _taskFactory.Create<ManagedTask>(rid => started = true);
             started.Should().BeFalse();
             _taskRunner.Run(syncTask);
             started.Should().BeTrue();

@@ -30,7 +30,7 @@ namespace DotNet.Basics.Tasks
             }
             catch (AggregateException ae)
             {
-                throw ae.InnerException;
+                throw ae.InnerException ?? ae;
             }
         }
 
@@ -55,7 +55,7 @@ namespace DotNet.Basics.Tasks
             }
             catch (AggregateException ae)
             {
-                throw ae.InnerException;
+                throw ae.InnerException??ae;
             }
         }
     }

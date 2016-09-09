@@ -7,17 +7,17 @@ namespace DotNet.Basics.Tasks
     {
         public bool IsRunning(string taskId)
         {
-            return new SingletonTask(taskId, rid => { }).IsRunning();
+            return TaskFactory.Create<SingletonTask>(taskId).IsRunning();
         }
 
         public void Run(string id, Action<string> task)
         {
-            Run(new SingletonTask(id, task));
+            Run(TaskFactory.Create<SingletonTask>(id, task));
         }
 
         public async Task RunAsync(string id, Func<string, Task> task)
         {
-            await RunAsync(new SingletonTask(id, task)).ConfigureAwait(false);
+            await RunAsync(TaskFactory.Create<SingletonTask>(id, task)).ConfigureAwait(false);
         }
     }
 }

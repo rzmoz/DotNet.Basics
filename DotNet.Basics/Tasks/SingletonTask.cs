@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks
@@ -11,18 +10,17 @@ namespace DotNet.Basics.Tasks
 
         public SingletonTask(ManagedTask task) : base(task)
         {
-            if (task == null) throw new ArgumentNullException(nameof(task));
             if (task.Id == null) throw new ArgumentNullException(nameof(task.Id));
-            if (string.IsNullOrWhiteSpace(task.Id)) throw new ArgumentException(nameof(task.Id));
+            if(string.IsNullOrWhiteSpace(task.Id))throw new ArgumentException(nameof(task.Id));
         }
 
-        public SingletonTask(string id, Action<string> task) : base(id, task)
+        public SingletonTask(string id, Action<string> syncTask, Func<string, TaskEndedReason> preconditionsMet = null) : base(id, syncTask, preconditionsMet)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
             if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException(nameof(id));
         }
 
-        public SingletonTask(string id, Func<string, Task> task) : base(id, task)
+        public SingletonTask(string id, Func<string, Task> asyncTask, Func<string, TaskEndedReason> preconditionsMet = null) : base(id, asyncTask, preconditionsMet)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
             if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException(nameof(id));
@@ -36,9 +34,7 @@ namespace DotNet.Basics.Tasks
         internal override TaskEndedReason PreconditionsMet(string runId)
         {
             var added = _singletonScheduler.TryAdd(Id, runId ?? string.Empty);
-            var endReason = added ? TaskEndedReason.AllGood : TaskEndedReason.AlreadyStarted;
-            Debug.WriteLine($"SingletonTask {Id}:{runId} preconditions result: {endReason}");
-            return endReason;
+            return added ? base.PreconditionsMet(runId) : TaskEndedReason.AlreadyStarted;
         }
 
         internal override void Run(string runId = null)
