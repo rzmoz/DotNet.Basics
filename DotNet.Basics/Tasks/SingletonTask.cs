@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks
@@ -32,10 +33,12 @@ namespace DotNet.Basics.Tasks
             return _singletonScheduler.ContainsKey(Id);
         }
 
-        internal override string PreconditionsMet(string runId)
+        internal override TaskEndedReason PreconditionsMet(string runId)
         {
             var added = _singletonScheduler.TryAdd(Id, runId ?? string.Empty);
-            return added ? null : $"Task {Id} already started";
+            var endReason = added ? TaskEndedReason.AllGood : TaskEndedReason.AlreadyStarted;
+            Debug.WriteLine($"SingletonTask {Id}:{runId} preconditions result: {endReason}");
+            return endReason;
         }
 
         internal override void Run(string runId = null)

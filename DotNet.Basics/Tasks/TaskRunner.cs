@@ -5,10 +5,8 @@ namespace DotNet.Basics.Tasks
 {
     public class TaskRunner
     {
-        public event ManagedTask.TaskStartedEventHandler TaskStarted;
-        public event ManagedTask.TaskNotStartedEventHandler TaskNotStarted;
-        public event ManagedTask.TaskFailedEventHandler TaskFailed;
-        public event ManagedTask.TaskEndedEventHandler TaskEnded;
+        public event ManagedTask.ManagedTaskEventHandler TaskStarted;
+        public event ManagedTask.ManagedTaskEndedEventHandler TaskEnded;
 
         public void Run(ManagedTask task)
         {
@@ -27,12 +25,10 @@ namespace DotNet.Basics.Tasks
         private bool TryInitTask(ManagedTask task, out string runId)
         {
             task.TaskStarted += TaskStarted;
-            task.TaskNotStarted += TaskNotStarted;
-            task.TaskFailed += TaskFailed;
             task.TaskEnded += TaskEnded;
             runId = $"[{Guid.NewGuid():N}]";
             var preconditionReason = task.PreconditionsMet(runId);
-            return preconditionReason == null;
+            return preconditionReason == TaskEndedReason.AllGood;
         }
     }
 }

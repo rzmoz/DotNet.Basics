@@ -6,6 +6,11 @@ namespace DotNet.Basics.Tasks
 {
     public class BackgroundTaskRunner : TaskRunner
     {
+        public bool IsRunning(string id)
+        {
+            return new BackgroundTask(id, rid => { }).IsRunning();
+        }
+
         public void StartAsSingleton(string id, Action<string> task)
         {
             var sTask = new SingletonTask(id, task);

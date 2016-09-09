@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNet.Basics.Collections;
 using DotNet.Basics.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
@@ -11,49 +12,48 @@ namespace DotNet.Basics.Tests.Tasks
     [TestFixture]
     public class BackgroundTaskRunnerTests
     {
-
-
         [Test]
         public async Task RunSync_AsSingleton_TaskIsRunAssingleton()
         {
-
             var taskId = "RunSync_AsSingleton_TaskIsRunAssingleton";
             var bgRunner = new BackgroundTaskRunner();
 
             var runCount = 0;
             var runTimes = 10;
+            var runRange = Enumerable.Range(0, runTimes);
             var startedCount = 0;
             var notStartedCount = 0;
-            string notStartedReason = string.Empty;
+            
+            TaskEndedReason notStartedReason = TaskEndedReason.AllGood;
 
             runTimes.Should().BeGreaterThan(3);//task needs to run at least some times to ensure singleton
 
-            bgRunner.TaskStarted += (tid, rid) =>
+            bgRunner.TaskStarted += (args) =>
             {
                 startedCount++;
             };
-            bgRunner.TaskNotStarted += (tid, rid, reason) =>
+            bgRunner.TaskEnded += (args) =>
             {
-                notStartedCount++;
-                notStartedReason += reason;
+                if (args.Reason == TaskEndedReason.AlreadyStarted)
+                {
+                    notStartedCount++;
+                    notStartedReason = args.Reason;
+                }
             };
 
-            var delay = 250.Milliseconds();
-
-            Parallel.For(0, runTimes, i => bgRunner.StartAsSingleton(taskId, async rid =>
+            runRange.ForEach(i => bgRunner.StartAsSingleton(taskId, async rid =>
             {
                 runCount++;
-                await Task.Delay(delay).ConfigureAwait(false);
+                await Task.Delay(250.Milliseconds()).ConfigureAwait(false);
             }));
 
-            await Task.Delay(delay + 250.Milliseconds()).ConfigureAwait(false);
-
+            while (bgRunner.IsRunning(taskId))
+                await Task.Delay(100.Milliseconds()).ConfigureAwait(false);
 
             runCount.Should().Be(1, "run count");
-            
             startedCount.Should().Be(1);
             notStartedCount.Should().Be(runTimes - 1, "not started count");
-            notStartedReason.Should().Contain("already started");
+            notStartedReason.Should().Be(TaskEndedReason.AlreadyStarted);
         }
 
 
@@ -94,17 +94,17 @@ namespace DotNet.Basics.Tests.Tasks
 
             bool taskEnded = false;
 
-            bgRunner.TaskStarted += (tid, rid) =>
+            bgRunner.TaskStarted += (args) =>
              {
                  taskRan = true;
-                 lastTaskId = tid;
-                 lastRunId = rid;
+                 lastTaskId = args.TaskId;
+                 lastRunId = args.RunId;
              };
-            bgRunner.TaskFailed += (tid, rid, e) =>
-              {
-                  lastException = e;
-                  taskEnded = true;
-              };
+            bgRunner.TaskEnded += (args) =>
+               {
+                   lastException = args.Exception;
+                   taskEnded = true;
+               };
 
             startTaskCallback(bgRunner);
 

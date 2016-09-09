@@ -125,6 +125,8 @@
     <Compile Include="Sys\EnumExtensions.cs" />
     <Compile Include="Sys\EventArgs.cs" />
     <Compile Include="Tasks\ManagedTask.cs" />
+    <Compile Include="Tasks\ManagedTaskEndedEventArgs.cs" />
+    <Compile Include="Tasks\ManagedTaskEventArgs.cs" />
     <Compile Include="Tasks\OnceOnlyTask.cs" />
     <Compile Include="Tasks\RepeaterTask.cs" />
     <Compile Include="Sys\Observable.cs" />
@@ -133,6 +135,7 @@
     <Compile Include="Tasks\RepeaterTaskRunner.cs" />
     <Compile Include="Tasks\RepeatOptions.cs" />
     <Compile Include="Tasks\SingletonTaskRunner.cs" />
+    <Compile Include="Tasks\TaskEndedReason.cs" />
     <Compile Include="Tasks\TaskRunner.cs" />
     <Compile Include="Tasks\SingletonTask.cs" />
     <Compile Include="Tasks\Repeat.cs" />
