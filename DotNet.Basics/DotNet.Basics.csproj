@@ -119,12 +119,14 @@
     <Compile Include="Sys\PowerShellConsole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Collections\StringKeyDictionary.cs" />
-    <Compile Include="Tasks\BackgroundTask.cs" />
-    <Compile Include="Tasks\BackgroundTaskRunner.cs" />
     <Compile Include="Tasks\CountLoopBreakPredicate.cs" />
     <Compile Include="Sys\EnumClass.cs" />
     <Compile Include="Sys\EnumExtensions.cs" />
     <Compile Include="Sys\EventArgs.cs" />
+    <Compile Include="Tasks\RunMode.cs" />
+    <Compile Include="Tasks\SingletonTaskScheduler.cs" />
+    <Compile Include="Tasks\TaskScheduler.cs" />
+    <Compile Include="Tasks\TransientTaskScheduler.cs" />
     <Compile Include="Tasks\ManagedTask.cs" />
     <Compile Include="Tasks\ManagedTaskEndedEventArgs.cs" />
     <Compile Include="Tasks\ManagedTaskEventArgs.cs" />
@@ -136,10 +138,8 @@
     <Compile Include="Tasks\RepeaterTaskExtensions.cs" />
     <Compile Include="Tasks\RepeaterTaskRunner.cs" />
     <Compile Include="Tasks\RepeatOptions.cs" />
-    <Compile Include="Tasks\SingletonTaskRunner.cs" />
     <Compile Include="Tasks\TaskEndedReason.cs" />
     <Compile Include="Tasks\TaskRunner.cs" />
-    <Compile Include="Tasks\SingletonTask.cs" />
     <Compile Include="Tasks\Repeat.cs" />
     <Compile Include="Tasks\TimeoutLoopBreakPredicate.cs" />
     <Compile Include="Sys\TimeSpanExtensions.cs" />

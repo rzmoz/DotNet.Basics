@@ -30,7 +30,7 @@ namespace DotNet.Basics.Tasks
                     Exception exceptionInLastLoop = null;
                     try
                     {
-                        await RunAsync(task).ConfigureAwait(false);
+                        await TryStartAsync(task, options.RunMode).ConfigureAwait(false);
                     }
                     catch (Exception e)
                     {

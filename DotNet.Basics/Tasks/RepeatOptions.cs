@@ -11,6 +11,7 @@ namespace DotNet.Basics.Tasks
         public RepeatOptions()
         {
             RetryDelay = 250.MilliSeconds();
+            RunMode = RunMode.Transient;
         }
 
         public TimeSpan RetryDelay { get; set; }
@@ -35,6 +36,8 @@ namespace DotNet.Basics.Tasks
             }
         }
 
+        public RunMode RunMode { get; set; }
+
         /// <summary>
         /// Will be invoked on every retry cycle
         /// </summary>
@@ -49,7 +52,7 @@ namespace DotNet.Basics.Tasks
         /// will always be invoked once on finish regardless of result
         /// </summary>
         public Action Finally { get; set; }
-        
+
         internal CountLoopBreakPredicate CountLoopBreakPredicate { get; private set; }
         internal TimeoutLoopBreakPredicate TimeoutLoopBreakPredicate { get; private set; }
     }

@@ -20,7 +20,7 @@ namespace DotNet.Basics.Tests.Tasks
             var task = _taskFactory.Create<ManagedTask>(rid => taskRan = true);
 
             taskRan.Should().BeFalse();
-            _taskRunner.Run(task);
+            _taskRunner.TryStart(task);
             taskRan.Should().BeTrue();
         }
         [Test]
@@ -35,7 +35,7 @@ namespace DotNet.Basics.Tests.Tasks
         });
 
             taskRan.Should().BeFalse();
-            _taskRunner.Run(task);
+            _taskRunner.TryStart(task);
             taskRan.Should().BeTrue();
         }
         [Test]
@@ -46,7 +46,7 @@ namespace DotNet.Basics.Tests.Tasks
             var task = _taskFactory.Create<ManagedTask>(rid => taskRan = true);
 
             taskRan.Should().BeFalse();
-            await _taskRunner.RunAsync(task).ConfigureAwait(false);
+            await _taskRunner.TryStartAsync(task).ConfigureAwait(false);
             taskRan.Should().BeTrue();
         }
         [Test]
@@ -61,7 +61,7 @@ namespace DotNet.Basics.Tests.Tasks
             });
 
             taskRan.Should().BeFalse();
-            await _taskRunner.RunAsync(task).ConfigureAwait(false);
+            await _taskRunner.TryStartAsync(task).ConfigureAwait(false);
             taskRan.Should().BeTrue();
         }
 

@@ -5,43 +5,44 @@ namespace DotNet.Basics.Tasks
 {
     public class TaskRunner
     {
-        public event ManagedTask.ManagedTaskEventHandler TaskStarted;
-        public event ManagedTask.ManagedTaskEndedEventHandler TaskEnded;
+        private static readonly TransientTaskScheduler _transientScheduler = new TransientTaskScheduler();
+        private static readonly SingletonTaskScheduler _singletonScheduler = new SingletonTaskScheduler();
+        private static ManagedTaskFactory _taskFactory;
 
-        protected ManagedTaskFactory TaskFactory { get; }
+        public event TaskScheduler.ManagedTaskEventHandler TaskStarted;
+        public event TaskScheduler.ManagedTaskEndedEventHandler TaskEnded;
 
         public TaskRunner()
         {
-            TaskFactory = new ManagedTaskFactory();
+            _transientScheduler.TaskStarted += args => { TaskStarted?.Invoke(args); };
+            _transientScheduler.TaskEnded += args => { TaskEnded?.Invoke(args); };
+            _singletonScheduler.TaskStarted += args => { TaskStarted?.Invoke(args); };
+            _singletonScheduler.TaskEnded += args => { TaskEnded?.Invoke(args); };
+
+            _taskFactory = new ManagedTaskFactory();
         }
 
-        public void Run(ManagedTask task)
+        public bool IsRunning(string taskId)
         {
-            var runId = InitTask(task);
-            if (task.TryAcquireStartlock(runId) == false)
-            {
-                TaskEnded?.Invoke(new ManagedTaskEndedEventArgs(task.Id, runId, TaskEndedReason.AlreadyStarted, null));
-                return;
-            }
-            task.Run(runId);
+            return _transientScheduler.IsRunning(taskId) || _singletonScheduler.IsRunning(taskId);
         }
 
-        public async Task RunAsync(ManagedTask task)
+        public bool TryStart(ManagedTask task, RunMode runMode = RunMode.Transient)
         {
-            var runId = InitTask(task);
-            if (task.TryAcquireStartlock(runId)== false)
-            {
-                TaskEnded?.Invoke(new ManagedTaskEndedEventArgs(task.Id,runId,TaskEndedReason.AlreadyStarted, null));
-                return;
-            }
-            await task.RunAsync(runId).ConfigureAwait(false);
+            var runId = NewRunId;
+
+            if (runMode.HasFlag(RunMode.Singleton))
+                return _singletonScheduler.TryStart(task, runId, runMode.HasFlag(RunMode.Background));
+            return _transientScheduler.TryStart(task, runId, runMode.HasFlag(RunMode.Background));
         }
 
-        private string InitTask(ManagedTask task)
+        public async Task<bool> TryStartAsync(ManagedTask task, RunMode runMode = RunMode.Transient)
         {
-            task.TaskStarted += TaskStarted;
-            task.TaskEnded += TaskEnded;
-            return $"[{Guid.NewGuid():N}]";
+            var runId = NewRunId;
+            if (runMode.HasFlag(RunMode.Singleton))
+                return await _singletonScheduler.TryStartAsync(task, runId, runMode.HasFlag(RunMode.Background)).ConfigureAwait(false);
+            return await _transientScheduler.TryStartAsync(task, runId, runMode.HasFlag(RunMode.Background)).ConfigureAwait(false);
         }
+        private string NewRunId => $"[{Guid.NewGuid():N}]";
     }
 }

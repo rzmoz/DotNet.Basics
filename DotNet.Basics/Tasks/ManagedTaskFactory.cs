@@ -35,10 +35,6 @@ namespace DotNet.Basics.Tasks
 
             if (createType == typeof(RepeaterTask))
                 return (T)(object)new RepeaterTask(task);
-            if (createType == typeof(BackgroundTask))
-                return (T)(object)new BackgroundTask(task);
-            if (createType == typeof(SingletonTask))
-                return (T)(object)new SingletonTask(task);
             if (createType == typeof(OnceOnlyTask))
                 return (T)(object)new OnceOnlyTask(task);
 

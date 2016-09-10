@@ -18,7 +18,7 @@ namespace DotNet.Basics.Tests.Tasks
             var counter = 0;
 
             var onceOnlyAction = _taskFactory.Create<OnceOnlyTask>(rid => { counter++; return Task.CompletedTask; });
-            Action action = async () => await _taskRunner.RunAsync(onceOnlyAction).ConfigureAwait(false);
+            Action action = async () => await _taskRunner.TryStartAsync(onceOnlyAction).ConfigureAwait(false);
 
             //invoke multiple times
             Run(action, 5);
@@ -32,7 +32,7 @@ namespace DotNet.Basics.Tests.Tasks
             var counter = 0;
 
             var onceOnlyAction = _taskFactory.Create<OnceOnlyTask>(rid => { counter++; throw new ArgumentException("buuh"); });
-            Action action = async () => await _taskRunner.RunAsync(onceOnlyAction).ConfigureAwait(false);
+            Action action = async () => await _taskRunner.TryStartAsync(onceOnlyAction).ConfigureAwait(false);
 
             //invoke multiple times
             Run(action, 5);
@@ -46,7 +46,7 @@ namespace DotNet.Basics.Tests.Tasks
             var counter = 0;
 
             var onceOnlyAction = _taskFactory.Create<OnceOnlyTask>(rid => counter++);
-            Action action = () => _taskRunner.Run(onceOnlyAction);
+            Action action = () => _taskRunner.TryStart(onceOnlyAction);
 
             //invoke multiple times
             Run(action, 5);
@@ -60,7 +60,7 @@ namespace DotNet.Basics.Tests.Tasks
             var counter = 0;
 
             var onceOnlyAction = _taskFactory.Create<OnceOnlyTask>(rid => { counter++; throw new ArgumentException("buuh"); });
-            Action action = () => _taskRunner.Run(onceOnlyAction);
+            Action action = () => _taskRunner.TryStart(onceOnlyAction);
 
             //invoke multiple times
             Run(action, 5);

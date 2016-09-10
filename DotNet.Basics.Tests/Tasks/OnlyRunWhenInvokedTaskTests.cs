@@ -18,7 +18,7 @@ namespace DotNet.Basics.Tests.Tasks
             var taskRun = false;
             var task = _taskFactory.Create<ManagedTask>(rid => { taskRun = true; return Task.CompletedTask; });
             taskRun.Should().BeFalse();
-            _taskRunner.Run(task);
+            _taskRunner.TryStart(task);
             taskRun.Should().BeTrue();
         }
 
@@ -28,7 +28,7 @@ namespace DotNet.Basics.Tests.Tasks
             var started = false;
             var task = _taskFactory.Create<ManagedTask>(rid => { started = true; return Task.CompletedTask; });
             started.Should().BeFalse();
-            await _taskRunner.RunAsync(task).ConfigureAwait(false);
+            await _taskRunner.TryStartAsync(task).ConfigureAwait(false);
             started.Should().BeTrue();
         }
 
@@ -38,7 +38,7 @@ namespace DotNet.Basics.Tests.Tasks
             var started = false;
             var syncTask = _taskFactory.Create<ManagedTask>(rid => started = true);
             started.Should().BeFalse();
-            await _taskRunner.RunAsync(syncTask).ConfigureAwait(false);
+            await _taskRunner.TryStartAsync(syncTask).ConfigureAwait(false);
             started.Should().BeTrue();
         }
 
@@ -48,7 +48,7 @@ namespace DotNet.Basics.Tests.Tasks
             var started = false;
             var syncTask = _taskFactory.Create<ManagedTask>(rid => started = true);
             started.Should().BeFalse();
-            _taskRunner.Run(syncTask);
+            _taskRunner.TryStart(syncTask);
             started.Should().BeTrue();
         }
     }
