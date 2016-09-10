@@ -8,7 +8,9 @@ namespace DotNet.Basics.Tasks
     {
         public bool IsRunning(string id)
         {
-            return TaskFactory.Create<BackgroundTask>(id).IsRunning();
+            if (TaskFactory.Create<BackgroundTask>(id).IsRunning())
+                return true;
+            return TaskFactory.Create<SingletonTask>(id).IsRunning();
         }
 
         public void StartAsSingleton(string id, Action<string> task)

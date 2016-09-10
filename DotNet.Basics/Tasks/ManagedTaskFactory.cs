@@ -10,23 +10,23 @@ namespace DotNet.Basics.Tasks
             return Create<T>(new ManagedTask(id, rid => { }));
         }
 
-        public T Create<T>(Action<string> syncTask, Func<string, TaskEndedReason> preconditionsMet = null) where T : ManagedTask
+        public T Create<T>(Action<string> syncTask) where T : ManagedTask
         {
-            return Create<T>(null, syncTask, preconditionsMet);
+            return Create<T>(null, syncTask);
         }
 
-        public T Create<T>(Func<string, Task> asyncTask, Func<string, TaskEndedReason> preconditionsMet = null) where T : ManagedTask
+        public T Create<T>(Func<string, Task> asyncTask) where T : ManagedTask
         {
-            return Create<T>(null, asyncTask, preconditionsMet);
+            return Create<T>(null, asyncTask);
         }
-        public T Create<T>(string id, Action<string> syncTask, Func<string, TaskEndedReason> preconditionsMet = null) where T : ManagedTask
+        public T Create<T>(string id, Action<string> syncTask) where T : ManagedTask
         {
-            return Create<T>(new ManagedTask(id, syncTask, preconditionsMet));
+            return Create<T>(new ManagedTask(id, syncTask));
         }
 
-        public T Create<T>(string id, Func<string, Task> asyncTask, Func<string, TaskEndedReason> preconditionsMet = null) where T : ManagedTask
+        public T Create<T>(string id, Func<string, Task> asyncTask) where T : ManagedTask
         {
-            return Create<T>(new ManagedTask(id, asyncTask, preconditionsMet));
+            return Create<T>(new ManagedTask(id, asyncTask));
         }
 
         public T Create<T>(ManagedTask task) where T : ManagedTask

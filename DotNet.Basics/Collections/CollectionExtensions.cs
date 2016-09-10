@@ -8,6 +8,11 @@ namespace DotNet.Basics.Collections
 {
     public static class CollectionExtensions
     {
+        public static void ParallelForEach<T>(this IEnumerable<T> col, Action<T> forEachAction)
+        {
+            Parallel.ForEach(col, forEachAction);
+        }
+
         public static async Task ParallelForEachAsync<T>(this IEnumerable<T> col, Func<T, Task> forEachAction)
         {
             var tasks = col.ForEach(forEachAction);

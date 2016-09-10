@@ -1,58 +1,65 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks
 {
     public class ManagedTask
     {
+        private static readonly ConcurrentDictionary<string, ConcurrentStack<bool>> _taskScheduler =
+            new ConcurrentDictionary<string, ConcurrentStack<bool>>();
+
         private readonly Action<string> _syncTask;
         private readonly Func<string, Task> _asyncTask;
-        private readonly Func<string, TaskEndedReason> _preconditionsMet;
+        private readonly Func<bool> _isRunning;
+        private readonly Func<string, bool> _tryAcquireStartlock;
 
         public delegate void ManagedTaskEventHandler(ManagedTaskEventArgs args);
+
         public delegate void ManagedTaskEndedEventHandler(ManagedTaskEndedEventArgs args);
 
         public event ManagedTaskEventHandler TaskStarted;
         public event ManagedTaskEndedEventHandler TaskEnded;
 
         public ManagedTask(ManagedTask task)
-            : this(task.Id, task.Run, task.RunAsync, task.PreconditionsMet)
+            : this(task.Id, task.Run, task.RunAsync, task.TryAcquireStartlock, task.IsRunning)
         {
         }
 
-        public ManagedTask(string id, Action<string> syncTask, Func<string, TaskEndedReason> preconditionsMet = null)
-            : this(id, syncTask, rid => { syncTask.Invoke(rid); return Task.CompletedTask; }, preconditionsMet)
+        public ManagedTask(string id, Action<string> syncTask, Func<string, bool> tryAcquireStartlock = null, Func<bool> isRunning = null)
+            : this(id, syncTask, rid =>
+            {
+                syncTask.Invoke(rid);
+                return Task.CompletedTask;
+            }, tryAcquireStartlock, isRunning)
         {
         }
 
-        public ManagedTask(string id, Func<string, Task> asyncTask, Func<string, TaskEndedReason> preconditionsMet = null)
-            : this(id, rid => { asyncTask.Invoke(rid).Wait(); }, asyncTask, preconditionsMet)
+        public ManagedTask(string id, Func<string, Task> asyncTask, Func<string, bool> tryAcquireStartlock = null, Func<bool> isRunning = null)
+            : this(id, rid => { asyncTask.Invoke(rid).Wait(); }, asyncTask, tryAcquireStartlock, isRunning)
         {
         }
 
-        private ManagedTask(string id, Action<string> syncTask, Func<string, Task> asyncTask, Func<string, TaskEndedReason> preconditionsMet)
+        private ManagedTask(string id, Action<string> syncTask, Func<string, Task> asyncTask, Func<string, bool> tryAcquireStartlock, Func<bool> isRunning)
         {
             Id = id ?? string.Empty;
             _syncTask = syncTask ?? VoidSyncTask;
             _asyncTask = asyncTask ?? VoidAsyncTask;
-            if (preconditionsMet == null)
-                _preconditionsMet = rid => TaskEndedReason.AllGood;
-            else
-                _preconditionsMet = runId =>
-                {
-                    var reason = preconditionsMet.Invoke(runId);
-                    if (reason != TaskEndedReason.AllGood)
-                        FireTaskEnded(runId, reason, null);
-
-                    return reason;
-                };
+            _tryAcquireStartlock = tryAcquireStartlock ?? DefaultTryAcquireStartTaskLock;
+            _isRunning = isRunning ?? DefaultIsRunning;
         }
 
         public string Id { get; }
 
-        internal virtual TaskEndedReason PreconditionsMet(string runId)
+        public virtual bool IsRunning()
         {
-            return _preconditionsMet(runId);
+            return _isRunning();
+        }
+        
+        internal virtual bool TryAcquireStartlock(string runId)
+        {
+            return _tryAcquireStartlock(runId);
         }
 
         internal virtual void Run(string runId)
@@ -71,6 +78,19 @@ namespace DotNet.Basics.Tasks
 
                 FireTaskEnded(runId, TaskEndedReason.Exception, e);
                 throw;
+            }
+            finally
+            {
+                try
+                {
+                    bool poppedTask;
+                    var runStack = _taskScheduler[Id];
+                    runStack.TryPop(out poppedTask);
+                }
+                catch (KeyNotFoundException)
+                {
+                    //ignore
+                }
             }
         }
 
@@ -91,14 +111,42 @@ namespace DotNet.Basics.Tasks
                 FireTaskEnded(runId, TaskEndedReason.Exception, e);
                 throw;
             }
+            finally
+            {
+                try
+                {
+                    bool poppedTask;
+                    var runStack = _taskScheduler[Id];
+                    runStack.TryPop(out poppedTask);
+                }
+                catch (KeyNotFoundException)
+                {
+                    //ignore
+                }
+            }
         }
 
-        protected void FireTaskStarted(string runId)
+        private bool DefaultIsRunning()
+        {
+            ConcurrentStack<bool> runStack;
+            if (_taskScheduler.TryGetValue(Id, out runStack) == false)
+                return false;
+            return runStack.Count > 0;
+        }
+        private bool DefaultTryAcquireStartTaskLock(string runId)
+        {
+            _taskScheduler.TryAdd(Id, new ConcurrentStack<bool>());
+            var runStack = _taskScheduler[Id];
+            runStack.Push(false);
+            return true;
+        }
+
+        private void FireTaskStarted(string runId)
         {
             TaskStarted?.Invoke(new ManagedTaskEventArgs(Id, runId));
         }
 
-        protected void FireTaskEnded(string runId, TaskEndedReason reason, Exception e)
+        private void FireTaskEnded(string runId, TaskEndedReason reason, Exception e)
         {
             TaskEnded?.Invoke(new ManagedTaskEndedEventArgs(Id, runId, reason, e));
         }

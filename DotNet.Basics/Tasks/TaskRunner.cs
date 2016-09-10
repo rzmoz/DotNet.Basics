@@ -17,25 +17,31 @@ namespace DotNet.Basics.Tasks
 
         public void Run(ManagedTask task)
         {
-            string runId;
-            if (TryInitTask(task, out runId))
-                task.Run(runId);
+            var runId = InitTask(task);
+            if (task.TryAcquireStartlock(runId) == false)
+            {
+                TaskEnded?.Invoke(new ManagedTaskEndedEventArgs(task.Id, runId, TaskEndedReason.AlreadyStarted, null));
+                return;
+            }
+            task.Run(runId);
         }
 
         public async Task RunAsync(ManagedTask task)
         {
-            string runId;
-            if (TryInitTask(task, out runId))
-                await task.RunAsync(runId).ConfigureAwait(false);
+            var runId = InitTask(task);
+            if (task.TryAcquireStartlock(runId)== false)
+            {
+                TaskEnded?.Invoke(new ManagedTaskEndedEventArgs(task.Id,runId,TaskEndedReason.AlreadyStarted, null));
+                return;
+            }
+            await task.RunAsync(runId).ConfigureAwait(false);
         }
 
-        private bool TryInitTask(ManagedTask task, out string runId)
+        private string InitTask(ManagedTask task)
         {
             task.TaskStarted += TaskStarted;
             task.TaskEnded += TaskEnded;
-            runId = $"[{Guid.NewGuid():N}]";
-            var preconditionReason = task.PreconditionsMet(runId);
-            return preconditionReason == TaskEndedReason.AllGood;
+            return $"[{Guid.NewGuid():N}]";
         }
     }
 }

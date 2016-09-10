@@ -34,9 +34,9 @@ namespace DotNet.Basics.Tests.Tasks
         }
 
         [Test]
-        public async Task StartTask_DetectTaskIsAlreadyRunning_TaskIsRunOnce()
+        public async Task StartAsyncTask_DetectTaskIsAlreadyRunning_TaskIsRunOnce()
         {
-            string taskId = "StartTask_DetectTaskIsAlreadyRunning_TaskIsRunOnce";
+            string taskId = "StartAsyncTask_DetectTaskIsAlreadyRunning_TaskIsRunOnce";
             int hitCount = 0;
 
             var task = _taskFactory.Create<SingletonTask>(taskId, async rid =>
@@ -50,6 +50,26 @@ namespace DotNet.Basics.Tests.Tasks
                 {
                     await _taskRunner.RunAsync(task).ConfigureAwait(false);
                 }).ConfigureAwait(false);
+
+            hitCount.Should().Be(1);
+        }
+        [Test]
+        public void StartSyncTask_DetectTaskIsAlreadyRunning_TaskIsRunOnce()
+        {
+            string taskId = "StartSyncTask_DetectTaskIsAlreadyRunning_TaskIsRunOnce";
+            int hitCount = 0;
+
+            var task = _taskFactory.Create<SingletonTask>(taskId, rid =>
+            {
+                hitCount++;
+                Thread.Sleep(1.Seconds());
+            });
+
+            //try start task 10 times
+            Enumerable.Range(1, 10).ParallelForEach(i =>
+            {
+                _taskRunner.Run(task);
+            });
 
             hitCount.Should().Be(1);
         }

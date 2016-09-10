@@ -10,44 +10,17 @@ namespace DotNet.Basics.Tasks
 
         public OnceOnlyTask(ManagedTask task) : base(task)
         {
-            _syncTask = rid =>
-            {
-                _syncTask = rd => { };
-                base.Run(rid);
-            };
-            _asyncTask = async runId =>
-             {
-                 _asyncTask = rid => Task.CompletedTask;
-                 await base.RunAsync(runId).ConfigureAwait(false);
-             };
+           Init();
         }
 
-        public OnceOnlyTask(string id, Action<string> syncTask, Func<string, TaskEndedReason> preconditionsMet = null) : base(id, syncTask, preconditionsMet)
+        public OnceOnlyTask(string id, Action<string> syncTask) : base(id, syncTask)
         {
-            _syncTask = rid =>
-            {
-                _syncTask = rd => { };
-                base.Run(rid);
-            };
-            _asyncTask = async runId =>
-            {
-                _asyncTask = rid => Task.CompletedTask;
-                await base.RunAsync(runId).ConfigureAwait(false);
-            };
+            Init();
         }
 
-        public OnceOnlyTask(string id, Func<string, Task> asyncTask, Func<string, TaskEndedReason> preconditionsMet = null) : base(id, asyncTask, preconditionsMet)
+        public OnceOnlyTask(string id, Func<string, Task> asyncTask) : base(id, asyncTask)
         {
-            _syncTask = rid =>
-            {
-                _syncTask = rd => { };
-                base.Run(rid);
-            };
-            _asyncTask = async runId =>
-            {
-                _asyncTask = rid => Task.CompletedTask;
-                await base.RunAsync(runId).ConfigureAwait(false);
-            };
+            Init();
         }
 
         internal override void Run(string runId)
@@ -58,6 +31,20 @@ namespace DotNet.Basics.Tasks
         internal override async Task RunAsync(string runId)
         {
             await _asyncTask(runId).ConfigureAwait(false);
+        }
+
+        private void Init()
+        {
+            _syncTask = rid =>
+            {
+                _syncTask = rd => { };
+                base.Run(rid);
+            };
+            _asyncTask = async runId =>
+            {
+                _asyncTask = rid => Task.CompletedTask;
+                await base.RunAsync(runId).ConfigureAwait(false);
+            };
         }
     }
 }

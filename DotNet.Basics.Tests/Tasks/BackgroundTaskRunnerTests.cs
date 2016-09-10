@@ -13,6 +13,28 @@ namespace DotNet.Basics.Tests.Tasks
     public class BackgroundTaskRunnerTests
     {
         [Test]
+        public async Task IsRunning_AsSingleton_TaskRunningIsdetected()
+        {
+            var taskId = "IsRunning_AsSingleton_TaskRunningIsdetected";
+            var bgRunner = new BackgroundTaskRunner();
+
+            bgRunner.StartAsSingleton(taskId, async rid =>
+            {
+                await Task.Delay(1.Seconds()).ConfigureAwait(false);
+            });
+
+            //ensure that task is started
+            await Task.Delay(200.Milliseconds()).ConfigureAwait(false);
+
+            //act
+            var isRunningdetected = bgRunner.IsRunning(taskId);
+
+            //assert
+            isRunningdetected.Should().BeTrue("IsRunning detected");
+        }
+
+
+        [Test]
         public async Task RunSync_AsSingleton_TaskIsRunAssingleton()
         {
             var taskId = "RunSync_AsSingleton_TaskIsRunAssingleton";
@@ -23,8 +45,6 @@ namespace DotNet.Basics.Tests.Tasks
             var runRange = Enumerable.Range(0, runTimes);
             var startedCount = 0;
             var notStartedCount = 0;
-            
-            TaskEndedReason notStartedReason = TaskEndedReason.AllGood;
 
             runTimes.Should().BeGreaterThan(3);//task needs to run at least some times to ensure singleton
 
@@ -37,23 +57,21 @@ namespace DotNet.Basics.Tests.Tasks
                 if (args.Reason == TaskEndedReason.AlreadyStarted)
                 {
                     notStartedCount++;
-                    notStartedReason = args.Reason;
                 }
             };
 
-            runRange.ForEach(i => bgRunner.StartAsSingleton(taskId, async rid =>
+            runRange.ParallelForEach(i => bgRunner.StartAsSingleton(taskId, async rid =>
             {
                 runCount++;
-                await Task.Delay(250.Milliseconds()).ConfigureAwait(false);
+                await Task.Delay(500.Milliseconds()).ConfigureAwait(false);
             }));
 
             while (bgRunner.IsRunning(taskId))
                 await Task.Delay(100.Milliseconds()).ConfigureAwait(false);
 
             runCount.Should().Be(1, "run count");
-            startedCount.Should().Be(1);
+            startedCount.Should().Be(1, "task started");
             notStartedCount.Should().Be(runTimes - 1, "not started count");
-            notStartedReason.Should().Be(TaskEndedReason.AlreadyStarted);
         }
 
 

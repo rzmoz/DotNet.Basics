@@ -10,12 +10,12 @@ namespace DotNet.Basics.Tasks
             Options = new RepeatOptions();
         }
 
-        public RepeaterTask(string id, Action<string> syncTask, Func<string, TaskEndedReason> preconditionsMet = null) : base(id, syncTask, preconditionsMet)
+        public RepeaterTask(string id, Action<string> syncTask) : base(id, syncTask)
         {
             Options = new RepeatOptions();
         }
 
-        public RepeaterTask(string id, Func<string, Task> asyncTask, Func<string, TaskEndedReason> preconditionsMet = null) : base(id, asyncTask, preconditionsMet)
+        public RepeaterTask(string id, Func<string, Task> asyncTask) : base(id, asyncTask)
         {
             Options = new RepeatOptions();
         }
