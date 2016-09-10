@@ -17,7 +17,7 @@ namespace DotNet.Basics.Tasks
             return runStack.Count > 0;
         }
 
-        protected override bool TryAcquireStartTaskLock(string taskId)
+        protected override bool InnerTryAcquireStartTaskLock(string taskId)
         {
             _taskScheduler.TryAdd(taskId, new ConcurrentStack<bool>());
             var runStack = _taskScheduler[taskId];

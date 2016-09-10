@@ -12,7 +12,7 @@ namespace DotNet.Basics.Tasks
             return _singletonScheduler.ContainsKey(taskId);
         }
 
-        protected override bool TryAcquireStartTaskLock(string taskId)
+        protected override bool InnerTryAcquireStartTaskLock(string taskId)
         {
             if (taskId == null) throw new ArgumentNullException(nameof(taskId));
             if (string.IsNullOrWhiteSpace(taskId)) throw new ArgumentException(taskId);
