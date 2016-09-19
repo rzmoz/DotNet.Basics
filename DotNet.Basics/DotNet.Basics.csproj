@@ -87,6 +87,7 @@
     <Compile Include="AppSettings\AppSetting.cs" />
     <Compile Include="AppSettings\SystemConfigurationManager.cs" />
     <Compile Include="AppSettings\IConfigurationManager.cs" />
+    <Compile Include="Pipelines\PipelineStep.cs" />
     <Compile Include="Pipelines\SectionEndedEventArgs.cs" />
     <Compile Include="Pipelines\SectionStartedEventArgs.cs" />
     <Compile Include="Pipelines\PipelineSection.cs" />
@@ -106,7 +107,7 @@
     <Compile Include="Rest\UriExtensions.cs" />
     <Compile Include="Sys\CommandPrompt.cs" />
     <Compile Include="Pipelines\EagerBindStep.cs" />
-    <Compile Include="Pipelines\LazyBindStep.cs" />
+    <Compile Include="Pipelines\LazyBindSection.cs" />
     <Compile Include="Diagnostics\Profiler.cs" />
     <Compile Include="Pipelines\PipelineBlock.cs" />
     <Compile Include="Pipelines\Pipeline.cs" />

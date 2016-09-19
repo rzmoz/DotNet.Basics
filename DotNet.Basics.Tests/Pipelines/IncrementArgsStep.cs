@@ -6,7 +6,7 @@ using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Tests.Pipelines
 {
-    public class IncrementArgsStep : PipelineSection<EventArgs<int>>
+    public class IncrementArgsStep : PipelineStep<EventArgs<int>>
     {
         private readonly ClassThatIncrementArgsDependOn _classThatIncrementArgsDependOn;
 
@@ -14,8 +14,6 @@ namespace DotNet.Basics.Tests.Pipelines
         {
             _classThatIncrementArgsDependOn = classThatIncrementArgsDependOn;
         }
-
-        public override SectionType SectionType => SectionType.Step;
 
         protected override async Task InnerRunAsync(EventArgs<int> args, CancellationToken ct)
         {

@@ -34,7 +34,7 @@ namespace DotNet.Basics.Tests.Pipelines
             var initialStepName = "cancellationStep";
             var additionalStepCount = 10;
 
-            pipeline.AddBlock().AddStep(initialStepName, async (args, ct) =>
+            pipeline.AddStep(initialStepName, async (args, ct) =>
             {
                 counter++;
                 while (ct.IsCancellationRequested == false)
@@ -42,7 +42,7 @@ namespace DotNet.Basics.Tests.Pipelines
             });
 
             for (var i = 0; i < additionalStepCount; i++)
-                pipeline.AddBlock().AddStep(async (args, ct) => counter++);
+                pipeline.AddStep(async (args, ct) => counter++);
 
             pipeline.SectionStarted += args =>
             {
@@ -81,7 +81,7 @@ namespace DotNet.Basics.Tests.Pipelines
         public async Task DisplayName_DisplayNameIsNotSet_TypeNameNameIsUsed()
         {
             var pipeline = new Pipeline<EventArgs<int>>(_container);
-            pipeline.AddBlock().AddStep<IncrementArgsStep>();
+            pipeline.AddStep<IncrementArgsStep>();
             string stepName = null;
 
             pipeline.SectionStarted += (e) =>
@@ -145,10 +145,10 @@ namespace DotNet.Basics.Tests.Pipelines
         public async Task RunAsync_PassArgs_ArgsArePassedInPipeline()
         {
             var pipeline = new Pipeline<EventArgs<int>>(_container);
+            pipeline.AddStep<IncrementArgsStep>();
+            pipeline.AddStep<IncrementArgsStep>();
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
-            pipeline.AddBlock().AddStep<IncrementArgsStep>();
-            pipeline.AddBlock().AddStep<IncrementArgsStep>();
-            pipeline.AddBlock().AddStep<IncrementArgsStep>();
+            pipeline.AddStep<IncrementArgsStep>();
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
 
             var args = await pipeline.RunAsync().ConfigureAwait(false);

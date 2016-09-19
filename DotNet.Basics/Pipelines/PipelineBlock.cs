@@ -24,7 +24,7 @@ namespace DotNet.Basics.Pipelines
 
         public PipelineBlock<T> AddStep<TStep>(string name = null) where TStep : PipelineSection<T>
         {
-            var lazyStep = new LazyBindStep<T, TStep>(name, _container.GetInstance<TStep>);
+            var lazyStep = new LazyBindSection<T, TStep>(name, _container.GetInstance<TStep>);
             InitEvents(lazyStep);
             _subSections.Add(lazyStep);
             return this;
