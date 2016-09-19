@@ -25,7 +25,7 @@ namespace DotNet.Basics.Tasks
             return true;
         }
 
-        protected override bool TryRemoveAcquiredTaskLock(string taskId)
+        protected override bool TryRemoveTaskLock(string taskId)
         {
             try
             {

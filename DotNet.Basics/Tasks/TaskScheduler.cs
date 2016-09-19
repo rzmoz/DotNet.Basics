@@ -14,13 +14,17 @@ namespace DotNet.Basics.Tasks
         public abstract bool IsRunning(string taskId);
 
         protected abstract bool InnerTryAcquireStartTaskLock(string taskId);
-        protected abstract bool TryRemoveAcquiredTaskLock(string taskId);
+        protected abstract bool TryRemoveTaskLock(string taskId);
 
-        public bool TryStart(ManagedTask task, string runId, bool scheduleInBackground)
+        private string NewRunId => $"[{Guid.NewGuid():N}]";
+
+        public bool TryStart(ManagedTask task, RunThread runThread)
         {
-            if (TryAcquireStartTaskLock(task.Id, runId) == false)
+            var runId = NewRunId;
+
+            if (TryAcquireTaskLock(task.Id, runId) == false)
                 return false;
-            if (scheduleInBackground)
+            if (runThread == RunThread.Background)
             {
                 Task.Run(() => Run(task, runId));
                 return true;
@@ -45,16 +49,18 @@ namespace DotNet.Basics.Tasks
             }
             finally
             {
-                TryRemoveAcquiredTaskLock(task.Id);
+                TryRemoveTaskLock(task.Id);
             }
         }
 
 
-        public async Task<bool> TryStartAsync(ManagedTask task, string runId, bool scheduleInBackground)
+        public async Task<bool> TryStartAsync(ManagedTask task, RunThread runThread)
         {
-            if (TryAcquireStartTaskLock(task.Id, runId) == false)
+            var runId = NewRunId;
+
+            if (TryAcquireTaskLock(task.Id, runId) == false)
                 return false;
-            if (scheduleInBackground)
+            if (runThread == RunThread.Background)
             {
                 Task.Run(async () => await RunAsync(task, runId).ConfigureAwait(false));
                 return true;
@@ -62,7 +68,7 @@ namespace DotNet.Basics.Tasks
             return await RunAsync(task, runId).ConfigureAwait(false);
         }
 
-        public async Task<bool> RunAsync(ManagedTask task, string runId)
+        private async Task<bool> RunAsync(ManagedTask task, string runId)
         {
             try
             {
@@ -78,7 +84,7 @@ namespace DotNet.Basics.Tasks
             }
             finally
             {
-                TryRemoveAcquiredTaskLock(task.Id);
+                TryRemoveTaskLock(task.Id);
             }
         }
 
@@ -91,7 +97,7 @@ namespace DotNet.Basics.Tasks
             TaskEnded?.Invoke(new ManagedTaskEndedEventArgs(taskId, runId, TaskEndedReason.Exception, e));
         }
 
-        private bool TryAcquireStartTaskLock(string taskId, string runId)
+        private bool TryAcquireTaskLock(string taskId, string runId)
         {
             if (InnerTryAcquireStartTaskLock(taskId) == false)
             {

@@ -19,7 +19,7 @@ namespace DotNet.Basics.Tasks
             return _singletonScheduler.TryAdd(taskId, false);
         }
 
-        protected override bool TryRemoveAcquiredTaskLock(string taskId)
+        protected override bool TryRemoveTaskLock(string taskId)
         {
             if (taskId == null) throw new ArgumentNullException(nameof(taskId));
             if (string.IsNullOrWhiteSpace(taskId)) throw new ArgumentException(taskId);

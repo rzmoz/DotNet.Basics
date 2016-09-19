@@ -23,7 +23,7 @@ namespace DotNet.Basics.Tests.Tasks
             var started = await runner.TryStartAsync(taskId, async rid =>
             {
                 await Task.Delay(60.Minutes(), ctSource.Token).ConfigureAwait(false);
-            }, RunMode.Singleton | RunMode.Background).ConfigureAwait(false);
+            }, RunThread.Background, RunScope.Singleton).ConfigureAwait(false);
 
             //ensure that task is started
             await Task.Delay(500.Milliseconds(), CancellationToken.None).ConfigureAwait(false);
@@ -66,7 +66,7 @@ namespace DotNet.Basics.Tests.Tasks
             {
                 runCount++;
                 await Task.Delay(500.Milliseconds()).ConfigureAwait(false);
-            }, RunMode.Singleton | RunMode.Background));
+            }, RunThread.Background, RunScope.Singleton ));
 
             await runner.TillTaskIsFinished(taskId).ConfigureAwait(false);
 
@@ -86,7 +86,7 @@ namespace DotNet.Basics.Tests.Tasks
                 runner.TryStart(taskId, (Action<string>)(rid =>
                 {
                     throw new ApplicationException(rid);
-                }), RunMode.Background);
+                }), RunThread.Background);
             }).ConfigureAwait(false);
         }
         [Test]
@@ -99,7 +99,7 @@ namespace DotNet.Basics.Tests.Tasks
                  bgRunner.TryStart(taskId, rid =>
                  {
                      throw new ApplicationException(rid);
-                 }, RunMode.Background);
+                 }, RunThread.Background);
              }).ConfigureAwait(false);
         }
 

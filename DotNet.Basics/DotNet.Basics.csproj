@@ -123,7 +123,8 @@
     <Compile Include="Sys\EnumClass.cs" />
     <Compile Include="Sys\EnumExtensions.cs" />
     <Compile Include="Sys\EventArgs.cs" />
-    <Compile Include="Tasks\RunMode.cs" />
+    <Compile Include="Tasks\RunScope.cs" />
+    <Compile Include="Tasks\RunThread.cs" />
     <Compile Include="Tasks\SingletonTaskScheduler.cs" />
     <Compile Include="Tasks\TaskScheduler.cs" />
     <Compile Include="Tasks\TransientTaskScheduler.cs" />

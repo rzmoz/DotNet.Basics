@@ -25,7 +25,7 @@ namespace DotNet.Basics.Tests.Tasks
             {
                 taskRan = true;
                 throw new ArgumentNullException();
-            }, RunMode.Singleton);
+            },runScope: RunScope.Singleton);
 
             action.ShouldThrow<ArgumentNullException>();
             taskRan.Should().BeTrue();
@@ -44,7 +44,7 @@ namespace DotNet.Basics.Tests.Tasks
                     {
                         hitCount++;
                         await Task.Delay(1.Seconds()).ConfigureAwait(false);
-                    }, RunMode.Singleton).ConfigureAwait(false);
+                    }, runScope: RunScope.Singleton).ConfigureAwait(false);
                 }).ConfigureAwait(false);
 
             hitCount.Should().Be(1);
@@ -62,7 +62,7 @@ namespace DotNet.Basics.Tests.Tasks
                 {
                     hitCount++;
                     Thread.Sleep(1.Seconds());
-                }, RunMode.Singleton);
+                }, runScope: RunScope.Singleton);
             });
 
             hitCount.Should().Be(1);
@@ -83,7 +83,7 @@ namespace DotNet.Basics.Tests.Tasks
                 if (ctSource.Token.IsCancellationRequested)
                     return;
                 taskRan = true;
-            }, RunMode.Singleton);//don't await task finish
+            }, runScope: RunScope.Singleton);//don't await task finish
 
             //ensure task has started
             await Task.Delay(100.Milliseconds(), CancellationToken.None).ConfigureAwait(false);
@@ -109,7 +109,7 @@ namespace DotNet.Basics.Tests.Tasks
             
             try
             {
-                _taskRunner.TryStart(rid => { }, RunMode.Singleton);
+                _taskRunner.TryStart(rid => { }, runScope: RunScope.Singleton);
             }
             catch (ArgumentNullException)
             {
@@ -143,7 +143,7 @@ namespace DotNet.Basics.Tests.Tasks
                         counter++;
                         //do a longrunning task
                         await LongRunningTask(taskDelay, 100000, new ApplicationException("Cowabunga"));
-                    }, RunMode.Singleton).ConfigureAwait(false);
+                    }, runScope: RunScope.Singleton).ConfigureAwait(false);
                 }
                 catch (ApplicationException)
                 {
