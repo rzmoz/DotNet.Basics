@@ -12,30 +12,30 @@ namespace DotNet.Basics.Tests.Tasks
     [TestFixture]
     public class BackgroundTaskRunnerTests
     {
-        private readonly ManagedTaskFactory _factory = new ManagedTaskFactory();
-
         [Test]
         public async Task IsRunning_AsSingleton_TaskRunningIsdetected()
         {
             var runner = new TaskRunner();
             var taskId = "IsRunning_AsSingleton_TaskRunningIsdetected";
-            var bgt = _factory.Create<ManagedTask>(taskId, async rid =>
-            {
-                await Task.Delay(1.Seconds()).ConfigureAwait(false);
-            });
 
-            runner.TryStart(bgt, RunMode.Singleton | RunMode.Background);
+            var ctSource = new CancellationTokenSource();
+
+            var started = await runner.TryStartAsync(taskId, async rid =>
+            {
+                await Task.Delay(60.Minutes(), ctSource.Token).ConfigureAwait(false);
+            }, RunMode.Singleton | RunMode.Background).ConfigureAwait(false);
 
             //ensure that task is started
-            await Task.Delay(200.Milliseconds()).ConfigureAwait(false);
+            await Task.Delay(500.Milliseconds(), CancellationToken.None).ConfigureAwait(false);
 
             //act
             var isRunningdetected = runner.IsRunning(taskId);
+            ctSource.Cancel();
 
             //assert
+            started.Should().BeTrue("started");
             isRunningdetected.Should().BeTrue("IsRunning detected");
         }
-
 
         [Test]
         public async Task RunSync_AsSingleton_TaskIsRunAssingleton()
@@ -50,12 +50,6 @@ namespace DotNet.Basics.Tests.Tasks
 
             runTimes.Should().BeGreaterThan(3);//task needs to run at least some times to ensure singleton
 
-            var bgTask = _factory.Create<ManagedTask>(taskId, async rid =>
-            {
-                runCount++;
-                await Task.Delay(500.Milliseconds()).ConfigureAwait(false);
-            });
-
             runner.TaskStarted += (args) =>
             {
                 startedCount++;
@@ -68,10 +62,13 @@ namespace DotNet.Basics.Tests.Tasks
                 }
             };
 
-            runRange.ParallelForEach(i => runner.TryStart(bgTask, RunMode.Singleton | RunMode.Background));
+            runRange.ParallelForEach(i => runner.TryStart(taskId, async rid =>
+            {
+                runCount++;
+                await Task.Delay(500.Milliseconds()).ConfigureAwait(false);
+            }, RunMode.Singleton | RunMode.Background));
 
-            while (runner.IsRunning(taskId))
-                await Task.Delay(100.Milliseconds()).ConfigureAwait(false);
+            await runner.TillTaskIsFinished(taskId).ConfigureAwait(false);
 
             runCount.Should().Be(1, "run count");
             startedCount.Should().Be(1, "task started");
@@ -84,14 +81,12 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var taskId = "RunSync_GetExceptionsFromBgTasks_ExceptionsAreBubbled";
 
-            var bgTask = _factory.Create<ManagedTask>(taskId, (Action<string>)(rid =>
-           {
-               throw new ApplicationException(rid);
-           }));
-
-            await AssertTaskAsync(taskId, bgRunner =>
+            await AssertTaskAsync(taskId, runner =>
             {
-                bgRunner.TryStart(bgTask, RunMode.Background);
+                runner.TryStart(taskId, (Action<string>)(rid =>
+                {
+                    throw new ApplicationException(rid);
+                }), RunMode.Background);
             }).ConfigureAwait(false);
         }
         [Test]
@@ -99,14 +94,12 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var taskId = "RunAsync_GetExceptionsFromBgTasks_ExceptionsAreBubbled";
 
-            var bgTask = _factory.Create<ManagedTask>(taskId, rid =>
-            {
-                throw new ApplicationException(rid);
-            });
-
             await AssertTaskAsync(taskId, bgRunner =>
              {
-                 bgRunner.TryStart(bgTask, RunMode.Background);
+                 bgRunner.TryStart(taskId, rid =>
+                 {
+                     throw new ApplicationException(rid);
+                 }, RunMode.Background);
              }).ConfigureAwait(false);
         }
 
@@ -117,8 +110,6 @@ namespace DotNet.Basics.Tests.Tasks
             Exception lastException = null;
             string lastTaskId = null;
             string lastRunId = null;
-            string runId = null;
-            bool taskEnded = false;
 
             bgRunner.TaskStarted += (args) =>
              {
@@ -129,14 +120,11 @@ namespace DotNet.Basics.Tests.Tasks
             bgRunner.TaskEnded += (args) =>
                {
                    lastException = args.Exception;
-                   taskEnded = true;
-                   runId = args.RunId;
                };
 
             startTaskCallback(bgRunner);
 
-            while (taskEnded == false)
-                await Task.Delay(50.Milliseconds(), CancellationToken.None).ConfigureAwait(false);
+            await bgRunner.TillTaskIsFinished(taskId).ConfigureAwait(false);
 
             taskRan.Should().BeTrue();
             lastTaskId.Should().Be(taskId);

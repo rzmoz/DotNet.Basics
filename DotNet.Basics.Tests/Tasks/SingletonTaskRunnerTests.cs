@@ -14,20 +14,18 @@ namespace DotNet.Basics.Tests.Tasks
     public class SingletonTaskRunnerTests
     {
         private readonly TaskRunner _taskRunner = new TaskRunner();
-        private readonly ManagedTaskFactory _taskFactory = new ManagedTaskFactory();
+        
         [Test]
         public void ExceptionThrown_GetExceptions_ExceptionsAreBubbled()
         {
             var taskID = "ExceptionThrown_GetExceptions_ExceptionsAreBubbled";
             bool taskRan = false;
-
-            var task = _taskFactory.Create<ManagedTask>(taskID, rid =>
+            
+            Action action = () => _taskRunner.TryStart(taskID, rid =>
             {
                 taskRan = true;
                 throw new ArgumentNullException();
-            });
-
-            Action action = () => _taskRunner.TryStart(task, RunMode.Singleton);
+            }, RunMode.Singleton);
 
             action.ShouldThrow<ArgumentNullException>();
             taskRan.Should().BeTrue();
@@ -38,17 +36,15 @@ namespace DotNet.Basics.Tests.Tasks
         {
             string taskId = "StartAsyncTask_DetectTaskIsAlreadyRunning_TaskIsRunOnce";
             int hitCount = 0;
-
-            var task = _taskFactory.Create<ManagedTask>(taskId, async rid =>
-            {
-                hitCount++;
-                await Task.Delay(1.Seconds()).ConfigureAwait(false);
-            });
-
+            
             //try start task 10 times
             await Enumerable.Range(1, 10).ParallelForEachAsync(async i =>
                 {
-                    await _taskRunner.TryStartAsync(task, RunMode.Singleton).ConfigureAwait(false);
+                    await _taskRunner.TryStartAsync(taskId, async rid =>
+                    {
+                        hitCount++;
+                        await Task.Delay(1.Seconds()).ConfigureAwait(false);
+                    }, RunMode.Singleton).ConfigureAwait(false);
                 }).ConfigureAwait(false);
 
             hitCount.Should().Be(1);
@@ -58,17 +54,15 @@ namespace DotNet.Basics.Tests.Tasks
         {
             string taskId = "StartSyncTask_DetectTaskIsAlreadyRunning_TaskIsRunOnce";
             int hitCount = 0;
-
-            var task = _taskFactory.Create<ManagedTask>(taskId, rid =>
-            {
-                hitCount++;
-                Thread.Sleep(1.Seconds());
-            });
-
+            
             //try start task 10 times
             Enumerable.Range(1, 10).ParallelForEach(i =>
             {
-                _taskRunner.TryStart(task, RunMode.Singleton);
+                _taskRunner.TryStart(taskId, rid =>
+                {
+                    hitCount++;
+                    Thread.Sleep(1.Seconds());
+                }, RunMode.Singleton);
             });
 
             hitCount.Should().Be(1);
@@ -81,17 +75,15 @@ namespace DotNet.Basics.Tests.Tasks
 
             bool taskRan = false;
             var ctSource = new CancellationTokenSource();
-
-            var task = _taskFactory.Create<ManagedTask>(taskId, async rid =>
+            
+            var runTask = _taskRunner.TryStartAsync(taskId, async rid =>
             {
                 while (ctSource.Token.IsCancellationRequested == false)
                     await Task.Delay(50.Milliseconds(), CancellationToken.None).ConfigureAwait(false);
                 if (ctSource.Token.IsCancellationRequested)
                     return;
                 taskRan = true;
-            });
-
-            var runTask = _taskRunner.TryStartAsync(task, RunMode.Singleton);//don't await task finish
+            }, RunMode.Singleton);//don't await task finish
 
             //ensure task has started
             await Task.Delay(100.Milliseconds(), CancellationToken.None).ConfigureAwait(false);
@@ -114,10 +106,10 @@ namespace DotNet.Basics.Tests.Tasks
         public void Run_TaskIdEmptyTask_ExceptionIsThrown(string taskId)
         {
             var errorCaught = false;
+            
             try
             {
-                var task = _taskFactory.Create<ManagedTask>();
-                _taskRunner.TryStart(task, RunMode.Singleton);
+                _taskRunner.TryStart(rid => { }, RunMode.Singleton);
             }
             catch (ArgumentNullException)
             {
@@ -138,14 +130,7 @@ namespace DotNet.Basics.Tests.Tasks
             var counter = 0;
             var taskDelay = 200.Milliseconds();
             var expectedDuration = ((int)(taskDelay.TotalMilliseconds * runCount)).Milliseconds();
-
-            var task = _taskFactory.Create<ManagedTask>(taskId, async rid =>
-            {
-                counter++;
-                //do a longrunning task
-                await LongRunningTask(taskDelay, 100000, new ApplicationException("Cowabunga"));
-            });
-
+            
             var profiler = new Profiler();
             profiler.Start();
             //run task multiple times in sequence
@@ -153,7 +138,12 @@ namespace DotNet.Basics.Tests.Tasks
             {
                 try
                 {
-                    await _taskRunner.TryStartAsync(task, RunMode.Singleton).ConfigureAwait(false);
+                    await _taskRunner.TryStartAsync(taskId, async rid =>
+                    {
+                        counter++;
+                        //do a longrunning task
+                        await LongRunningTask(taskDelay, 100000, new ApplicationException("Cowabunga"));
+                    }, RunMode.Singleton).ConfigureAwait(false);
                 }
                 catch (ApplicationException)
                 {

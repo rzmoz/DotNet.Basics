@@ -27,6 +27,27 @@ namespace DotNet.Basics.Tasks
             return _transientScheduler.IsRunning(taskId) || _singletonScheduler.IsRunning(taskId);
         }
 
+        public bool TryStart(Action<string> syncTask, RunMode runMode = RunMode.Transient)
+        {
+            var task = _taskFactory.Create<ManagedTask>(syncTask);
+            return TryStart(task, runMode);
+        }
+        public async Task<bool> TryStartAsync(Func<string, Task> asyncTask, RunMode runMode = RunMode.Transient)
+        {
+            var task = _taskFactory.Create<ManagedTask>(asyncTask);
+            return await TryStartAsync(task, runMode).ConfigureAwait(false);
+        }
+        public bool TryStart(string taskId, Action<string> syncTask, RunMode runMode = RunMode.Transient)
+        {
+            var task = _taskFactory.Create<ManagedTask>(taskId, syncTask);
+            return TryStart(task, runMode);
+        }
+        public async Task<bool> TryStartAsync(string taskId, Func<string, Task> asyncTask, RunMode runMode = RunMode.Transient)
+        {
+            var task = _taskFactory.Create<ManagedTask>(taskId, asyncTask);
+            return await TryStartAsync(task, runMode).ConfigureAwait(false);
+        }
+
         public bool TryStart(ManagedTask task, RunMode runMode = RunMode.Transient)
         {
             var runId = NewRunId;

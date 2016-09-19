@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks
 {
-    public class RepeaterTaskRunner : TaskRunner
+    public class RepeaterTaskRunner
     {
+        private readonly TaskRunner _taskRunner = new TaskRunner();
+
         public async Task<bool> RunAsync(ManagedTask task, Func<Exception, bool> untilPredicate, RepeatOptions options = null)
         {
             if (task == null)
@@ -30,7 +32,7 @@ namespace DotNet.Basics.Tasks
                     Exception exceptionInLastLoop = null;
                     try
                     {
-                        await TryStartAsync(task, options.RunMode).ConfigureAwait(false);
+                        await _taskRunner.TryStartAsync(task, options.RunMode).ConfigureAwait(false);
                     }
                     catch (Exception e)
                     {
