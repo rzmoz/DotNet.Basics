@@ -75,11 +75,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppSettings\AppSettingsTests.cs" />
-    <Compile Include="AppSettings\AppSettingsValidator.cs" />
+    <Compile Include="AppSettings\AppSettingsProviderTests.cs" />
     <Compile Include="Collections\CollectionExtensionsTests.cs" />
     <Compile Include="Collections\StringKeyDictionaryTests.cs" />
     <Compile Include="Compression\SevenZipTests.cs" />
-    <Compile Include="Ioc\SeimpleContainerTests.cs" />
+    <Compile Include="Ioc\SimpleContainerTests.cs" />
     <Compile Include="Ioc\TestHelpers\MyRegistrations.cs" />
     <Compile Include="Ioc\TestHelpers\TestSettingsProvider.cs" />
     <Compile Include="Ioc\TestHelpers\TypeWithValue.cs" />

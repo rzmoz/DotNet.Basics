@@ -13,44 +13,32 @@ namespace DotNet.Basics.Tests.AppSettings
         [Test]
         public void Verify_RequiredKeys_RequiredKeysArePresent()
         {
-            var settingsProvider = new AppSettingsProvider();
-            settingsProvider.Register(new AppSetting<string>("RequiredKey"));
+            var validator = new AppSettingsProvider();
+            validator.Register(new AppSetting<string>("RequiredKey"));
 
-            //act
-            var isValid = settingsProvider.VerifyAll();
-
-            isValid.Should().BeTrue();
+            Action action = () => validator.VerifyAll();
+            action.ShouldNotThrow();
         }
-
         [Test]
         public void Verify_RequiredKeys_RequiredKeysAreMissing()
         {
             var missingKey = "MissingKey";
-            var settingsProvider = new AppSettingsProvider();
-            settingsProvider.Register(new AppSetting<string>(missingKey));
-            IReadOnlyCollection<string> missingKeys;
+            var validator = new AppSettingsProvider();
+            validator.Register(new AppSetting<string>(missingKey));
 
-            //act
-            var isValid = settingsProvider.VerifyAll(out missingKeys);
-
-            isValid.Should().BeFalse();
-            missingKeys.Single().Should().Be(missingKey);
+            Action action = () => validator.VerifyAll();
+            action.ShouldThrow<RequiredConfigurationNotSetException>().WithMessage(missingKey);
         }
 
         [Test]
         public void Verify_DefaultValues_SettingsWithDefaultValuesAreNotRequiredToBeSet()
         {
-            //arrange
             var defaultValue = "MyDefaultValue%&/%&/¤%/%&";
             var appSetting = new AppSetting<string>("MissingKey", defaultValue);
             var settingsValidator = new AppSettingsProvider();
             settingsValidator.Register(appSetting);
-
-            //act
-            var isValid = settingsValidator.VerifyAll();
-
-            //assert
-            isValid.Should().BeTrue();
+            Action action = () => settingsValidator.VerifyAll();
+            action.ShouldNotThrow();
             appSetting.GetValue().Should().Be(defaultValue);
             appSetting.DefaultValue.Should().Be(defaultValue);
         }

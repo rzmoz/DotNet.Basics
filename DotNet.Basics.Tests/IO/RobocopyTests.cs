@@ -38,10 +38,11 @@ namespace DotNet.Basics.Tests.IO
 
             //act
             Robocopy.MoveContent(sourceDir.FullName, targetDir.FullName, null, true, null);
-            Robocopy.MoveContent(emptyDir.FullName, targetDir.FullName, null, true, null);//move empty dir  to ensure target dir is not cleaned
+            Robocopy.MoveContent(emptyDir.FullName, targetDir.FullName, null, true, null);//move empty dir to ensure target dir is not cleaned
 
             //assert
-            sourceDir.GetPaths().Count().Should().Be(0);
+            sourceDir.Exists().Should().BeTrue(sourceDir.FullName);
+            sourceDir.IsEmpty();
             targetDir.GetFiles().Single().Name.Should().Be("TextFile1.txt");
         }
 

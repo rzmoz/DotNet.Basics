@@ -11,7 +11,7 @@ using SimpleInjector;
 namespace DotNet.Basics.Tests.Ioc
 {
     [TestFixture]
-    public class SeimpleContainerTests
+    public class SimpleContainerTests
     {
         private const string _missingKey = "MissingKey";
         private const string _foundKey = "RequiredKey";

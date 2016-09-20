@@ -63,6 +63,16 @@ namespace DotNet.Basics.IO
             return Run(sourceDir, targetDir, null, options);
         }
 
+
+        public static int MoveFolder(string sourceDir, string targetDir, string filter = null, bool recurse = false, string extraOptions = null)
+        {
+            string options = $"{_moveOption} {extraOptions}";
+            if (recurse)
+                options = $"{_includeSubfoldersOption} {options}";
+            var moveResult = Run(sourceDir, targetDir, filter, options);
+            return moveResult;
+        }
+
         /// <summary>
         /// http://ss64.com/nt/robocopy.html
         /// http://ss64.com/nt/robocopy-exit.html
@@ -70,10 +80,9 @@ namespace DotNet.Basics.IO
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
         public static int MoveContent(string sourceDir, string targetDir, string filter = null, bool recurse = false, string extraOptions = null)
         {
-            string options = $"{_moveOption} {extraOptions}";
-            if (recurse)
-                options = $"{_includeSubfoldersOption} {options}";
-            return Run(sourceDir, targetDir, filter, options);
+            var result = MoveFolder(sourceDir, targetDir, filter, recurse, extraOptions);
+            sourceDir.ToDir().CreateIfNotExists();
+            return result;
         }
 
         private static void Init()

@@ -61,7 +61,7 @@ namespace DotNet.Basics.IO
                 var target = dir.Parent.ToDir(source.Name);
                 if (target.FullName.Equals(dir.FullName, StringComparison.InvariantCultureIgnoreCase))
                     subDirIsIdenticalToParentDir = true;
-                Robocopy.MoveContent(source.FullName, target.FullName, null, true);
+                Robocopy.MoveFolder(source.FullName, target.FullName, null, true);
             }
 
             if (subDirIsIdenticalToParentDir == false)
@@ -74,7 +74,7 @@ namespace DotNet.Basics.IO
                 }
                 catch (Exception)
                 {
-                    Robocopy.MoveContent(source.FullName, target.FullName);
+                    Robocopy.MoveFolder(source.FullName, target.FullName);
                 }
             }
 
