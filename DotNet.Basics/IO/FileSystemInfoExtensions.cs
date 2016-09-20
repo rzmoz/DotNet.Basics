@@ -22,6 +22,7 @@ namespace DotNet.Basics.IO
             else
                 PowerShellConsole.CopyItem(path.FullName, destination.FullName, force: false, recurse: false);
         }
+
         public static void CopyTo(this Path path, FilePath destination, bool overwrite = false)
         {
             if (path is DirPath)

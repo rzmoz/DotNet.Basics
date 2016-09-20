@@ -12,7 +12,6 @@ namespace DotNet.Basics.IO
 {
     public static class DirExtensions
     {
-
         public static DirPath ToDir(this Path path, params string[] pathSegments)
         {
             return new DirPath(path.Segments, path.Delimiter).Add(pathSegments);
@@ -146,7 +145,6 @@ namespace DotNet.Basics.IO
             {
                 //kill exceptions if not found
             }
-
         }
         
         public static void GrantAccess(this DirPath dir, string username, FileSystemRights fileSystemRights = FileSystemRights.FullControl)

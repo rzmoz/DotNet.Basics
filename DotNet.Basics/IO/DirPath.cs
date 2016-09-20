@@ -19,7 +19,6 @@ namespace DotNet.Basics.IO
             : base(pathSegments, true, delimiter)
         { }
 
-
         public void CleanIfExists()
         {
             if (IsFolder == false)

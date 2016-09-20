@@ -70,6 +70,7 @@ namespace DotNet.Basics.IO
                 return Create(allSegments, false);
             return asPath;
         }
+
         public static Path ToPath(this string path, bool isFolder, params string[] segments)
         {
             if (string.IsNullOrEmpty(path))
@@ -88,6 +89,7 @@ namespace DotNet.Basics.IO
                 return false;
             return _protocolRegex.IsMatch(path);
         }
+
         public static bool IsProtocol(this string path)
         {
             return path?.EndsWith("://") ?? false;

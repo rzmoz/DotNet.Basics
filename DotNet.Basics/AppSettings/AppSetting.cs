@@ -1,62 +1,59 @@
 ﻿using System;
+using System.Globalization;
 
 namespace DotNet.Basics.AppSettings
 {
     public class AppSetting : AppSetting<string>
     {
         public AppSetting(string key) : base(key)
-        {
-        }
+        { }
 
         public AppSetting(string key, bool required, string defaultValue) : base(key, required, defaultValue)
-        {
-        }
+        { }
 
         public AppSetting(string key, IConfigurationManager configurationManager) : base(key, configurationManager)
-        {
-        }
+        { }
 
         public AppSetting(string key, bool required, string defaultValue, IConfigurationManager configurationManager) : base(key, required, defaultValue, configurationManager)
-        {
-        }
+        { }
     }
+
     public class AppSetting<T> : IAppSetting
     {
         private readonly IConfigurationManager _configurationManager;
         private readonly Func<object, object> _parser;
+        private readonly IFormatProvider _usCulture = new CultureInfo("en-us");
 
         public AppSetting(string key)
             : this(key, new SystemConfigurationManager())
-        {
-        }
+        { }
 
         /***********************************************************************/
         public AppSetting(string key, Func<string, T> customParser)
             : this(key, customParser, new SystemConfigurationManager())
-        {
-        }
+        { }
+
         public AppSetting(string key, IConfigurationManager configurationManager)
             : this(key, true, default(T), configurationManager)
-        {
-        }
+        { }
+
         public AppSetting(string key, bool required, T defaultValue)
             : this(key, required, defaultValue, new SystemConfigurationManager())
-        {
-        }
+        { }
+
         /***********************************************************************/
         public AppSetting(string key, Func<string, T> customParser, IConfigurationManager configurationManager)
             : this(key, true, default(T), customParser, configurationManager)
-        {
-        }
+        { }
+
         public AppSetting(string key, bool required, T defaultValue, Func<string, T> customParser)
             : this(key, required, defaultValue, customParser, new SystemConfigurationManager())
-        {
-        }
+        { }
 
         public AppSetting(string key, bool required, T defaultValue, IConfigurationManager configurationManager)
             : this(key, required, defaultValue, null, configurationManager)
-        {
-        }
+        { }
+
         /***********************************************************************/
         public AppSetting(string key, bool required, T defaultValue, Func<string, T> customParser, IConfigurationManager configurationManager)
         {
@@ -71,7 +68,6 @@ namespace DotNet.Basics.AppSettings
             else
                 _parser = value => customParser(value?.ToString());
         }
-
 
         public string Key { get; }
         public bool Required { get; }
@@ -101,33 +97,35 @@ namespace DotNet.Basics.AppSettings
         private object DefaultParse(object value)
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
-            var parseType = value.GetType().FullName;
+            var parseType = typeof(T).FullName;
             switch (parseType)
             {
                 case "System.String":
                     return value;
                 case "System.Int16":
-                    return short.Parse(value.ToString());
+                    return short.Parse(value.ToString(), _usCulture);
                 case "System.UInt16":
-                    return ushort.Parse(value.ToString());
+                    return ushort.Parse(value.ToString(), _usCulture);
                 case "System.Int32":
-                    return int.Parse(value.ToString());
+                    return int.Parse(value.ToString(), _usCulture);
                 case "System.UInt32":
-                    return uint.Parse(value.ToString());
+                    return uint.Parse(value.ToString(), _usCulture);
                 case "System.Int64":
-                    return long.Parse(value.ToString());
+                    return long.Parse(value.ToString(), _usCulture);
                 case "System.UInt64":
-                    return ulong.Parse(value.ToString());
+                    return ulong.Parse(value.ToString(), _usCulture);
                 case "System.Boolean":
                     return bool.Parse(value.ToString());
                 case "System.Double":
-                    return double.Parse(value.ToString());
+                    return double.Parse(value.ToString(), _usCulture);
                 case "System.Byte":
-                    return byte.Parse(value.ToString());
+                    return byte.Parse(value.ToString(), _usCulture);
                 case "System.Decimal":
-                    return decimal.Parse(value.ToString());
+                    return decimal.Parse(value.ToString(), _usCulture);
                 case "System.Single":
-                    return float.Parse(value.ToString());
+                    return float.Parse(value.ToString(), _usCulture);
+                case "System.Guid":
+                    return Guid.Parse(value.ToString());
                 case "System.Uri":
                     return new Uri(value.ToString());
                 default:

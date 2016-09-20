@@ -27,6 +27,7 @@ namespace DotNet.Basics.IO
 
             return targetFile.ToFile();
         }
+
         public static FilePath WriteAllText(this string content, Path targetPath, bool overwrite = false)
         {
             if (targetPath == null) throw new ArgumentNullException(nameof(targetPath));
@@ -35,10 +36,12 @@ namespace DotNet.Basics.IO
 
             return WriteAllText(content, targetPath.FullName, overwrite);
         }
+
         public static FilePath WriteAllText(this string content, FilePath targetPath, bool overwrite = false)
         {
             return WriteAllText(content, targetPath.FullName, overwrite);
         }
+
         public static FilePath WriteAllText(this string content, DirPath targetDir, string fileName, bool overwrite = false)
         {
             return WriteAllText(content, targetDir.ToFile(fileName).FullName, overwrite);

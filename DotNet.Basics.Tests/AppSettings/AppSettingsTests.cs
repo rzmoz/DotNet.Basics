@@ -26,9 +26,8 @@ namespace DotNet.Basics.Tests.AppSettings
             parsed.Last().Should().Be("3");
         }
 
-
         [Test]
-        public void GetValue_RequiredIsSet_ValueIsRetrieved()
+        public void GetValue_FromSystemConfigurationManager_ValueIsRetrieved()
         {
             var setting = new AppSetting<string>("RequiredKey");
             setting.GetValue().Should().Be("ValueIsSet");
@@ -50,7 +49,7 @@ namespace DotNet.Basics.Tests.AppSettings
         [Test]
         public void GetValue_Uri_ValueIsRightType()
         {
-            AssertValueType<Uri>(new Uri("http://localhost/"));
+            AssertValueType<Uri>("http://localhost/", new Uri("http://localhost/"));
         }
         [Test]
         public void GetValue_UShort_ValueIsRightType()
@@ -75,7 +74,8 @@ namespace DotNet.Basics.Tests.AppSettings
         [Test]
         public void GetValue_Long_ValueIsRightType()
         {
-            AssertValueType<long>(DateTime.UtcNow.Ticks);
+            var ticks = DateTime.UtcNow.Ticks;
+            AssertValueType<long>(ticks);
         }
         [Test]
         public void GetValue_ULong_ValueIsRightType()
@@ -85,17 +85,17 @@ namespace DotNet.Basics.Tests.AppSettings
         [Test]
         public void GetValue_Double_ValueIsRightType()
         {
-            AssertValueType<double>(12.0d);
+            AssertValueType<double>("12.0", 12.0d);
         }
         [Test]
         public void GetValue_Decimal_ValueIsRightType()
         {
-            AssertValueType<decimal>(12.0m);
+            AssertValueType<decimal>("12.0", 12.0m);
         }
         [Test]
         public void GetValue_Float_ValueIsRightType()
         {
-            AssertValueType<float>(12.0f);
+            AssertValueType<float>("12.0", 12.0f);
         }
         [Test]
         public void GetValue_Byte_ValueIsRightType()
@@ -105,14 +105,30 @@ namespace DotNet.Basics.Tests.AppSettings
         [Test]
         public void GetValue_Boolean_ValueIsRightType()
         {
-            AssertValueType<bool>(true);
+            AssertValueType<bool>("TrUe", true);
+            AssertValueType<bool>("true", true);
+            AssertValueType<bool>("TRUE", true);
+        }
+        [Test]
+        public void GetValue_Guid_ValueIsRightType()
+        {
+            var guid = Guid.NewGuid();
+
+            AssertValueType<Guid>(guid);
+            AssertValueType<Guid>(guid.ToString("N"), guid);
         }
 
-        private void AssertValueType<T>(T value)
+        private void AssertValueType<T>(T expected)
+        {
+            AssertValueType<T>(expected.ToString(), expected);
+        }
+        private void AssertValueType<T>(string input, T expected)
         {
             var randomKey = Guid.NewGuid().ToString("N");
-            var setting = new AppSetting<T>(randomKey, false, value);
-            setting.GetValue().Should().Be(value);
+            var settingsProvider = Substitute.For<IConfigurationManager>();
+            settingsProvider.Get(Arg.Any<string>()).Returns(input);
+            var setting = new AppSetting<T>(randomKey, false, default(T), settingsProvider);
+            setting.GetValue().Should().Be(expected);
         }
     }
 }

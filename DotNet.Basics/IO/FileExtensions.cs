@@ -11,19 +11,23 @@ namespace DotNet.Basics.IO
         {
             return new FilePath(path).Add(pathSegments);
         }
+
         public static FilePath ToFile(this Path path, params string[] pathSegments)
         {
             return new FilePath(path.Segments, path.Delimiter).Add(pathSegments);
         }
+
         public static bool MoveTo(this FilePath sourceFile, DirPath targetDir, bool overwrite = false)
         {
             var targetFile = targetDir.Add(sourceFile.Name).ToFile();
             return sourceFile.MoveTo(targetFile, overwrite);
         }
+
         public static bool MoveTo(this FilePath sourceFile, string targetFile, bool overwrite = false)
         {
             return sourceFile.MoveTo(targetFile.ToFile(), overwrite);
         }
+
         public static bool MoveTo(this FilePath sourceFile, FilePath targetFile, bool overwrite = false)
         {
             if (targetFile == null) throw new ArgumentNullException(nameof(targetFile));
