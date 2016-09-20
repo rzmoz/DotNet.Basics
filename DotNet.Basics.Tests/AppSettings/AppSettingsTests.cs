@@ -15,10 +15,11 @@ namespace DotNet.Basics.Tests.AppSettings
         [Test]
         public void Ctor_CustomParserArray_ValueIsParsed()
         {
-            var settingsProvider = Substitute.For<IConfigurationManager>();
-            settingsProvider.Get(Arg.Any<string>()).Returns("['1','2,','3']");
+            var configurationManager = Substitute.For<IConfigurationManager>();
+            configurationManager.Get(Arg.Any<string>()).Returns("['1','2,','3']");
 
-            var setting = new AppSetting<string[]>("Ctor_CustomParserArray_ValueIsParsed", JsonConvert.DeserializeObject<string[]>, settingsProvider);
+            var setting = new AppSetting<string[]>("Ctor_CustomParserArray_ValueIsParsed",
+                JsonConvert.DeserializeObject<string[]>, configurationManager);
 
             var parsed = setting.GetValue();
 
@@ -30,7 +31,7 @@ namespace DotNet.Basics.Tests.AppSettings
         [Test]
         public void GetValue_FromSystemConfigurationManager_ValueIsRetrieved()
         {
-            var setting = new AppSetting<string>("RequiredKey");
+            var setting = new AppSetting("RequiredKey");
             setting.GetValue().Should().Be("ValueIsSet");
         }
         [Test]
@@ -50,6 +51,7 @@ namespace DotNet.Basics.Tests.AppSettings
         {
             AssertValueType<DirPath>(path.ToDir());
         }
+
         [Test]
         [TestCase(@"c:\mypath\myfile.txt")]//absolute path
         [TestCase(@"\mypath\myfile.txt")]//relative path
@@ -57,7 +59,6 @@ namespace DotNet.Basics.Tests.AppSettings
         {
             AssertValueType<FilePath>(path.ToFile());
         }
-
 
         /************** Non-Simple System Types **************/
 
@@ -182,9 +183,9 @@ namespace DotNet.Basics.Tests.AppSettings
             Console.WriteLine($"Asserting appsetting: {input} conversion to {typeof(T).FullName}");
 
             var randomKey = Guid.NewGuid().ToString("N");
-            var settingsProvider = Substitute.For<IConfigurationManager>();
-            settingsProvider.Get(Arg.Any<string>()).Returns(input);
-            var setting = new AppSetting<T>(randomKey, false, default(T), settingsProvider);
+            var configurationManager = Substitute.For<IConfigurationManager>();
+            configurationManager.Get(Arg.Any<string>()).Returns(input);
+            var setting = new AppSetting<T>(randomKey, configurationManager: configurationManager);
             setting.GetValue().Should().Be(expected);
         }
     }

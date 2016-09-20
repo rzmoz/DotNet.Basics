@@ -6,17 +6,20 @@ namespace DotNet.Basics.AppSettings
 {
     public class AppSetting : AppSetting<string>
     {
-        public AppSetting(string key) : base(key)
-        { }
+        public AppSetting(string key, Func<string, string> customParser = null, IConfigurationManager configurationManager = null) : base(key, customParser, configurationManager)
+        {
+        }
 
-        public AppSetting(string key, bool required, string defaultValue) : base(key, required, defaultValue)
-        { }
-
-        public AppSetting(string key, IConfigurationManager configurationManager) : base(key, configurationManager)
-        { }
-
-        public AppSetting(string key, bool required, string defaultValue, IConfigurationManager configurationManager) : base(key, required, defaultValue, configurationManager)
-        { }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="defaultValue">Setting default value will cause the settings validator to return this value instead of throwing exception if key is not set in configuration</param>
+        /// <param name="customParser"></param>
+        /// <param name="configurationManager"></param>
+        public AppSetting(string key, string defaultValue, Func<string, string> customParser = null, IConfigurationManager configurationManager = null) : base(key, defaultValue, customParser, configurationManager)
+        {
+        }
     }
 
     public class AppSetting<T> : IAppSetting
@@ -24,46 +27,31 @@ namespace DotNet.Basics.AppSettings
         private readonly IConfigurationManager _configurationManager;
         private readonly Func<object, object> _parser;
         private readonly IFormatProvider _usCulture = new CultureInfo("en-us");
-
-        public AppSetting(string key)
-            : this(key, new SystemConfigurationManager())
-        { }
-
-        /***********************************************************************/
-        public AppSetting(string key, Func<string, T> customParser)
-            : this(key, customParser, new SystemConfigurationManager())
-        { }
-
-        public AppSetting(string key, IConfigurationManager configurationManager)
-            : this(key, true, default(T), configurationManager)
-        { }
-
-        public AppSetting(string key, bool required, T defaultValue)
-            : this(key, required, defaultValue, new SystemConfigurationManager())
-        { }
-
-        /***********************************************************************/
-        public AppSetting(string key, Func<string, T> customParser, IConfigurationManager configurationManager)
+        
+        public AppSetting(string key, Func<string, T> customParser = null,
+            IConfigurationManager configurationManager = null)
             : this(key, true, default(T), customParser, configurationManager)
         { }
 
-        public AppSetting(string key, bool required, T defaultValue, Func<string, T> customParser)
-            : this(key, required, defaultValue, customParser, new SystemConfigurationManager())
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="defaultValue">Setting default value will cause the settings validator to return this value instead of throwing exception if key is not set in configuration</param>
+        /// <param name="customParser"></param>
+        /// <param name="configurationManager"></param>
+        public AppSetting(string key, T defaultValue, Func<string, T> customParser = null, IConfigurationManager configurationManager = null)
+            : this(key, false, defaultValue, customParser, configurationManager)
         { }
 
-        public AppSetting(string key, bool required, T defaultValue, IConfigurationManager configurationManager)
-            : this(key, required, defaultValue, null, configurationManager)
-        { }
-
-        /***********************************************************************/
-        public AppSetting(string key, bool required, T defaultValue, Func<string, T> customParser, IConfigurationManager configurationManager)
+        private AppSetting(string key, bool required, T defaultValue, Func<string, T> customParser = null,
+            IConfigurationManager configurationManager = null)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
-            if (configurationManager == null) throw new ArgumentNullException(nameof(configurationManager));
             Key = key;
-            Required = required;
             DefaultValue = defaultValue;
-            _configurationManager = configurationManager;
+            Required = required;
+            _configurationManager = configurationManager ?? new SystemConfigurationManager();
             if (customParser == null)
                 _parser = DefaultParse;
             else
@@ -71,8 +59,8 @@ namespace DotNet.Basics.AppSettings
         }
 
         public string Key { get; }
+        public T DefaultValue { get; set; }
         public bool Required { get; }
-        public T DefaultValue { get; }
 
         public bool Verify()
         {

@@ -33,12 +33,16 @@ namespace DotNet.Basics.Tests.AppSettings
         }
 
         [Test]
-        public void Verify_NotRequiredKeys_NotRequiredKeysArePresent()
+        public void Verify_DefaultValues_SettingsWithDefaultValuesAreNotRequiredToBeSet()
         {
+            var defaultValue = "MyDefaultValue%&/%&/¤%/%&";
+            var appSetting = new AppSetting<string>("MissingKey", defaultValue);
             var settingsValidator = new AppSettingsProvider();
-            settingsValidator.Register(new AppSetting<string>("MissingKey", false, null));
+            settingsValidator.Register(appSetting);
             Action action = () => settingsValidator.Verify();
             action.ShouldNotThrow();
+            appSetting.GetValue().Should().Be(defaultValue);
+            appSetting.DefaultValue.Should().Be(defaultValue);
         }
     }
 }
