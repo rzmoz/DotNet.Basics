@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 
 namespace DotNet.Basics.AppSettings
 {
@@ -19,7 +18,13 @@ namespace DotNet.Basics.AppSettings
             _settings[setting.Key] = setting;
         }
 
-        public void Verify()
+        public bool VerifyAll()
+        {
+            IReadOnlyCollection<string> requiredKeysNotSet;
+            return VerifyAll(out requiredKeysNotSet);
+        }
+        public bool VerifyAll(out IReadOnlyCollection<string> requiredKeysNotSet)
+
         {
             var missingKeys = new List<string>();
             foreach (var appSetting in _settings.Values)
@@ -28,13 +33,9 @@ namespace DotNet.Basics.AppSettings
                     missingKeys.Add(appSetting.Key);
             }
 
-            //all is good
-            if (missingKeys.Count == 0)
-                return;
+            requiredKeysNotSet = missingKeys;
 
-            var errorMessage = missingKeys.Count == 1 ? missingKeys.Single() : JsonConvert.SerializeObject(missingKeys);
-
-            throw new RequiredConfigurationNotSetException(errorMessage);
+            return missingKeys.Count == 0;
         }
 
         public IReadOnlyCollection<IAppSetting> GetAppSettings()

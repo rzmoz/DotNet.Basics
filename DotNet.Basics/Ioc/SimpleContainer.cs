@@ -33,12 +33,12 @@ namespace DotNet.Basics.Ioc
         public new void Verify()
         {
             base.Verify();
-            _settingsProvider.Verify();
+            _settingsProvider.VerifyAll();
         }
         public new void Verify(VerificationOption vo)
         {
             base.Verify(vo);
-            _settingsProvider.Verify();
+            _settingsProvider.VerifyAll();
         }
 
         public IReadOnlyCollection<IAppSetting> GetAppSettings()

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DotNet.Basics.AppSettings;
 using FluentAssertions;
 using NUnit.Framework;
@@ -10,37 +8,49 @@ using NUnit.Framework;
 namespace DotNet.Basics.Tests.AppSettings
 {
     [TestFixture]
-    public class AppSettingsValidatorTests
+    public class AppSettingsProviderTests
     {
         [Test]
         public void Verify_RequiredKeys_RequiredKeysArePresent()
         {
-            var validator = new AppSettingsProvider();
-            validator.Register(new AppSetting<string>("RequiredKey"));
+            var settingsProvider = new AppSettingsProvider();
+            settingsProvider.Register(new AppSetting<string>("RequiredKey"));
 
-            Action action = () => validator.Verify();
-            action.ShouldNotThrow();
+            //act
+            var isValid = settingsProvider.VerifyAll();
+
+            isValid.Should().BeTrue();
         }
+
         [Test]
         public void Verify_RequiredKeys_RequiredKeysAreMissing()
         {
             var missingKey = "MissingKey";
-            var validator = new AppSettingsProvider();
-            validator.Register(new AppSetting<string>(missingKey));
+            var settingsProvider = new AppSettingsProvider();
+            settingsProvider.Register(new AppSetting<string>(missingKey));
+            IReadOnlyCollection<string> missingKeys;
 
-            Action action = () => validator.Verify();
-            action.ShouldThrow<RequiredConfigurationNotSetException>().WithMessage(missingKey);
+            //act
+            var isValid = settingsProvider.VerifyAll(out missingKeys);
+
+            isValid.Should().BeFalse();
+            missingKeys.Single().Should().Be(missingKey);
         }
 
         [Test]
         public void Verify_DefaultValues_SettingsWithDefaultValuesAreNotRequiredToBeSet()
         {
+            //arrange
             var defaultValue = "MyDefaultValue%&/%&/¤%/%&";
             var appSetting = new AppSetting<string>("MissingKey", defaultValue);
             var settingsValidator = new AppSettingsProvider();
             settingsValidator.Register(appSetting);
-            Action action = () => settingsValidator.Verify();
-            action.ShouldNotThrow();
+
+            //act
+            var isValid = settingsValidator.VerifyAll();
+
+            //assert
+            isValid.Should().BeTrue();
             appSetting.GetValue().Should().Be(defaultValue);
             appSetting.DefaultValue.Should().Be(defaultValue);
         }
