@@ -55,7 +55,6 @@
     <Compile Include="AppSettings\IAppSettingsProvider.cs" />
     <Compile Include="AppSettings\RequiredConfigurationNotSetException.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
-    <Compile Include="Collections\ConcurrentSet.cs" />
     <Compile Include="Compression\CompressionResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

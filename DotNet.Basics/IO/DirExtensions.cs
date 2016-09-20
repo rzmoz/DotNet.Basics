@@ -108,9 +108,9 @@ namespace DotNet.Basics.IO
 
             try
             {
-                //depth first to find out quickly if we have long path exceptions - we want to fail early then
                 target.CreateIfNotExists();
 
+                //depth first to find out quickly if we have long path exceptions - we want to fail early then
                 if (includeSubfolders)
                 {
                     Parallel.ForEach(source.GetDirectories(), dir =>
