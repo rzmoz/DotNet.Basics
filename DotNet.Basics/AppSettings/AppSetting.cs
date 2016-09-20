@@ -102,6 +102,8 @@ namespace DotNet.Basics.AppSettings
             {
                 case "System.String":
                     return value;
+                case "System.Char":
+                    return char.Parse(value.ToString());
                 case "System.Int16":
                     return short.Parse(value.ToString(), _usCulture);
                 case "System.UInt16":
@@ -118,6 +120,8 @@ namespace DotNet.Basics.AppSettings
                     return bool.Parse(value.ToString());
                 case "System.Double":
                     return double.Parse(value.ToString(), _usCulture);
+                case "System.SByte":
+                    return sbyte.Parse(value.ToString(), _usCulture);
                 case "System.Byte":
                     return byte.Parse(value.ToString(), _usCulture);
                 case "System.Decimal":

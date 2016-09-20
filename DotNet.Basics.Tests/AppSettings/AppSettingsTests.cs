@@ -41,67 +41,110 @@ namespace DotNet.Basics.Tests.AppSettings
             action.ShouldThrow<RequiredConfigurationNotSetException>().WithMessage(key);
         }
 
+        /************** Non-Simple Types **************/
+
         [Test]
         public void GetValue_String_ValueIsRightType()
         {
             AssertValueType<string>("sdfsfsdf");
         }
+
         [Test]
         public void GetValue_Uri_ValueIsRightType()
         {
             AssertValueType<Uri>("http://localhost/", new Uri("http://localhost/"));
         }
+
+        //https://msdn.microsoft.com/en-us/library/97af8hh4(v=vs.110).aspx
         [Test]
-        public void GetValue_UShort_ValueIsRightType()
+        [TestCase("")]
+        [TestCase("N")]
+        [TestCase("D")]
+        [TestCase("B")]
+        [TestCase("P")]
+        [TestCase("X")]
+        public void GetValue_Guid_ValueIsRightType(string toStringFormatter)
         {
-            AssertValueType<ushort>(12312);
+            var guid = Guid.NewGuid();
+            AssertValueType<Guid>(guid.ToString(toStringFormatter), guid);
         }
+
+        /************** Integral Types **************/
+
         [Test]
-        public void GetValue_Short_ValueIsRightType()
+        public void GetValue_SByte_ValueIsRightType()
         {
-            AssertValueType<short>(12312);
-        }
-        [Test]
-        public void GetValue_UInt_ValueIsRightType()
-        {
-            AssertValueType<uint>(1231232);
-        }
-        [Test]
-        public void GetValue_Int_ValueIsRightType()
-        {
-            AssertValueType<int>(1231232);
-        }
-        [Test]
-        public void GetValue_Long_ValueIsRightType()
-        {
-            var ticks = DateTime.UtcNow.Ticks;
-            AssertValueType<long>(ticks);
-        }
-        [Test]
-        public void GetValue_ULong_ValueIsRightType()
-        {
-            AssertValueType<ulong>(1231232);
-        }
-        [Test]
-        public void GetValue_Double_ValueIsRightType()
-        {
-            AssertValueType<double>("12.0", 12.0d);
-        }
-        [Test]
-        public void GetValue_Decimal_ValueIsRightType()
-        {
-            AssertValueType<decimal>("12.0", 12.0m);
-        }
-        [Test]
-        public void GetValue_Float_ValueIsRightType()
-        {
-            AssertValueType<float>("12.0", 12.0f);
+            AssertValueType<sbyte>(11);
         }
         [Test]
         public void GetValue_Byte_ValueIsRightType()
         {
             AssertValueType<byte>(12);
         }
+
+        [Test]
+        public void GetValue_Short_ValueIsRightType()
+        {
+            AssertValueType<short>(12312);
+        }
+        [Test]
+        public void GetValue_UShort_ValueIsRightType()
+        {
+            AssertValueType<ushort>(12312);
+        }
+
+        [Test]
+        public void GetValue_Int_ValueIsRightType()
+        {
+            AssertValueType<int>(1231232);
+        }
+        [Test]
+        public void GetValue_UInt_ValueIsRightType()
+        {
+            AssertValueType<uint>(1231232);
+        }
+
+        [Test]
+        public void GetValue_Long_ValueIsRightType()
+        {
+            AssertValueType<long>(DateTime.UtcNow.Ticks);
+        }
+        [Test]
+        public void GetValue_ULong_ValueIsRightType()
+        {
+            AssertValueType<ulong>((ulong)DateTime.UtcNow.Ticks);
+        }
+
+        [Test]
+        public void GetValue_Char_ValueIsRightType()
+        {
+            AssertValueType<char>('@');
+        }
+
+        /************** Floating Point Types **************/
+
+        [Test]
+        public void GetValue_Float_ValueIsRightType()
+        {
+            AssertValueType<float>("12.0", 12.0f);
+        }
+
+        [Test]
+        public void GetValue_Double_ValueIsRightType()
+        {
+            AssertValueType<double>("12.0", 12.0d);
+        }
+
+        /************** The Decimal Type **************/
+
+        [Test]
+        public void GetValue_Decimal_ValueIsRightType()
+        {
+            AssertValueType<decimal>("12.0", 12.0m);
+        }
+
+        /************** The Bool Type **************/
+
         [Test]
         public void GetValue_Boolean_ValueIsRightType()
         {
@@ -109,14 +152,8 @@ namespace DotNet.Basics.Tests.AppSettings
             AssertValueType<bool>("true", true);
             AssertValueType<bool>("TRUE", true);
         }
-        [Test]
-        public void GetValue_Guid_ValueIsRightType()
-        {
-            var guid = Guid.NewGuid();
 
-            AssertValueType<Guid>(guid);
-            AssertValueType<Guid>(guid.ToString("N"), guid);
-        }
+        /************** Assertions **************/
 
         private void AssertValueType<T>(T expected)
         {
@@ -124,6 +161,8 @@ namespace DotNet.Basics.Tests.AppSettings
         }
         private void AssertValueType<T>(string input, T expected)
         {
+            Console.WriteLine($"Asserting appsetting: {input} conversion to {typeof(T).FullName}");
+
             var randomKey = Guid.NewGuid().ToString("N");
             var settingsProvider = Substitute.For<IConfigurationManager>();
             settingsProvider.Get(Arg.Any<string>()).Returns(input);
