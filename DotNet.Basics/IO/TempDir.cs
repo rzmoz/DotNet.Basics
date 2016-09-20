@@ -5,7 +5,7 @@ namespace DotNet.Basics.IO
 {
     public class TempDir : IDisposable
     {
-        private int _tempDirLength = 16;
+        private readonly int _tempDirLength = 16;
 
         public TempDir(string dirPrefix = null)
             : this(GetTempDir(), dirPrefix)

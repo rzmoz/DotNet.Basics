@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace DotNet.Basics.Collections
@@ -34,6 +33,5 @@ namespace DotNet.Basics.Collections
         {
             return new[] { t };
         }
-
     }
 }
