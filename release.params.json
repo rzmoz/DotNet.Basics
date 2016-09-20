@@ -1,5 +1,5 @@
 {
-  "version.assembly": "4.2.3",
+  "version.assembly": "4.3.0",
   "version.prerelease": "",
   "sln.path": "DotNet.Basics.sln",
   "test.assemblies": "*.tests.dll",

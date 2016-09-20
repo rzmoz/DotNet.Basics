@@ -4,11 +4,11 @@ namespace DotNet.Basics.IO
 {
     public class PathNotFoundException : Exception
     {
-        public PathNotFoundException(Path path) : base($"{path?.FullName}")
+        public PathNotFoundException(PathInfo path) : base($"{path?.FullName}")
         {
             Path = path;
         }
 
-        public Path Path { get; }
+        public PathInfo Path { get; }
     }
 }

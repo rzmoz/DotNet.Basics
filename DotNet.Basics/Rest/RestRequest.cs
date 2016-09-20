@@ -54,20 +54,6 @@ namespace DotNet.Basics.Rest
             TimeOut = TimeSpan.FromHours(1);//we default to 1 hour timeout            
         }
 
-        private static string ConcatenateHostUrlAndPathAndQuery(string hostUrl, string pathAndQuery)
-        {
-            if (hostUrl == null) throw new ArgumentNullException(nameof(hostUrl));
-            if (pathAndQuery == null) throw new ArgumentNullException(nameof(pathAndQuery));
-
-            var url = $"{hostUrl}/{pathAndQuery}";
-
-            const string doubleSlashes = "//";
-
-            while (url.LastIndexOf(doubleSlashes, StringComparison.Ordinal) != url.IndexOf(doubleSlashes, StringComparison.Ordinal))
-                url = url.Remove(url.LastIndexOf(doubleSlashes, System.StringComparison.Ordinal), 1);
-            return url;
-        }
-
         public HttpRequestMessage HttpRequestMessage { get; }
 
         public Uri Uri

@@ -4,12 +4,12 @@ using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {
-    public class Path
+    public class PathInfo
     {
         private readonly string[] _segments;
         private readonly Func<string> _resolveFullName;
 
-        protected Path(string[] pathSegments, bool isFolder, PathDelimiter delimiter)
+        protected PathInfo(string[] pathSegments, bool isFolder, PathDelimiter delimiter)
         {
             _segments = pathSegments.SplitToSegments();
             IsFolder = isFolder;
@@ -18,7 +18,7 @@ namespace DotNet.Basics.IO
 
             try
             {
-                var tryAsUri = RawName.Replace(PathExtensions.Backslash, PathExtensions.Slash);
+                var tryAsUri = RawName.Replace(PathInfoExtensions.Backslash, PathInfoExtensions.Slash);
                 new Uri(tryAsUri);//will fail if not uri
                 IsUri = RawName.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
                         RawName.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
@@ -70,10 +70,10 @@ namespace DotNet.Basics.IO
         /// </summary>
         /// <param name="pathSegments"></param>
         /// <returns></returns>
-        public Path Add(params string[] pathSegments)
+        public PathInfo Add(params string[] pathSegments)
         {
             var combinedSegments = AddSegments(pathSegments);
-            return new Path(combinedSegments, IsFolder, Delimiter);
+            return new PathInfo(combinedSegments, IsFolder, Delimiter);
         }
 
         protected string[] AddSegments(params string[] pathSegments)
@@ -110,7 +110,7 @@ namespace DotNet.Basics.IO
             return path;
         }
 
-        protected bool Equals(Path other)
+        protected bool Equals(PathInfo other)
         {
             return RawName == other.RawName;
         }
@@ -120,7 +120,7 @@ namespace DotNet.Basics.IO
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Path)obj);
+            return Equals((PathInfo)obj);
         }
 
         public override int GetHashCode()

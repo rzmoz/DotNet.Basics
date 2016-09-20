@@ -87,7 +87,7 @@
     <Compile Include="IO\FileTypeTests.cs" />
     <Compile Include="IO\DirExtensionsTests.cs" />
     <Compile Include="IO\FileExtensionsTests.cs" />
-    <Compile Include="IO\PathExtensionsTests.cs" />
+    <Compile Include="IO\PathInfoExtensionsTests.cs" />
     <Compile Include="IO\PathTests.cs" />
     <Compile Include="IO\RobocopyTests.cs" />
     <Compile Include="IO\SystemIoPathTests.cs" />

@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace DotNet.Basics.IO
 {
-    public static class PathExtensions
+    public static class PathInfoExtensions
     {
         public const char Slash = '/';
         public const char Backslash = '\\';
@@ -39,7 +39,7 @@ namespace DotNet.Basics.IO
             }
         }
 
-        public static Path ToPath(this string path, params string[] segments)
+        public static PathInfo ToPath(this string path, params string[] segments)
         {
             if (string.IsNullOrEmpty(path))
                 return null;
@@ -74,7 +74,7 @@ namespace DotNet.Basics.IO
             return asPath;
         }
 
-        public static Path ToPath(this string path, bool isFolder, params string[] segments)
+        public static PathInfo ToPath(this string path, bool isFolder, params string[] segments)
         {
             if (string.IsNullOrEmpty(path))
                 return null;
@@ -129,7 +129,7 @@ namespace DotNet.Basics.IO
             return updatedSegments.ToArray();
         }
 
-        private static Path Create(string[] pathSegments, bool isFolder)
+        private static PathInfo Create(string[] pathSegments, bool isFolder)
         {
             if (isFolder)
                 return new DirPath(pathSegments);

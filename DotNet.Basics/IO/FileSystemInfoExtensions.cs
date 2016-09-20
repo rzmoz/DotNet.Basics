@@ -5,7 +5,7 @@ namespace DotNet.Basics.IO
 {
     public static class FileSystemInfoExtensions
     {
-        public static void CopyTo(this Path path, Path destination, bool overwrite = false)
+        public static void CopyTo(this PathInfo path, PathInfo destination, bool overwrite = false)
         {
             if (destination.IsFolder)
                 path.CopyTo(destination.ToDir(), overwrite);
@@ -13,7 +13,7 @@ namespace DotNet.Basics.IO
                 path.CopyTo(destination.ToFile(), overwrite);
         }
 
-        public static void CopyTo(this Path path, DirPath destination, bool overwrite = false)
+        public static void CopyTo(this PathInfo path, DirPath destination, bool overwrite = false)
         {
             destination.CreateIfNotExists();
 
@@ -23,7 +23,7 @@ namespace DotNet.Basics.IO
                 PowerShellConsole.CopyItem(path.FullName, destination.FullName, force: false, recurse: false);
         }
 
-        public static void CopyTo(this Path path, FilePath destination, bool overwrite = false)
+        public static void CopyTo(this PathInfo path, FilePath destination, bool overwrite = false)
         {
             if (path is DirPath)
                 throw new ArgumentException("You're trying to copy a folder to a file. You should archive it (zip it)");

@@ -7,7 +7,7 @@ namespace DotNet.Basics.IO
 {
     public static class PathFileSystemExtensions
     {
-        public static bool DeleteIfExists(this Path path)
+        public static bool DeleteIfExists(this PathInfo path)
         {
             return DeleteIfExists(path, 30.Seconds());
         }
@@ -21,10 +21,10 @@ namespace DotNet.Basics.IO
             if (SystemIoPath.Exists(path, false))
                 return false;
 
-            return path.EndsWith(PathExtensions.Slash.ToString()) || path.EndsWith(PathExtensions.Backslash.ToString());
+            return path.EndsWith(PathInfoExtensions.Slash.ToString()) || path.EndsWith(PathInfoExtensions.Backslash.ToString());
         }
 
-        public static bool DeleteIfExists(this Path path, TimeSpan timeout)
+        public static bool DeleteIfExists(this PathInfo path, TimeSpan timeout)
         {
             if (path == null)
                 return false;

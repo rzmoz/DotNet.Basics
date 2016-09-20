@@ -28,7 +28,7 @@ namespace DotNet.Basics.IO
             return targetFile.ToFile();
         }
 
-        public static FilePath WriteAllText(this string content, Path targetPath, bool overwrite = false)
+        public static FilePath WriteAllText(this string content, PathInfo targetPath, bool overwrite = false)
         {
             if (targetPath == null) throw new ArgumentNullException(nameof(targetPath));
             if (targetPath is FilePath == false)

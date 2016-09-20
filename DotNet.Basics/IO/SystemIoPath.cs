@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -78,7 +77,7 @@ namespace DotNet.Basics.IO
             }
         }
 
-        public static bool Exists(this Path path)
+        public static bool Exists(this PathInfo path)
         {
             return Exists(path.FullName, path.IsFolder);
         }
@@ -111,14 +110,6 @@ namespace DotNet.Basics.IO
             var type = typeof(System.IO.Path);
             type?.GetField("MaxPath", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue("MaxPath", _maxPathLength);
             type?.GetField("MaxDirectoryLength", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue("MaxDirectoryLength", _maxPathLength);
-        }
-
-        private static IEnumerable<MethodInfo> GetMethods(string methodName)
-        {
-            var type = typeof(System.IO.Path);
-
-            return type.GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
-                .Where(m => m.Name == methodName);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace DotNet.Basics.IO
             return new FilePath(path).Add(pathSegments);
         }
 
-        public static FilePath ToFile(this Path path, params string[] pathSegments)
+        public static FilePath ToFile(this PathInfo path, params string[] pathSegments)
         {
             return new FilePath(path.Segments, path.Delimiter).Add(pathSegments);
         }

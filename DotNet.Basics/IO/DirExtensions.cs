@@ -12,7 +12,7 @@ namespace DotNet.Basics.IO
 {
     public static class DirExtensions
     {
-        public static DirPath ToDir(this Path path, params string[] pathSegments)
+        public static DirPath ToDir(this PathInfo path, params string[] pathSegments)
         {
             return new DirPath(path.Segments, path.Delimiter).Add(pathSegments);
         }

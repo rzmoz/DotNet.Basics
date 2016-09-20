@@ -7,7 +7,7 @@ using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {
-    public class DirPath : Path
+    public class DirPath : PathInfo
     {
         public DirPath(string fullPath)
             : this(new[] { fullPath })
@@ -71,7 +71,7 @@ namespace DotNet.Basics.IO
             var dirs = PowerShellConsole.GetChildItem(FullName, recurse, searchPattern, "File");
             return dirs.Select(dir => dir.ToFile()).ToArray();
         }
-        public Path[] GetPaths(string searchPattern = null, bool recurse = false)
+        public PathInfo[] GetPaths(string searchPattern = null, bool recurse = false)
         {
             var dirs = PowerShellConsole.GetChildItem(FullName, recurse, searchPattern);
             return dirs.Select(dir => dir.ToPath()).ToArray();
@@ -85,9 +85,9 @@ namespace DotNet.Basics.IO
         {
             return ToDirectoryInfo().EnumerateFiles(searchPattern ?? "*").Select(file => file.FullName.ToFile());
         }
-        public IEnumerable<Path> EnumeratePaths(string searchPattern = null)
+        public IEnumerable<PathInfo> EnumeratePaths(string searchPattern = null)
         {
-            return ToDirectoryInfo().EnumerateFileSystemInfos(searchPattern ?? "*").Select<System.IO.FileSystemInfo, Path>(fsi =>
+            return ToDirectoryInfo().EnumerateFileSystemInfos(searchPattern ?? "*").Select<System.IO.FileSystemInfo, PathInfo>(fsi =>
             {
                 if (fsi is System.IO.DirectoryInfo)
                     return fsi.FullName.ToDir();

@@ -10,7 +10,7 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         public void Use_Dir_DirExists()
         {
-            Path dir = null;
+            PathInfo dir = null;
 
             using (var temp = new TempDir("TempDirTest"))
             {

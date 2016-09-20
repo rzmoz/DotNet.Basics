@@ -3,7 +3,7 @@ using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {
-    public class FilePath : Path
+    public class FilePath : PathInfo
     {
         public FilePath(string fullPath)
             : this(new[] { fullPath })

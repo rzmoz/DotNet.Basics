@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace DotNet.Basics.Tests.IO
 {
     [TestFixture]
-    public class PathExtensionsTests
+    public class PathInfoExtensionsTests
     {
         [Test]
         [TestCase("FOLDER_THAT_DOES_NOT_EXIST_WO_FOLDER_MARKER", false)]//folder that doesnt exist without marker
@@ -29,7 +29,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("Exists_TestPath_PathIsVerified\\file.txt", false)]//file
         public void Exists_TestPath_PathIsVerified(string path, bool isFolder)
         {
-            Path p;
+            PathInfo p;
             if (isFolder)
                 p = TestContext.CurrentContext.TestDirectory.ToDir(path);
             else
@@ -139,7 +139,7 @@ namespace DotNet.Basics.Tests.IO
         [TestCase("mypath", true)]//file
         public void IsFolder_Set_IsFolderIsSet(string pth, bool isFolder)
         {
-            Path p;
+            PathInfo p;
             if (isFolder)
                 p = pth.ToDir();
             else

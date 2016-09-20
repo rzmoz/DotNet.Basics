@@ -35,7 +35,7 @@ namespace DotNet.Basics.Tests.IO
             {
                 foreach (var content in sourceFsi.ToDir().EnumeratePaths())
                 {
-                    Path expectedDestinationContentFsi;
+                    PathInfo expectedDestinationContentFsi;
                     if (content.IsFolder)
                         expectedDestinationContentFsi = destinationFsi.ToDir(content.Name);
                     else
