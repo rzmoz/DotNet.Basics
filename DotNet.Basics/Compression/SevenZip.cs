@@ -7,6 +7,13 @@ namespace DotNet.Basics.Compression
 {
     public class SevenZip
     {
+        private readonly DirPath _tempRootdir;
+
+        public SevenZip(DirPath tempRootdir = null)
+        {
+            _tempRootdir = tempRootdir;
+        }
+
         public int ExtractToDirectory(string archivePath, string targetDirPath)
         {
             return ExecuteSevenZip("x", $"\"{archivePath}\"", $"\"-o{targetDirPath.ToDir().FullName}\"", "*", "-r", "aoa");
@@ -23,7 +30,7 @@ namespace DotNet.Basics.Compression
 
         private int ExecuteSevenZip(string command, params string[] @params)
         {
-            using (var temp = new TempDir("7z"))
+            using (var temp = new TempDir(_tempRootdir, "7z"))
             {
                 var temp7ZExe = temp.Root.ToFile("7za.exe");
                 Extract(temp7ZExe.FullName, CompressionResources._7za);
