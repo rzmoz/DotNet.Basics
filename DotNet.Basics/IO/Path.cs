@@ -32,7 +32,7 @@ namespace DotNet.Basics.IO
 
             if (IsUri)
             {
-                Delimiter=PathDelimiter.Slash;
+                Delimiter = PathDelimiter.Slash;
                 _resolveFullName = () => RawName;
             }
             else
@@ -108,6 +108,24 @@ namespace DotNet.Basics.IO
             if (IsFolder == false)
                 path = path.RemoveSuffix(delimiter.ToChar());
             return path;
+        }
+
+        protected bool Equals(Path other)
+        {
+            return RawName == other.RawName;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Path)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return RawName.GetHashCode();
         }
     }
 }

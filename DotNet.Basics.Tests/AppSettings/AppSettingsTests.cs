@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using DotNet.Basics.AppSettings;
+using DotNet.Basics.IO;
 using FluentAssertions;
 using Newtonsoft.Json;
 using NSubstitute;
@@ -41,7 +42,24 @@ namespace DotNet.Basics.Tests.AppSettings
             action.ShouldThrow<RequiredConfigurationNotSetException>().WithMessage(key);
         }
 
-        /************** Non-Simple Types **************/
+        /************** DotNet.Basics Types **************/
+        [Test]
+        [TestCase(@"c:\mypath\")]//absolute path
+        [TestCase(@"\mypath\")]//relative path
+        public void GetValue_DirPath_ValueIsRightType(string path)
+        {
+            AssertValueType<DirPath>(path.ToDir());
+        }
+        [Test]
+        [TestCase(@"c:\mypath\myfile.txt")]//absolute path
+        [TestCase(@"\mypath\myfile.txt")]//relative path
+        public void GetValue_FilePath_ValueIsRightType(string path)
+        {
+            AssertValueType<FilePath>(path.ToFile());
+        }
+
+
+        /************** Non-Simple System Types **************/
 
         [Test]
         public void GetValue_String_ValueIsRightType()

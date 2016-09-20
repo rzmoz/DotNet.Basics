@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using DotNet.Basics.IO;
 
 namespace DotNet.Basics.AppSettings
 {
@@ -100,6 +101,10 @@ namespace DotNet.Basics.AppSettings
             var parseType = typeof(T).FullName;
             switch (parseType)
             {
+                case "DotNet.Basics.IO.DirPath":
+                    return value.ToString().ToDir();
+                case "DotNet.Basics.IO.FilePath":
+                    return value.ToString().ToFile();
                 case "System.String":
                     return value;
                 case "System.Char":
