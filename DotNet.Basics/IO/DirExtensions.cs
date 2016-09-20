@@ -146,8 +146,16 @@ namespace DotNet.Basics.IO
                 //kill exceptions if not found
             }
         }
-        
-        public static void GrantAccess(this DirPath dir, string username, FileSystemRights fileSystemRights = FileSystemRights.FullControl)
+
+        public static bool IsEmpty(this DirPath dir)
+        {
+            if (dir == null) throw new ArgumentNullException(nameof(dir));
+            if (dir.Exists())
+                return dir.EnumeratePaths().Any() == false;
+            return true;
+        }
+
+        public static void GrantAccess(this DirPath dir, string username, FileSystemRights fileSystemRights = FileSystemRights.Read)
         {
             if (dir.Exists() == false)
                 return;
@@ -165,76 +173,60 @@ namespace DotNet.Basics.IO
             dir.SetAccessControl(directorySecurity);
         }
 
-        public static bool IsEmpty(this DirPath dir)
-        {
-            if (dir == null) throw new ArgumentNullException(nameof(dir));
-            if (dir.Exists())
-                return dir.EnumeratePaths().Any() == false;
-            return true;
-        }
-
-
         private static void CanonicalizeDacl(NativeObjectSecurity objectSecurity)
         {
             if (objectSecurity == null) { throw new ArgumentNullException(nameof(objectSecurity)); }
             if (objectSecurity.AreAccessRulesCanonical) { return; }
 
+
+            var descriptor = new RawSecurityDescriptor(objectSecurity.GetSecurityDescriptorSddlForm(AccessControlSections.Access));
+            var result = CanonicalizeDacl(descriptor);
+
+            //"The DACL cannot be canonicalized since it would potentially result in a loss of information";
+            if (result.AceIndex != descriptor.DiscretionaryAcl.Count)
+                return;
+
+            descriptor.DiscretionaryAcl = result.RawAcl;
+            objectSecurity.SetSecurityDescriptorSddlForm(descriptor.GetSddlForm(AccessControlSections.Access), AccessControlSections.Access);
+        }
+
+        private class CanonicalizeResult
+        {
+            public CanonicalizeResult(int aceIndex, RawAcl rawAcl)
+            {
+                AceIndex = aceIndex;
+                RawAcl = rawAcl;
+            }
+
+            public int AceIndex { get; }
+            public RawAcl RawAcl { get; }
+        }
+
+        private static CanonicalizeResult CanonicalizeDacl(RawSecurityDescriptor descriptor)
+        {
+            var newDacl = new RawAcl(descriptor.DiscretionaryAcl.Revision, descriptor.DiscretionaryAcl.Count);
+            var aceIndex = 0;
+            var commonAces = descriptor.DiscretionaryAcl.Cast<CommonAce>().ToList();
+
             // A canonical ACL must have ACES sorted according to the following order:
             //   1. Access-denied on the object
+            Add(newDacl, commonAces.Where(ace => ace.AceType == AceType.AccessDenied), ref aceIndex);
             //   2. Access-denied on a child or property
+            Add(newDacl, commonAces.Where(ace => ace.AceType == AceType.AccessAllowedObject), ref aceIndex);
             //   3. Access-allowed on the object
+            Add(newDacl, commonAces.Where(ace => ace.AceType == AceType.AccessAllowed), ref aceIndex);
             //   4. Access-allowed on a child or property
+            Add(newDacl, commonAces.Where(ace => ace.AceType == AceType.AccessAllowedObject), ref aceIndex);
             //   5. All inherited ACEs 
-            var descriptor = new RawSecurityDescriptor(objectSecurity.GetSecurityDescriptorSddlForm(AccessControlSections.Access));
+            Add(newDacl, commonAces.Where(ace => (ace.AceFlags & AceFlags.Inherited) == AceFlags.Inherited), ref aceIndex);
 
-            var implicitDenyDacl = new List<CommonAce>();
-            var implicitDenyObjectDacl = new List<CommonAce>();
-            var inheritedDacl = new List<CommonAce>();
-            var implicitAllowDacl = new List<CommonAce>();
-            var implicitAllowObjectDacl = new List<CommonAce>();
+            return new CanonicalizeResult(aceIndex, newDacl);
+        }
 
-            foreach (CommonAce ace in descriptor.DiscretionaryAcl)
-            {
-                if ((ace.AceFlags & AceFlags.Inherited) == AceFlags.Inherited) { inheritedDacl.Add(ace); }
-                else
-                {
-                    switch (ace.AceType)
-                    {
-                        case AceType.AccessAllowed:
-                            implicitAllowDacl.Add(ace);
-                            break;
-
-                        case AceType.AccessDenied:
-                            implicitDenyDacl.Add(ace);
-                            break;
-
-                        case AceType.AccessAllowedObject:
-                            implicitAllowObjectDacl.Add(ace);
-                            break;
-
-                        case AceType.AccessDeniedObject:
-                            implicitDenyObjectDacl.Add(ace);
-                            break;
-                    }
-                }
-            }
-
-            Int32 aceIndex = 0;
-            RawAcl newDacl = new RawAcl(descriptor.DiscretionaryAcl.Revision, descriptor.DiscretionaryAcl.Count);
-            implicitDenyDacl.ForEach(x => newDacl.InsertAce(aceIndex++, x));
-            implicitDenyObjectDacl.ForEach(x => newDacl.InsertAce(aceIndex++, x));
-            implicitAllowDacl.ForEach(x => newDacl.InsertAce(aceIndex++, x));
-            implicitAllowObjectDacl.ForEach(x => newDacl.InsertAce(aceIndex++, x));
-            inheritedDacl.ForEach(x => newDacl.InsertAce(aceIndex++, x));
-
-            if (aceIndex != descriptor.DiscretionaryAcl.Count)
-            {
-                //"The DACL cannot be canonicalized since it would potentially result in a loss of information";
-                return;
-            }
-
-            descriptor.DiscretionaryAcl = newDacl;
-            objectSecurity.SetSecurityDescriptorSddlForm(descriptor.GetSddlForm(AccessControlSections.Access), AccessControlSections.Access);
+        private static void Add(RawAcl acl, IEnumerable<CommonAce> aces, ref int aceIndex)
+        {
+            foreach (var ace in aces)
+                acl.InsertAce(aceIndex++, ace);
         }
     }
 }

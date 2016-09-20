@@ -18,7 +18,7 @@ namespace DotNet.Basics.IO
 
             try
             {
-                var tryAsUri = RawName.Replace(PathDelimiterAsChar.Backslash, PathDelimiterAsChar.Slash);
+                var tryAsUri = RawName.Replace(PathExtensions.Backslash, PathExtensions.Slash);
                 new Uri(tryAsUri);//will fail if not uri
                 IsUri = RawName.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
                         RawName.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||

@@ -21,7 +21,7 @@ namespace DotNet.Basics.IO
             if (SystemIoPath.Exists(path, false))
                 return false;
 
-            return path.EndsWith(PathDelimiterAsChar.Slash.ToString()) || path.EndsWith(PathDelimiterAsChar.Backslash.ToString());
+            return path.EndsWith(PathExtensions.Slash.ToString()) || path.EndsWith(PathExtensions.Backslash.ToString());
         }
 
         public static bool DeleteIfExists(this Path path, TimeSpan timeout)

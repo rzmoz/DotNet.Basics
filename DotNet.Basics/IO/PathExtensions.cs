@@ -7,6 +7,9 @@ namespace DotNet.Basics.IO
 {
     public static class PathExtensions
     {
+        public const char Slash = '/';
+        public const char Backslash = '\\';
+
         private static readonly string _protocolPattern = @"^([a-zA-Z]+://)";
         private static readonly Regex _protocolRegex = new Regex(_protocolPattern, RegexOptions.Compiled);
 
@@ -14,9 +17,9 @@ namespace DotNet.Basics.IO
         {
             switch (delimiter)
             {
-                case PathDelimiterAsChar.Backslash:
+                case Backslash:
                     return PathDelimiter.Backslash;
-                case PathDelimiterAsChar.Slash:
+                case Slash:
                     return PathDelimiter.Slash;
                 default:
                     throw new NotSupportedException($"Path delimiter not supported: {delimiter}");
@@ -28,9 +31,9 @@ namespace DotNet.Basics.IO
             switch (pathDelimiter)
             {
                 case PathDelimiter.Backslash:
-                    return PathDelimiterAsChar.Backslash;
+                    return Backslash;
                 case PathDelimiter.Slash:
-                    return PathDelimiterAsChar.Slash;
+                    return Slash;
                 default:
                     throw new NotSupportedException($"Path delimiter not supported: {pathDelimiter}");
             }
@@ -118,7 +121,7 @@ namespace DotNet.Basics.IO
                     toBesplit = toBesplit.Substring(capture.Length);//remove protocol
                 }
 
-                var splits = toBesplit.Split(new[] { PathDelimiterAsChar.Slash, PathDelimiterAsChar.Backslash },
+                var splits = toBesplit.Split(new[] { Slash, Backslash },
                     StringSplitOptions.RemoveEmptyEntries);
                 updatedSegments.AddRange(splits);
             }
@@ -141,8 +144,8 @@ namespace DotNet.Basics.IO
                 return false;
             }
 
-            var slashIndex = path.IndexOf(PathDelimiterAsChar.Slash);
-            var backSlashIndex = path.IndexOf(PathDelimiterAsChar.Backslash);
+            var slashIndex = path.IndexOf(Slash);
+            var backSlashIndex = path.IndexOf(Backslash);
 
             if (slashIndex < 0)
             {
