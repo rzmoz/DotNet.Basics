@@ -6,7 +6,6 @@ namespace DotNet.Basics.Tasks
 {
     public class RepeaterTaskRunner
     {
-        private readonly TaskRunner _taskRunner = new TaskRunner();
 
         public async Task<bool> RunAsync(ManagedTask task, Func<Exception, bool> untilPredicate, RepeatOptions options = null)
         {
@@ -32,7 +31,7 @@ namespace DotNet.Basics.Tasks
                     Exception exceptionInLastLoop = null;
                     try
                     {
-                        await _taskRunner.TryStartAsync(task, options.RunThread, options.RunScope).ConfigureAwait(false);
+                        await task.RunAsync("").ConfigureAwait(false);
                     }
                     catch (Exception e)
                     {

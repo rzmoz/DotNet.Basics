@@ -11,8 +11,6 @@ namespace DotNet.Basics.Tasks
         public RepeatOptions()
         {
             RetryDelay = 250.MilliSeconds();
-            RunScope = RunScope.Transient;
-            RunThread = RunThread.Current;
         }
 
         public TimeSpan RetryDelay { get; set; }
@@ -36,10 +34,6 @@ namespace DotNet.Basics.Tasks
                 TimeoutLoopBreakPredicate = Timeout == null ? null : new TimeoutLoopBreakPredicate(Timeout.Value);
             }
         }
-
-        public RunScope RunScope { get; set; }
-
-        public RunThread RunThread { get; set; }
 
         /// <summary>
         /// Will be invoked on every retry cycle
