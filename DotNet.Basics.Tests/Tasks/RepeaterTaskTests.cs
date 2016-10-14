@@ -91,7 +91,9 @@ namespace DotNet.Basics.Tests.Tasks
                         o.RetryDelay = 10.Milliseconds();
                         o.MaxTries = until;
                         o.DontRethrowOnTaskFailedType = typeof(System.IO.IOException);
+                        o.PingOnRetry = () => { Console.WriteLine(doCounter); };
                     })
+
                 .UntilAsync(() => false).ConfigureAwait(false);
 
             result.Should().BeFalse();

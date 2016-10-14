@@ -9,33 +9,29 @@ namespace DotNet.Basics.Tests.Tasks
     [TestFixture]
     public class OnceOnlyTaskTests
     {
-        private readonly TaskRunner _taskRunner = new TaskRunner();
-        private readonly ManagedTaskFactory _taskFactory = new ManagedTaskFactory();
-
         [Test]
-        public void AsyncTask_Run_ActionIsOnlyExecutedOnce()
+        public async Task AsyncTask_Run_ActionIsOnlyExecutedOnce()
         {
             var counter = 0;
 
-            var onceOnlyAction = _taskFactory.Create<OnceOnlyTask>(rid => { counter++; return Task.CompletedTask; });
-            Action action = async () => await _taskRunner.TryStartAsync(onceOnlyAction).ConfigureAwait(false);
-
-            //invoke multiple times
-            Run(action, 5);
+            await Run5TimesAsync(async () =>
+            {
+                counter++;
+            }).ConfigureAwait(false);
 
             counter.Should().Be(1);
         }
 
         [Test]
-        public void AsyncTask_RunWithException_ActionIsOnlyExecutedOnce()
+        public async Task AsyncTask_RunWithException_ActionIsOnlyExecutedOnce()
         {
             var counter = 0;
 
-            var onceOnlyAction = _taskFactory.Create<OnceOnlyTask>(rid => { counter++; throw new ArgumentException("buuh"); });
-            Action action = async () => await _taskRunner.TryStartAsync(onceOnlyAction).ConfigureAwait(false);
-
-            //invoke multiple times
-            Run(action, 5);
+            await Run5TimesAsync(async () =>
+            {
+                counter++;
+                throw new ArgumentException("buuh");
+            }).ConfigureAwait(false);
 
             counter.Should().Be(1);
         }
@@ -45,12 +41,10 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var counter = 0;
 
-            var onceOnlyAction = _taskFactory.Create<OnceOnlyTask>(rid => counter++);
-            Action action = () => _taskRunner.TryStart(onceOnlyAction);
-
-            //invoke multiple times
-            Run(action, 5);
-
+            Run5Times(() =>
+            {
+                counter++;
+            });
             counter.Should().Be(1);
         }
 
@@ -59,32 +53,45 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var counter = 0;
 
-            var onceOnlyAction = _taskFactory.Create<OnceOnlyTask>(rid => { counter++; throw new ArgumentException("buuh"); });
-            Action action = () => _taskRunner.TryStart(onceOnlyAction);
-
-            //invoke multiple times
-            Run(action, 5);
-
+            Run5Times(() =>
+            {
+                counter++;
+                throw new ArgumentException("buuh");
+            });
             counter.Should().Be(1);
         }
 
-        private void Run(Action action, uint times)
+
+        private async Task Run5TimesAsync(Func<Task> task)
         {
-            for (var i = 0; i < times; i++)
-            {
+            var ooTask = task.ToOnceOnly();
+
+            //invoke multiple times
+            for (var i = 0; i < 5; i++)
                 try
                 {
-                    action.Invoke();
+                    await ooTask.Invoke().ConfigureAwait(false);
                 }
-                catch (ArgumentException)
+                catch (ArgumentException e)
                 {
-                    //ignore
+                    e.Message.Should().Be("buuh");
                 }
-                catch (AggregateException)
+        }
+
+        private void Run5Times(Action task)
+        {
+            var ooTask = task.ToOnceOnly();
+
+            //invoke multiple times
+            for (var i = 0; i < 5; i++)
+                try
                 {
-                    //ignore
+                    ooTask.Invoke();
                 }
-            }
+                catch (ArgumentException e)
+                {
+                    e.Message.Should().Be("buuh");
+                }
         }
     }
 }

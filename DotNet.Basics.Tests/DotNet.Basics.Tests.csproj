@@ -116,12 +116,8 @@
     <Compile Include="Sys\EnumExtensionsTests.cs" />
     <Compile Include="Sys\ObservableTests.cs" />
     <Compile Include="Sys\SysExtensionsTests.cs" />
-    <Compile Include="Tasks\BackgroundTaskRunnerTests.cs" />
-    <Compile Include="Tasks\SingletonTaskRunnerTests.cs" />
     <Compile Include="Tasks\ManagedTaskTests.cs" />
     <Compile Include="Tasks\OnceOnlyTaskTests.cs" />
-    <Compile Include="Tasks\OnlyRunWhenInvokedTaskTests.cs" />
-    <Compile Include="Tasks\TaskRunnerTestExtensions.cs" />
     <Compile Include="Tasks\ThrowExceptionUntilXTriesDummeTask.cs" />
     <Compile Include="Tasks\RepeaterTaskTests.cs" />
     <Compile Include="Sys\TimeSpanExtensionsTests.cs" />

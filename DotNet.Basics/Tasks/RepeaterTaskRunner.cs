@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks
 {
     public class RepeaterTaskRunner
     {
-
-        public async Task<bool> RunAsync(ManagedTask task, Func<Exception, bool> untilPredicate, RepeatOptions options = null)
+        public async Task<bool> RunAsync(ITask task, Func<Exception, bool> untilPredicate, RepeatOptions options = null)
         {
             if (task == null)
                 return false;
@@ -19,8 +19,8 @@ namespace DotNet.Basics.Tasks
                 options = new RepeatOptions();
 
             Exception lastException = null;
-            options.CountLoopBreakPredicate?.Reset();
-            options.TimeoutLoopBreakPredicate?.Reset();
+            options.RepeatMaxTriesPredicate?.Init();
+            options.RepeatTimeoutPredicate?.Init();
 
             bool success;
 
@@ -31,7 +31,7 @@ namespace DotNet.Basics.Tasks
                     Exception exceptionInLastLoop = null;
                     try
                     {
-                        await task.RunAsync("").ConfigureAwait(false);
+                        await task.RunAsync(EventArgs.Empty, CancellationToken.None).ConfigureAwait(false);
                     }
                     catch (Exception e)
                     {
@@ -41,7 +41,7 @@ namespace DotNet.Basics.Tasks
                     }
                     finally
                     {
-                        options.CountLoopBreakPredicate?.LoopCallback();
+                        options.RepeatMaxTriesPredicate?.LoopCallback();
                     }
 
                     if (untilPredicate.Invoke(exceptionInLastLoop))
@@ -97,8 +97,8 @@ namespace DotNet.Basics.Tasks
 
         private bool ShouldContinue(Exception lastException, RepeatOptions options)
         {
-            bool breakPrematurely = options.CountLoopBreakPredicate != null && options.CountLoopBreakPredicate.ShouldBreak() ||
-                               options.TimeoutLoopBreakPredicate != null && options.TimeoutLoopBreakPredicate.ShouldBreak();
+            bool breakPrematurely = options.RepeatMaxTriesPredicate != null && options.RepeatMaxTriesPredicate.ShouldBreak() ||
+                               options.RepeatTimeoutPredicate != null && options.RepeatTimeoutPredicate.ShouldBreak();
 
             if (breakPrematurely)
             {

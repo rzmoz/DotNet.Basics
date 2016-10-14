@@ -1,56 +1,53 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks
 {
-    public class ManagedTask
+    public class ManagedTask<T> : ITask<T> where T : EventArgs, new()
     {
-        private readonly Action<string> _syncTask;
-        private readonly Func<string, Task> _asyncTask;
-
-        public ManagedTask(ManagedTask task)
-            : this(task.Id, task.Run, task.RunAsync)
-        {
-        }
-
-        public ManagedTask(string id, Action<string> syncTask)
-            : this(id, syncTask, rid =>
-            {
-                syncTask.Invoke(rid);
-                return Task.CompletedTask;
-            })
-        {
-        }
-
-        public ManagedTask(string id, Func<string, Task> asyncTask)
-            : this(id, rid => { asyncTask.Invoke(rid).Wait(); }, asyncTask)
-        {
-        }
-
-        private ManagedTask(string id, Action<string> syncTask, Func<string, Task> asyncTask)
-        {
-            Id = id ?? string.Empty;
-            _syncTask = syncTask ?? VoidSyncTask;
-            _asyncTask = asyncTask ?? VoidAsyncTask;
-        }
+        private readonly Func<T, CancellationToken, Task> _task;
 
         public string Id { get; }
-        
-        internal virtual void Run(string runId)
+        public string DisplayName { get; }
+
+        public ManagedTask(Func<Task> task) : this((args, ct) => task())
         {
-            _syncTask(runId ?? string.Empty);
+        }
+        public ManagedTask(Action task) : this((args, ct) => task())
+        {
+
         }
 
-        internal virtual async Task RunAsync(string runId)
+        public ManagedTask(Func<T, CancellationToken, Task> task)
         {
-            await _asyncTask(runId ?? string.Empty).ConfigureAwait(false);
+            if (task == null) throw new ArgumentNullException(nameof(task));
+            _task = task;
+        }
+        public ManagedTask(Action<T, CancellationToken> task)
+        {
+            if (task == null) throw new ArgumentNullException(nameof(task));
+            _task = (args, ct) =>
+            {
+                task(args, ct);
+                return Task.CompletedTask;
+            };
         }
 
-        private void VoidSyncTask(string runId)
-        { }
-        private Task VoidAsyncTask(string runId)
+        public Task<T> RunAsync()
         {
-            return Task.CompletedTask;
+            return RunAsync(new T(), CancellationToken.None);
+        }
+
+        public Task<T> RunAsync(CancellationToken ct)
+        {
+            return RunAsync(new T(), ct);
+        }
+
+        public async Task<T> RunAsync(T args, CancellationToken ct)
+        {
+            await _task(args, ct).ConfigureAwait(false);
+            return args;
         }
     }
 }

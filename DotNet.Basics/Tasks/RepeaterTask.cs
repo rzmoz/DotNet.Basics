@@ -3,25 +3,18 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks
 {
-    public class RepeaterTask : ManagedTask
+    public class RepeaterTask : ManagedTask<EventArgs>, ITask
     {
-        public RepeaterTask(ManagedTask task) : base(task)
+        public RepeaterTask(Func<Task> task) : base(task)
         {
             Options = new RepeatOptions();
         }
 
-        public RepeaterTask(string id, Action<string> syncTask) : base(id ?? NewRandomId, syncTask)
-        {
-            Options = new RepeatOptions();
-        }
-
-        public RepeaterTask(string id, Func<string, Task> asyncTask) : base(id ?? NewRandomId, asyncTask)
+        public RepeaterTask(Action task) : base(task)
         {
             Options = new RepeatOptions();
         }
 
         internal RepeatOptions Options { get; }
-
-        private static string NewRandomId => Guid.NewGuid().ToString("N");
     }
 }
