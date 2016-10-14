@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.Tests.Pipelines
+﻿namespace DotNet.Basics.Tests.Tasks.Pipelines
 {
     public class ClassThatIncrementArgsDependOn
     {

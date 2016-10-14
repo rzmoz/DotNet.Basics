@@ -1,10 +1,10 @@
 ﻿using System.Linq;
-using DotNet.Basics.Pipelines;
 using DotNet.Basics.Sys;
+using DotNet.Basics.Tasks.Pipelines;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace DotNet.Basics.Tests.Pipelines
+namespace DotNet.Basics.Tests.Tasks.Pipelines
 {
     [TestFixture]
     public class PipelineBlockTests

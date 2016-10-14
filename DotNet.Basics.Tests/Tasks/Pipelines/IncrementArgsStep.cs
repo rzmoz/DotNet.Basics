@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using DotNet.Basics.Pipelines;
 using DotNet.Basics.Sys;
+using DotNet.Basics.Tasks.Pipelines;
 
-namespace DotNet.Basics.Tests.Pipelines
+namespace DotNet.Basics.Tests.Tasks.Pipelines
 {
     public class IncrementArgsStep : PipelineStep<EventArgs<int>>
     {

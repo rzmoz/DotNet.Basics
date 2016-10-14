@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DotNet.Basics.Tasks;
+using DotNet.Basics.Tasks.Repeating;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace DotNet.Basics.Tests.Tasks
+namespace DotNet.Basics.Tests.Tasks.Repeating
 {
     [TestFixture]
     public class RepeaterTaskTests
@@ -284,4 +284,3 @@ namespace DotNet.Basics.Tests.Tasks
         }
     }
 }
-

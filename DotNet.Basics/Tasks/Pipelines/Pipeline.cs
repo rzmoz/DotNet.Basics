@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Ioc;
 
-namespace DotNet.Basics.Pipelines
+namespace DotNet.Basics.Tasks.Pipelines
 {
     public class Pipeline<T> : PipelineBlock<T> where T : EventArgs, new()
     {
@@ -13,7 +13,7 @@ namespace DotNet.Basics.Pipelines
         public Pipeline(SimpleContainer container) : this(null, container)
         {
         }
-        public Pipeline(string name, SimpleContainer container) : base(name ?? nameof(SectionType.Pipeline), container)
+        public Pipeline(string name, SimpleContainer container) : base(name ?? PipelineTaskTypes.Pipeline, container)
         {
         }
         protected override async Task InnerRunAsync(T args, CancellationToken ct)
@@ -25,6 +25,6 @@ namespace DotNet.Basics.Pipelines
                     break;
             }
         }
-        public override SectionType SectionType => SectionType.Pipeline;
+        public override string TaskType => PipelineTaskTypes.Pipeline;
     }
 }

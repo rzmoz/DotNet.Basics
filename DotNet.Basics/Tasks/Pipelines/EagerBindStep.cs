@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DotNet.Basics.Pipelines
+namespace DotNet.Basics.Tasks.Pipelines
 {
     public class EagerBindStep<T> : PipelineStep<T> where T : EventArgs, new()
     {

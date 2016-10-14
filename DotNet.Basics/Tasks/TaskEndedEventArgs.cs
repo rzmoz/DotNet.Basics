@@ -5,7 +5,7 @@ namespace DotNet.Basics.Tasks
 {
     public class TaskEndedEventArgs : TaskStartedEventArgs
     {
-        public TaskEndedEventArgs(string taskName, IDictionary<string, string> taskAttributes, bool wasCancelled, Exception exception) : base(taskName, taskAttributes)
+        public TaskEndedEventArgs(string name, string taskType, IReadOnlyDictionary<string, string> taskProperties, bool wasCancelled, Exception exception) : base(name, taskType, taskProperties)
         {
             WasCancelled = wasCancelled;
             Exception = exception;

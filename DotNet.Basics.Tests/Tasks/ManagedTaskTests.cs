@@ -38,20 +38,20 @@ namespace DotNet.Basics.Tests.Tasks
             var task = new ManagedTask<EventArgs<int>>((args, ct) => { args.Value = argsValue; });
             task.Properties[myKey] = myValue;
 
-            task.TaskStarted += (args) => { startedArgs = args; };
-            task.TaskEnded += (args) => { endedArgs = args; };
+            task.Started += (args) => { startedArgs = args; };
+            task.Ended += (args) => { endedArgs = args; };
 
             resultArgs = await task.RunAsync(null, ctSource.Token);
 
             //assert - started
             startedArgs.Should().NotBeNull();
             startedArgs.Should().NotBeNull();
-            startedArgs.TaskName.Should().Be(task.GetType().FullName, "Expected Name");
+            startedArgs.Name.Should().Be(task.GetType().Name, "Expected Name");
             startedArgs.TaskProperties[myKey].Should().Be(myValue);
 
             endedArgs.Exception.Should().BeNull();
             endedArgs.WasCancelled.Should().BeTrue();
-            endedArgs.TaskName.Should().Be(startedArgs.TaskName);
+            endedArgs.Name.Should().Be(startedArgs.Name);
             endedArgs.TaskProperties[myKey].Should().Be(startedArgs.TaskProperties[myKey]);
 
             resultArgs.Value.Should().Be(argsValue);
@@ -65,7 +65,7 @@ namespace DotNet.Basics.Tests.Tasks
 
             TaskEndedEventArgs endedArgs = null;
 
-            task.TaskEnded += (args) => { endedArgs = args; };
+            task.Ended += (args) => { endedArgs = args; };
 
             try
             {
@@ -93,17 +93,17 @@ namespace DotNet.Basics.Tests.Tasks
             var task = new ManagedTask<EventArgs<int>>((args, ct) => { });
             task.Properties[myKey] = myValue;
 
-            task.TaskStarted += (args) =>
+            task.Started += (args) =>
             {
                 eventRaised = true;
-                observedName = args.TaskName;
+                observedName = args.Name;
                 observedValue = args.TaskProperties[myKey];
             };
 
             await task.RunAsync(null, CancellationToken.None);
 
             eventRaised.Should().BeTrue("Event raised");
-            observedName.Should().Be(task.GetType().FullName, "Expected Name");
+            observedName.Should().Be(task.GetType().Name, "Expected Name");
             observedValue.Should().Be(myValue);
         }
 

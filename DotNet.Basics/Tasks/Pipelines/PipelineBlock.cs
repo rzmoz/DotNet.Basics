@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using DotNet.Basics.Collections;
 using DotNet.Basics.Ioc;
 
-namespace DotNet.Basics.Pipelines
+namespace DotNet.Basics.Tasks.Pipelines
 {
     public class PipelineBlock<T> : PipelineSection<T>, IEnumerable<PipelineSection<T>> where T : EventArgs, new()
     {
@@ -37,7 +37,7 @@ namespace DotNet.Basics.Pipelines
 
         public PipelineBlock<T> AddStep(string name, Func<T, CancellationToken, Task> step)
         {
-            var eagerStep = new EagerBindStep<T>(name ?? $"{SectionType.Step} {_subSections.Count}", step);
+            var eagerStep = new EagerBindStep<T>(name ?? $"{PipelineTaskTypes.Step} {_subSections.Count}", step);
             InitEvents(eagerStep);
             _subSections.Add(eagerStep);
             return this;
@@ -49,14 +49,14 @@ namespace DotNet.Basics.Pipelines
         }
         public PipelineBlock<T> AddBlock(string name, params Func<T, CancellationToken, Task>[] steps)
         {
-            var block = new PipelineBlock<T>(name ?? $"{SectionType.Block} {_subSections.Count}", _container);
+            var block = new PipelineBlock<T>(name ?? $"{PipelineTaskTypes.Block} {_subSections.Count}", _container);
             steps.ForEach(step => block.AddStep(step));
             InitEvents(block);
             _subSections.Add(block);
             return block;
         }
 
-        public override SectionType SectionType => SectionType.Block;
+        public override string TaskType => PipelineTaskTypes.Block;
 
         protected override async Task InnerRunAsync(T args, CancellationToken ct)
         {
@@ -67,8 +67,8 @@ namespace DotNet.Basics.Pipelines
 
         private void InitEvents(PipelineSection<T> section)
         {
-            section.SectionStarted += FireSectionStarted;
-            section.SectionEnded += FireSectionEnded;
+            section.Started += FireStarted;
+            section.Ended += FireEnded;
         }
 
         public IEnumerator<PipelineSection<T>> GetEnumerator()

@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.Tasks
+﻿namespace DotNet.Basics.Tasks.Repeating
 {
     public class RepeatMaxTriesPredicate
     {

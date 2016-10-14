@@ -5,13 +5,15 @@ namespace DotNet.Basics.Tasks
 {
     public class TaskStartedEventArgs : EventArgs
     {
-        public TaskStartedEventArgs(string taskName, IDictionary<string, string> taskAttributes)
+        public TaskStartedEventArgs(string name, string taskType, IReadOnlyDictionary<string, string> taskProperties)
         {
-            TaskName = taskName;
-            TaskProperties = new Dictionary<string, string>(taskAttributes);
+            Name = name;
+            TaskType = taskType;
+            TaskProperties = taskProperties;
         }
 
-        public string TaskName { get; }
+        public string Name { get; }
+        public string TaskType { get; }
         public IReadOnlyDictionary<string, string> TaskProperties { get; }
     }
 }

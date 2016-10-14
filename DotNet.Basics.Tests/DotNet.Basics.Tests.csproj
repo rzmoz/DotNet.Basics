@@ -101,13 +101,13 @@
     <Compile Include="Ioc\TestHelpers\IMyType.cs" />
     <Compile Include="Ioc\TestHelpers\MyType1.cs" />
     <Compile Include="Ioc\TestHelpers\MyType2.cs" />
-    <Compile Include="Pipelines\ClassThatIncrementArgsDependOn.cs" />
-    <Compile Include="Pipelines\IncrementArgsStep.cs" />
-    <Compile Include="Pipelines\SimplePipeline.cs" />
-    <Compile Include="Pipelines\PipelineBlockTests.cs" />
-    <Compile Include="Pipelines\PipelineTests.cs" />
+    <Compile Include="Tasks\Pipelines\ClassThatIncrementArgsDependOn.cs" />
+    <Compile Include="Tasks\Pipelines\IncrementArgsStep.cs" />
+    <Compile Include="Tasks\Pipelines\SimplePipeline.cs" />
+    <Compile Include="Tasks\Pipelines\PipelineBlockTests.cs" />
+    <Compile Include="Tasks\Pipelines\PipelineTests.cs" />
     <Compile Include="Diagnostics\ProfileTests.cs" />
-    <Compile Include="Pipelines\PipelineStepWithDisplayNameSetStep.cs" />
+    <Compile Include="Tasks\Pipelines\PipelineStepWithDisplayNameSetStep.cs" />
     <Compile Include="Collections\StringDictionaryTests.cs" />
     <Compile Include="Collections\StringPairTests.cs" />
     <Compile Include="Sys\PowerShellCmdletTests.cs" />
@@ -119,7 +119,7 @@
     <Compile Include="Tasks\ManagedTaskTests.cs" />
     <Compile Include="Tasks\OnceOnlyTaskTests.cs" />
     <Compile Include="Tasks\ThrowExceptionUntilXTriesDummeTask.cs" />
-    <Compile Include="Tasks\RepeaterTaskTests.cs" />
+    <Compile Include="Tasks\Repeating\RepeaterTaskTests.cs" />
     <Compile Include="Sys\TimeSpanExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>

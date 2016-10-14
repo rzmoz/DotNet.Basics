@@ -16,9 +16,9 @@ namespace DotNet.Basics.Tasks
         public ManagedTask(Func<Task> task) : this((args, ct) => task())
         {
         }
+
         public ManagedTask(Action task) : this((args, ct) => task())
         {
-
         }
 
         public ManagedTask(Action<T, CancellationToken> task)
@@ -34,17 +34,17 @@ namespace DotNet.Basics.Tasks
         {
             if (task == null) throw new ArgumentNullException(nameof(task));
             _task = task;
-            Name = GetType().FullName;
+            Name = null;//trigger default name
             Properties = new StringDictionary(DictionaryKeyMode.IgnoreKeyCase);
         }
 
-        public event TaskStartedEventHandler TaskStarted;
-        public event TaskEndedEventHandler TaskEnded;
+        public event TaskStartedEventHandler Started;
+        public event TaskEndedEventHandler Ended;
 
         public string Name
         {
             get { return _name; }
-            set { _name = value ?? GetType().FullName; }
+            set { _name = value ?? GetType().Name; }
         }
 
         public StringDictionary Properties { get; }
@@ -76,8 +76,8 @@ namespace DotNet.Basics.Tasks
             try
             {
                 Init();
-                TaskStarted?.Invoke(new TaskStartedEventArgs(Name, Properties));
-                await _task(args, ct).ConfigureAwait(false);
+                FireStarted(new TaskStartedEventArgs(Name, TaskType, Properties));
+                await InnerRunAsync(args, ct).ConfigureAwait(false);
                 return args;
             }
             catch (Exception e)
@@ -87,8 +87,24 @@ namespace DotNet.Basics.Tasks
             }
             finally
             {
-                TaskEnded?.Invoke(new TaskEndedEventArgs(Name, Properties, ct.IsCancellationRequested, exceptionEncountered));
+                FireEnded(new TaskEndedEventArgs(Name, TaskType, Properties, ct.IsCancellationRequested, exceptionEncountered));
             }
+        }
+
+        public virtual string TaskType => "Task";
+
+        protected virtual async Task InnerRunAsync(T args, CancellationToken ct)
+        {
+            await _task(args, ct).ConfigureAwait(false);
+        }
+
+        protected void FireStarted(TaskStartedEventArgs args)
+        {
+            Started?.Invoke(args);
+        }
+        protected void FireEnded(TaskEndedEventArgs args)
+        {
+            Ended?.Invoke(args);
         }
     }
 }

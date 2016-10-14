@@ -12,8 +12,8 @@ namespace DotNet.Basics.Tasks
 
     public interface ITask<T> where T : EventArgs, new()
     {
-        event ManagedTask<T>.TaskStartedEventHandler TaskStarted;
-        event ManagedTask<T>.TaskEndedEventHandler TaskEnded;
+        event ManagedTask<T>.TaskStartedEventHandler Started;
+        event ManagedTask<T>.TaskEndedEventHandler Ended;
 
         string Name { get; }
         StringDictionary Properties { get; }

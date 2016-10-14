@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DotNet.Basics.Tasks
+namespace DotNet.Basics.Tasks.Repeating
 {
     public class RepeatTimeoutPredicate
     {

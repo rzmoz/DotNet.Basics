@@ -4,12 +4,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Ioc;
-using DotNet.Basics.Pipelines;
 using DotNet.Basics.Sys;
+using DotNet.Basics.Tasks.Pipelines;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace DotNet.Basics.Tests.Pipelines
+namespace DotNet.Basics.Tests.Tasks.Pipelines
 {
     [TestFixture]
     public class PipelineTests
@@ -44,14 +44,14 @@ namespace DotNet.Basics.Tests.Pipelines
             for (var i = 0; i < additionalStepCount; i++)
                 pipeline.AddStep(async (args, ct) => counter++);
 
-            pipeline.SectionStarted += args =>
+            pipeline.Started += args =>
             {
                 if (args.Name == initialStepName)
                     ts.Cancel();
             };
 
             var pipelineTask = pipeline.RunAsync(ts.Token);
-            
+
             await Task.WhenAll(pipelineTask).ConfigureAwait(false);
             pipeline.Count().Should().Be(additionalStepCount + 1);
             counter.Should().Be(1);
@@ -66,9 +66,9 @@ namespace DotNet.Basics.Tests.Pipelines
 
             string stepName = null;
 
-            pipeline.SectionStarted += (e) =>
+            pipeline.Started += (e) =>
             {
-                if (e.Type == SectionType.Step)
+                if (e.TaskType == PipelineTaskTypes.Step)
                     stepName = e.Name;
             };
 
@@ -84,9 +84,9 @@ namespace DotNet.Basics.Tests.Pipelines
             pipeline.AddStep<IncrementArgsStep>();
             string stepName = null;
 
-            pipeline.SectionStarted += (e) =>
+            pipeline.Started += (e) =>
             {
-                if (e.Type == SectionType.Step)
+                if (e.TaskType == PipelineTaskTypes.Step)
                     stepName = e.Name;
             };
 
@@ -168,32 +168,32 @@ namespace DotNet.Basics.Tests.Pipelines
             string stepStarted = string.Empty;
             string stepEnded = string.Empty;
 
-            pipeline.SectionStarted += args =>
+            pipeline.Started += args =>
             {
-                switch (args.Type)
+                switch (args.TaskType)
                 {
-                    case SectionType.Step:
+                    case PipelineTaskTypes.Step:
                         stepStarted = args.Name;
                         break;
-                    case SectionType.Block:
+                    case PipelineTaskTypes.Block:
                         blockStarted = args.Name;
                         break;
-                    case SectionType.Pipeline:
+                    case PipelineTaskTypes.Pipeline:
                         pipelineStarted = args.Name;
                         break;
                 }
             };
-            pipeline.SectionEnded += args =>
+            pipeline.Ended += args =>
             {
-                switch (args.Type)
+                switch (args.TaskType)
                 {
-                    case SectionType.Step:
+                    case PipelineTaskTypes.Step:
                         stepEnded = args.Name;
                         break;
-                    case SectionType.Block:
+                    case PipelineTaskTypes.Block:
                         blockEnded = args.Name;
                         break;
-                    case SectionType.Pipeline:
+                    case PipelineTaskTypes.Pipeline:
                         pipelineEnded = args.Name;
                         break;
                 }

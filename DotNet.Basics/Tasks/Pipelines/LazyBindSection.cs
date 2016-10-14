@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DotNet.Basics.Pipelines
+namespace DotNet.Basics.Tasks.Pipelines
 {
     public class LazyBindSection<T, TSection> : PipelineSection<T>
         where T : EventArgs, new()
@@ -16,19 +16,20 @@ namespace DotNet.Basics.Pipelines
             _getSection = getSection;
         }
 
-        public override SectionType SectionType
+        public override string TaskType
         {
             get
             {
                 var step = _getSection();
-                return step.SectionType;
+                return step.TaskType;
             }
         }
 
-        protected override void Init()
+        public override void Init()
         {
             var step = _getSection();
             Name = step.Name;
+            base.Init();
         }
 
         protected override async Task InnerRunAsync(T args, CancellationToken ct)
