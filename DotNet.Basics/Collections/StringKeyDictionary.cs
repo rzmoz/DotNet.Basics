@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace DotNet.Basics.Collections
 {
     [Serializable]
-    public class StringKeyDictionary<TValue> : IDictionary<string, TValue>
+    public class StringKeyDictionary<TValue> : IDictionary<string, TValue>, IReadOnlyDictionary<string, TValue>
     {
         private readonly IDictionary<string, TValue> _dic;
         private readonly IDictionary<string, string> _casesInsensitiveMapping;
@@ -41,6 +41,16 @@ namespace DotNet.Basics.Collections
         {
             get { return GetValue(key); }
             set { _dic[ResolvedKey(key)] = value; }
+        }
+
+        IEnumerable<string> IReadOnlyDictionary<string, TValue>.Keys
+        {
+            get { return Keys; }
+        }
+
+        IEnumerable<TValue> IReadOnlyDictionary<string, TValue>.Values
+        {
+            get { return Values; }
         }
 
 
@@ -125,10 +135,10 @@ namespace DotNet.Basics.Collections
 
         public int Count => _dic.Count;
         public bool IsReadOnly => false;
-        
+
         public ICollection<string> Keys => _dic.Keys;
         public ICollection<TValue> Values => _dic.Values;
-        
+
         private string ResolvedKey(string key)
         {
             if (DictionaryKeyMode == DictionaryKeyMode.KeyCaseSensitive)

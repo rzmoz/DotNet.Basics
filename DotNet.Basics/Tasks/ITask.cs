@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+
 
 namespace DotNet.Basics.Tasks
 {
@@ -10,8 +12,13 @@ namespace DotNet.Basics.Tasks
 
     public interface ITask<T> where T : EventArgs, new()
     {
-        string Id { get; }
-        string DisplayName { get; }
+        event ManagedTask<T>.TaskStartedEventHandler TaskStarted;
+        event ManagedTask<T>.TaskEndedEventHandler TaskEnded;
+
+        string Name { get; }
+        IReadOnlyDictionary<string, string> Attributes { get; }
+
+        void Init();
         Task<T> RunAsync();
         Task<T> RunAsync(CancellationToken ct);
         Task<T> RunAsync(T args, CancellationToken ct);

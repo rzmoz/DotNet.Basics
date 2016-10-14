@@ -136,6 +136,8 @@
     <Compile Include="Tasks\Repeat.cs" />
     <Compile Include="Tasks\RepeatTimeoutPredicate.cs" />
     <Compile Include="Sys\TimeSpanExtensions.cs" />
+    <Compile Include="Tasks\TaskEndedEventArgs.cs" />
+    <Compile Include="Tasks\TaskStartedEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DotNet.Basics.nuspec" />
