@@ -5,10 +5,11 @@ namespace DotNet.Basics.Collections
     public sealed class StringPair
     {
         public StringPair() { }
+
         public StringPair(KeyValuePair<string, string> kvp)
             : this(kvp.Key, kvp.Value)
-        {
-        }
+        { }
+
         public StringPair(string key = null, string value = null)
         {
             Key = key;
