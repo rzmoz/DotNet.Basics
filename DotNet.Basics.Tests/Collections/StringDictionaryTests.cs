@@ -26,7 +26,7 @@ namespace DotNet.Basics.Tests.Collections
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(StringDictionary));
             ser.WriteObject(stream1, kvc);
             stream1.Position = 0;
-            var  sr = new System.IO.StreamReader(stream1);
+            var sr = new System.IO.StreamReader(stream1);
             var json = sr.ReadToEnd();
 
             //assert
@@ -85,7 +85,8 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Ctor_KeyModeNotFoundExceptionfNotFound_ExceptionIsThrown()
         {
-            var kvCollection = new StringDictionary(DictionaryKeyMode.KeyCaseSensitive, KeyNotFoundMode.ThrowKeyNotFoundException) { [_myKey] = _myValue };
+            var kvCollection = new StringDictionary(DictionaryKeyMode.IgnoreKeyCase, KeyNotFoundMode.ThrowKeyNotFoundException);
+            kvCollection[_myKey] = _myValue;
 
             Action action = () => { var @value = kvCollection[_myKeyThatDoesntExist]; };
 
@@ -114,7 +115,7 @@ namespace DotNet.Basics.Tests.Collections
         [Test]
         public void Add_KeyDoesNotExist_ValueIsAdded()
         {
-            var kvCollection = new StringDictionary {{_myKey, _myValue}};
+            var kvCollection = new StringDictionary { { _myKey, _myValue } };
 
 
             kvCollection[_myKey].Should().Be(_myValue);

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace DotNet.Basics.Collections
 {
     [Serializable]
-    public class StringKeyDictionary<TValue> : IDictionary<string, TValue>, IReadOnlyDictionary<string, TValue>
+    public class StringKeyDictionary<TValue> : IDictionary<string, TValue>
     {
         private readonly IDictionary<string, TValue> _dic;
         private readonly IDictionary<string, string> _casesInsensitiveMapping;
@@ -42,17 +42,6 @@ namespace DotNet.Basics.Collections
             get { return GetValue(key); }
             set { _dic[ResolvedKey(key)] = value; }
         }
-
-        IEnumerable<string> IReadOnlyDictionary<string, TValue>.Keys
-        {
-            get { return Keys; }
-        }
-
-        IEnumerable<TValue> IReadOnlyDictionary<string, TValue>.Values
-        {
-            get { return Values; }
-        }
-
 
         public KeyNotFoundMode KeyNotFoundMode { get; }
         public DictionaryKeyMode DictionaryKeyMode { get; }
@@ -143,13 +132,7 @@ namespace DotNet.Basics.Collections
         {
             if (DictionaryKeyMode == DictionaryKeyMode.KeyCaseSensitive)
                 return key;
-            var loweredKey = key.ToLower();
-            if (_casesInsensitiveMapping.ContainsKey(loweredKey))
-                return _casesInsensitiveMapping[loweredKey];
-
-            if (KeyNotFoundMode == KeyNotFoundMode.ThrowKeyNotFoundException)
-                throw new KeyNotFoundException(key);
-            return key;
+            return key.ToLower();
         }
 
         private TValue GetValue(string key)

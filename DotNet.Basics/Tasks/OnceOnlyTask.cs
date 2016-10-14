@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks
 {
-    public class OnceOnlyAction
+    public class OnceOnlyTask
     {
         private Action _syncTask;
         private Func<Task> _asyncTask;
 
-        public OnceOnlyAction(Action task)
+        public OnceOnlyTask(Action task)
         {
             _syncTask = () =>
             {
@@ -23,7 +23,7 @@ namespace DotNet.Basics.Tasks
             };
         }
 
-        public OnceOnlyAction(Func<Task> asyncTask)
+        public OnceOnlyTask(Func<Task> asyncTask)
         {
             _asyncTask = async () =>
             {

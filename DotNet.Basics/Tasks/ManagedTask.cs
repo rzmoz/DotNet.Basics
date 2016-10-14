@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Collections;
@@ -8,12 +7,11 @@ namespace DotNet.Basics.Tasks
 {
     public class ManagedTask<T> : ITask<T> where T : EventArgs, new()
     {
-        private readonly StringDictionary _attributes;
         private readonly Func<T, CancellationToken, Task> _task;
         private string _name;
 
-        public delegate void TaskStartedEventHandler(TaskStartedEventArgs<T> args);
-        public delegate void TaskEndedEventHandler(TaskEndedEventArgs<T> args);
+        public delegate void TaskStartedEventHandler(TaskStartedEventArgs args);
+        public delegate void TaskEndedEventHandler(TaskEndedEventArgs args);
 
         public ManagedTask(Func<Task> task) : this((args, ct) => task())
         {
@@ -37,7 +35,7 @@ namespace DotNet.Basics.Tasks
             if (task == null) throw new ArgumentNullException(nameof(task));
             _task = task;
             Name = GetType().FullName;
-            _attributes = new StringDictionary(DictionaryKeyMode.IgnoreKeyCase);
+            Properties = new StringDictionary(DictionaryKeyMode.IgnoreKeyCase);
         }
 
         public event TaskStartedEventHandler TaskStarted;
@@ -49,7 +47,7 @@ namespace DotNet.Basics.Tasks
             set { _name = value ?? GetType().FullName; }
         }
 
-        public IReadOnlyDictionary<string, string> Attributes => _attributes;
+        public StringDictionary Properties { get; }
 
         public virtual void Init()
         {
@@ -58,6 +56,11 @@ namespace DotNet.Basics.Tasks
         public Task<T> RunAsync()
         {
             return RunAsync(new T(), CancellationToken.None);
+        }
+
+        public Task<T> RunAsync(T args)
+        {
+            return RunAsync(args, CancellationToken.None);
         }
 
         public Task<T> RunAsync(CancellationToken ct)
@@ -73,7 +76,7 @@ namespace DotNet.Basics.Tasks
             try
             {
                 Init();
-                TaskStarted?.Invoke(new TaskStartedEventArgs<T>(Name, Attributes, args));
+                TaskStarted?.Invoke(new TaskStartedEventArgs(Name, Properties));
                 await _task(args, ct).ConfigureAwait(false);
                 return args;
             }
@@ -84,7 +87,7 @@ namespace DotNet.Basics.Tasks
             }
             finally
             {
-                TaskEnded?.Invoke(new TaskEndedEventArgs<T>(Name, Attributes, args, ct.IsCancellationRequested, exceptionEncountered));
+                TaskEnded?.Invoke(new TaskEndedEventArgs(Name, Properties, ct.IsCancellationRequested, exceptionEncountered));
             }
         }
     }

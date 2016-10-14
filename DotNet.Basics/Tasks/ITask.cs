@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNet.Basics.Collections;
 
 
 namespace DotNet.Basics.Tasks
@@ -16,7 +16,7 @@ namespace DotNet.Basics.Tasks
         event ManagedTask<T>.TaskEndedEventHandler TaskEnded;
 
         string Name { get; }
-        IReadOnlyDictionary<string, string> Attributes { get; }
+        StringDictionary Properties { get; }
 
         void Init();
         Task<T> RunAsync();

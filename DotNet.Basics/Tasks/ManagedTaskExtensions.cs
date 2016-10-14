@@ -7,11 +7,11 @@ namespace DotNet.Basics.Tasks
     {
         public static Action ToOnceOnly(this Action task)
         {
-            return new OnceOnlyAction(task).RunSync;
+            return new OnceOnlyTask(task).RunSync;
         }
         public static Func<Task> ToOnceOnly(this Func<Task> task)
         {
-            return new OnceOnlyAction(task).RunAsync;
+            return new OnceOnlyTask(task).RunAsync;
         }
     }
 }

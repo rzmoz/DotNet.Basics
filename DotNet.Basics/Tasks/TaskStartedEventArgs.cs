@@ -3,17 +3,15 @@ using System.Collections.Generic;
 
 namespace DotNet.Basics.Tasks
 {
-    public class TaskStartedEventArgs<T> : EventArgs where T : EventArgs
+    public class TaskStartedEventArgs : EventArgs
     {
-        public TaskStartedEventArgs(string taskName, IReadOnlyDictionary<string, string> taskAttributes, T args)
+        public TaskStartedEventArgs(string taskName, IDictionary<string, string> taskAttributes)
         {
             TaskName = taskName;
-            TaskAttributes = taskAttributes;
-            Args = args;
+            TaskProperties = new Dictionary<string, string>(taskAttributes);
         }
 
         public string TaskName { get; }
-        public IReadOnlyDictionary<string, string> TaskAttributes { get; }
-        public T Args { get; }
+        public IReadOnlyDictionary<string, string> TaskProperties { get; }
     }
 }
