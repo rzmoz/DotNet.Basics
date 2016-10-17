@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿using System;
 using System.Linq;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
@@ -7,11 +7,11 @@ namespace DotNet.Basics.Compression
 {
     public class SevenZip
     {
-        private readonly DirPath _tempRootdir;
+        private readonly DirPath _appRootDir;
 
-        public SevenZip(DirPath tempRootdir = null)
+        public SevenZip(DirPath appRootDir = null)
         {
-            _tempRootdir = tempRootdir;
+            _appRootDir = appRootDir ?? Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).ToDir();
         }
 
         public int ExtractToDirectory(string archivePath, string targetDirPath)
@@ -30,27 +30,15 @@ namespace DotNet.Basics.Compression
 
         private int ExecuteSevenZip(string command, params string[] @params)
         {
-            using (var temp = new TempDir(_tempRootdir, "7z"))
+            using (var appInstaller = new ApplicationInstaller(_appRootDir.ToDir("SevenZip"), "7za.exe"))
             {
-                var temp7ZExe = temp.Root.ToFile("7za.exe");
-                Extract(temp7ZExe.FullName, CompressionResources._7za);
-                var temp7ZipDll = temp.Root.ToFile("7za.dll");
-                Extract(temp7ZipDll.FullName, CompressionResources._7za1);
-                var temp7Zip32Dll = temp.Root.ToFile("7zxa.dll");
-                Extract(temp7Zip32Dll.FullName, CompressionResources._7zxa);
-
-                Trace.WriteLine($"7zip extracted to {temp.Root.FullName}");
-
+                appInstaller.AddFromBytes(appInstaller.Executable.Name, CompressionResources._7za);
+                appInstaller.AddFromBytes("7za.dll", CompressionResources._7za1);
+                appInstaller.AddFromBytes("7zxa.dll", CompressionResources._7zxa);
                 var paramsString = @params.Aggregate(string.Empty, (current, param) => current + $" {param}");
-                var script = $"{temp7ZExe.FullName} {command} {paramsString} -y";
+                var script = $"{appInstaller.Executable.FullName} {command} {paramsString} -y";
                 return CommandPrompt.Run(script);
             }
-        }
-
-        private void Extract(string path, byte[] bytes)
-        {
-            using (var fsDst = new System.IO.FileStream(path, System.IO.FileMode.CreateNew, System.IO.FileAccess.Write))
-                fsDst.Write(bytes, 0, bytes.Length);
         }
     }
 }

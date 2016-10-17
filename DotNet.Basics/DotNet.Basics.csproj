@@ -67,6 +67,8 @@
     <Compile Include="Diagnostics\ProfilerStates.cs" />
     <Compile Include="Ioc\SimpleContainer.cs" />
     <Compile Include="Ioc\ISimpleRegistrations.cs" />
+    <Compile Include="IO\ApplicationInstaller.cs" />
+    <Compile Include="IO\FileApplication.cs" />
     <Compile Include="IO\DirExtensions.cs" />
     <Compile Include="IO\DirPath.cs" />
     <Compile Include="IO\FilePath.cs" />

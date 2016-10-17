@@ -83,6 +83,7 @@
     <Compile Include="Ioc\TestHelpers\MyRegistrations.cs" />
     <Compile Include="Ioc\TestHelpers\TestSettingsProvider.cs" />
     <Compile Include="Ioc\TestHelpers\TypeWithValue.cs" />
+    <Compile Include="IO\ApplicationInstallerTests.cs" />
     <Compile Include="IO\FileSystemInfoExtensionTests.cs" />
     <Compile Include="IO\FileTypeTests.cs" />
     <Compile Include="IO\DirExtensionsTests.cs" />
@@ -93,6 +94,11 @@
     <Compile Include="IO\SystemIoPathTests.cs" />
     <Compile Include="IO\TempDirTests.cs" />
     <Compile Include="IO\TempWorkDirTests.cs" />
+    <Compile Include="IO\TestSources\IoTestResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IoTestResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Rest\RestClientTests.cs" />
     <Compile Include="Rest\RestRequestTests.cs" />
     <Compile Include="Rest\RestResponseTests.cs" />
@@ -148,11 +154,17 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="IO\TestSources\ReturnIntConsole.exe" />
     <Content Include="IO\TestSources\TextFile1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="IO\TestSources\IoTestResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>IoTestResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
