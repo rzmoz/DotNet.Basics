@@ -12,6 +12,14 @@ namespace DotNet.Basics.Tests.Compression
     [TestFixture]
     public class SevenZipTests
     {
+        private SevenZip _sevenZip;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _sevenZip = new SevenZip(TestContext.CurrentContext.TestDirectory.ToDir());
+        }
+
         [Test]
         public void CreateFromDirectory_DontOverWrite_ExceptionWhenTargetAlreadyExists()
         {
@@ -20,9 +28,9 @@ namespace DotNet.Basics.Tests.Compression
             targetPath.DeleteIfExists();
             "dummyContent".WriteAllText(targetPath);
             targetPath.Exists().Should().BeTrue();
-            var zip = new SevenZip();
+
             //act
-            Action action = () => zip.CreateFromDirectory("mySource", targetPath.FullName, false);
+            Action action = () => _sevenZip.CreateFromDirectory("mySource", targetPath.FullName, false);
 
             action.ShouldThrow<System.IO.IOException>();
         }
@@ -41,9 +49,9 @@ namespace DotNet.Basics.Tests.Compression
             targetZip.DeleteIfExists();
 
             targetZip.Exists().Should().BeFalse();
-            var zip = new SevenZip();
+
             //act
-            zip.CreateFromDirectory(sourceDir.FullName, targetZip.FullName);
+            _sevenZip.CreateFromDirectory(sourceDir.FullName, targetZip.FullName);
 
             targetZip.Exists().Should().BeTrue($"Exists:{targetZip.FullName}");
             using (var archive = ZipFile.OpenRead(targetZip.FullName))
@@ -69,10 +77,9 @@ namespace DotNet.Basics.Tests.Compression
             targetDir.DeleteIfExists();
             targetDir.Exists().Should().BeFalse();
             targetFile.Exists().Should().BeFalse();
-
-            var zip = new SevenZip();
+            
             //act
-            zip.ExtractToDirectory(sourceZip.FullName, targetDir.FullName);
+            _sevenZip.ExtractToDirectory(sourceZip.FullName, targetDir.FullName);
             targetDir.Exists().Should().BeTrue($"Exists:{targetDir.FullName}");
             targetDir.ToDir().EnumeratePaths().Count().Should().Be(1);
             targetFile.Exists().Should().BeTrue();

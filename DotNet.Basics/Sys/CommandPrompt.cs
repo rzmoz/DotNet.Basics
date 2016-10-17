@@ -22,13 +22,13 @@ namespace DotNet.Basics.Sys
             {
                 console.Start();
 
-                Trace.WriteLine(console.StandardOutput.ReadToEnd());
+                Debug.WriteLine(console.StandardOutput.ReadToEnd());
                 var error = console.StandardError.ReadToEnd();
                 if (error.Length > 0)
-                    Trace.WriteLine($"[Error]: {error}");
+                    Debug.WriteLine($"[Error]: {error}");
 
                 var exitCode = console.ExitCode;
-                Trace.WriteLine($"ExitCode:{exitCode} returned from {commandString}");
+                Debug.WriteLine($"ExitCode:{exitCode} returned from {commandString}");
                 console.Close();
                 return exitCode;
             }

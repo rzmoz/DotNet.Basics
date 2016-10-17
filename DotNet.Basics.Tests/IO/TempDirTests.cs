@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DotNet.Basics.IO;
 using FluentAssertions;
 using NUnit.Framework;
@@ -18,21 +15,20 @@ namespace DotNet.Basics.Tests.IO
         {
             const int numOfDirsToGenerate = 23;//prime
             var rootDir = TestContext.CurrentContext.TestDirectory.ToDir("Ctor_RandomNess_RandomDirsAreGenerated");
-            var dirs = new List<TempDir>();
-            Parallel.For(0, numOfDirsToGenerate, i =>
+            var dirs = new Dictionary<string, TempDir>();//dic to ensure names are unique
+            foreach (var i in Enumerable.Range(1, numOfDirsToGenerate))
             {
-                dirs.Add(new TempDir(rootDir));
-            });
-
-            dirs.Count.Should().Be(numOfDirsToGenerate);
-            foreach (var tempDir in dirs)
-            {
-                tempDir.Root.Exists().Should().BeTrue(tempDir.Root.FullName);
+                var td = new TempDir(rootDir);
+                dirs.Add(td.Root.Name, td);
             }
 
-            foreach (var tempDir in dirs)
+            dirs.Count.Should().Be(numOfDirsToGenerate);
+            foreach (var td in dirs)
             {
-                tempDir.Dispose();
+                using (var tempDir = td.Value)
+                {
+                    tempDir.Root.Exists().Should().BeTrue(tempDir.Root.FullName);
+                }
             }
         }
     }

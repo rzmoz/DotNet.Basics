@@ -6,7 +6,7 @@ using DotNet.Basics.Tasks.Repeating;
 
 namespace DotNet.Basics.IO
 {
-    public class ApplicationInstaller : IDisposable
+    public class ApplicationInstaller
     {
         private const string _installingHandleName = "installing.dat";
         private const string _installedHandleName = "installed.dat";
@@ -93,11 +93,6 @@ namespace DotNet.Basics.IO
         public void UnInstall()
         {
             InstallDir.DeleteIfExists();
-        }
-
-        public void Dispose()
-        {
-            Install();
         }
     }
 }

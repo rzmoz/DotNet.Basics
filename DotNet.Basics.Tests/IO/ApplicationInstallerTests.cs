@@ -22,11 +22,9 @@ namespace DotNet.Basics.Tests.IO
             var installRange = Enumerable.Range(1, 50);
             Parallel.ForEach(installRange, val =>
             {
-                using (var installer = new ApplicationInstaller(appDir, fileName))
-                {
-                    installer.AddFromBytes(fileName, IoTestResources.ReturnIntConsole);
-                    installer.Install();
-                }
+                var installer = new ApplicationInstaller(appDir, fileName);
+                installer.AddFromBytes(fileName, IoTestResources.ReturnIntConsole);
+                installer.Install();
 
                 var fullName = appDir.ToFile(fileName).FullName;
 

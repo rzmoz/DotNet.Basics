@@ -30,15 +30,21 @@ namespace DotNet.Basics.Compression
 
         private int ExecuteSevenZip(string command, params string[] @params)
         {
-            using (var appInstaller = new ApplicationInstaller(_appRootDir.ToDir("SevenZip"), "7za.exe"))
-            {
-                appInstaller.AddFromBytes(appInstaller.Executable.Name, CompressionResources._7za);
-                appInstaller.AddFromBytes("7za.dll", CompressionResources._7za1);
-                appInstaller.AddFromBytes("7zxa.dll", CompressionResources._7zxa);
-                var paramsString = @params.Aggregate(string.Empty, (current, param) => current + $" {param}");
-                var script = $"{appInstaller.Executable.FullName} {command} {paramsString} -y";
-                return CommandPrompt.Run(script);
-            }
+            var filename = InstallsevenZip();
+            var paramsString = @params.Aggregate(string.Empty, (current, param) => current + $" {param}");
+            var script = $"{filename} {command} {paramsString} -y";
+            return CommandPrompt.Run(script);
+        }
+
+        private string InstallsevenZip()
+        {
+            var appInstaller = new ApplicationInstaller(_appRootDir.ToDir("SevenZip"), "7za.exe");
+            appInstaller.AddFromBytes(appInstaller.Executable.Name, CompressionResources._7za);
+            appInstaller.AddFromBytes("7za.dll", CompressionResources._7za1);
+            appInstaller.AddFromBytes("7zxa.dll", CompressionResources._7zxa);
+            appInstaller.Install();
+            return appInstaller.Executable.FullName;
         }
     }
 }
+
