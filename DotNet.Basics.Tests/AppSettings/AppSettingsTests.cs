@@ -40,7 +40,7 @@ namespace DotNet.Basics.Tests.AppSettings
             var key = "MissingKey";
             var setting = new AppSetting<string>(key);
             Action action = () => setting.GetValue();
-            action.ShouldThrow<RequiredConfigurationNotSetException>().WithMessage(key);
+            action.ShouldThrow<RequiredConfigurationKeyNotSetException>().And.MissingKeys.Single().Should().Be(key);
         }
 
         /************** DotNet.Basics Types **************/

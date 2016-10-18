@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Autofac;
 using DotNet.Basics.Collections;
 using DotNet.Basics.Ioc;
 
@@ -10,13 +11,13 @@ namespace DotNet.Basics.Tasks.Pipelines
 {
     public class PipelineBlock<T> : PipelineSection<T>, IEnumerable<PipelineSection<T>> where T : EventArgs, new()
     {
-        private readonly SimpleContainer _container;
+        private readonly IContainer _container;
         private readonly List<PipelineSection<T>> _subSections;
 
-        public PipelineBlock(string name, SimpleContainer container)
+        public PipelineBlock(string name, IContainer container)
             : base(name)
         {
-            _container = container ?? new SimpleContainer();
+            _container = container ?? new IocBuilder().Build();
             _subSections = new List<PipelineSection<T>>();
         }
 
@@ -24,7 +25,7 @@ namespace DotNet.Basics.Tasks.Pipelines
 
         public PipelineBlock<T> AddStep<TStep>(string name = null) where TStep : PipelineSection<T>
         {
-            var lazyStep = new LazyBindSection<T, TStep>(name, _container.GetInstance<TStep>);
+            var lazyStep = new LazyBindSection<T, TStep>(name, _container.Resolve<TStep>);
             InitEvents(lazyStep);
             _subSections.Add(lazyStep);
             return this;

@@ -32,13 +32,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=4.1.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.1.1\lib\net45\Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="SimpleInjector, Version=3.2.3.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
-      <HintPath>..\packages\SimpleInjector.3.2.3\lib\net45\SimpleInjector.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -51,10 +51,8 @@
     <Reference Include="System.Runtime.Caching" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppSettings\AppSettingsProvider.cs" />
     <Compile Include="AppSettings\IAppSetting.cs" />
-    <Compile Include="AppSettings\IAppSettingsProvider.cs" />
-    <Compile Include="AppSettings\RequiredConfigurationNotSetException.cs" />
+    <Compile Include="AppSettings\RequiredConfigurationKeyNotSetException.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Compression\CompressionResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -65,8 +63,9 @@
     <Compile Include="Diagnostics\ProfilerFormatter.cs" />
     <Compile Include="Diagnostics\DurationFormattingUnit.cs" />
     <Compile Include="Diagnostics\ProfilerStates.cs" />
-    <Compile Include="Ioc\SimpleContainer.cs" />
-    <Compile Include="Ioc\ISimpleRegistrations.cs" />
+    <Compile Include="AppSettings\IocAppSettingExtensions.cs" />
+    <Compile Include="Ioc\IIocRegistrations.cs" />
+    <Compile Include="Ioc\IocContainer.cs" />
     <Compile Include="IO\ApplicationInstaller.cs" />
     <Compile Include="IO\FileApplication.cs" />
     <Compile Include="IO\DirExtensions.cs" />

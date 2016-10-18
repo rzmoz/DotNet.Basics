@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using DotNet.Basics.Ioc;
+using Autofac;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {
@@ -10,10 +10,10 @@ namespace DotNet.Basics.Tasks.Pipelines
         public Pipeline(string name = null) : this(name, null)
         {
         }
-        public Pipeline(SimpleContainer container) : this(null, container)
+        public Pipeline(IContainer container) : this(null, container)
         {
         }
-        public Pipeline(string name, SimpleContainer container) : base(name ?? PipelineTaskTypes.Pipeline, container)
+        public Pipeline(string name, IContainer container) : base(name ?? PipelineTaskTypes.Pipeline, container)
         {
         }
         protected override async Task InnerRunAsync(T args, CancellationToken ct)

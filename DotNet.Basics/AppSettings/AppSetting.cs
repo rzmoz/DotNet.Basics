@@ -80,7 +80,7 @@ namespace DotNet.Basics.AppSettings
             if (Required == false)
                 return (T)_parser(DefaultValue);
 
-            throw new RequiredConfigurationNotSetException(Key);
+            throw new RequiredConfigurationKeyNotSetException(Key);
         }
 
         private object DefaultParse(object value)
