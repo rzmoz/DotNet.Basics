@@ -12,7 +12,7 @@ namespace DotNet.Basics.AppSettings
             return container.Resolve<IEnumerable<IAppSetting>>().ToList();
         }
 
-        public static void VerifyAppSettings(this IContainer container)
+        public static AppSettingsVerificationResult VerifyRequiredAppSettingKeysAreConfigured(this IContainer container)
         {
             var missingKeys = new List<string>();
             foreach (var appSetting in container.GetAppSettings())
@@ -20,8 +20,7 @@ namespace DotNet.Basics.AppSettings
                 if (appSetting.Verify() == false)
                     missingKeys.Add(appSetting.Key);
             }
-            if (missingKeys.Any())
-                throw new RequiredConfigurationKeyNotSetException(missingKeys.ToArray());
+            return new AppSettingsVerificationResult(missingKeys);
         }
 
         public static void Register(this ContainerBuilder builder, params IIocRegistrations[] iocRegistrations)

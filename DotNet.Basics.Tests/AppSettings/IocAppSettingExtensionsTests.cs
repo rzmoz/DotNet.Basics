@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Linq;
 using DotNet.Basics.AppSettings;
 using DotNet.Basics.Ioc;
 using FluentAssertions;
@@ -22,8 +22,10 @@ namespace DotNet.Basics.Tests.AppSettings
         {
             _builder.RegisterAppSettings(new AppSetting<string>("RequiredKey"));
             var container = _builder.Build();
-            Action action = () => container.VerifyAppSettings();
-            action.ShouldNotThrow();
+            //act
+            var result = container.VerifyRequiredAppSettingKeysAreConfigured();
+
+            result.AllGood.Should().BeTrue();
         }
         [Test]
         public void Verify_RequiredKeys_RequiredKeysAreMissing()
@@ -32,8 +34,14 @@ namespace DotNet.Basics.Tests.AppSettings
             _builder.RegisterAppSettings(new AppSetting<string>(missingKey + 1));
             _builder.RegisterAppSettings(new AppSetting<string>(missingKey + 2));
             var container = _builder.Build();
-            Action action = () => container.VerifyAppSettings();
-            action.ShouldThrow<RequiredConfigurationKeyNotSetException>().And.MissingKeys.Count.Should().Be(2);
+
+            //act
+            var result = container.VerifyRequiredAppSettingKeysAreConfigured();
+
+            result.AllGood.Should().BeFalse();
+            result.MissingKeys.Count.Should().Be(2);
+            result.MissingKeys.First().Should().Be(missingKey + 1);
+            result.MissingKeys.Last().Should().Be(missingKey + 2);
         }
 
         [Test]
@@ -43,8 +51,11 @@ namespace DotNet.Basics.Tests.AppSettings
             var appSetting = new AppSetting<string>("MissingKey", defaultValue);
             _builder.RegisterAppSettings(appSetting);
             var container = _builder.Build();
-            Action action = () => container.VerifyAppSettings();
-            action.ShouldNotThrow();
+
+            //act
+            var result = container.VerifyRequiredAppSettingKeysAreConfigured();
+            result.AllGood.Should().BeTrue();
+
             appSetting.GetValue().Should().Be(defaultValue);
             appSetting.DefaultValue.Should().Be(defaultValue);
         }
