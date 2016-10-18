@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ColoredConsoleTargetExtensions.cs" />
     <Compile Include="NLogConfigurator.cs" />
     <Compile Include="NLogTargetExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
