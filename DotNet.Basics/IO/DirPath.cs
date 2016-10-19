@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Security.AccessControl;
@@ -63,36 +64,27 @@ namespace DotNet.Basics.IO
 
         public DirPath[] GetDirectories(string searchPattern = null, bool recurse = false)
         {
-            var dirs = PowerShellConsole.GetChildItem(FullName, recurse, searchPattern, "Dir");
-            return dirs.Select(dir => dir.ToDir()).ToArray();
+            return System.IO.Directory.GetDirectories(FullName, searchPattern ?? "*", ToSearchOption(recurse)).Select(dir => dir.ToDir()).ToArray();
         }
         public FilePath[] GetFiles(string searchPattern = null, bool recurse = false)
         {
-            var dirs = PowerShellConsole.GetChildItem(FullName, recurse, searchPattern, "File");
-            return dirs.Select(dir => dir.ToFile()).ToArray();
+            return System.IO.Directory.GetFiles(FullName, searchPattern ?? "*", ToSearchOption(recurse)).Select(dir => dir.ToFile()).ToArray();
         }
         public PathInfo[] GetPaths(string searchPattern = null, bool recurse = false)
         {
-            var dirs = PowerShellConsole.GetChildItem(FullName, recurse, searchPattern);
-            return dirs.Select(dir => dir.ToPath()).ToArray();
+            return System.IO.Directory.GetFileSystemEntries(FullName, searchPattern ?? "*", ToSearchOption(recurse)).Select(dir => dir.ToPath()).ToArray();
         }
-
-        public IEnumerable<DirPath> EnumerateDirectories(string searchPattern = null)
+        public IEnumerable<DirPath> EnumerateDirectories(string searchPattern = null, bool recurse = false)
         {
-            return ToDirectoryInfo().EnumerateDirectories(searchPattern ?? "*").Select(dir => dir.FullName.ToDir());
+            return System.IO.Directory.EnumerateDirectories(FullName, searchPattern ?? "*", ToSearchOption(recurse)).Select(dir => dir.ToDir());
         }
-        public IEnumerable<FilePath> EnumerateFiles(string searchPattern = null)
+        public IEnumerable<FilePath> EnumerateFiles(string searchPattern = null, bool recurse = false)
         {
-            return ToDirectoryInfo().EnumerateFiles(searchPattern ?? "*").Select(file => file.FullName.ToFile());
+            return System.IO.Directory.EnumerateFiles(FullName, searchPattern ?? "*", ToSearchOption(recurse)).Select(file => file.ToFile());
         }
-        public IEnumerable<PathInfo> EnumeratePaths(string searchPattern = null)
+        public IEnumerable<PathInfo> EnumeratePaths(string searchPattern = null, bool recurse = false)
         {
-            return ToDirectoryInfo().EnumerateFileSystemInfos(searchPattern ?? "*").Select<System.IO.FileSystemInfo, PathInfo>(fsi =>
-            {
-                if (fsi is System.IO.DirectoryInfo)
-                    return fsi.FullName.ToDir();
-                return fsi.FullName.ToFile();
-            });
+            return System.IO.Directory.EnumerateFileSystemEntries(FullName, searchPattern ?? "*", ToSearchOption(recurse)).Select(fse => fse.ToPath());
         }
 
         public DirectorySecurity GetAccessControl()
@@ -106,6 +98,13 @@ namespace DotNet.Basics.IO
         public System.IO.DirectoryInfo ToDirectoryInfo()
         {
             return new System.IO.DirectoryInfo(RawName);
+        }
+
+        private SearchOption ToSearchOption(bool recurse)
+        {
+            return recurse ?
+                SearchOption.AllDirectories :
+                SearchOption.TopDirectoryOnly;
         }
     }
 }
