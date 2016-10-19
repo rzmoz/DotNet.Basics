@@ -21,9 +21,9 @@ namespace DotNet.Basics.Tests.AppSettings
         public void Verify_RequiredKeys_RequiredKeysArePresent()
         {
             _builder.RegisterAppSettings(new AppSetting<string>("RequiredKey"));
-            var container = _builder.Build();
+
             //act
-            var result = container.VerifyRequiredAppSettingKeysAreConfigured();
+            var result = _builder.Container.VerifyRequiredAppSettingKeysAreConfigured();
 
             result.AllGood.Should().BeTrue();
         }
@@ -33,10 +33,9 @@ namespace DotNet.Basics.Tests.AppSettings
             var missingKey = "MissingKey";
             _builder.RegisterAppSettings(new AppSetting<string>(missingKey + 1));
             _builder.RegisterAppSettings(new AppSetting<string>(missingKey + 2));
-            var container = _builder.Build();
 
             //act
-            var result = container.VerifyRequiredAppSettingKeysAreConfigured();
+            var result = _builder.Container.VerifyRequiredAppSettingKeysAreConfigured();
 
             result.AllGood.Should().BeFalse();
             result.MissingKeys.Count.Should().Be(2);
@@ -50,10 +49,9 @@ namespace DotNet.Basics.Tests.AppSettings
             var defaultValue = "MyDefaultValue%&/%&/¤%/%&";
             var appSetting = new AppSetting<string>("MissingKey", defaultValue);
             _builder.RegisterAppSettings(appSetting);
-            var container = _builder.Build();
 
             //act
-            var result = container.VerifyRequiredAppSettingKeysAreConfigured();
+            var result = _builder.Container.VerifyRequiredAppSettingKeysAreConfigured();
             result.AllGood.Should().BeTrue();
 
             appSetting.GetValue().Should().Be(defaultValue);

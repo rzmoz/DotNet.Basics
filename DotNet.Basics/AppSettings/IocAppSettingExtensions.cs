@@ -23,7 +23,7 @@ namespace DotNet.Basics.AppSettings
             return new AppSettingsVerificationResult(missingKeys);
         }
 
-        public static void Register(this ContainerBuilder builder, params IIocRegistrations[] iocRegistrations)
+        public static void Register(this IocBuilder builder, params IIocRegistrations[] iocRegistrations)
         {
             foreach (var iocRegistrationse in iocRegistrations)
             {

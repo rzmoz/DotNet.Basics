@@ -20,6 +20,14 @@ namespace DotNet.Basics.Tests.Ioc
             _builder = new IocBuilder();
         }
 
+        [Test]
+        public void Register_TypeThatDependsOnContainer_TypeIsResolved()
+        {
+            _builder.Register(new MyIocRegistrations());
+            var mytype = _builder.Container.Resolve<IMyType>();
+            var typeThatDependesOnContainer = _builder.Container.Resolve<TypeThatDependesOnContainer>();
+            typeThatDependesOnContainer.Value.Should().Be(mytype.GetValue());
+        }
 
         [Test]
         public void Build_Registrations_RegistrationsAreRegistered()

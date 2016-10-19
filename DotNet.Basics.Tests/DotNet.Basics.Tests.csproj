@@ -83,6 +83,7 @@
     <Compile Include="Ioc\IocBuilderTests.cs" />
     <Compile Include="Ioc\TestHelpers\MyIocRegistrations.cs" />
     <Compile Include="Ioc\TestHelpers\TestSettingsProvider.cs" />
+    <Compile Include="Ioc\TestHelpers\TypeThatDependesOnContainer.cs" />
     <Compile Include="Ioc\TestHelpers\TypeWithValue.cs" />
     <Compile Include="IO\ApplicationInstallerTests.cs" />
     <Compile Include="IO\FileSystemInfoExtensionTests.cs" />

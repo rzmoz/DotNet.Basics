@@ -17,7 +17,7 @@ namespace DotNet.Basics.Tasks.Pipelines
         public PipelineBlock(string name, IContainer container)
             : base(name)
         {
-            _container = container ?? new IocBuilder().Build();
+            _container = container ?? new IocBuilder().Container;
             _subSections = new List<PipelineSection<T>>();
         }
 
