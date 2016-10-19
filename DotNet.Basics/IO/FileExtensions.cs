@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
@@ -44,9 +46,8 @@ namespace DotNet.Basics.IO
 
         public static void CopyTo(this IEnumerable<FilePath> sourceFiles, DirPath targetDir, bool overwrite = false)
         {
-            var paths = sourceFiles.Select(file => file.FullName).ToArray();
             targetDir.CreateIfNotExists();
-            PowerShellConsole.CopyItem(paths, targetDir.FullName, force: overwrite, recurse: false);
+            Parallel.ForEach(sourceFiles, sFile => sFile.CopyTo(targetDir.ToFile(sFile.Name), overwrite));
         }
 
         public static void CopyTo(this FilePath file, DirPath targetDir, bool overwrite = false)
@@ -63,7 +64,7 @@ namespace DotNet.Basics.IO
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
             target.Directory.CreateIfNotExists();
-            PowerShellConsole.CopyItem(source.FullName, target.FullName, force: overwrite, recurse: false);
+            File.Copy(source.FullName, target.FullName, overwrite);
         }
     }
 }

@@ -128,7 +128,6 @@ namespace DotNet.Basics.IO
             }
             catch (Exception e)
             {
-
                 DebugOut.WriteLine($"Fast copy failed - falling back to use robocopy\r\n{e}");
                 Robocopy.CopyDir(source.FullName, target.FullName, includeSubFolders: includeSubfolders);
             }
