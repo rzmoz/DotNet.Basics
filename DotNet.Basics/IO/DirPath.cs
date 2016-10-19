@@ -46,7 +46,7 @@ namespace DotNet.Basics.IO
             }
             catch (System.IO.IOException e)
             {
-                Trace.WriteLine(e.ToString());
+                DebugOut.WriteLine(e.ToString());
             }
         }
 

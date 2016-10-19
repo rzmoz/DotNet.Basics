@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -76,7 +75,6 @@ namespace DotNet.Basics.Tasks.Repeating
                 }
             }
 
-
             return success;
         }
 
@@ -91,7 +89,7 @@ namespace DotNet.Basics.Tasks.Repeating
             }
             catch (Exception e)
             {
-                Trace.WriteLine(e.ToString());
+                DebugOut.WriteLine(e.ToString());
             }
         }
 

@@ -71,12 +71,16 @@ namespace DotNet.Basics.IO
                 if (handleAcquired && IsInstalled())
                     return;
 
+                DebugOut.WriteLine($"Installing {Executable.Name} in {InstallDir.FullName}");
+
                 //install and don't rely on rollback (try/catch) since it might conflict with other task
                 foreach (var installAction in _installActions)
                     installAction();
 
                 //app installed succesfully
                 File.Create(_installedHandle.FullName);
+
+                DebugOut.WriteLine($"{Executable.Name} successfully installd");
             }
             finally
             {
@@ -93,6 +97,9 @@ namespace DotNet.Basics.IO
         public void UnInstall()
         {
             InstallDir.DeleteIfExists();
+            DebugOut.WriteLine(InstallDir.Exists()
+                ? $"{Executable.Name} filed to uninstall at {InstallDir}"
+                : $"{Executable.Name} successfully uninstalld at {InstallDir}");
         }
     }
 }

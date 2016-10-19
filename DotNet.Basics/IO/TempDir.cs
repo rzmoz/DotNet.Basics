@@ -18,6 +18,8 @@ namespace DotNet.Basics.IO
             Root = (parent ?? GetTempDir()).Add($"{Prefix}{TempName(_tempDirLength)}");
             Root.CleanIfExists();
             Root.CreateIfNotExists();
+
+            DebugOut.WriteLine($"TempDir created at: {Root}");
         }
 
         public string Prefix { get; }
@@ -31,7 +33,11 @@ namespace DotNet.Basics.IO
         public void Dispose()
         {
             Root.DeleteIfExists();
+            DebugOut.WriteLine(Root.Exists() ?
+                $"TempDir failed to delete at: {Root}" :
+                $"TempDir deleted at: {Root}");
         }
+
         private string TempName(int length)
         {
             var random = Guid.NewGuid().ToString("N");

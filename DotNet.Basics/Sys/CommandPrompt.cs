@@ -4,13 +4,9 @@ namespace DotNet.Basics.Sys
 {
     public static class CommandPrompt
     {
-        public delegate void OutputEventHandler(string message);
-
-        public static event OutputEventHandler StandardOut;
-
         public static int Run(string commandString)
         {
-            StandardOut?.Invoke($"Command prompt invoked: {commandString}");
+            DebugOut.WriteLine($"Command prompt invoked: {commandString}");
 
             var si = new ProcessStartInfo("cmd.exe", $"/c {commandString}")
             {
@@ -26,13 +22,13 @@ namespace DotNet.Basics.Sys
             {
                 console.Start();
 
-                var output = console.StandardOutput.ReadToEnd();
-                StandardOut?.Invoke(output);
+                DebugOut.WriteLine(console.StandardOutput.ReadToEnd());
 
                 console.WaitForExit();
-
                 var exitCode = console.ExitCode;
-                StandardOut?.Invoke($"ExitCode:{exitCode} returned from {commandString}");
+
+                DebugOut.WriteLine($"ExitCode:{exitCode} returned from {commandString}");
+
                 console.Close();
                 return exitCode;
             }

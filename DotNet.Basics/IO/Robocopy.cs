@@ -99,7 +99,7 @@ namespace DotNet.Basics.IO
                 };
 
                 _fullPath = LookupRobocopy(lookforPaths);
-                Trace.WriteLine($"Robocopy found at: {_fullPath}");
+                DebugOut.WriteLine($"Robocopy found at: {_fullPath}");
             }
         }
 
@@ -118,7 +118,7 @@ namespace DotNet.Basics.IO
                 foreach (var searchPath in searchPaths)
                 {
                     var lookFor = driveInfo.Name + searchPath.TrimStart('\\');
-                    Trace.WriteLine("Looking for robocopy in {0}", lookFor);
+                    DebugOut.WriteLine($"Looking for robocopy in {lookFor}");
                     if (lookFor.ToFile().Exists())
                         return lookFor;
                 }

@@ -10,12 +10,6 @@ namespace DotNet.Basics.Tests.IO
     [TestFixture]
     public class RobocopyTests
     {
-        [SetUp]
-        public void SetUp()
-        {
-            CommandPrompt.StandardOut += Console.WriteLine;
-        }
-
         [Test]
         public void Init_FindRobocopyByDrive_RobocopyIsFound()
         {

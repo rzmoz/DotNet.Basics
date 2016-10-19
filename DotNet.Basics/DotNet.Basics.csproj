@@ -61,6 +61,7 @@
       <DependentUpon>CompressionResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Compression\SevenZip.cs" />
+    <Compile Include="DebugOut.cs" />
     <Compile Include="Diagnostics\ProfilerFormatter.cs" />
     <Compile Include="Diagnostics\DurationFormattingUnit.cs" />
     <Compile Include="Diagnostics\ProfilerStates.cs" />

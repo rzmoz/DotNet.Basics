@@ -96,13 +96,13 @@ namespace DotNet.Basics.IO
         {
             if (source.Exists() == false)
             {
-                Trace.WriteLine($"Source '{source.FullName}' not found. Aborting");
+                DebugOut.WriteLine($"Source '{source.FullName}' not found. Aborting");
                 return;
             }
 
             if (source.FullName.Equals(target.FullName, StringComparison.OrdinalIgnoreCase))
             {
-                Trace.WriteLine($"Source and Target are the same '{source.FullName}'. Aborting");
+                DebugOut.WriteLine($"Source and Target are the same '{source.FullName}'. Aborting");
                 return;
             }
 
@@ -128,7 +128,8 @@ namespace DotNet.Basics.IO
             }
             catch (Exception e)
             {
-                Trace.WriteLine($"Fast copy failed - falling back to use robocopy\r\n{e}");
+
+                DebugOut.WriteLine($"Fast copy failed - falling back to use robocopy\r\n{e}");
                 Robocopy.CopyDir(source.FullName, target.FullName, includeSubFolders: includeSubfolders);
             }
         }
