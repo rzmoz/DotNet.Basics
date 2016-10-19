@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using DotNet.Basics.IO;
+using DotNet.Basics.Sys;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -8,6 +10,12 @@ namespace DotNet.Basics.Tests.IO
     [TestFixture]
     public class RobocopyTests
     {
+        [SetUp]
+        public void SetUp()
+        {
+            CommandPrompt.StandardOut += Console.WriteLine;
+        }
+
         [Test]
         public void Init_FindRobocopyByDrive_RobocopyIsFound()
         {

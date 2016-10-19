@@ -4,15 +4,19 @@ namespace DotNet.Basics.Sys
 {
     public static class CommandPrompt
     {
+        public delegate void OutputEventHandler(string message);
+
+        public static event OutputEventHandler StandardOut;
+
         public static int Run(string commandString)
         {
-            Trace.WriteLine($"Command prompt invoked: {commandString}");
+            StandardOut?.Invoke($"Command prompt invoked: {commandString}");
 
             var si = new ProcessStartInfo("cmd.exe", $"/c {commandString}")
             {
                 RedirectStandardInput = false,
                 RedirectStandardOutput = true,
-                RedirectStandardError = true,
+                RedirectStandardError = false,
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 WindowStyle = ProcessWindowStyle.Hidden
@@ -22,13 +26,13 @@ namespace DotNet.Basics.Sys
             {
                 console.Start();
 
-                Debug.WriteLine(console.StandardOutput.ReadToEnd());
-                var error = console.StandardError.ReadToEnd();
-                if (error.Length > 0)
-                    Debug.WriteLine($"[Error]: {error}");
+                var output = console.StandardOutput.ReadToEnd();
+                StandardOut?.Invoke(output);
+
+                console.WaitForExit();
 
                 var exitCode = console.ExitCode;
-                Debug.WriteLine($"ExitCode:{exitCode} returned from {commandString}");
+                StandardOut?.Invoke($"ExitCode:{exitCode} returned from {commandString}");
                 console.Close();
                 return exitCode;
             }
