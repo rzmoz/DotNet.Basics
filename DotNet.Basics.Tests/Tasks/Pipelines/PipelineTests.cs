@@ -93,7 +93,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 
             await pipeline.RunAsync().ConfigureAwait(false);
 
-            stepName.Should().Be("IncrementArgsStep");
+            stepName.Should().Be(nameof(IncrementArgsStep));
         }
 
         [Test]
@@ -107,7 +107,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            await pipeline.RunAsync().ConfigureAwait(false);
+            await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
             stopwatch.Stop();
 
             //total timespan should be close to 1 second since tasks were run in parallel
@@ -135,7 +135,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             task1Called.Should().BeFalse();
             task2Called.Should().BeFalse();
 
-            await pipeline.RunAsync().ConfigureAwait(false);
+            await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
             task1Called.Should().BeTrue();
             task2Called.Should().BeTrue();
@@ -152,7 +152,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             pipeline.AddStep<IncrementArgsStep>();
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
 
-            var args = await pipeline.RunAsync().ConfigureAwait(false);
+            var args = await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
             args.Value.Should().Be(5);
         }
 

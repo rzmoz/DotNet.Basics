@@ -14,6 +14,17 @@ namespace DotNet.Basics.Tasks.Pipelines
         private readonly IContainer _container;
         private readonly List<PipelineSection<T>> _subSections;
 
+
+        public PipelineBlock(string name = null) : base(name)
+        {
+        }
+        public PipelineBlock(IContainer container)
+            : base(null)
+        {
+            _container = container ?? new IocBuilder().Container;
+            _subSections = new List<PipelineSection<T>>();
+        }
+
         public PipelineBlock(string name, IContainer container)
             : base(name)
         {

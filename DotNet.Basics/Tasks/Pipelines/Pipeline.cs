@@ -7,15 +7,18 @@ namespace DotNet.Basics.Tasks.Pipelines
 {
     public class Pipeline<T> : PipelineBlock<T> where T : EventArgs, new()
     {
-        public Pipeline(string name = null) : this(name, null)
+        public Pipeline(string name = null) : base(name)
         {
         }
-        public Pipeline(IContainer container) : this(null, container)
+
+        public Pipeline(IContainer container) : base(container)
         {
         }
-        public Pipeline(string name, IContainer container) : base(name ?? PipelineTaskTypes.Pipeline, container)
+
+        public Pipeline(string name, IContainer container) : base(name, container)
         {
         }
+
         protected override async Task InnerRunAsync(T args, CancellationToken ct)
         {
             foreach (var section in SubSections)
