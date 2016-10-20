@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.Tests", "DotN
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{CF5747AC-FFBB-4D69-96B8-447202608D3A}"
 	ProjectSection(SolutionItems) = preProject
-		release.params.json = release.params.json
+		lib.release.json = lib.release.json
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.TestsConsole", "DotNet.Basics.TestsConsole\DotNet.Basics.TestsConsole.csproj", "{391CF41A-E1C9-4670-B1B5-C92FDDC0FB3D}"

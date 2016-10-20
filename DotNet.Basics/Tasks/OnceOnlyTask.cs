@@ -33,7 +33,7 @@ namespace DotNet.Basics.Tasks
                 }
                 finally
                 {
-                    _asyncTask = () => Task.CompletedTask;
+                    _asyncTask = () => Task.FromResult("");
                 }
             };
         }

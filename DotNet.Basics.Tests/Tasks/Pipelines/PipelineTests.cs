@@ -129,7 +129,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
                 if (task2Called)
                     throw new ArgumentException("Task 2 called already");
                 task2Called = true;
-                return Task.CompletedTask;
+                return Task.FromResult("");
             });
 
             task1Called.Should().BeFalse();

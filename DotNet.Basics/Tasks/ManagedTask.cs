@@ -22,11 +22,7 @@ namespace DotNet.Basics.Tasks
         }
 
         public ManagedTask(Action<T, CancellationToken> task)
-            : this((args, ct) =>
-             {
-                 task(args, ct);
-                 return Task.CompletedTask;
-             })
+            : this(async (args, ct) => task(args, ct))
         {
         }
 

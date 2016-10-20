@@ -137,7 +137,7 @@ namespace DotNet.Basics.Tests.Tasks
 
         private Task VoidTaskAsync()
         {
-            return Task.CompletedTask;
+            return Task.FromResult("");
         }
     }
 }
