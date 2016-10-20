@@ -1,0 +1,12 @@
+{
+  "projects": [
+    {
+      "extension": "",
+      "version": "5.2.1"
+    },
+    {
+      "extension": ".NLog",
+      "version": "5.2.0"
+    }
+  ]
+}

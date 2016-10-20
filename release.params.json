@@ -1,7 +1,0 @@
-{
-  "version.assembly": "5.1.7",
-  "version.prerelease": "",
-  "sln.path": "DotNet.Basics.sln",
-  "test.assemblies": "*.tests.dll",
-  "nuget.targets": [ "DotNet.Basics\\DotNet.Basics.csproj", "DotNet.Basics.NLog\\DotNet.Basics.NLog.csproj" ]
-}
