@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using DotNet.Basics.NLog;
 using NLog;
 using NLog.Targets;
@@ -20,7 +21,9 @@ namespace DotNet.Basics.TestsConsole
             logger.Warn("Warn");
             logger.Error("Error");
             logger.Fatal("Fatal");
-            //Console.ReadKey();
+
+            if (args.Skip(1).Take(1).FirstOrDefault()?.ToLower() == "debug")
+                Console.ReadKey();
             return int.Parse(args[0]);
         }
     }
