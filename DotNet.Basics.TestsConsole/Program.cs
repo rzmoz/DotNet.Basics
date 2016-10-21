@@ -20,7 +20,7 @@ namespace DotNet.Basics.TestsConsole
             logger.Warn("Warn");
             logger.Error("Error");
             logger.Fatal("Fatal");
-            Console.ReadKey();
+            //Console.ReadKey();
             return int.Parse(args[0]);
         }
     }
