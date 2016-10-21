@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.3.10\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,6 +50,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DotNet.Basics.NLog\DotNet.Basics.NLog.csproj">
+      <Project>{f6afae2e-99fd-45cc-a4df-add078276307}</Project>
+      <Name>DotNet.Basics.NLog</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj">
       <Project>{a0144b4e-ee9c-4914-82f1-dcc0d9d5196f}</Project>
       <Name>DotNet.Basics</Name>
@@ -53,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

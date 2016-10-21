@@ -39,11 +39,11 @@ namespace DotNet.Basics.Compression
         private string InstallsevenZip()
         {
             var appInstaller = new ApplicationInstaller(_appRootDir.ToDir("SevenZip"), "7za.exe");
-            appInstaller.AddFromBytes(appInstaller.Executable.Name, CompressionResources._7za);
+            appInstaller.AddFromBytes(appInstaller.EntryFile.Name, CompressionResources._7za);
             appInstaller.AddFromBytes("7za.dll", CompressionResources._7za1);
             appInstaller.AddFromBytes("7zxa.dll", CompressionResources._7zxa);
             appInstaller.Install();
-            return appInstaller.Executable.FullName;
+            return appInstaller.EntryFile.FullName;
         }
     }
 }

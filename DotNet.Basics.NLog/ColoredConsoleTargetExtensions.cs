@@ -6,19 +6,26 @@ namespace DotNet.Basics.NLog
 {
     public static class ColoredConsoleTargetExtensions
     {
-        public static ColoredConsoleTarget AddDefaultLogColors(this ColoredConsoleTarget target)
+        public static ColoredConsoleTarget WithOutputColors(this ColoredConsoleTarget target,
+            ConsoleOutputColor debugColor = ConsoleOutputColor.DarkCyan,
+            ConsoleOutputColor traceColor = ConsoleOutputColor.White,
+            ConsoleOutputColor infoColor = ConsoleOutputColor.Green,
+            ConsoleOutputColor warnColor = ConsoleOutputColor.Yellow,
+            ConsoleOutputColor errorColor = ConsoleOutputColor.Red,
+            ConsoleOutputColor fatalForeColor = ConsoleOutputColor.White,
+            ConsoleOutputColor fatalBackColor = ConsoleOutputColor.DarkRed)
         {
-            target.AddLogColor(LogLevel.Debug, ConsoleOutputColor.DarkGray)
-                  .AddLogColor(LogLevel.Trace, ConsoleOutputColor.DarkCyan)
-                  .AddLogColor(LogLevel.Info, ConsoleOutputColor.White)
-                  .AddLogColor(LogLevel.Warn, ConsoleOutputColor.Yellow)
-                  .AddLogColor(LogLevel.Error, ConsoleOutputColor.Red)
-                  .AddLogColor(LogLevel.Fatal, ConsoleOutputColor.White, ConsoleOutputColor.DarkRed);
+            target.RowHighlightingRules.Clear();
+            target.AddLogColor(LogLevel.Debug, debugColor)
+                  .AddLogColor(LogLevel.Trace, traceColor)
+                  .AddLogColor(LogLevel.Info, infoColor)
+                  .AddLogColor(LogLevel.Warn, warnColor)
+                  .AddLogColor(LogLevel.Error, errorColor)
+                  .AddLogColor(LogLevel.Fatal, fatalForeColor, fatalBackColor);
             return target;
         }
 
-        public static ColoredConsoleTarget AddLogColor(this ColoredConsoleTarget target, LogLevel level, ConsoleOutputColor foregroundColor,
-            ConsoleOutputColor backgroundColor = ConsoleOutputColor.NoChange)
+        public static ColoredConsoleTarget AddLogColor(this ColoredConsoleTarget target, LogLevel level, ConsoleOutputColor foregroundColor, ConsoleOutputColor backgroundColor = ConsoleOutputColor.NoChange)
         {
             target.RowHighlightingRules.Add(new ConsoleRowHighlightingRule
             {
