@@ -110,6 +110,7 @@
     <Compile Include="Ioc\TestHelpers\IMyType.cs" />
     <Compile Include="Ioc\TestHelpers\MyType1.cs" />
     <Compile Include="Ioc\TestHelpers\MyType2.cs" />
+    <Compile Include="Sys\StringExtensionsTests.cs" />
     <Compile Include="Tasks\Pipelines\ClassThatIncrementArgsDependOn.cs" />
     <Compile Include="Tasks\Pipelines\IncrementArgsStep.cs" />
     <Compile Include="Tasks\Pipelines\SimplePipeline.cs" />

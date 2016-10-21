@@ -7,9 +7,9 @@ namespace DotNet.Basics.NLog
     public static class ColoredConsoleTargetExtensions
     {
         public static ColoredConsoleTarget WithOutputColors(this ColoredConsoleTarget target,
-            ConsoleOutputColor debugColor = ConsoleOutputColor.DarkCyan,
-            ConsoleOutputColor traceColor = ConsoleOutputColor.White,
-            ConsoleOutputColor infoColor = ConsoleOutputColor.Green,
+            ConsoleOutputColor debugColor = ConsoleOutputColor.DarkGray,
+            ConsoleOutputColor traceColor = ConsoleOutputColor.Cyan,
+            ConsoleOutputColor infoColor = ConsoleOutputColor.White,
             ConsoleOutputColor warnColor = ConsoleOutputColor.Yellow,
             ConsoleOutputColor errorColor = ConsoleOutputColor.Red,
             ConsoleOutputColor fatalForeColor = ConsoleOutputColor.White,

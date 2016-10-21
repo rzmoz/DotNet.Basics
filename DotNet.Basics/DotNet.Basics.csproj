@@ -89,6 +89,7 @@
     <Compile Include="AppSettings\AppSetting.cs" />
     <Compile Include="AppSettings\SystemConfigurationManager.cs" />
     <Compile Include="AppSettings\IConfigurationManager.cs" />
+    <Compile Include="Sys\StringExtensions.cs" />
     <Compile Include="Tasks\Pipelines\PipelineStep.cs" />
     <Compile Include="Tasks\Pipelines\PipelineSection.cs" />
     <Compile Include="Rest\HttpClientTransport.cs" />
