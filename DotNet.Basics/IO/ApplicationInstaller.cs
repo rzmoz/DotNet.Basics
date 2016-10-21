@@ -17,7 +17,7 @@ namespace DotNet.Basics.IO
         {
             if (installDir == null) throw new ArgumentNullException(nameof(installDir));
             InstallDir = installDir;
-            Executable = installDir.ToFile(executableFilename);
+            EntryFile = installDir.ToFile(executableFilename);
             _installedHandle = installDir.ToFile(_installedHandleName);
             _installActions = new List<Action>();
         }
@@ -30,7 +30,7 @@ namespace DotNet.Basics.IO
         }
 
         public DirPath InstallDir { get; }
-        public FilePath Executable { get; }
+        public FilePath EntryFile { get; }
 
         public void AddFromBytes(string filename, byte[] content)
         {
@@ -71,7 +71,7 @@ namespace DotNet.Basics.IO
                 if (handleAcquired && IsInstalled())
                     return;
 
-                DebugOut.WriteLine($"Installing {Executable.Name} in {InstallDir.FullName}");
+                DebugOut.WriteLine($"Installing {EntryFile.Name} in {InstallDir.FullName}");
 
                 //install and don't rely on rollback (try/catch) since it might conflict with other task
                 foreach (var installAction in _installActions)
@@ -80,7 +80,7 @@ namespace DotNet.Basics.IO
                 //app installed succesfully
                 File.Create(_installedHandle.FullName);
 
-                DebugOut.WriteLine($"{Executable.Name} successfully installd");
+                DebugOut.WriteLine($"{EntryFile.Name} successfully installd");
             }
             finally
             {
@@ -98,8 +98,8 @@ namespace DotNet.Basics.IO
         {
             InstallDir.DeleteIfExists();
             DebugOut.WriteLine(InstallDir.Exists()
-                ? $"{Executable.Name} filed to uninstall at {InstallDir}"
-                : $"{Executable.Name} successfully uninstalld at {InstallDir}");
+                ? $"{EntryFile.Name} failed to uninstall at {InstallDir}"
+                : $"{EntryFile.Name} successfully uninstalld at {InstallDir}");
         }
     }
 }
