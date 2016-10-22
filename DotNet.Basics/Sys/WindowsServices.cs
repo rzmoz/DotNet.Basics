@@ -55,19 +55,21 @@ namespace DotNet.Basics.Sys
         private static bool InvokeService(string serviceName, Action<ServiceController> serviceAction, ServiceControllerStatus exitStatus, TimeSpan timeout)
         {
             if (serviceName == null) throw new ArgumentNullException(nameof(serviceName));
-            using (var service = Get(serviceName))
-            {
-                if (service == null)
-                    return false;
+            if (Exists(serviceName) == false)
+                return false;
 
-                var success = Repeat.TaskOnce(() => serviceAction(service))
-                    .WithOptions(o =>
-                    {
-                        o.RetryDelay = 1.Seconds();
-                        o.Timeout = timeout;
-                    }).Until(() => service.Status == exitStatus);
-                return success;
-            }
+            ServiceController service = Get(serviceName);
+            var success = Repeat.TaskOnce(() => serviceAction(service))
+                .WithOptions(o =>
+                {
+                    o.RetryDelay = 1.Seconds();
+                    o.Timeout = timeout;
+                    o.PingOnRetry = () => service = Get(serviceName);
+                    o.Finally = () => service.Close();
+                }).Until(() => service?.Status == exitStatus);
+            service = null;
+            return success;
+
         }
 
         private static ServiceController Get(string serviceName)
