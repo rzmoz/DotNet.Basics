@@ -49,6 +49,7 @@
     </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.ServiceProcess" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppSettings\AppSettingsVerificationResult.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="AppSettings\SystemConfigurationManager.cs" />
     <Compile Include="AppSettings\IConfigurationManager.cs" />
     <Compile Include="Sys\StringExtensions.cs" />
+    <Compile Include="Sys\WindowsServices.cs" />
     <Compile Include="Tasks\Pipelines\PipelineStep.cs" />
     <Compile Include="Tasks\Pipelines\PipelineSection.cs" />
     <Compile Include="Rest\HttpClientTransport.cs" />
