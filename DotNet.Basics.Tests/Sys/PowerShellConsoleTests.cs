@@ -27,92 +27,26 @@ namespace DotNet.Basics.Tests.Sys
             const string greeting = "Hello world!";
 
             var result = PowerShellConsole.RunScript($"Write-Host \"{greeting}\"");
-
-            
-        }
-
-
-        [Test]
-        public void GetChildItem_RecurseFalse_NothingIsFound()
-        {
-            var root = TestContext.CurrentContext.TestDirectory.ToDir("IO");
-            var childItems = PowerShellConsole.GetChildItem(root.FullName, false, null, "file");
-
-            childItems.Length.Should().Be(0);
         }
 
         [Test]
-        public void GetChildItem_Filter_ChildItemsAreFound()
+        public void RemoveItem_DeleteFilesAndFolders_DirIsEmptied()
         {
-            var root = TestContext.CurrentContext.TestDirectory.ToDir("IO");
-            var exptectedFound = root.ToFile("TestSources", "Textfile1.txt");
-            var childItems = PowerShellConsole.GetChildItem(root.FullName, true, "*.txt");
+            var dir = TestContext.CurrentContext.TestDirectory.ToDir("RemoveItem_DeleteFilesAndFolders_DirIsEmptied");
+            dir.CreateSubDir("myDir");
+            "nothing".WriteAllText(dir.ToFile("myFile.txt"));
 
-            childItems.Single().ToLower().Should().Be(exptectedFound.FullName.ToLower());
-        }
-
-        [Test]
-        public void GetChildItem_File_ChildItemsAreFound()
-        {
-            var root = TestContext.CurrentContext.TestDirectory.ToDir("IO");
-            var exptectedFound = root.ToFile("TestSources", "Textfile1.txt");
-            var childItems = PowerShellConsole.GetChildItem(root.FullName, true, null, "File");
-
-            childItems.Single().ToLower().Should().Be(exptectedFound.FullName.ToLower());
-        }
-
-
-        [Test]
-        public void GetChildItem_Dirs_ChildItemsAreFound()
-        {
-            var root = TestContext.CurrentContext.TestDirectory.ToDir("IO");
-            var exptectedFound = root.ToFile("TestSources");
-            var childItems = PowerShellConsole.GetChildItem(root.FullName, true, null, "Dir");
-
-            childItems.Single().ToLower().Should().Be(exptectedFound.FullName.ToLower());
-        }
-
-
-        [Test]
-        public void MoveItem_Folder_FolderIsMoved()
-        {
-            var dummyContent = "Lorem Ipsum sdfgjnsndfkjsdfkhsdfjksdfsdf";
-
-            var sourceDir = TestContext.CurrentContext.TestDirectory.ToDir("MoveItem_Folder_FolderIsMoved");
-            var sourceFile = sourceDir.ToFile("Myfile.txt");
-            var targetDir = TestContext.CurrentContext.TestDirectory.ToDir("MoveItem_Folder_FolderIsMoved_Target");
-            var targetFile = targetDir.ToFile(sourceFile.Name);
-
-            targetDir.DeleteIfExists();
-            sourceDir.CreateIfNotExists();
-            sourceDir.CleanIfExists();
-            dummyContent.WriteAllText(sourceFile);
-
-            targetFile.Exists().Should().BeFalse();
-            targetDir.Exists().Should().BeFalse();
+            dir.EnumerateDirectories().Count().Should().Be(1);
+            dir.EnumerateFiles().Count().Should().Be(1);
+            dir.EnumeratePaths().Count().Should().Be(2);
 
             //act
-            PowerShellConsole.MoveItem(sourceDir.FullName, targetDir.FullName, true);
+            PowerShellConsole.RemoveItem($"{dir.FullName}\\*");
 
             //assert
-            sourceDir.Exists().Should().BeFalse();
-            targetDir.Exists().Should().BeTrue();
-            targetFile.Exists().Should().BeTrue();
-            targetFile.ReadAllText().Should().Be(dummyContent);
-        }
-
-        [Test]
-        public void MoveItem_SourceNotFound_ExceptionIsThrown()
-        {
-            var sourceDir = TestContext.CurrentContext.TestDirectory.ToDir("SOMETHINGTHATDOESNTEXIST");
-            var targetDir = TestContext.CurrentContext.TestDirectory.ToDir($"{sourceDir.Name}EITHER");
-            sourceDir.DeleteIfExists();
-
-            //act
-            Action action = () => PowerShellConsole.MoveItem(sourceDir.FullName, targetDir.FullName, true);
-
-            //assert
-            action.ShouldThrow<ItemNotFoundException>();
+            dir.EnumerateDirectories().Count().Should().Be(0);
+            dir.EnumerateFiles().Count().Should().Be(0);
+            dir.EnumeratePaths().Count().Should().Be(0);
         }
     }
 }

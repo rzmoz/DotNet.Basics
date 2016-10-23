@@ -1,50 +1,25 @@
 ﻿using System;
-using DotNet.Basics.Sys;
-using DotNet.Basics.Tasks.Repeating;
+using System.IO;
 
 namespace DotNet.Basics.IO
 {
     public static class IoExtensions
     {
-        public static FilePath WriteAllText(this string content, string targetFile, bool overwrite = false)
+        public static bool WriteAllText(this string content, FilePath targetFile, bool overwrite = false)
         {
-            if (content == null) throw new ArgumentNullException(nameof(content));
             if (targetFile == null) throw new ArgumentNullException(nameof(targetFile));
 
-            var outFileCmdlet = new PowerShellCmdlet("Out-File");
-            outFileCmdlet.AddParameter("FilePath", targetFile);
-            outFileCmdlet.AddParameter("inputobject", content);
-            outFileCmdlet.AddParameter("NoNewline");
+            if (overwrite == false && targetFile.Exists())
+                return false;
 
-            targetFile.ToFile().Directory.CreateIfNotExists();
-            var result = Repeat.Task(() => PowerShellConsole.RunScript(outFileCmdlet.ToScript()))
-                .WithOptions(o =>
-                {
-                    o.RetryDelay = 1.Seconds();
-                    o.MaxTries = 10;
-                })
-                .UntilNoExceptions();
-
-            return targetFile.ToFile();
+            targetFile.Directory.CreateIfNotExists();
+            File.WriteAllText(targetFile.FullName, content ?? string.Empty);
+            return true;
         }
 
-        public static FilePath WriteAllText(this string content, PathInfo targetPath, bool overwrite = false)
+        public static bool WriteAllText(this string content, PathInfo target, bool overwrite = false)
         {
-            if (targetPath == null) throw new ArgumentNullException(nameof(targetPath));
-            if (targetPath is FilePath == false)
-                throw new ArgumentException($"target path is not a file:{targetPath}. Was: {targetPath.GetType()}");
-
-            return WriteAllText(content, targetPath.FullName, overwrite);
-        }
-
-        public static FilePath WriteAllText(this string content, FilePath targetPath, bool overwrite = false)
-        {
-            return WriteAllText(content, targetPath.FullName, overwrite);
-        }
-
-        public static FilePath WriteAllText(this string content, DirPath targetDir, string fileName, bool overwrite = false)
-        {
-            return WriteAllText(content, targetDir.ToFile(fileName).FullName, overwrite);
+            return !target.IsFolder && content.WriteAllText(target as FilePath, overwrite);
         }
     }
 }

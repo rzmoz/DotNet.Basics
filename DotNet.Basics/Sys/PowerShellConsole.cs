@@ -8,41 +8,11 @@ namespace DotNet.Basics.Sys
 {
     public class PowerShellConsole
     {
-        public static string[] GetChildItem(string root, bool recurse, string filter = null, params string[] flags)
-        {
-            var cmdlet = new PowerShellCmdlet("Get-ChildItem")
-                .AddParameter("Path", root)
-                .WithRecurse(recurse);
-
-            if (filter != null)
-                cmdlet.AddParameter("Filter", filter);
-
-            foreach (var flag in flags)
-                cmdlet.AddParameter(flag);
-
-            var results = RunScript(cmdlet.ToScript());
-            return results.Select(dir => (string)((dynamic)dir).FullName.ToString()).ToArray();
-        }
-
-        public static object[] CopyItem(string path, string destination, bool force, bool recurse)
-        {
-            return CopyItem(new[] { path }, destination, force, recurse);
-        }
-        public static object[] CopyItem(string[] paths, string destination, bool force, bool recurse)
-        {
-            var cmdlet = new PowerShellCmdlet("Copy-Item")
-                .AddParameter("Path", paths)
-                .AddParameter("Destination", destination)
-                .WithForce(force)
-                .WithRecurse(recurse);
-            return RunScript(cmdlet.ToScript());
-        }
-
-        public static object[] RemoveItem(string path, bool force, bool recurse)
+        public static object[] RemoveItem(string path, bool force = false, bool recurse = false)
         {
             return RemoveItem(new[] { path }, force, recurse);
         }
-        public static object[] RemoveItem(string[] paths, bool force, bool recurse)
+        public static object[] RemoveItem(string[] paths, bool force = false, bool recurse = false)
         {
             var cmdlet = new PowerShellCmdlet("Remove-Item")
                 .AddParameter("Path", paths)
@@ -50,20 +20,6 @@ namespace DotNet.Basics.Sys
                 .WithRecurse(recurse);
             return RunScript(cmdlet.ToScript());
         }
-
-        public static object[] MoveItem(string path, string destination, bool force)
-        {
-            return MoveItem(new[] { path }, destination, force);
-        }
-        public static object[] MoveItem(string[] paths, string destination, bool force)
-        {
-            var cmdlet = new PowerShellCmdlet("Move-Item")
-                .AddParameter("Path", paths)
-                .AddParameter("Destination", destination)
-                .WithForce(force);
-            return RunScript(cmdlet.ToScript());
-        }
-
 
         public static object[] RunScript(params string[] scripts)
         {

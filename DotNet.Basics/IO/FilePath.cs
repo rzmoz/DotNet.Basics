@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
@@ -37,12 +38,7 @@ namespace DotNet.Basics.IO
 
         public string ReadAllText()
         {
-            var getContentCmdlet = new PowerShellCmdlet("Get-Content");
-            getContentCmdlet.AddParameter("Path", FullName);
-            getContentCmdlet.AddParameter("raw");
-
-            var result = PowerShellConsole.RunScript(getContentCmdlet.ToScript());
-            return result.FirstOrDefault()?.ToString();
+            return File.ReadAllText(FullName);
         }
     }
 }

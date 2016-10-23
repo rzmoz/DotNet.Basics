@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Security.AccessControl;
@@ -70,7 +70,7 @@ namespace DotNet.Basics.IO
                 var target = dir.Parent;
                 try
                 {
-                    PowerShellConsole.MoveItem($"{source.FullName}\\*.*", target.FullName, true);
+                    Parallel.ForEach(source.EnumerateFiles(), file => file.MoveTo(target));
                 }
                 catch (Exception)
                 {
@@ -128,7 +128,7 @@ namespace DotNet.Basics.IO
             }
             catch (Exception e)
             {
-                DebugOut.WriteLine($"Fast copy failed - falling back to use robocopy\r\n{e}");
+                DebugOut.WriteLine($"Fast copy failed for copying {source} to {target} - falling back to use robocopy\r\n{e}");
                 Robocopy.CopyDir(source.FullName, target.FullName, includeSubFolders: includeSubfolders);
             }
         }

@@ -13,10 +13,12 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         public void Init_FindRobocopyByDrive_RobocopyIsFound()
         {
+
             var dir = TestContext.CurrentContext.TestDirectory.ToDir(@"Init_FindRobocopyByDrive_RobocopyIsFound");
+            var testFile = dir.ToFile("robocopyTestfile.text");
             dir.CleanIfExists();
 
-            var testFile = "blaa".WriteAllText(dir, "robocopyTestfile.text");
+            "blaa".WriteAllText(testFile);
 
             var exitCode = Robocopy.MoveContent(testFile.Directory.FullName, testFile.Directory.FullName, testFile.Name);
 

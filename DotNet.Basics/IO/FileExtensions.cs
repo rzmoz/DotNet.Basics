@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {
@@ -21,8 +19,7 @@ namespace DotNet.Basics.IO
 
         public static bool MoveTo(this FilePath sourceFile, DirPath targetDir, bool overwrite = false)
         {
-            var targetFile = targetDir.Add(sourceFile.Name).ToFile();
-            return sourceFile.MoveTo(targetFile, overwrite);
+            return sourceFile.MoveTo(targetDir.ToFile(sourceFile.Name), overwrite);
         }
 
         public static bool MoveTo(this FilePath sourceFile, string targetFile, bool overwrite = false)
@@ -32,39 +29,34 @@ namespace DotNet.Basics.IO
 
         public static bool MoveTo(this FilePath sourceFile, FilePath targetFile, bool overwrite = false)
         {
-            if (targetFile == null) throw new ArgumentNullException(nameof(targetFile));
-            if (sourceFile.FullName.Equals(targetFile.FullName, StringComparison.OrdinalIgnoreCase))
-                return false;
-            if (sourceFile.Exists() == false)
-                return false;
-            if (overwrite == false && targetFile.ToFile().Exists())
-                return false;
-            targetFile.Directory.CreateIfNotExists();
-            PowerShellConsole.MoveItem(sourceFile.FullName, targetFile.FullName, force: true);
+            sourceFile.CopyTo(targetFile, overwrite);
+            sourceFile.DeleteIfExists();
             return targetFile.Exists();
         }
 
         public static void CopyTo(this IEnumerable<FilePath> sourceFiles, DirPath targetDir, bool overwrite = false)
         {
-            targetDir.CreateIfNotExists();
             Parallel.ForEach(sourceFiles, sFile => sFile.CopyTo(targetDir.ToFile(sFile.Name), overwrite));
         }
 
         public static void CopyTo(this FilePath file, DirPath targetDir, bool overwrite = false)
         {
-            file.CopyTo(targetDir.Add(file.Name).ToFile(), overwrite: overwrite);
+            file.CopyTo(targetDir.ToFile(file.Name), overwrite);
         }
 
         public static void CopyTo(this FilePath source, DirPath targetDir, string newFileName, bool overwrite = false)
         {
-            source.CopyTo(targetDir.Add(newFileName).ToFile(), overwrite: overwrite);
+            source.CopyTo(targetDir.ToFile(newFileName), overwrite);
         }
 
         public static void CopyTo(this FilePath source, FilePath target, bool overwrite = false)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
+            if (target == null) throw new ArgumentNullException(nameof(target));
             target.Directory.CreateIfNotExists();
+            //no logging here since it heavily impacts performance
             File.Copy(source.FullName, target.FullName, overwrite);
+            File.SetAttributes(target.FullName, FileAttributes.Normal);
         }
     }
 }

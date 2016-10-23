@@ -75,7 +75,6 @@
     <Compile Include="IO\DirPath.cs" />
     <Compile Include="IO\FilePath.cs" />
     <Compile Include="IO\FileExtensions.cs" />
-    <Compile Include="IO\FileSystemInfoExtensions.cs" />
     <Compile Include="IO\FileType.cs" />
     <Compile Include="IO\FileTypeCollection.cs" />
     <Compile Include="IO\PathInfo.cs" />
