@@ -32,7 +32,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             var serviceName = "Spooler";
 
-            var isrunning = WindowsServices.IsRunning(serviceName);
+            var isrunning = WindowsServices.Is(serviceName,WindowsServiceStatus.Running);
 
             isrunning.Should().BeTrue(serviceName);
         }

@@ -17,11 +17,11 @@ namespace DotNet.Basics.Sys
                     .Any(ctrl => ctrl.ServiceName.Equals(serviceName, StringComparison.OrdinalIgnoreCase));
         }
 
-        public static bool IsRunning(string serviceName)
+        public static bool Is(string serviceName, WindowsServiceStatus status)
         {
             using (var ctrl = Get(serviceName))
             {
-                return ctrl?.Status == ServiceControllerStatus.Running;
+                return (int)ctrl?.Status == (int)status;
             }
         }
 
@@ -31,7 +31,7 @@ namespace DotNet.Basics.Sys
         }
         public static bool Start(string serviceName, TimeSpan timeout)
         {
-            return InvokeService(serviceName, service => service.Start(), ServiceControllerStatus.Running, timeout);
+            return InvokeService(serviceName, service => service.Start(), WindowsServiceStatus.Running, timeout);
         }
 
         public static bool Stop(string serviceName)
@@ -40,7 +40,7 @@ namespace DotNet.Basics.Sys
         }
         public static bool Stop(string serviceName, TimeSpan timeout)
         {
-            return InvokeService(serviceName, service => service.Stop(), ServiceControllerStatus.Stopped, timeout);
+            return InvokeService(serviceName, service => service.Stop(), WindowsServiceStatus.Stopped, timeout);
         }
 
         public static bool Restart(string serviceName)
@@ -52,7 +52,7 @@ namespace DotNet.Basics.Sys
             return Stop(serviceName, timeout) && Start(serviceName, timeout);
         }
 
-        private static bool InvokeService(string serviceName, Action<ServiceController> serviceAction, ServiceControllerStatus exitStatus, TimeSpan timeout)
+        private static bool InvokeService(string serviceName, Action<ServiceController> serviceAction, WindowsServiceStatus exitStatus, TimeSpan timeout)
         {
             if (serviceName == null) throw new ArgumentNullException(nameof(serviceName));
             if (Exists(serviceName) == false)
@@ -66,7 +66,7 @@ namespace DotNet.Basics.Sys
                     o.Timeout = timeout;
                     o.PingOnRetry = () => service = Get(serviceName);
                     o.Finally = () => service.Close();
-                }).Until(() => service?.Status == exitStatus);
+                }).Until(() => (int)service.Status == (int)exitStatus);
             service = null;
             return success;
 
