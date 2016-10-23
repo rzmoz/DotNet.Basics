@@ -27,49 +27,17 @@ namespace DotNet.Basics.Sys
 
         public static bool Start(string serviceName)
         {
-            return Start(serviceName, DefaultTimeout);
-        }
-        public static bool Start(string serviceName, TimeSpan timeout)
-        {
-            return InvokeService(serviceName, service => service.Start(), WindowsServiceStatus.Running, timeout);
+            return CommandPrompt.Run($"net start {serviceName}") == 0;
         }
 
         public static bool Stop(string serviceName)
         {
-            return Stop(serviceName, DefaultTimeout);
-        }
-        public static bool Stop(string serviceName, TimeSpan timeout)
-        {
-            return InvokeService(serviceName, service => service.Stop(), WindowsServiceStatus.Stopped, timeout);
+            return CommandPrompt.Run($"net stop {serviceName}") == 0;
         }
 
         public static bool Restart(string serviceName)
         {
-            return Restart(serviceName, DefaultTimeout);
-        }
-        public static bool Restart(string serviceName, TimeSpan timeout)
-        {
-            return Stop(serviceName, timeout) && Start(serviceName, timeout);
-        }
-
-        private static bool InvokeService(string serviceName, Action<ServiceController> serviceAction, WindowsServiceStatus exitStatus, TimeSpan timeout)
-        {
-            if (serviceName == null) throw new ArgumentNullException(nameof(serviceName));
-            if (Exists(serviceName) == false)
-                return false;
-
-            ServiceController service = Get(serviceName);
-            var success = Repeat.TaskOnce(() => serviceAction(service))
-                .WithOptions(o =>
-                {
-                    o.RetryDelay = 1.Seconds();
-                    o.Timeout = timeout;
-                    o.PingOnRetry = () => service = Get(serviceName);
-                    o.Finally = () => service.Close();
-                }).Until(() => (int)service.Status == (int)exitStatus);
-            service = null;
-            return success;
-
+            return Stop(serviceName) && Start(serviceName);
         }
 
         private static ServiceController Get(string serviceName)

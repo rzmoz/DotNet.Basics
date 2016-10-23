@@ -1,4 +1,7 @@
-﻿using DotNet.Basics.Sys;
+﻿using System;
+using System.Security.Principal;
+using System.Threading;
+using DotNet.Basics.Sys;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -32,7 +35,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             var serviceName = "Spooler";
 
-            var isrunning = WindowsServices.Is(serviceName,WindowsServiceStatus.Running);
+            var isrunning = WindowsServices.Is(serviceName, WindowsServiceStatus.Running);
 
             isrunning.Should().BeTrue(serviceName);
         }
