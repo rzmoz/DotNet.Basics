@@ -17,43 +17,46 @@ namespace DotNet.Basics.IO
             return new FilePath(path.Segments, path.Delimiter).Add(pathSegments);
         }
 
-        public static bool MoveTo(this FilePath sourceFile, DirPath targetDir, bool overwrite = false)
+        public static bool MoveTo(this FilePath sourceFile, DirPath targetDir, bool overwrite = false, bool ensureTargetDir = true)
         {
-            return sourceFile.MoveTo(targetDir.ToFile(sourceFile.Name), overwrite);
+            return sourceFile.MoveTo(targetDir.ToFile(sourceFile.Name), overwrite, ensureTargetDir);
         }
 
-        public static bool MoveTo(this FilePath sourceFile, string targetFile, bool overwrite = false)
+        public static bool MoveTo(this FilePath sourceFile, string targetFile, bool overwrite = false, bool ensureTargetDir = true)
         {
-            return sourceFile.MoveTo(targetFile.ToFile(), overwrite);
+            return sourceFile.MoveTo(targetFile.ToFile(), overwrite, ensureTargetDir);
         }
 
-        public static bool MoveTo(this FilePath sourceFile, FilePath targetFile, bool overwrite = false)
+        public static bool MoveTo(this FilePath sourceFile, FilePath targetFile, bool overwrite = false, bool ensureTargetDir = true)
         {
-            sourceFile.CopyTo(targetFile, overwrite);
+            sourceFile.CopyTo(targetFile, overwrite, ensureTargetDir);
             sourceFile.DeleteIfExists();
             return targetFile.Exists();
         }
 
-        public static void CopyTo(this IEnumerable<FilePath> sourceFiles, DirPath targetDir, bool overwrite = false)
+        public static void CopyTo(this IEnumerable<FilePath> sourceFiles, DirPath targetDir, bool overwrite = false, bool ensureTargetDir = true)
         {
-            Parallel.ForEach(sourceFiles, sFile => sFile.CopyTo(targetDir.ToFile(sFile.Name), overwrite));
+            if (ensureTargetDir)
+                targetDir.CreateIfNotExists();
+            Parallel.ForEach(sourceFiles, sFile => sFile.CopyTo(targetDir.ToFile(sFile.Name), overwrite, ensureTargetDir: false));
         }
 
-        public static void CopyTo(this FilePath file, DirPath targetDir, bool overwrite = false)
+        public static void CopyTo(this FilePath file, DirPath targetDir, bool overwrite = false, bool ensureTargetDir = true)
         {
-            file.CopyTo(targetDir.ToFile(file.Name), overwrite);
+            file.CopyTo(targetDir.ToFile(file.Name), overwrite, ensureTargetDir);
         }
 
-        public static void CopyTo(this FilePath source, DirPath targetDir, string newFileName, bool overwrite = false)
+        public static void CopyTo(this FilePath source, DirPath targetDir, string newFileName, bool overwrite = false, bool ensureTargetDir = true)
         {
-            source.CopyTo(targetDir.ToFile(newFileName), overwrite);
+            source.CopyTo(targetDir.ToFile(newFileName), overwrite, ensureTargetDir);
         }
 
-        public static void CopyTo(this FilePath source, FilePath target, bool overwrite = false)
+        public static void CopyTo(this FilePath source, FilePath target, bool overwrite = false, bool ensureTargetDir = true)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
             if (target == null) throw new ArgumentNullException(nameof(target));
-            target.Directory.CreateIfNotExists();
+            if (ensureTargetDir)
+                target.Directory.CreateIfNotExists();
             //no logging here since it heavily impacts performance
             File.Copy(source.FullName, target.FullName, overwrite);
             File.SetAttributes(target.FullName, FileAttributes.Normal);

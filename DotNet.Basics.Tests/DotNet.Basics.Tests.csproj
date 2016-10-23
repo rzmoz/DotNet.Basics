@@ -95,6 +95,7 @@
     <Compile Include="IO\SystemIoPathTests.cs" />
     <Compile Include="IO\TempDirTests.cs" />
     <Compile Include="IO\TempWorkDirTests.cs" />
+    <Compile Include="IO\TestFile1.cs" />
     <Compile Include="IO\TestSources\IoTestResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

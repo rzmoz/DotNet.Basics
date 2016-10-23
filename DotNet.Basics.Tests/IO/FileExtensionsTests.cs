@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using DotNet.Basics.IO;
 using FluentAssertions;
 using NUnit.Framework;
@@ -52,6 +53,30 @@ namespace DotNet.Basics.Tests.IO
 
             testFile.Exists().Should().BeFalse("File should have been deleted");
         }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void CopyTo_EnsureTargetdir_TargetDirIsEnsured(bool ensureTargetDir)
+        {
+            var testdir = TestContext.CurrentContext.TestDirectory.ToDir("CopyTo_EnsureTargetdir_TargetDirIsEnsured");
+            testdir.DeleteIfExists();
+            var testFile1 = new TestFile1();
+            Action action = () => testFile1.CopyTo(testdir, false, ensureTargetDir);
+
+
+            if (ensureTargetDir)
+            {
+                action.ShouldNotThrow();
+                testdir.ToFile(testFile1.Name).Exists().Should().BeTrue();
+            }
+            else
+            {
+                action.ShouldThrow<IOException>();
+                testdir.ToFile(testFile1.Name).Exists().Should().BeFalse();
+            }
+        }
+
 
         [Test]
         public void MoveTo_RenameFileInSameFolder_FileIsRenamed()

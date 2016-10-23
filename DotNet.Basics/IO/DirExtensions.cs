@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Security.AccessControl;
@@ -68,14 +67,7 @@ namespace DotNet.Basics.IO
             {
                 var source = dir;
                 var target = dir.Parent;
-                try
-                {
-                    Parallel.ForEach(source.EnumerateFiles(), file => file.MoveTo(target));
-                }
-                catch (Exception)
-                {
-                    Robocopy.MoveFolder(source.FullName, target.FullName);
-                }
+                Robocopy.MoveFolder(source.FullName, target.FullName);
             }
 
             //we delete the folder if it's empty if everything was moved - otherwise, we don't 
@@ -123,7 +115,7 @@ namespace DotNet.Basics.IO
 
                 Parallel.ForEach(source.GetFiles(), file =>
                 {
-                    file.CopyTo(target, overwrite: true);
+                    file.CopyTo(target, overwrite: true, ensureTargetDir: false);
                 });
             }
             catch (Exception e)
