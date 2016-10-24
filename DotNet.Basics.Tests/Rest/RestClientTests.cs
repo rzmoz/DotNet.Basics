@@ -18,35 +18,9 @@ namespace DotNet.Basics.Tests.Rest
     public class RestClientTests
     {
         [Test]
-        public async Task ExecuteTAsync_ContentType_ContentTypeIsAddedToContent()
+        public async Task ExecuteTAsync_ValidRquest_RequestIsReceived()
         {
-            var request = new RestRequest("http://dr.dk/", HttpMethod.Post)
-            {
-                Content = new StringContent("something", Encoding.UTF8, "my/content")
-            };
-            var client = new RestClient();
-
-            var response = await client.ExecuteAsync<string>(request).ConfigureAwait(false);
-
-            ((RestResponse<string>)response).HttpResponseMessage.RequestMessage.Content.Headers.First().Value.First().Should().Be("my/content; charset=utf-8");
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-        }
-
-        [Test]
-        public void ExecuteTAsync_ResponseBodyNotProperValueTo_ExceptionIsThrown()
-        {
-            var request = new RestRequest("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css", HttpMethod.Get);
-            var client = new RestClient();
-
-            Func<Task> action = async () => await client.ExecuteAsync<int>(request).ConfigureAwait(false);
-
-            action.ShouldThrow<RestReaderException>();
-        }
-
-        [Test]
-        public async Task ExecuteTAsync_ValidRquest_RequestIsRecieved()
-        {
-            var request = new RestRequest("http://dr.dk/", HttpMethod.Get);
+            var request = new RestRequest("https://files-stackablejs.netdna-ssl.com/stacktable.min.js", HttpMethod.Get);
             var client = new RestClient();
 
             var response = await client.ExecuteAsync<string>(request).ConfigureAwait(false);
@@ -55,16 +29,15 @@ namespace DotNet.Basics.Tests.Rest
         }
 
         [Test]
-        public async Task ExecuteAsync_ValidRquest_RequestIsRecieved()
+        public async Task ExecuteAsync_ValidRquest_RequestIsReceived()
         {
-            var request = new RestRequest("http://dr.dk/", HttpMethod.Get);
+            var request = new RestRequest("https://files-stackablejs.netdna-ssl.com/stacktable.min.js", HttpMethod.Get);
             var client = new RestClient();
 
-            var response = await client.ExecuteAsync<string>(request).ConfigureAwait(false);
+            var response = await client.ExecuteAsync(request).ConfigureAwait(false);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
-
 
         /*
         [Test]
@@ -82,30 +55,46 @@ namespace DotNet.Basics.Tests.Rest
         }*/
 
         [Test]
+        public void ExecuteTAsync_ContentType_ContentTypeIsAddedToContent()
+        {
+            var request = new RestRequest("https://files-stackablejs.netdna-ssl.com/stacktable.min.js/", HttpMethod.Post)
+            {
+                Content = new StringContent("something", Encoding.UTF8, "my/content")
+            };
+
+            request.Content.Headers.First().Value.First().Should().Be("my/content; charset=utf-8");
+        }
+
+
+        [Test]
+        public void ExecuteTAsync_ResponseBodyNotProperValueTo_ExceptionIsThrown()
+        {
+            var request = new RestRequest("https://my.server.com", HttpMethod.Get);
+            var client = GetRestClientWithResponseContent("string.not.int");
+
+            Func<Task> action = async () => await client.ExecuteAsync<int>(request).ConfigureAwait(false);
+
+            action.ShouldThrow<RestReaderException>();
+        }
+
+        [Test]
         public async Task ExecuteAsync_ResponseGottenAndQuotesStripped_ShouldDeserializeString()
         {
             //arrange
-            const string connectionString = "\"some connection string\"";
-
-            var httpTransport = Substitute.For<IHttpTransport>();
-
-            httpTransport.SendRequestAsync(Arg.Any<IRestRequest>()).Returns(GetHttpResponseMessageTask(connectionString));
-            var restClient = new RestClient(httpTransport);
+            const string contentWithQuotes = "\"some connection string\"";
+            var restClient = GetRestClientWithResponseContent(contentWithQuotes);
             var request = new RestRequest("http://myserver.com/string");
             //act 
             var restResponse = await restClient.ExecuteAsync<string>(request, ResponseFormatting.TrimQuotesWhenContentIsString).ConfigureAwait(false);
             //assert
-            restResponse.Content.Should().Be(connectionString.Trim('\"'));
+            restResponse.Content.Should().Be(contentWithQuotes.Trim('\"'));
         }
 
         [Test]
         public async Task ExecuteAsync_EmptyResponse_ShouldNotThrowException()
         {
             //arrange
-            var httpTransport = Substitute.For<IHttpTransport>();
-
-            httpTransport.SendRequestAsync(Arg.Any<IRestRequest>()).Returns(GetHttpResponseMessageTask(string.Empty));
-            var restClient = new RestClient(httpTransport);
+            var restClient = GetRestClientWithResponseContent(string.Empty);
             var request = new RestRequest("http://myserver.com/string");
             //act 
             var restResponse = await restClient.ExecuteAsync<string>(request).ConfigureAwait(false);
@@ -117,16 +106,13 @@ namespace DotNet.Basics.Tests.Rest
         public async Task ExecuteAsync_ResponseGotten_ShouldBeDeserialized()
         {
             //arrange
-            var client = new TestClient()
+            var serializedClient = JsonConvert.SerializeObject(new TestClient()
             {
                 ClientName = "Martin F",
                 PhoneNumbers = { { "Home", "+38095234223" }, { "Work", "+380769508682" } }
-            };
+            });
 
-            var httpTransport = Substitute.For<IHttpTransport>();
-            var serializedClient = JsonConvert.SerializeObject(client);
-            httpTransport.SendRequestAsync(Arg.Any<IRestRequest>()).Returns(GetHttpResponseMessageTask(serializedClient));
-            var restClient = new RestClient(httpTransport);
+            var restClient = GetRestClientWithResponseContent(serializedClient);
             var request = new RestRequest("http://myserver.com/clients/1");
             //act 
             var restResponse = await restClient.ExecuteAsync<TestClient>(request).ConfigureAwait(false);
@@ -150,10 +136,18 @@ namespace DotNet.Basics.Tests.Rest
             var restRequest = new RestRequest(uri);
             var jsonRestClient = new RestClient(httpTransport);
             //act
-            System.Action action = () => { var result = jsonRestClient.ExecuteAsync(restRequest).Result; };
+            Action action = () => { var result = jsonRestClient.ExecuteAsync(restRequest).Result; };
             //assert
             action.ShouldThrow<RestRequestException>().WithInnerException<WebException>().Which.Request.Uri.ToString().Should().Be(uri);
         }
+
+        private IRestClient GetRestClientWithResponseContent(string content)
+        {
+            var httpTransport = Substitute.For<IHttpTransport>();
+            httpTransport.SendRequestAsync(Arg.Any<IRestRequest>()).Returns(GetHttpResponseMessageTask(content));
+            return new RestClient(httpTransport);
+        }
+
         private Task<HttpResponseMessage> GetHttpResponseMessageTask(string content)
         {
             return Task.FromResult(new HttpResponseMessage

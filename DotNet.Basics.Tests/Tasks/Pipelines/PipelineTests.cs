@@ -49,31 +49,17 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var pipeline = new Pipeline(_builder.Container);
 
             var ts = new CancellationTokenSource();
-
+            ts.Cancel();
+            ts.IsCancellationRequested.Should().BeTrue();
             var counter = 0;
-            var initialStepName = "cancellationStep";
-            var additionalStepCount = 10;
+            var stepCount = 11;
 
-            pipeline.AddStep(initialStepName, async (args, ct) =>
-            {
-                counter++;
-                while (ct.IsCancellationRequested == false)
-                    await Task.Delay(100.Milliseconds(), ct).ConfigureAwait(false);
-            });
+            for (var i = 0; i < stepCount; i++)
+                pipeline.AddStep((args, ct) => Task.FromResult(++counter));
 
-            for (var i = 0; i < additionalStepCount; i++)
-                pipeline.AddStep(async (args, ct) => counter++);
+            await pipeline.RunAsync(ts.Token).ConfigureAwait(false);
 
-            pipeline.Started += args =>
-            {
-                if (args.Name == initialStepName)
-                    ts.Cancel();
-            };
-
-            var pipelineTask = pipeline.RunAsync(ts.Token);
-
-            await Task.WhenAll(pipelineTask).ConfigureAwait(false);
-            pipeline.Count().Should().Be(additionalStepCount + 1);
+            pipeline.Count().Should().Be(stepCount);
             counter.Should().Be(1);
         }
 
