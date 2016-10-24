@@ -31,8 +31,8 @@ namespace DotNet.Basics.Tasks.Pipelines
             Name = step.Name;
             base.Init();
         }
-
-        protected override async Task InnerRunAsync(T args, CancellationToken ct)
+        
+        protected override async Task RunImpAsync(T args, CancellationToken ct)
         {
             var step = _getSection();
             Name = step.Name;

@@ -15,11 +15,11 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             _classThatIncrementArgsDependOn = classThatIncrementArgsDependOn;
         }
 
-        protected override async Task InnerRunAsync(EventArgs<int> args, CancellationToken ct)
+        protected override Task RunImpAsync(EventArgs<int> args, CancellationToken ct)
         {
-            await Task.Delay(1.MilliSeconds(), ct).ConfigureAwait(false);//silence compiler warning
             args.Value = _classThatIncrementArgsDependOn.IncrementByOne(args.Value);
-            Console.WriteLine($"Value is now: {args.Value}");
+            Console.WriteLine($@"Value is now: {args.Value}");
+            return Task.FromResult("");
         }
     }
 }

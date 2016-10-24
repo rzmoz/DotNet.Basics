@@ -1,4 +1,7 @@
-﻿namespace DotNet.Basics.Tasks.Pipelines
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace DotNet.Basics.Tasks.Pipelines
 {
     public abstract class PipelineSection<T> : ManagedTask<T> where T : new()
     {
@@ -10,6 +13,13 @@
         {
             Name = ResolveName(name);
         }
+
+        protected override Task InnerRunAsync(T args, CancellationToken ct)
+        {
+            return RunImpAsync(args, ct);
+        }
+
+        protected abstract Task RunImpAsync(T args, CancellationToken ct);
 
         private string ResolveName(string name)
         {

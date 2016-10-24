@@ -91,10 +91,11 @@ namespace DotNet.Basics.Tasks.Pipelines
 
         public override string TaskType => PipelineTaskTypes.Block;
 
-        protected override async Task InnerRunAsync(T args, CancellationToken ct)
+        protected override async Task RunImpAsync(T args, CancellationToken ct)
         {
             await _innerRun(args, ct).ConfigureAwait(false);
         }
+
         protected async Task InnerParallelRunAsync(T args, CancellationToken ct)
         {
             DebugOut.WriteLine($"Running block {Name} in parallel");
