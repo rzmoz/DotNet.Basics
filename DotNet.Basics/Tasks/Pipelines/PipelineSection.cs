@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace DotNet.Basics.Tasks.Pipelines
+﻿namespace DotNet.Basics.Tasks.Pipelines
 {
-    public abstract class PipelineSection<T> : ManagedTask<T> where T : EventArgs, new()
+    public abstract class PipelineSection<T> : ManagedTask<T> where T : new()
     {
         protected PipelineSection()
             : this(null)

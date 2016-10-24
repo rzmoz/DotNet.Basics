@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace DotNet.Basics.Tasks.Pipelines
+﻿namespace DotNet.Basics.Tasks.Pipelines
 {
-    public abstract class PipelineStep<T> : PipelineSection<T> where T : EventArgs, new()
+    public abstract class PipelineStep<T> : PipelineSection<T> where T : new()
     {
         protected PipelineStep(string name = null) : base(name)
         {

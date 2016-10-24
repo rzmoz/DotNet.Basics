@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace DotNet.Basics.Tasks.Pipelines
 {
     public class LazyBindSection<T, TSection> : PipelineSection<T>
-        where T : EventArgs, new()
+        where T : new()
         where TSection : PipelineSection<T>
     {
         private readonly Func<TSection> _getSection;

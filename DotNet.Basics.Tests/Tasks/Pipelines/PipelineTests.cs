@@ -25,9 +25,28 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         }
 
         [Test]
+        public async Task Ctor_ArgsInheritanceHierarchy_StepsWithAcenstorArgsCanBeUsedInPipeline()
+        {
+            var argsInit = new DescendantArgs();
+            argsInit.AncestorUpdated.Should().BeFalse();
+            argsInit.DescendantUpdated.Should().BeFalse();
+            var pipeline = new Pipeline<DescendantArgs>();
+
+            //act
+            pipeline.AddStep((args, ct) => new AncestorStep().RunAsync(args, ct));
+            pipeline.AddStep<DescendantStep>();
+
+            //assert
+            var argsUpdated = await pipeline.RunAsync(argsInit, CancellationToken.None).ConfigureAwait(false);
+            argsUpdated.AncestorUpdated.Should().BeTrue();
+            argsUpdated.DescendantUpdated.Should().BeTrue();
+        }
+
+
+        [Test]
         public async Task RunAsync_TaskCancellation_PipelineIsCancelled()
         {
-            var pipeline = new Pipeline<EventArgs>(_builder.Container);
+            var pipeline = new Pipeline(_builder.Container);
 
             var ts = new CancellationTokenSource();
 
@@ -62,7 +81,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Test]
         public async Task DisplayName_DisplayNameIsSet_DisplayNameIsUsed()
         {
-            var pipeline = new Pipeline<EventArgs>(_builder.Container);
+            var pipeline = new Pipeline(_builder.Container);
             pipeline.AddBlock().AddStep<PipelineStepWithDisplayNameSetStep>();
 
             string stepName = null;

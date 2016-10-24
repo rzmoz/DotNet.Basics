@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace DotNet.Basics.Tasks
 {
-    public class TaskStartedEventArgs : EventArgs
+    public class TaskStartedEventArgs
     {
         public TaskStartedEventArgs(string name, string taskType, IReadOnlyDictionary<string, string> taskProperties)
         {

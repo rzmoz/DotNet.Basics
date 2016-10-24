@@ -5,7 +5,7 @@ using DotNet.Basics.Collections;
 
 namespace DotNet.Basics.Tasks
 {
-    public class ManagedTask<T> : ITask<T> where T : EventArgs, new()
+    public class ManagedTask<T> : ITask<T> where T : new()
     {
         private readonly Func<T, CancellationToken, Task> _task;
         private string _name;

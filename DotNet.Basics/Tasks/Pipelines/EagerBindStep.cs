@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {
-    public class EagerBindStep<T> : PipelineStep<T> where T : EventArgs, new()
+    public class EagerBindStep<T> : PipelineStep<T> where T : new()
     {
         private readonly Func<T, CancellationToken, Task> _step;
 

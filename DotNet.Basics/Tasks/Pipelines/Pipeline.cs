@@ -5,7 +5,21 @@ using Autofac;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {
-    public class Pipeline<T> : PipelineBlock<T> where T : EventArgs, new()
+    public class Pipeline : PipelineBlock<EventArgs>
+    {
+        public Pipeline(string name = null) : base(name)
+        {
+        }
+
+        public Pipeline(IContainer container) : base(container)
+        {
+        }
+
+        public Pipeline(string name, IContainer container) : base(name, container)
+        {
+        }
+    }
+    public class Pipeline<T> : PipelineBlock<T> where T : new()
     {
         public Pipeline(string name = null) : base(name)
         {

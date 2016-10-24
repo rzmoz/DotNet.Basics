@@ -89,6 +89,7 @@
     <Compile Include="AppSettings\AppSetting.cs" />
     <Compile Include="AppSettings\SystemConfigurationManager.cs" />
     <Compile Include="AppSettings\IConfigurationManager.cs" />
+    <Compile Include="Sys\EventArgs.cs" />
     <Compile Include="Sys\StringExtensions.cs" />
     <Compile Include="Sys\WindowsServices.cs" />
     <Compile Include="Sys\WindowsServiceStatus.cs" />
@@ -128,7 +129,6 @@
     <Compile Include="Tasks\Repeating\RepeatMaxTriesPredicate.cs" />
     <Compile Include="Sys\EnumClass.cs" />
     <Compile Include="Sys\EnumExtensions.cs" />
-    <Compile Include="Sys\EventArgs.cs" />
     <Compile Include="Tasks\ITask.cs" />
     <Compile Include="Tasks\ManagedTask.cs" />
     <Compile Include="Tasks\Repeating\RepeaterTask.cs" />

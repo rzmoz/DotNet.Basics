@@ -9,20 +9,18 @@ using DotNet.Basics.Ioc;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {
-    public class PipelineBlock<T> : PipelineSection<T>, IEnumerable<PipelineSection<T>> where T : EventArgs, new()
+    public class PipelineBlock<T> : PipelineSection<T>, IEnumerable<PipelineSection<T>> where T : new()
     {
         private readonly IContainer _container;
         private readonly List<PipelineSection<T>> _subSections;
 
-
-        public PipelineBlock(string name = null) : base(name)
+        public PipelineBlock(string name = null)
+            : this(name, null)
         {
         }
         public PipelineBlock(IContainer container)
-            : base(null)
+            : this(null, container)
         {
-            _container = container ?? new IocBuilder().Container;
-            _subSections = new List<PipelineSection<T>>();
         }
 
         public PipelineBlock(string name, IContainer container)
