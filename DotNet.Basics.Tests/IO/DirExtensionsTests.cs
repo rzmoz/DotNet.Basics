@@ -2,6 +2,7 @@
 using System.Linq;
 using DotNet.Basics.IO;
 using FluentAssertions;
+using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace DotNet.Basics.Tests.IO
@@ -81,14 +82,24 @@ namespace DotNet.Basics.Tests.IO
 
             dir.Parent.FullName.Should().Be(currentDir.FullName);
         }
+        [Test]
+        public void Serialization_JsonSerialization_DirIsSerialized()
+        {
+            var dir = TestContext.CurrentContext.TestDirectory.ToDir();
+
+            var json = JsonConvert.SerializeObject(dir);
+
+            json.Should().Be("");
+        }
+
 
         [Test]
         public void Parent_FullSourceDir_ParenItsResolved()
         {
-            var parent = @"C:\Projects\dotnet.basics\DotNet.Basics.Tests\bin\Debug".ToDir();
-            var dir = parent.ToDir("Parent_ParentDir_PartenIsResolved");
+            var parent = TestContext.CurrentContext.TestDirectory.ToDir();
+            var subCir = parent.ToDir("Parent_ParentDir_PartenIsResolved");
 
-            dir.Parent.FullName.Should().Be(parent.FullName);
+            subCir.Parent.FullName.Should().Be(parent.FullName);
         }
 
 

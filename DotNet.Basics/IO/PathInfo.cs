@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using DotNet.Basics.Sys;
+using Newtonsoft.Json;
 
 namespace DotNet.Basics.IO
 {
@@ -49,8 +50,11 @@ namespace DotNet.Basics.IO
         public string FullName => _resolveFullName();
         public string NameWithoutExtension => System.IO.Path.GetFileNameWithoutExtension(Name);
         public string Extension => System.IO.Path.GetExtension(Name);
+
+        [JsonIgnore]
         public DirPath Directory => IsFolder ? this.ToDir() : Parent;
 
+        [JsonIgnore]
         public DirPath Parent
         {
             get
