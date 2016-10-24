@@ -82,16 +82,6 @@ namespace DotNet.Basics.Tests.IO
 
             dir.Parent.FullName.Should().Be(currentDir.FullName);
         }
-        [Test]
-        public void Serialization_JsonSerialization_DirIsSerialized()
-        {
-            var dir = TestContext.CurrentContext.TestDirectory.ToDir();
-
-            var json = JsonConvert.SerializeObject(dir);
-
-            json.Should().Be("");
-        }
-
 
         [Test]
         public void Parent_FullSourceDir_ParenItsResolved()

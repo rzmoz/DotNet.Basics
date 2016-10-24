@@ -1,6 +1,7 @@
 ﻿using System;
 using DotNet.Basics.IO;
 using FluentAssertions;
+using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace DotNet.Basics.Tests.IO
@@ -8,6 +9,17 @@ namespace DotNet.Basics.Tests.IO
     [TestFixture]
     public class PathInfoExtensionsTests
     {
+        [Test]
+        public void Serialization_JsonSerialization_DirIsSerialized()
+        {
+            var dir = TestContext.CurrentContext.TestDirectory.ToPath();
+
+            var json = JsonConvert.SerializeObject(dir);
+
+            json.Should().Be(@"{""IsFolder"":true,""IsUri"":false,""Name"":""Debug"",""RawName"":""C:\\Projects\\DotNet.Basics\\DotNet.Basics.Tests\\bin\\Debug\\"",""FullName"":""C:\\Projects\\DotNet.Basics\\DotNet.Basics.Tests\\bin\\Debug\\"",""NameWithoutExtension"":""Debug"",""Extension"":""""}");
+        }
+
+
         [Test]
         [TestCase("FOLDER_THAT_DOES_NOT_EXIST_WO_FOLDER_MARKER", false)]//folder that doesnt exist without marker
         [TestCase("FOLDER_THAT_DOES_NOT_EXIST_WITH_FOLDER_MARKER//", true)]//folder that doesnt exist with marker
