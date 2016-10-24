@@ -5,6 +5,10 @@ namespace DotNet.Basics.Tasks.Pipelines
 {
     public class Pipeline : Pipeline<EventArgs>
     {
+        public Pipeline() : base()
+        {
+        }
+
         public Pipeline(string name = null) : base(name)
         {
         }
@@ -19,7 +23,11 @@ namespace DotNet.Basics.Tasks.Pipelines
     }
     public class Pipeline<T> : PipelineBlock<T> where T : new()
     {
-        public Pipeline(string name = null) : this(name, null)
+        public Pipeline() : this(null, null)
+        {
+        }
+
+        public Pipeline(string name) : this(name, null)
         {
         }
 

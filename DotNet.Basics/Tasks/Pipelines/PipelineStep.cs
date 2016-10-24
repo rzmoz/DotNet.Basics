@@ -2,7 +2,10 @@
 {
     public abstract class PipelineStep<T> : PipelineSection<T> where T : new()
     {
-        protected PipelineStep(string name = null) : base(name)
+        protected PipelineStep() : this(null)
+        {
+        }
+        protected PipelineStep(string name) : base(name)
         {
         }
 
