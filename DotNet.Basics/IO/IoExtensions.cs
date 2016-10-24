@@ -5,6 +5,18 @@ namespace DotNet.Basics.IO
 {
     public static class IoExtensions
     {
+        public static void WriteAllText(this string content, string target, bool overwrite = true)
+        {
+            content.WriteAllText(target.ToPath(), overwrite);
+        }
+        public static void WriteAllText(this string content, PathInfo target, bool overwrite = true)
+        {
+            if (target.IsFolder)
+                throw new ArgumentException($"Cannot write text. Target is a folder: {target}");
+
+            content.WriteAllText(target as FilePath, overwrite);
+        }
+
         public static void WriteAllText(this string content, FilePath targetFile, bool overwrite = true)
         {
             if (targetFile == null) throw new ArgumentNullException(nameof(targetFile));
@@ -15,12 +27,6 @@ namespace DotNet.Basics.IO
             File.WriteAllText(targetFile.FullName, content ?? string.Empty);
         }
 
-        public static void WriteAllText(this string content, PathInfo target, bool overwrite = true)
-        {
-            if (target.IsFolder)
-                throw new ArgumentException($"Cannot write text. Target is a folder: {target}");
 
-            content.WriteAllText(target as FilePath, overwrite);
-        }
     }
 }
