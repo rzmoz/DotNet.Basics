@@ -93,6 +93,7 @@
     <Compile Include="Sys\StringExtensions.cs" />
     <Compile Include="Sys\WindowsServices.cs" />
     <Compile Include="Sys\WindowsServiceStatus.cs" />
+    <Compile Include="Tasks\Pipelines\BlockRunType.cs" />
     <Compile Include="Tasks\Pipelines\PipelineStep.cs" />
     <Compile Include="Tasks\Pipelines\PipelineSection.cs" />
     <Compile Include="Rest\HttpClientTransport.cs" />

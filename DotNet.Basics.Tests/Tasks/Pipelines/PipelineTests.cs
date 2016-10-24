@@ -52,7 +52,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             ts.Cancel();
             ts.IsCancellationRequested.Should().BeTrue();
             var counter = 0;
-            var stepCount = 11;
+            var stepCount = 101;
 
             for (var i = 0; i < stepCount; i++)
                 pipeline.AddStep((args, ct) => Task.FromResult(++counter));
@@ -68,7 +68,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         public async Task DisplayName_DisplayNameIsSet_DisplayNameIsUsed()
         {
             var pipeline = new Pipeline(_builder.Container);
-            pipeline.AddBlock().AddStep<PipelineStepWithDisplayNameSetStep>();
+            pipeline.AddBlock("").AddStep<PipelineStepWithDisplayNameSetStep>();
 
             string stepName = null;
 
@@ -105,9 +105,11 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         public async Task RunAsync_AllInParallel_AllStepsAreRunInParallel()
         {
             var pipeline = new Pipeline<EventArgs<int>>(_builder.Container);
-            var block = pipeline.AddBlock();
+            var block = pipeline.AddBlock("ParallelBlock", BlockRunType.Parallel);
 
-            for (var i = 0; i < 10; i++)
+            var runCount = 101;
+
+            for (var i = 0; i < runCount; i++)
                 block.AddStep(async (args, ct) => await Task.Delay(TimeSpan.FromSeconds(1), ct));
 
             var stopwatch = new Stopwatch();
@@ -126,8 +128,8 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var task1Called = false;
             var task2Called = false;
 
-            pipeline.AddBlock(async (args, ct) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200), ct); });
-            pipeline.AddBlock((args, xct) =>
+            pipeline.AddBlock("1", async (args, ct) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200), ct); });
+            pipeline.AddBlock("2", (args, xct) =>
             {
                 if (task1Called == false)
                     throw new ArgumentException("Task 1 not called");
@@ -153,9 +155,9 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var pipeline = new Pipeline<EventArgs<int>>(_builder.Container);
             pipeline.AddStep<IncrementArgsStep>();
             pipeline.AddStep<IncrementArgsStep>();
-            pipeline.AddBlock().AddStep<IncrementArgsStep>();
+            pipeline.AddBlock("1").AddStep<IncrementArgsStep>();
             pipeline.AddStep<IncrementArgsStep>();
-            pipeline.AddBlock().AddStep<IncrementArgsStep>();
+            pipeline.AddBlock("2").AddStep<IncrementArgsStep>();
 
             var args = await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
             args.Value.Should().Be(5);
@@ -166,7 +168,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         {
             //arrange
             var pipeline = new Pipeline<EventArgs<int>>(_builder.Container);
-            pipeline.AddBlock().AddStep<IncrementArgsStep>();
+            pipeline.AddBlock(null).AddStep<IncrementArgsStep>();
             string pipelineStarted = string.Empty;
             string pipelineEnded = string.Empty;
             string blockStarted = string.Empty;
