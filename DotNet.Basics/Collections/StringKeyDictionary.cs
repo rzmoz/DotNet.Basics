@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DotNet.Basics.Collections
 {
     [Serializable]
-    public class StringKeyDictionary<TValue> : IDictionary<string, TValue>, IReadOnlyDictionary<string, TValue>
+    public class StringKeyDictionary<TValue> : ICollection<KeyValuePair<string, TValue>>, IReadOnlyDictionary<string, TValue>
     {
         private readonly IDictionary<string, TValue> _dic;
         private readonly IDictionary<string, string> _casesInsensitiveMapping;
@@ -129,8 +130,8 @@ namespace DotNet.Basics.Collections
         public int Count => _dic.Count;
         public bool IsReadOnly => false;
 
-        public ICollection<string> Keys => _dic.Keys;
-        public ICollection<TValue> Values => _dic.Values;
+        public IReadOnlyCollection<string> Keys => _dic.Keys.ToList();
+        public IReadOnlyCollection<TValue> Values => _dic.Values.ToList();
 
         private string ResolvedKey(string key)
         {

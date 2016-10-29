@@ -81,6 +81,7 @@
     <Compile Include="Collections\StringCollectionExtensionsTests.cs" />
     <Compile Include="Collections\StringKeyDictionaryTests.cs" />
     <Compile Include="Compression\SevenZipTests.cs" />
+    <Compile Include="Compression\ZipReaderTests.cs" />
     <Compile Include="Ioc\IocBuilderTests.cs" />
     <Compile Include="Ioc\TestHelpers\MyIocRegistrations.cs" />
     <Compile Include="Ioc\TestHelpers\TestSettingsProvider.cs" />
@@ -142,6 +143,9 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Compression\myArchive.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Compression\NewFolder.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
