@@ -78,6 +78,7 @@
     <Compile Include="AppSettings\AppSettingsTests.cs" />
     <Compile Include="AppSettings\IocAppSettingExtensionsTests.cs" />
     <Compile Include="Collections\CollectionExtensionsTests.cs" />
+    <Compile Include="Collections\StringCollectionExtensionsTests.cs" />
     <Compile Include="Collections\StringKeyDictionaryTests.cs" />
     <Compile Include="Compression\SevenZipTests.cs" />
     <Compile Include="Ioc\IocBuilderTests.cs" />
