@@ -6,7 +6,7 @@ namespace DotNet.Basics.Sys
     {
         public static int Run(string commandString)
         {
-            DebugOut.WriteLine($"Command prompt invoked: {commandString}");
+            DebugOut.WriteLine($"Command prompt invoked: \"{commandString}\"");
 
             var si = new ProcessStartInfo("cmd.exe", $"/c {commandString}")
             {
@@ -27,7 +27,7 @@ namespace DotNet.Basics.Sys
                 console.WaitForExit();
                 var exitCode = console.ExitCode;
 
-                DebugOut.WriteLine($"ExitCode:{exitCode} returned from {commandString}");
+                DebugOut.WriteLine($"Command prompt exit code:{exitCode} from \"{commandString}\"");
 
                 console.Close();
                 return exitCode;
