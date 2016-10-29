@@ -30,7 +30,7 @@ namespace DotNet.Basics.Tests.Collections
             var json = sr.ReadToEnd();
 
             //assert
-            json.Should().Be("[{\"Key\":\"myKey\",\"Value\":\"myValue\"}]");
+            json.Should().Be("[{\"key\":\"myKey\",\"value\":\"myValue\"}]");
 
             //deserialize
             stream1.Position = 0;
