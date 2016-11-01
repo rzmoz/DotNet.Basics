@@ -18,7 +18,7 @@ namespace DotNet.Basics.Diagnostics
                 return output;
             });
         }
-        public string Format(Profiler profiler, DurationFormattingUnit formattingUnit)
+        public string Format(Profiler profiler, DurationFormattingUnit formattingUnit, CultureInfo cultureInfo = null)
         {
             return Format(profiler, p =>
             {
@@ -49,8 +49,9 @@ namespace DotNet.Basics.Diagnostics
                     default:
                         throw new ArgumentException($"DurationFormattingUnit not supported: {formattingUnit.ToName()}");
                 }
-
-                var output = $"finished in {value.ToString("0.00", new CultureInfo("en-US"))} {unit}";
+                if (cultureInfo == null)
+                    cultureInfo = new CultureInfo("en-US");
+                var output = $"finished in {value.ToString("0.00", cultureInfo)} {unit}";
 
                 if (string.IsNullOrWhiteSpace(profiler.Name) == false)
                     output = $"'{profiler.Name}' {output}";
