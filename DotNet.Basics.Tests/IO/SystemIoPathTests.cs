@@ -1,4 +1,6 @@
-﻿using DotNet.Basics.IO;
+﻿using System;
+using System.IO;
+using DotNet.Basics.IO;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -10,10 +12,10 @@ namespace DotNet.Basics.Tests.IO
         [Test]
         public void GetFullPath_LongPath_NoExceptionIsThrown()
         {
-            var longPath= "GetFullPath_LongPath_NoExceptionIsThrownxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-            
+            var longPath = "GetFullPath_LongPath_NoExceptionIsThrownxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+
             var fullPath = SystemIoPath.GetFullPath(longPath);
-            
+
             fullPath.Should().EndWith(longPath);//no exception is thrown
         }
 
@@ -28,7 +30,17 @@ namespace DotNet.Basics.Tests.IO
 
             systemIoPath.Should().Be(systemDotIoDotPath);
         }
+        [Test]
+        public void Exists_ThrowIfNotFound_ExceptionIsThrown()
+        {
+            var path = TestContext.CurrentContext.TestDirectory.ToDir("Exists_ThrowIfNotFound_ExceptionIsThrown");
 
+            path.DeleteIfExists();
+
+            Action action = () => SystemIoPath.Exists(path, throwIoExceptionIfNotExists: true);
+
+            action.ShouldThrow<IOException>().WithMessage($"{path.FullName} not found");
+        }
         [Test]
         public void Exists_PathExists_Works()
         {
@@ -47,7 +59,7 @@ namespace DotNet.Basics.Tests.IO
         public void Exists_LongPaths_NoExceptionIsThrown()
         {
             var path = TestContext.CurrentContext.TestDirectory.ToDir("Exists_LongPaths_NoExceptionIsThrownxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-            
+
             SystemIoPath.Exists(path).Should().BeFalse();
         }
     }

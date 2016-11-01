@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -77,32 +78,40 @@ namespace DotNet.Basics.IO
             }
         }
 
-        public static bool Exists(this PathInfo path)
+        public static bool Exists(this PathInfo path, bool throwIoExceptionIfNotExists = false)
         {
-            return Exists(path.FullName, path.IsFolder);
+            return Exists(path.FullName, path.IsFolder, throwIoExceptionIfNotExists);
         }
 
-        public static bool Exists(string path, bool isFolder)
+        public static bool Exists(string path, bool isFolder, bool throwIoExceptionIfNotExists = false)
         {
+            bool found;
+
             if (path == null)
-                return false;
-
-            var method = isFolder ? _dirInternalExists : _fileInternalExists;
-
-            var @params = new object[]
+                found = false;
+            else
             {
+                var method = isFolder ? _dirInternalExists : _fileInternalExists;
+
+                var @params = new object[]
+                {
                 path
-            };
+                };
 
-            try
-            {
-                var result = method.Invoke(null, @params);
-                return bool.Parse(result.ToString());
+                try
+                {
+                    var result = method.Invoke(null, @params);
+                    found = bool.Parse(result.ToString());
+                }
+                catch (TargetInvocationException e)
+                {
+                    throw e.InnerException;
+                }
             }
-            catch (TargetInvocationException e)
-            {
-                throw e.InnerException;
-            }
+
+            if (found == false && throwIoExceptionIfNotExists)
+                throw new IOException($"{path} not found");
+            return found; 
         }
 
         private static void EnsureLongPathsAreEnabled()
