@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using DotNet.Basics.Sys;
-using DotNet.Basics.Tasks.Repeating;
 
 namespace DotNet.Basics.IO
 {
@@ -49,26 +47,12 @@ namespace DotNet.Basics.IO
             if (_installedHandle.Exists())
                 return;
 
-            InstallDir.CreateIfNotExists();
-
-            FileStream installingHandle = null;
-
-            //try to acquire exclusive installing ownership
-            try
+            using (var iolock = new IoLock(InstallDir, _installingHandleName))
             {
-                //try get install handle
-                var handleAcquired = Repeat.Task(() =>
-                  {
-                      installingHandle = File.Create(InstallDir.ToFile(_installingHandleName).FullName, 128, FileOptions.DeleteOnClose);
-                  }).WithOptions(o =>
-                  {
-                      o.MaxTries = 10;
-                      o.RetryDelay = 1.Seconds();
-                      o.DontRethrowOnTaskFailedType = typeof(IOException);
-                  }).UntilNoExceptions();
+                var lockAcquired = iolock.TryAcquire();
 
                 //someone else already installed the app in another thread so we're aborting
-                if (handleAcquired && IsInstalled())
+                if (lockAcquired && IsInstalled())
                     return;
 
                 DebugOut.WriteLine($"Installing {EntryFile.Name} in {InstallDir.FullName}");
@@ -80,12 +64,7 @@ namespace DotNet.Basics.IO
                 //app installed succesfully
                 File.Create(_installedHandle.FullName);
 
-                DebugOut.WriteLine($"{EntryFile.Name} successfully installd");
-            }
-            finally
-            {
-                installingHandle?.Dispose();
-                installingHandle = null;
+                DebugOut.WriteLine($"{EntryFile.Name} successfully installed");
             }
         }
 

@@ -17,8 +17,7 @@ namespace DotNet.Basics.Tests.IO
             var appDir = TestContext.CurrentContext.TestDirectory.ToDir("InstallFromBytes_EnsureAppIsInstalled_AppIsInstalledInMultiThreadedEnvironment");
             appDir.DeleteIfExists();
             var fileName = "ReturnIntConsole.Exe";
-
-
+            
             var installRange = Enumerable.Range(1, 50);
             Parallel.ForEach(installRange, val =>
             {

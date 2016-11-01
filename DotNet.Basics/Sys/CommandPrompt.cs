@@ -27,7 +27,7 @@ namespace DotNet.Basics.Sys
                 console.WaitForExit();
                 var exitCode = console.ExitCode;
 
-                DebugOut.WriteLine($"Command prompt exit code:{exitCode} from \"{commandString}\"");
+                DebugOut.WriteLine($"Command prompt exit code: {exitCode} from \"{commandString}\"");
 
                 console.Close();
                 return exitCode;

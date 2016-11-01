@@ -81,6 +81,7 @@
     <Compile Include="IO\FileExtensions.cs" />
     <Compile Include="IO\FileType.cs" />
     <Compile Include="IO\FileTypeCollection.cs" />
+    <Compile Include="IO\IoLock.cs" />
     <Compile Include="IO\PathInfo.cs" />
     <Compile Include="IO\PathException.cs" />
     <Compile Include="IO\PathInfoExtensions.cs" />
