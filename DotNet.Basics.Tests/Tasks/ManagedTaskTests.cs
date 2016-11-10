@@ -54,18 +54,16 @@ namespace DotNet.Basics.Tests.Tasks
         [Fact]
         public async Task RunAsync_EventRaising_StartAndEndedEventAreRaised()
         {
-            var myKey = "!sfrwe";
-            var myValue = Guid.NewGuid().ToString();
             var argsValue = 12312313;
 
-            TaskStartedEventArgs startedArgs = null;
-            TaskEndedEventArgs endedArgs = null;
+            TaskArgs startedArgs = null;
+            TaskArgs  endedArgs = null;
             EventArgs<int> resultArgs = null;
             var ctSource = new CancellationTokenSource();
             ctSource.Cancel();
 
             var task = new ManagedTask<EventArgs<int>>((args, issues, ct) => { args.Value = argsValue; });
-            task.Properties[myKey] = myValue;
+            
 
             task.Started += (args) => { startedArgs = args; };
             task.Ended += (args) => { endedArgs = args; };
@@ -76,12 +74,10 @@ namespace DotNet.Basics.Tests.Tasks
             startedArgs.Should().NotBeNull();
             startedArgs.Should().NotBeNull();
             startedArgs.Name.Should().Be(task.GetType().Name, "Expected Name");
-            startedArgs.TaskProperties[myKey].Should().Be(myValue);
 
             endedArgs.Exception.Should().BeNull();
             endedArgs.WasCancelled.Should().BeTrue();
             endedArgs.Name.Should().Be(startedArgs.Name);
-            endedArgs.TaskProperties[myKey].Should().Be(startedArgs.TaskProperties[myKey]);
 
             resultArgs.Value.Should().Be(0);//value should not have been updatd since task was cancelled before executing
         }
@@ -92,7 +88,7 @@ namespace DotNet.Basics.Tests.Tasks
             var exMessage = "buuh";
             var task = new ManagedTask<EventArgs<int>>((args, issues, ct) => { throw new ArgumentException(exMessage); });
 
-            TaskEndedEventArgs endedArgs = null;
+            TaskArgs endedArgs = null;
 
             task.Ended += (args) => { endedArgs = args; };
 
@@ -114,26 +110,20 @@ namespace DotNet.Basics.Tests.Tasks
         public async Task TaskStarted_EventRaising_EndedEventIsRaised()
         {
             var eventRaised = false;
-            var myKey = "!sfrwe";
-            var myValue = Guid.NewGuid().ToString();
             var observedName = "";
-            var observedValue = "";
 
             var task = new ManagedTask<EventArgs<int>>((args, issues, ct) => { });
-            task.Properties[myKey] = myValue;
 
             task.Started += (args) =>
             {
                 eventRaised = true;
                 observedName = args.Name;
-                observedValue = args.TaskProperties[myKey];
             };
 
             await task.RunAsync(CancellationToken.None);
 
             eventRaised.Should().BeTrue("Event raised");
             observedName.Should().Be(task.GetType().Name, "Expected Name");
-            observedValue.Should().Be(myValue);
         }
 
         [Fact]

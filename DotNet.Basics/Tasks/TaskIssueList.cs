@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DotNet.Basics.Tasks
 {
-    public class TaskIssueList : ConcurrentQueue<TaskIssue>
+    public class TaskIssueList : ConcurrentQueue<TaskIssue>, IReadOnlyCollection<TaskIssue>
     {
         public TaskIssueList()
         { }

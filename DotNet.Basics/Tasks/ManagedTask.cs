@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using DotNet.Basics.Collections;
 
 namespace DotNet.Basics.Tasks
 {
@@ -10,8 +9,7 @@ namespace DotNet.Basics.Tasks
         private readonly Func<T, TaskIssueList, CancellationToken, Task> _task;
         private string _name;
 
-        public delegate void TaskStartedEventHandler(TaskStartedEventArgs args);
-        public delegate void TaskEndedEventHandler(TaskEndedEventArgs args);
+        public delegate void TaskEventHandler(TaskArgs args);
 
         public ManagedTask(string name) : this(name, (args, issues, ct) => { })
         { }
@@ -43,11 +41,12 @@ namespace DotNet.Basics.Tasks
             if (task == null) throw new ArgumentNullException(nameof(task));
             _task = task;
             Name = name;
-            Properties = new StringDictionary(DictionaryKeyMode.IgnoreKeyCase);
+            PreConditionsAsync = null;
+            PostConditionsAsync = null;
         }
 
-        public event TaskStartedEventHandler Started;
-        public event TaskEndedEventHandler Ended;
+        public event TaskEventHandler Started;
+        public event TaskEventHandler Ended;
 
         public string Name
         {
@@ -55,7 +54,8 @@ namespace DotNet.Basics.Tasks
             set { _name = value ?? GetType().Name; }
         }
 
-        public StringDictionary Properties { get; }
+        public Func<T, TaskIssueList, CancellationToken, Task<bool>> PreConditionsAsync { get; set; }
+        public Func<T, TaskIssueList, CancellationToken, Task<bool>> PostConditionsAsync { get; set; }
 
         public Task<TaskResult<T>> RunAsync()
         {
@@ -69,14 +69,26 @@ namespace DotNet.Basics.Tasks
 
         public async Task<TaskResult<T>> RunAsync(T args, CancellationToken ct)
         {
-            Exception exceptionEncountered = null;
             if (args == null)
                 args = new T();
+            Exception exceptionEncountered = null;
+            var issues = new TaskIssueList();
+            //var result = new TaskResult<T>(args, issues);
+            FireStarted(new TaskArgs(Name, ct.IsCancellationRequested));
             try
             {
-                FireStarted(new TaskStartedEventArgs(Name, Properties));
-                var issues = new TaskIssueList();
-                await InnerRunAsync(args, issues, ct).ConfigureAwait(false);
+                var preconditionsMet = await InnerPreConditionsAsync(args, issues, ct).ConfigureAwait(false);
+                if (preconditionsMet == false)
+                    issues.Add("Pre-Conditions not met. Inspect issues for details");
+                else if (ct.IsCancellationRequested == false)
+                {
+                    await InnerRunAsync(args, issues, ct).ConfigureAwait(false);
+
+                    var postConditionsMet = await InnerPostConditionsAsync(args, issues, ct).ConfigureAwait(false);
+                    if (postConditionsMet == false)
+                        issues.Add("POST-Conditions not met. Inspect issues for details");
+                }
+
                 return new TaskResult<T>(args, issues);
             }
             catch (Exception e)
@@ -86,22 +98,31 @@ namespace DotNet.Basics.Tasks
             }
             finally
             {
-                FireEnded(new TaskEndedEventArgs(Name, Properties, ct.IsCancellationRequested, exceptionEncountered));
+                FireEnded(new TaskArgs(Name, ct.IsCancellationRequested, issues, exceptionEncountered));
             }
+        }
+
+        protected virtual Task<bool> InnerPreConditionsAsync(T args, TaskIssueList issues, CancellationToken ct)
+        {
+            return PreConditionsAsync?.Invoke(args, issues, ct) ?? Task.FromResult(true);
+        }
+
+        protected virtual Task<bool> InnerPostConditionsAsync(T args, TaskIssueList issues, CancellationToken ct)
+        {
+            return PostConditionsAsync?.Invoke(args, issues, ct) ?? Task.FromResult(true);
         }
 
         protected virtual async Task InnerRunAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
-            if (ct.IsCancellationRequested)
-                return;
             await _task(args, issues, ct).ConfigureAwait(false);
         }
 
-        protected void FireStarted(TaskStartedEventArgs args)
+        protected void FireStarted(TaskArgs args)
         {
             Started?.Invoke(args);
         }
-        protected void FireEnded(TaskEndedEventArgs args)
+
+        protected void FireEnded(TaskArgs args)
         {
             Ended?.Invoke(args);
         }
