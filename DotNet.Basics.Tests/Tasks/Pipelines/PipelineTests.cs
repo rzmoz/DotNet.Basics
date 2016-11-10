@@ -12,11 +12,9 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks.Pipelines
 {
-
     public class PipelineTests
     {
         private readonly IocBuilder _builder;
-
 
         public PipelineTests()
         {
@@ -42,7 +40,6 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             argsUpdated.Args.DescendantUpdated.Should().BeTrue();
         }
 
-
         [Fact]
         public async Task RunAsync_TaskCancellation_PipelineIsCancelled()
         {
@@ -62,8 +59,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             pipeline.Count().Should().Be(stepCount);
             counter.Should().Be(1);
         }
-
-
+        
         [Fact]
         public async Task DisplayName_DisplayNameIsSet_DisplayNameIsUsed()
         {
@@ -147,7 +143,6 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             task1Called.Should().BeTrue();
             task2Called.Should().BeTrue();
         }
-
 
         [Fact]
         public async Task RunAsync_PassArgs_ArgsArePassedInPipeline()

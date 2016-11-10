@@ -9,7 +9,6 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks.Pipelines
 {
-    
     public class PipelineBlockTests
     {
         [Fact]
@@ -52,7 +51,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
                     {
                         Monitor.Enter(lockFlag);
                         args.Value = args.Value + 1;
-                        await Task.Delay(TimeSpan.FromMilliseconds(100)).ConfigureAwait(false);
+                        await Task.Delay(TimeSpan.FromMilliseconds(100), CancellationToken.None).ConfigureAwait(false);
                         // free the lock.
                         Interlocked.Decrement(ref lockFlag);
                     }

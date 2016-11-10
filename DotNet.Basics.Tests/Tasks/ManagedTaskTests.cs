@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Sys;
@@ -8,9 +9,37 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks
 {
-
     public class ManagedTaskTests
     {
+        [Fact]
+        public async Task RunAsyncResult_NoIssues_ResultIsGood()
+        {
+            var task = new ManagedTask<EventArgs>((args, issues, ct) => { });
+            var result = await task.RunAsync(CancellationToken.None).ConfigureAwait(false);
+
+            result.Args.Should().NotBeNull();
+            result.NoIssues.Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task RunAsyncResult_IssueFound_ResultHasIssues()
+        {
+            var issueMessage = "RunAsyncResult_IssueFound_ResultHasIssues";
+            var inputValue = 234232424;
+            var inputArgs = new EventArgs<int> { Value = inputValue };
+
+            var task = new ManagedTask<EventArgs<int>>((args, issues, ct) =>
+            {
+                issues.Add(issueMessage);
+                args.Value++;
+            });
+            var result = await task.RunAsync(inputArgs, CancellationToken.None).ConfigureAwait(false);
+
+            result.Args.Value.Should().Be(inputValue + 1);
+            result.NoIssues.Should().BeFalse();
+            result.Issues.Single().Message.Should().Be(issueMessage);
+        }
+
         [Fact]
         public async Task RunAsync_ArgsIsNull_ArgsIsDefault()
         {

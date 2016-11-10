@@ -60,7 +60,7 @@ namespace DotNet.Basics.Tasks
 
         public Task<TaskResult<T>> RunAsync(CancellationToken ct)
         {
-            return RunAsync(new T(), null, ct);
+            return RunAsync(default(T), null, ct);
         }
 
         public Task<TaskResult<T>> RunAsync(T args, CancellationToken ct)
@@ -70,7 +70,7 @@ namespace DotNet.Basics.Tasks
 
         public Task<TaskResult<T>> RunAsync(TaskIssueList issues, CancellationToken ct)
         {
-            return RunAsync(new T(), issues, ct);
+            return RunAsync(default(T), issues, ct);
         }
 
         public async Task<TaskResult<T>> RunAsync(T args, TaskIssueList issues, CancellationToken ct)

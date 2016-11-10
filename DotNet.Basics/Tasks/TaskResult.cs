@@ -22,10 +22,10 @@ namespace DotNet.Basics.Tasks
         }
     }
 
-    public class TaskResult<T> where T : new()
+    public class TaskResult<T> where T : class
     {
         public TaskResult()
-            : this(new T(), new TaskIssueList())
+            : this(null, new TaskIssueList())
         { }
 
         public TaskResult(T args)
@@ -33,11 +33,11 @@ namespace DotNet.Basics.Tasks
         { }
 
         public TaskResult(Action<TaskIssueList> addIssues)
-            : this(new T(), addIssues)
+            : this(null, addIssues)
         { }
 
         public TaskResult(TaskIssueList issues)
-            : this(new T(), issues)
+            : this(null, issues)
         { }
 
         public TaskResult(T args, Action<TaskIssueList> addIssues)
@@ -46,7 +46,7 @@ namespace DotNet.Basics.Tasks
 
         public TaskResult(T args, TaskIssueList issues)
         {
-            Args = args;
+            Args = args ?? default(T);
             Issues = issues ?? new TaskIssueList();
             NoIssues = Issues.Count == 0;
         }
