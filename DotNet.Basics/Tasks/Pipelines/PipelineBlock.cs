@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -79,7 +78,10 @@ namespace DotNet.Basics.Tasks.Pipelines
             _subSections.Add(eagerStep);
             return this;
         }
-
+        public PipelineBlock<T> AddBlock(params Func<T, TaskIssueList, CancellationToken, Task>[] steps)
+        {
+            return AddBlock(null, steps);
+        }
         public PipelineBlock<T> AddBlock(string name, params Func<T, TaskIssueList, CancellationToken, Task>[] steps)
         {
             return AddBlock(name, BlockRunType.Parallel, steps);

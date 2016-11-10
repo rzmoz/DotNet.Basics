@@ -14,12 +14,10 @@ namespace DotNet.Basics.Tasks
         public delegate void TaskEndedEventHandler(TaskEndedEventArgs args);
 
         public ManagedTask(Func<Task> task) : this((args, issues, ct) => task())
-        {
-        }
+        { }
 
         public ManagedTask(Action task) : this((args, issues, ct) => task())
-        {
-        }
+        { }
 
         public ManagedTask(Action<T, TaskIssueList, CancellationToken> task)
             : this((args, issues, ct) =>
@@ -27,8 +25,7 @@ namespace DotNet.Basics.Tasks
                 task?.Invoke(args, issues, ct);
                 return Task.FromResult("");
             })
-        {
-        }
+        { }
 
         public ManagedTask(Func<T, TaskIssueList, CancellationToken, Task> task)
         {

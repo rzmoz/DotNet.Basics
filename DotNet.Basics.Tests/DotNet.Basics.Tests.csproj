@@ -137,7 +137,6 @@
     <Compile Include="Tasks\Pipelines\PipelineBlockTests.cs" />
     <Compile Include="Tasks\Pipelines\PipelineTests.cs" />
     <Compile Include="Diagnostics\ProfileTests.cs" />
-    <Compile Include="Tasks\Pipelines\PipelineStepWithDisplayNameSetStep.cs" />
     <Compile Include="Collections\StringDictionaryTests.cs" />
     <Compile Include="Collections\StringPairTests.cs" />
     <Compile Include="Sys\PowerShellCmdletTests.cs" />

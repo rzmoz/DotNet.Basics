@@ -29,7 +29,8 @@ namespace DotNet.Basics.Tasks.Pipelines
         {
             var step = _getSection();
             Name = step.Name;
-            await step.RunAsync(args, ct).ConfigureAwait(false);
+            var result = await step.RunAsync(args, ct).ConfigureAwait(false);
+            issues.Add(result.Issues);
         }
     }
 }

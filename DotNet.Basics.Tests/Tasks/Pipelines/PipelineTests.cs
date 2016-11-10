@@ -86,27 +86,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             pipeline.Count().Should().Be(stepCount);
             counter.Should().Be(0);
         }
-
-
-        [Fact]
-        public async Task DisplayName_DisplayNameIsSet_DisplayNameIsUsed()
-        {
-            var pipeline = new Pipeline(_builder.Container);
-            pipeline.AddBlock("").AddStep<PipelineStepWithDisplayNameSetStep>();
-
-            string stepName = null;
-
-            pipeline.Started += (e) =>
-            {
-                if (e.TaskType == PipelineTaskTypes.Step)
-                    stepName = e.Name;
-            };
-
-            await pipeline.RunAsync().ConfigureAwait(false);
-
-            stepName.Should().Be("ThisStepHasCustomName");
-        }
-
+        
         [Fact]
         public async Task DisplayName_DisplayNameIsNotSet_TypeNameNameIsUsed()
         {
@@ -191,7 +171,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         {
             //arrange
             var pipeline = new Pipeline<EventArgs<int>>(_builder.Container);
-            pipeline.AddBlock(null).AddStep<IncrementArgsStep>();
+            pipeline.AddBlock().AddStep<IncrementArgsStep>();
             string pipelineStarted = string.Empty;
             string pipelineEnded = string.Empty;
             string blockStarted = string.Empty;
