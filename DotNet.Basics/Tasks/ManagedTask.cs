@@ -20,18 +20,26 @@ namespace DotNet.Basics.Tasks
         { }
 
         public ManagedTask(Action<T, TaskIssueList, CancellationToken> task)
-            : this((args, issues, ct) =>
-            {
-                task?.Invoke(args, issues, ct);
-                return Task.FromResult("");
-            })
+            : this(null, task)
         { }
 
         public ManagedTask(Func<T, TaskIssueList, CancellationToken, Task> task)
+            : this(null, task)
+        { }
+
+        public ManagedTask(string name, Action<T, TaskIssueList, CancellationToken> task)
+            : this(name, (args, issues, ct) =>
+             {
+                 task?.Invoke(args, issues, ct);
+                 return Task.FromResult("");
+             })
+        { }
+
+        public ManagedTask(string name, Func<T, TaskIssueList, CancellationToken, Task> task)
         {
             if (task == null) throw new ArgumentNullException(nameof(task));
             _task = task;
-            Name = null;//trigger default name
+            Name = name;
             Properties = new StringDictionary(DictionaryKeyMode.IgnoreKeyCase);
         }
 

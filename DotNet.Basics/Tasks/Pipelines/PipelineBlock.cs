@@ -80,7 +80,7 @@ namespace DotNet.Basics.Tasks.Pipelines
         }
         public PipelineBlock<T> AddBlock(params Func<T, TaskIssueList, CancellationToken, Task>[] steps)
         {
-            return AddBlock(null, steps);
+            return AddBlock("", steps);
         }
         public PipelineBlock<T> AddBlock(string name, params Func<T, TaskIssueList, CancellationToken, Task>[] steps)
         {
