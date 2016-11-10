@@ -1,6 +1,6 @@
 ﻿namespace DotNet.Basics.Tasks
 {
-    public enum InvokeStyle
+    public enum Invoke
     {
         Parallel,
         Sequential

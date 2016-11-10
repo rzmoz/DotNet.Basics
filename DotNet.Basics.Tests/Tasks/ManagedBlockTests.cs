@@ -9,12 +9,24 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks
 {
-    public class ManagedTaskBlockTests
+    public class ManagedBlockTests
     {
+        [Fact]
+        public void Add_AddGenericSteps_StepsAreAdded()
+        {
+            var block = new ManagedBlock();
+            var taskCount = 7;
+
+            foreach (var i in Enumerable.Range(0, taskCount))
+                block.AddTask<ManagedTask<EventArgs>>();
+
+            block.Tasks.Count().Should().Be(taskCount);
+        }
+
         [Fact]
         public void Add_AddInlineTasks_TasksAreAdded()
         {
-            var block = new ManagedTaskBlock<EventArgs<int>>();
+            var block = new ManagedBlock<EventArgs<int>>();
             var taskCount = 7;
 
             foreach (var i in Enumerable.Range(0, taskCount))
@@ -24,11 +36,11 @@ namespace DotNet.Basics.Tests.Tasks
         }
 
         [Theory]
-        [InlineData(101, InvokeStyle.Parallel)]
-        [InlineData(10, InvokeStyle.Sequential)]
-        public async Task BlockInvokeStyle_Sequence_TasksAreRunAccordingToInvokeStyle(int stepCount, InvokeStyle invokeStyle)
+        [InlineData(101, Invoke.Parallel)]
+        [InlineData(10, Invoke.Sequential)]
+        public async Task BlockInvokeStyle_Sequence_TasksAreRunAccordingToInvokeStyle(int stepCount, Invoke invoke)
         {
-            var block = new ManagedTaskBlock<EventArgs<int>>(invokeStyle);
+            var block = new ManagedBlock<EventArgs<int>>(invoke);
             int lockFlag = 0;
 
             var raceConditionEncountered = 0;
@@ -53,7 +65,7 @@ namespace DotNet.Basics.Tests.Tasks
 
             result.Issues.Count.Should().Be(stepCount);
 
-            if (invokeStyle == InvokeStyle.Parallel)
+            if (invoke == Invoke.Parallel)
             {
                 result.Args.Value.Should().BeLessThan(stepCount);
                 raceConditionEncountered.Should().BeGreaterThan(0);

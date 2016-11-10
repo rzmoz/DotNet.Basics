@@ -13,6 +13,9 @@ namespace DotNet.Basics.Tasks
         public delegate void TaskStartedEventHandler(TaskStartedEventArgs args);
         public delegate void TaskEndedEventHandler(TaskEndedEventArgs args);
 
+        public ManagedTask(string name) : this(name, (args, issues, ct) => { })
+        { }
+
         public ManagedTask(Func<Task> task) : this((args, issues, ct) => task())
         { }
 

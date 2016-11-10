@@ -98,9 +98,10 @@
     <Compile Include="Sys\StringExtensions.cs" />
     <Compile Include="Sys\WindowsServices.cs" />
     <Compile Include="Sys\WindowsServiceStatus.cs" />
-    <Compile Include="Tasks\ManagedTaskBlock.cs" />
+    <Compile Include="Tasks\LazyLoadManagedTask.cs" />
+    <Compile Include="Tasks\ManagedBlock.cs" />
     <Compile Include="Tasks\Pipelines\BlockRunType.cs" />
-    <Compile Include="Tasks\InvokeStyle.cs" />
+    <Compile Include="Tasks\Invoke.cs" />
     <Compile Include="Tasks\TaskIssue.cs" />
     <Compile Include="Tasks\TaskIssueList.cs" />
     <Compile Include="Tasks\TaskResult.cs" />

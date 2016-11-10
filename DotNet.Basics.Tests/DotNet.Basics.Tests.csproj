@@ -126,7 +126,7 @@
     <Compile Include="Ioc\TestHelpers\MyType2.cs" />
     <Compile Include="Sys\StringExtensionsTests.cs" />
     <Compile Include="Sys\WindowsServicesTests.cs" />
-    <Compile Include="Tasks\ManagedTaskBlockTests.cs" />
+    <Compile Include="Tasks\ManagedBlockTests.cs" />
     <Compile Include="Tasks\Pipelines\AddIssueStep.cs" />
     <Compile Include="Tasks\Pipelines\AncestorArgs.cs" />
     <Compile Include="Tasks\Pipelines\AncestorStep.cs" />
