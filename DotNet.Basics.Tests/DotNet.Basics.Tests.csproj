@@ -147,6 +147,8 @@
     <Compile Include="Sys\SysExtensionsTests.cs" />
     <Compile Include="Tasks\ManagedTaskTests.cs" />
     <Compile Include="Tasks\OnceOnlyTaskTests.cs" />
+    <Compile Include="Tasks\TaskIssueTests.cs" />
+    <Compile Include="Tasks\TaskResultTests.cs" />
     <Compile Include="Tasks\ThrowExceptionUntilXTriesDummeTask.cs" />
     <Compile Include="Tasks\Repeating\RepeaterTaskTests.cs" />
     <Compile Include="Sys\TimeSpanExtensionsTests.cs" />

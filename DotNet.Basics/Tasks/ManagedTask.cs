@@ -5,32 +5,32 @@ using DotNet.Basics.Collections;
 
 namespace DotNet.Basics.Tasks
 {
-    public class ManagedTask<T> : ITask<T> where T : new()
+    public class ManagedTask<T> : ITask<T> where T : class, new()
     {
-        private readonly Func<T, CancellationToken, Task> _task;
+        private readonly Func<T, TaskIssueList, CancellationToken, Task> _task;
         private string _name;
 
         public delegate void TaskStartedEventHandler(TaskStartedEventArgs args);
         public delegate void TaskEndedEventHandler(TaskEndedEventArgs args);
 
-        public ManagedTask(Func<Task> task) : this((args, ct) => task())
+        public ManagedTask(Func<Task> task) : this((args, issues, ct) => task())
         {
         }
 
-        public ManagedTask(Action task) : this((args, ct) => task())
+        public ManagedTask(Action task) : this((args, issues, ct) => task())
         {
         }
 
-        public ManagedTask(Action<T, CancellationToken> task)
-            : this((args, ct) =>
+        public ManagedTask(Action<T, TaskIssueList, CancellationToken> task)
+            : this((args, issues, ct) =>
             {
-                task(args, ct);
+                task?.Invoke(args, issues, ct);
                 return Task.FromResult("");
             })
         {
         }
 
-        public ManagedTask(Func<T, CancellationToken, Task> task)
+        public ManagedTask(Func<T, TaskIssueList, CancellationToken, Task> task)
         {
             if (task == null) throw new ArgumentNullException(nameof(task));
             _task = task;
@@ -53,22 +53,27 @@ namespace DotNet.Basics.Tasks
         {
         }
 
-        public Task<T> RunAsync()
+        public Task<TaskResult<T>> RunAsync()
         {
-            return RunAsync(new T(), CancellationToken.None);
+            return RunAsync(CancellationToken.None);
         }
 
-        public Task<T> RunAsync(T args)
+        public Task<TaskResult<T>> RunAsync(CancellationToken ct)
         {
-            return RunAsync(args, CancellationToken.None);
+            return RunAsync(new T(), null, ct);
         }
 
-        public Task<T> RunAsync(CancellationToken ct)
+        public Task<TaskResult<T>> RunAsync(T args, CancellationToken ct)
         {
-            return RunAsync(new T(), ct);
+            return RunAsync(args, null, ct);
         }
 
-        public async Task<T> RunAsync(T args, CancellationToken ct)
+        public Task<TaskResult<T>> RunAsync(TaskIssueList issues, CancellationToken ct)
+        {
+            return RunAsync(new T(), issues, ct);
+        }
+
+        public async Task<TaskResult<T>> RunAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
             Exception exceptionEncountered = null;
             if (args == null)
@@ -77,8 +82,10 @@ namespace DotNet.Basics.Tasks
             {
                 Init();
                 FireStarted(new TaskStartedEventArgs(Name, TaskType, Properties));
-                await InnerRunAsync(args, ct).ConfigureAwait(false);
-                return args;
+                if (issues == null)
+                    issues = new TaskIssueList();
+                await InnerRunAsync(args, issues, ct).ConfigureAwait(false);
+                return new TaskResult<T>(args, issues);
             }
             catch (Exception e)
             {
@@ -93,9 +100,9 @@ namespace DotNet.Basics.Tasks
 
         public virtual string TaskType => "Task";
 
-        protected virtual async Task InnerRunAsync(T args, CancellationToken ct)
+        protected virtual async Task InnerRunAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
-            await _task(args, ct).ConfigureAwait(false);
+            await _task(args, issues, ct).ConfigureAwait(false);
         }
 
         protected void FireStarted(TaskStartedEventArgs args)

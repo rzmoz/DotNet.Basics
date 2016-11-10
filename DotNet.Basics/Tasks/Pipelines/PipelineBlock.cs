@@ -10,12 +10,12 @@ using DotNet.Basics.Ioc;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {
-    public class PipelineBlock<T> : PipelineSection<T>, IEnumerable<PipelineSection<T>> where T : new()
+    public class PipelineBlock<T> : PipelineSection<T>, IEnumerable<PipelineSection<T>> where T : class, new()
     {
         private readonly IContainer _container;
         private readonly List<PipelineSection<T>> _subSections;
 
-        private readonly Func<T, CancellationToken, Task> _innerRun;
+        private readonly Func<T, TaskIssueList, CancellationToken, Task> _innerRun;
 
         public PipelineBlock(BlockRunType blockRunType = BlockRunType.Parallel)
             : this(null, null, blockRunType)
@@ -91,22 +91,22 @@ namespace DotNet.Basics.Tasks.Pipelines
 
         public override string TaskType => PipelineTaskTypes.Block;
 
-        protected override async Task RunImpAsync(T args, CancellationToken ct)
+        protected override async Task RunImpAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
-            await _innerRun(args, ct).ConfigureAwait(false);
+            await _innerRun(args, issues, ct).ConfigureAwait(false);
         }
 
-        protected async Task InnerParallelRunAsync(T args, CancellationToken ct)
+        protected async Task InnerParallelRunAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
             DebugOut.WriteLine($"Running block {Name} in parallel");
-            await _subSections.ParallelForEachAsync(s => s.RunAsync(args, ct)).ConfigureAwait(false);
+            await _subSections.ParallelForEachAsync(s => s.RunAsync(args, issues, ct)).ConfigureAwait(false);
         }
-        protected async Task InnerSequentialRunAsync(T args, CancellationToken ct)
+        protected async Task InnerSequentialRunAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
             DebugOut.WriteLine($"Running block {Name} in sequence");
             foreach (var section in SubSections)
             {
-                await section.RunAsync(args, ct).ConfigureAwait(false);
+                await section.RunAsync(args, issues, ct).ConfigureAwait(false);
                 if (ct.IsCancellationRequested)
                     break;
             }

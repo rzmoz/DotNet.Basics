@@ -63,12 +63,12 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var argsOutput = await block.RunAsync(CancellationToken.None).ConfigureAwait(false);
             if (blockRunType == BlockRunType.Parallel)
             {
-                argsOutput.Value.Should().BeLessThan(stepCount);
+                argsOutput.Args.Value.Should().BeLessThan(stepCount);
                 raceConditionEncountered.Should().BeGreaterThan(0);
             }
             else
             {
-                argsOutput.Value.Should().Be(stepCount);
+                argsOutput.Args.Value.Should().Be(stepCount);
                 raceConditionEncountered.Should().Be(0);
             }
         }

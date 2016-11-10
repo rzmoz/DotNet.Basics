@@ -3,23 +3,23 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {
-    public abstract class PipelineSection<T> : ManagedTask<T> where T : new()
+    public abstract class PipelineSection<T> : ManagedTask<T> where T : class, new()
     {
         protected PipelineSection()
             : this(null)
         {
         }
-        protected PipelineSection(string name) : base((args, ct) => { })
+        protected PipelineSection(string name) : base((args, issues, ct) => { })
         {
             Name = ResolveName(name);
         }
 
-        protected override Task InnerRunAsync(T args, CancellationToken ct)
+        protected override Task InnerRunAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
-            return RunImpAsync(args, ct);
+            return RunImpAsync(args, issues, ct);
         }
 
-        protected abstract Task RunImpAsync(T args, CancellationToken ct);
+        protected abstract Task RunImpAsync(T args, TaskIssueList issues, CancellationToken ct);
 
         private string ResolveName(string name)
         {

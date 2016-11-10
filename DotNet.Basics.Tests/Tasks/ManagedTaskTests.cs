@@ -8,7 +8,7 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks
 {
-    
+
     public class ManagedTaskTests
     {
         [Fact]
@@ -16,8 +16,8 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var argsIsNotNull = false;
 
-            var task = new ManagedTask<EventArgs>((args, ct) => argsIsNotNull = args != null);
-            await task.RunAsync(null, CancellationToken.None);
+            var task = new ManagedTask<EventArgs>((args, issues, ct) => argsIsNotNull = args != null);
+            await task.RunAsync(CancellationToken.None);
 
             argsIsNotNull.Should().BeTrue();
         }
@@ -35,13 +35,13 @@ namespace DotNet.Basics.Tests.Tasks
             var ctSource = new CancellationTokenSource();
             ctSource.Cancel();
 
-            var task = new ManagedTask<EventArgs<int>>((args, ct) => { args.Value = argsValue; });
+            var task = new ManagedTask<EventArgs<int>>((args, issues, ct) => { args.Value = argsValue; });
             task.Properties[myKey] = myValue;
 
             task.Started += (args) => { startedArgs = args; };
             task.Ended += (args) => { endedArgs = args; };
 
-            resultArgs = await task.RunAsync(null, ctSource.Token);
+            resultArgs = (await task.RunAsync(ctSource.Token)).Args;
 
             //assert - started
             startedArgs.Should().NotBeNull();
@@ -61,7 +61,7 @@ namespace DotNet.Basics.Tests.Tasks
         public async Task RunAsync_Exception_ExceptionIsCapturedInTaskEndEvent()
         {
             var exMessage = "buuh";
-            var task = new ManagedTask<EventArgs<int>>((args, ct) => { throw new ArgumentException(exMessage); });
+            var task = new ManagedTask<EventArgs<int>>((args, issues, ct) => { throw new ArgumentException(exMessage); });
 
             TaskEndedEventArgs endedArgs = null;
 
@@ -75,7 +75,7 @@ namespace DotNet.Basics.Tests.Tasks
             {
                 //ignore
             }
-            
+
             //assert
             endedArgs.Exception.Should().BeOfType<ArgumentException>();
             endedArgs.Exception.Message.Should().Be(exMessage);
@@ -90,7 +90,7 @@ namespace DotNet.Basics.Tests.Tasks
             var observedName = "";
             var observedValue = "";
 
-            var task = new ManagedTask<EventArgs<int>>((args, ct) => { });
+            var task = new ManagedTask<EventArgs<int>>((args, issues, ct) => { });
             task.Properties[myKey] = myValue;
 
             task.Started += (args) =>
@@ -100,7 +100,7 @@ namespace DotNet.Basics.Tests.Tasks
                 observedValue = args.TaskProperties[myKey];
             };
 
-            await task.RunAsync(null, CancellationToken.None);
+            await task.RunAsync(CancellationToken.None);
 
             eventRaised.Should().BeTrue("Event raised");
             observedName.Should().Be(task.GetType().Name, "Expected Name");

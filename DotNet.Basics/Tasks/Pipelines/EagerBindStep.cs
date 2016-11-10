@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {
-    public class EagerBindStep<T> : PipelineStep<T> where T : new()
+    public class EagerBindStep<T> : PipelineStep<T> where T : class, new()
     {
         private readonly Func<T, CancellationToken, Task> _step;
 
@@ -13,8 +13,8 @@ namespace DotNet.Basics.Tasks.Pipelines
             if (step == null) throw new ArgumentNullException(nameof(step));
             _step = step;
         }
-        
-        protected override async Task RunImpAsync(T args, CancellationToken ct)
+
+        protected override async Task RunImpAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
             await _step(args, ct).ConfigureAwait(false);
         }

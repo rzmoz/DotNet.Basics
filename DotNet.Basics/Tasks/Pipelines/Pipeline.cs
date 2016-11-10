@@ -21,7 +21,7 @@ namespace DotNet.Basics.Tasks.Pipelines
         {
         }
     }
-    public class Pipeline<T> : PipelineBlock<T> where T : new()
+    public class Pipeline<T> : PipelineBlock<T> where T : class, new()
     {
         public Pipeline() : this(null, null)
         {

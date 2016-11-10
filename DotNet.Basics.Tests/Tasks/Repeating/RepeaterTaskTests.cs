@@ -7,7 +7,7 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks.Repeating
 {
-    
+
     public class RepeaterTaskTests
     {
         [Fact]
@@ -171,6 +171,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             var result = Repeat.Task(() => { doCounter++; })
                 .WithOptions(o =>
                 {
+                    o.RetryDelay = 0.Seconds();
                     o.Timeout = 1.Seconds();
                 })
                 .Until(() => false);

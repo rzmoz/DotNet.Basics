@@ -12,12 +12,12 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks.Pipelines
 {
-    
+
     public class PipelineTests
     {
         private readonly IocBuilder _builder;
 
-        
+
         public PipelineTests()
         {
             _builder = new IocBuilder();
@@ -38,8 +38,8 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 
             //assert
             var argsUpdated = await pipeline.RunAsync(argsInit, CancellationToken.None).ConfigureAwait(false);
-            argsUpdated.AncestorUpdated.Should().BeTrue();
-            argsUpdated.DescendantUpdated.Should().BeTrue();
+            argsUpdated.Args.AncestorUpdated.Should().BeTrue();
+            argsUpdated.Args.DescendantUpdated.Should().BeTrue();
         }
 
 
@@ -160,7 +160,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             pipeline.AddBlock("2").AddStep<IncrementArgsStep>();
 
             var args = await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
-            args.Value.Should().Be(5);
+            args.Args.Value.Should().Be(5);
         }
 
         [Fact]

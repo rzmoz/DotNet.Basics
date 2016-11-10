@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace DotNet.Basics.Tasks.Pipelines
 {
     public class LazyBindSection<T, TSection> : PipelineSection<T>
-        where T : new()
+        where T : class, new()
         where TSection : PipelineSection<T>
     {
         private readonly Func<TSection> _getSection;
@@ -31,8 +31,8 @@ namespace DotNet.Basics.Tasks.Pipelines
             Name = step.Name;
             base.Init();
         }
-        
-        protected override async Task RunImpAsync(T args, CancellationToken ct)
+
+        protected override async Task RunImpAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
             var step = _getSection();
             Name = step.Name;
