@@ -2,15 +2,15 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DotNet.Basics.Tasks
+namespace DotNet.Basics.Tasks.Pipelines
 {
-    public class LazyLoadManagedTask<T, TTask> : ManagedTask<T>
+    public class LazyLoadStep<T, TTask> : ManagedTask<T>
         where T : class, new()
         where TTask : ManagedTask<T>
     {
         private readonly Func<TTask> _getTask;
 
-        public LazyLoadManagedTask(string name, Func<TTask> getTask) : base(name ?? typeof(TTask).Name)
+        public LazyLoadStep(string name, Func<TTask> getTask) : base(name ?? typeof(TTask).Name)
         {
             if (getTask == null) throw new ArgumentNullException(nameof(getTask));
             _getTask = getTask;

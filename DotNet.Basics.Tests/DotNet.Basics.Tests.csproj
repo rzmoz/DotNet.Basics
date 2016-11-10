@@ -126,7 +126,7 @@
     <Compile Include="Ioc\TestHelpers\MyType2.cs" />
     <Compile Include="Sys\StringExtensionsTests.cs" />
     <Compile Include="Sys\WindowsServicesTests.cs" />
-    <Compile Include="Tasks\ManagedBlockTests.cs" />
+    <Compile Include="Tasks\Pipelines\PipelineBlockTests.cs" />
     <Compile Include="Tasks\Pipelines\AddIssueStep.cs" />
     <Compile Include="Tasks\Pipelines\AncestorArgs.cs" />
     <Compile Include="Tasks\Pipelines\AncestorStep.cs" />
@@ -146,7 +146,7 @@
     <Compile Include="Sys\ObservableTests.cs" />
     <Compile Include="Sys\SysExtensionsTests.cs" />
     <Compile Include="Tasks\ManagedTaskTests.cs" />
-    <Compile Include="Tasks\OnceOnlyTaskTests.cs" />
+    <Compile Include="Tasks\Repeating\OnceOnlyTaskTests.cs" />
     <Compile Include="Tasks\TaskIssueTests.cs" />
     <Compile Include="Tasks\TaskResultTests.cs" />
     <Compile Include="Tasks\ThrowExceptionUntilXTriesDummeTask.cs" />

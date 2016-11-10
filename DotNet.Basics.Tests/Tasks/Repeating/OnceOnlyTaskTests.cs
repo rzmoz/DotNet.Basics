@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DotNet.Basics.Tasks;
+using DotNet.Basics.Tasks.Repeating;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Tasks
+namespace DotNet.Basics.Tests.Tasks.Repeating
 {
-    
     public class OnceOnlyTaskTests
     {
         [Fact]

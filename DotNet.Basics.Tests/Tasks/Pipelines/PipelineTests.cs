@@ -31,7 +31,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var pipeline = new Pipeline(invoke);
             var count = 15;
             foreach (var i in Enumerable.Range(0, count))
-                pipeline.AddTask<AddIssueStep>();
+                pipeline.AddStep<AddIssueStep>();
 
             var result = await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
@@ -44,7 +44,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         public void Ctor_LazyLoadStepName_NameIsSetOnAdd()
         {
             var pipeline = new Pipeline();
-            pipeline.AddTask<AddIssueStep>();
+            pipeline.AddStep<AddIssueStep>();
 
             pipeline.Tasks.Single().Name.Should().Be(nameof(AddIssueStep));
         }
@@ -57,8 +57,8 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var pipeline = new Pipeline<DescendantArgs>();
 
             //act
-            pipeline.AddTask((args, issues, ct) => new AncestorStep().RunAsync(args, ct));
-            pipeline.AddTask<DescendantStep>();
+            pipeline.AddStep((args, issues, ct) => new AncestorStep().RunAsync(args, ct));
+            pipeline.AddStep<DescendantStep>();
 
             //assert
             var argsUpdated = await pipeline.RunAsync(argsInit, CancellationToken.None).ConfigureAwait(false);
@@ -80,7 +80,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var stepCount = 101;
 
             for (var i = 0; i < stepCount; i++)
-                pipeline.AddTask((args, issues, ct) => Task.FromResult(++counter));
+                pipeline.AddStep((args, issues, ct) => Task.FromResult(++counter));
 
             await pipeline.RunAsync(ts.Token).ConfigureAwait(false);
 
@@ -92,7 +92,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         public async Task DisplayName_DisplayNameIsNotSet_TypeNameNameIsUsed()
         {
             var pipeline = new Pipeline<EventArgs<int>>(_builder.Container);
-            pipeline.AddTask<IncrementArgsStep>();
+            pipeline.AddStep<IncrementArgsStep>();
             string stepName = null;
 
             pipeline.Started += (e) =>
@@ -109,13 +109,13 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public async Task RunAsync_AllInParallel_AllStepsAreRunInParallel()
         {
-            var pipeline = new Pipeline<EventArgs<int>>(_builder.Container);
+            var pipeline = new Pipeline(_builder.Container);
             var block = pipeline.AddBlock("ParallelBlock", Invoke.Parallel);
 
             var runCount = 101;
 
             for (var i = 0; i < runCount; i++)
-                block.AddTask(async (args, issues, ct) => await Task.Delay(TimeSpan.FromSeconds(1), ct));
+                block.AddStep(async (args, issues, ct) => await Task.Delay(TimeSpan.FromSeconds(1), ct));
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -129,7 +129,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public async Task RunAsync_BlockWait_StepsAreRunInBlockOrder()
         {
-            var pipeline = new Pipeline<EventArgs<int>>(_builder.Container);
+            var pipeline = new Pipeline(_builder.Container);
             var task1Called = false;
             var task2Called = false;
 
@@ -157,11 +157,11 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         public async Task RunAsync_PassArgs_ArgsArePassedInPipeline()
         {
             var pipeline = new Pipeline<EventArgs<int>>(_builder.Container);
-            pipeline.AddTask<IncrementArgsStep>();
-            pipeline.AddTask<IncrementArgsStep>();
-            pipeline.AddBlock("1").AddTask<IncrementArgsStep>();
-            pipeline.AddTask<IncrementArgsStep>();
-            pipeline.AddBlock("2").AddTask<IncrementArgsStep>();
+            pipeline.AddStep<IncrementArgsStep>();
+            pipeline.AddStep<IncrementArgsStep>();
+            pipeline.AddBlock("1").AddStep<IncrementArgsStep>();
+            pipeline.AddStep<IncrementArgsStep>();
+            pipeline.AddBlock("2").AddStep<IncrementArgsStep>();
 
             var args = await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
             args.Args.Value.Should().Be(5);
@@ -179,8 +179,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             string stepEnded = string.Empty;
 
             var pipeline = new Pipeline<EventArgs<int>>(_builder.Container);
-            pipeline.AddBlock().AddTask<IncrementArgsStep>();
-
+            pipeline.AddBlock().AddStep<IncrementArgsStep>();
 
             pipeline.Started += args =>
             {

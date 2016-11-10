@@ -4,21 +4,22 @@ using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
+using DotNet.Basics.Tasks.Pipelines;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Tasks
+namespace DotNet.Basics.Tests.Tasks.Pipelines
 {
-    public class ManagedBlockTests
+    public class PipelineBlockTests
     {
         [Fact]
         public void Add_AddGenericSteps_StepsAreAdded()
         {
-            var block = new ManagedBlock();
+            var block = new Pipeline();
             var taskCount = 7;
 
             foreach (var i in Enumerable.Range(0, taskCount))
-                block.AddTask<ManagedTask<EventArgs>>();
+                block.AddStep<ManagedTask<EventArgs>>();
 
             block.Tasks.Count().Should().Be(taskCount);
         }
@@ -26,11 +27,11 @@ namespace DotNet.Basics.Tests.Tasks
         [Fact]
         public void Add_AddInlineTasks_TasksAreAdded()
         {
-            var block = new ManagedBlock<EventArgs<int>>();
+            var block = new Pipeline<EventArgs<int>>();
             var taskCount = 7;
 
             foreach (var i in Enumerable.Range(0, taskCount))
-                block.AddTask((args, issues, ct) => { });
+                block.AddStep((args, issues, ct) => { });
 
             block.Tasks.Count().Should().Be(taskCount);
         }
@@ -40,12 +41,12 @@ namespace DotNet.Basics.Tests.Tasks
         [InlineData(10, Invoke.Sequential)]
         public async Task BlockInvokeStyle_Sequence_TasksAreRunAccordingToInvokeStyle(int stepCount, Invoke invoke)
         {
-            var block = new ManagedBlock<EventArgs<int>>(invoke);
+            var block = new Pipeline<EventArgs<int>>(invoke);
             int lockFlag = 0;
 
             var raceConditionEncountered = 0;
             for (var i = 0; i < stepCount; i++)
-                block.AddTask(async (args, issues, ct) =>
+                block.AddStep(async (args, issues, ct) =>
                 {
                     issues.Add(i.ToString());
 

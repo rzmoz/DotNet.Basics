@@ -98,8 +98,8 @@
     <Compile Include="Sys\StringExtensions.cs" />
     <Compile Include="Sys\WindowsServices.cs" />
     <Compile Include="Sys\WindowsServiceStatus.cs" />
-    <Compile Include="Tasks\LazyLoadManagedTask.cs" />
-    <Compile Include="Tasks\ManagedBlock.cs" />
+    <Compile Include="Tasks\Pipelines\LazyLoadStep.cs" />
+    <Compile Include="Tasks\Pipelines\Pipeline.cs" />
     <Compile Include="Tasks\Invoke.cs" />
     <Compile Include="Tasks\TaskIssue.cs" />
     <Compile Include="Tasks\TaskIssueList.cs" />
@@ -120,7 +120,6 @@
     <Compile Include="Rest\UriExtensions.cs" />
     <Compile Include="Sys\CommandPrompt.cs" />
     <Compile Include="Diagnostics\Profiler.cs" />
-    <Compile Include="Tasks\Pipelines\Pipeline.cs" />
     <Compile Include="Collections\KeyNotFoundMode.cs" />
     <Compile Include="Collections\DictionaryKeyMode.cs" />
     <Compile Include="Collections\StringPair.cs" />
@@ -130,8 +129,7 @@
     <Compile Include="Sys\PowerShellConsole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Collections\StringKeyDictionary.cs" />
-    <Compile Include="Tasks\ManagedTaskExtensions.cs" />
-    <Compile Include="Tasks\OnceOnlyTask.cs" />
+    <Compile Include="Tasks\Repeating\OnceOnlyTask.cs" />
     <Compile Include="Tasks\Repeating\RepeatMaxTriesPredicate.cs" />
     <Compile Include="Sys\EnumClass.cs" />
     <Compile Include="Sys\EnumExtensions.cs" />

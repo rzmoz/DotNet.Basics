@@ -5,6 +5,15 @@ namespace DotNet.Basics.Tasks.Repeating
 {
     public static class RepeaterTaskExtensions
     {
+        public static Action ToOnceOnly(this Action task)
+        {
+            return new OnceOnlyTask(task).RunSync;
+        }
+        public static Func<Task> ToOnceOnly(this Func<Task> task)
+        {
+            return new OnceOnlyTask(task).RunAsync;
+        }
+
         public static RepeaterTask WithOptions(this RepeaterTask task, Action<RepeatOptions> setOptions)
         {
             if (setOptions == null) throw new ArgumentNullException(nameof(setOptions));

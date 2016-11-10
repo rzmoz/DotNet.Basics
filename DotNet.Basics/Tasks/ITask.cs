@@ -6,8 +6,7 @@ using DotNet.Basics.Collections;
 namespace DotNet.Basics.Tasks
 {
     public interface ITask : ITask<EventArgs>
-    {
-    }
+    { }
 
     public interface ITask<T> where T : class, new()
     {
@@ -16,7 +15,7 @@ namespace DotNet.Basics.Tasks
 
         string Name { get; }
         StringDictionary Properties { get; }
-        
+
         Task<TaskResult<T>> RunAsync();
         Task<TaskResult<T>> RunAsync(CancellationToken ct);
         Task<TaskResult<T>> RunAsync(T args, CancellationToken ct);

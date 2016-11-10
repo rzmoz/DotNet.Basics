@@ -7,7 +7,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
     {
         public SimplePipeline()
         {
-            AddBlock("MyBlock").AddTask<IncrementArgsStep>();
+            AddBlock("MyBlock").AddStep<IncrementArgsStep>();
         }
     }
 }
