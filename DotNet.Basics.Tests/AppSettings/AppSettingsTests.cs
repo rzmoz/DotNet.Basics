@@ -182,7 +182,7 @@ namespace DotNet.Basics.Tests.AppSettings
         }
         private void AssertValueType<T>(string input, T expected)
         {
-            Debug.WriteLine($"Asserting appsetting: {input} conversion to {typeof(T).FullName}");
+            DebugOut.WriteLine($"Asserting appsetting: {input} conversion to {typeof(T).FullName}");
 
             var randomKey = Guid.NewGuid().ToString("N");
             var configurationManager = Substitute.For<IConfigurationManager>();

@@ -16,9 +16,7 @@ namespace DotNet.Basics.Tasks
 
         string Name { get; }
         StringDictionary Properties { get; }
-
-        void Init();
-
+        
         Task<TaskResult<T>> RunAsync();
         Task<TaskResult<T>> RunAsync(CancellationToken ct);
         Task<TaskResult<T>> RunAsync(T args, CancellationToken ct);

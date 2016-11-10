@@ -16,7 +16,7 @@ namespace DotNet.Basics.Tasks.Pipelines
         private readonly IContainer _container;
         private readonly List<PipelineSection<T>> _subSections;
 
-        private readonly Func<T, CancellationToken, Task> _innerRun;
+        private readonly Func<T, TaskIssueList, CancellationToken, Task> _innerRun;
 
         public PipelineBlock()
             : this(BlockRunType.Parallel)
@@ -61,7 +61,7 @@ namespace DotNet.Basics.Tasks.Pipelines
 
         public PipelineBlock<T> AddStep<TStep>(string name = null) where TStep : PipelineSection<T>
         {
-            var lazyStep = new LazyBindSection<T, TStep>(name, _container.Resolve<TStep>);
+            var lazyStep = new LazyBindSection<T, TStep>(name ?? typeof(TStep).Name, _container.Resolve<TStep>);
             InitEvents(lazyStep);
             _subSections.Add(lazyStep);
             return this;
@@ -99,24 +99,29 @@ namespace DotNet.Basics.Tasks.Pipelines
 
         protected override async Task RunImpAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
-            await _innerRun(args, ct).ConfigureAwait(false);
+            await _innerRun(args, issues, ct).ConfigureAwait(false);
         }
 
-        protected async Task InnerParallelRunAsync(T args, CancellationToken ct)
+        protected async Task InnerParallelRunAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
-            Debug.WriteLine($"Running block {Name} in parallel");
+            DebugOut.WriteLine($"Running block {Name} in parallel");
             if (ct.IsCancellationRequested)
                 return;
-            await _subSections.ParallelForEachAsync(s => s.RunAsync(args, ct)).ConfigureAwait(false);
+            await _subSections.ParallelForEachAsync(async s =>
+            {
+                var result = await s.RunAsync(args, ct).ConfigureAwait(false);
+                issues.Add(result.Issues);
+            }).ConfigureAwait(false);
         }
-        protected async Task InnerSequentialRunAsync(T args, CancellationToken ct)
+        protected async Task InnerSequentialRunAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
-            Debug.WriteLine($"Running block {Name} in sequence");
+            DebugOut.WriteLine($"Running block {Name} in sequence");
             foreach (var section in SubSections)
             {
                 if (ct.IsCancellationRequested)
                     break;
-                await section.RunAsync(args, ct).ConfigureAwait(false);
+                var result = await section.RunAsync(args, ct).ConfigureAwait(false);
+                issues.Add(result.Issues);
             }
         }
 

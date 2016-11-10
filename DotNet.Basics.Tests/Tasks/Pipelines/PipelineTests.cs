@@ -25,7 +25,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Theory]
         [InlineData(BlockRunType.Parallel)]
         [InlineData(BlockRunType.Sequential)]
-        public async Task RunAsync_AddIssues_IssuesAreCollectedAndAggregatedInFinalResult(BlockRunType blockRunType)
+        public async Task RunAsync_AddIssuesFromDerivedStepClass_IssuesAreCollectedAndAggregatedInFinalResult(BlockRunType blockRunType)
         {
             var pipeline = new Pipeline(blockRunType);
             var count = 15;
@@ -39,6 +39,14 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             result.Issues.All(i => i.Exception == null).Should().BeTrue();
         }
 
+        [Fact]
+        public void Ctor_LazyLoadStepName_NameIsSetOnAdd()
+        {
+            var pipeline = new Pipeline();
+            pipeline.AddStep<AddIssueStep>();
+
+            pipeline.Single().Name.Should().Be(nameof(AddIssueStep));
+        }
         [Fact]
         public async Task Ctor_ArgsInheritanceHierarchy_StepsWithAcenstorArgsCanBeUsedInPipeline()
         {

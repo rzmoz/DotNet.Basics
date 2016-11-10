@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Tasks;
@@ -10,7 +11,9 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
     {
         protected override Task RunImpAsync(EventArgs args, TaskIssueList issues, CancellationToken ct)
         {
-            issues.Add(nameof(AddIssueStep));
+            var issue = nameof(AddIssueStep);
+            DebugOut.WriteLine($"Adding issue: {issue}");
+            issues.Add(issue);
             return Task.FromResult("");
         }
     }

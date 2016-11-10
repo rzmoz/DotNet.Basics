@@ -1,28 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DotNet.Basics.Tasks
 {
     public class TaskResult : TaskResult<EventArgs>
     {
         public TaskResult()
-        {
-        }
+        { }
 
         public TaskResult(EventArgs args) : base(args)
-        {
-        }
+        { }
 
         public TaskResult(Action<TaskIssueList> addIssues) : base(addIssues)
-        {
-        }
+        { }
+
+        public TaskResult(TaskIssueList issues) : base(issues)
+        { }
 
         public TaskResult(EventArgs args, Action<TaskIssueList> addIssues) : base(args, addIssues)
-        {
-        }
+        { }
+
+        public TaskResult(EventArgs args, TaskIssueList issues) : base(args, issues)
+        { }
     }
 
-    public class TaskResult<T> where T : class
+    public class TaskResult<T> where T : class, new()
     {
         public TaskResult()
             : this(null, new TaskIssueList())
@@ -46,8 +49,8 @@ namespace DotNet.Basics.Tasks
 
         public TaskResult(T args, TaskIssueList issues)
         {
-            Args = args ?? default(T);
-            Issues = issues ?? new TaskIssueList();
+            Args = args ?? new T();
+            Issues = (issues ?? new TaskIssueList()).ToList();
             NoIssues = Issues.Count == 0;
         }
 
@@ -59,7 +62,7 @@ namespace DotNet.Basics.Tasks
         {
             return new TaskResult<T>(Args, issues =>
              {
-                 issues.AddRange(Issues);
+                 issues.Add(Issues);
                  addIssues?.Invoke(issues);
              });
         }

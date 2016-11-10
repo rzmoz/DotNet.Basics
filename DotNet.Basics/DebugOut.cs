@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿using System;
 
 namespace DotNet.Basics
 {
@@ -11,7 +11,15 @@ namespace DotNet.Basics
         public static void WriteLine(string msg)
         {
             Out?.Invoke(msg);
-            Debug.WriteLine(msg);
+#if DEBUG
+            Console.WriteLine(msg);
+#endif
+        }
+        public static void WriteLine(object msg)
+        {
+            if (msg == null)
+                return;
+            WriteLine(msg.ToString());
         }
     }
 }

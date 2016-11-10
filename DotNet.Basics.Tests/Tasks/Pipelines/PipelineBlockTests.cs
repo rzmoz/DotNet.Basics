@@ -27,7 +27,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Theory]
         [InlineData(101, BlockRunType.Parallel)]
         [InlineData(10, BlockRunType.Sequential)]
-        public async Task BlockRunType_Sequence_StepsAreRunInSequence(int stepCount, BlockRunType blockRunType)
+        public async Task BlockRunType_Sequence_StepsAreAccordingToRunType(int stepCount, BlockRunType blockRunType)
         {
             var block = new PipelineBlock<EventArgs<int>>(blockRunType);
             int lockFlag = 0;

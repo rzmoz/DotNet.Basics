@@ -49,10 +49,6 @@ namespace DotNet.Basics.Tasks
 
         public StringDictionary Properties { get; }
 
-        public virtual void Init()
-        {
-        }
-
         public Task<TaskResult<T>> RunAsync()
         {
             return RunAsync(CancellationToken.None);
@@ -70,7 +66,6 @@ namespace DotNet.Basics.Tasks
                 args = new T();
             try
             {
-                Init();
                 FireStarted(new TaskStartedEventArgs(Name, TaskType, Properties));
                 var issues = new TaskIssueList();
                 await InnerRunAsync(args, issues, ct).ConfigureAwait(false);

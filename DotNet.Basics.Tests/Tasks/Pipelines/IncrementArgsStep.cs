@@ -20,7 +20,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         protected override Task RunImpAsync(EventArgs<int> args, TaskIssueList issues, CancellationToken ct)
         {
             args.Value = _classThatIncrementArgsDependOn.IncrementByOne(args.Value);
-            Debug.WriteLine($@"Value is now: {args.Value}");
+            DebugOut.WriteLine($@"Value is now: {args.Value}");
             return Task.FromResult("");
         }
     }

@@ -25,13 +25,6 @@ namespace DotNet.Basics.Tasks.Pipelines
             }
         }
 
-        public override void Init()
-        {
-            var step = _getSection();
-            Name = step.Name;
-            base.Init();
-        }
-
         protected override async Task RunImpAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
             var step = _getSection();
