@@ -22,6 +22,23 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             _builder.RegisterType<ClassThatIncrementArgsDependOn>().AsSelf();
         }
 
+        [Theory]
+        [InlineData(BlockRunType.Parallel)]
+        [InlineData(BlockRunType.Sequential)]
+        public async Task RunAsync_AddIssues_IssuesAreCollectedAndAggregatedInFinalResult(BlockRunType blockRunType)
+        {
+            var pipeline = new Pipeline(blockRunType);
+            var count = 15;
+            foreach (var i in Enumerable.Range(0, count))
+                pipeline.AddStep<AddIssueStep>();
+
+            var result = await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
+
+            result.Issues.Count.Should().Be(count);
+            result.Issues.All(i => i.Message == nameof(AddIssueStep)).Should().BeTrue();
+            result.Issues.All(i => i.Exception == null).Should().BeTrue();
+        }
+
         [Fact]
         public async Task Ctor_ArgsInheritanceHierarchy_StepsWithAcenstorArgsCanBeUsedInPipeline()
         {
