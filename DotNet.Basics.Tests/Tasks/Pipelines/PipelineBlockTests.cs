@@ -45,8 +45,10 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 
             var raceConditionEncountered = 0;
             for (var i = 0; i < stepCount; i++)
-                block.AddStep(async (args, ct) =>
+                block.AddStep(async (args, issues, ct) =>
                 {
+                    issues.Add(i.ToString());
+
                     if (Interlocked.CompareExchange(ref lockFlag, 1, 0) == 0)
                     {
                         Monitor.Enter(lockFlag);
@@ -59,15 +61,18 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
                         raceConditionEncountered++;
                 });
 
-            var argsOutput = await block.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            var result = await block.RunAsync(CancellationToken.None).ConfigureAwait(false);
+
+            result.Issues.Count.Should().Be(stepCount);
+
             if (blockRunType == BlockRunType.Parallel)
             {
-                argsOutput.Args.Value.Should().BeLessThan(stepCount);
+                result.Args.Value.Should().BeLessThan(stepCount);
                 raceConditionEncountered.Should().BeGreaterThan(0);
             }
             else
             {
-                argsOutput.Args.Value.Should().Be(stepCount);
+                result.Args.Value.Should().Be(stepCount);
                 raceConditionEncountered.Should().Be(0);
             }
         }

@@ -21,10 +21,6 @@ namespace DotNet.Basics.Tasks
 
         Task<TaskResult<T>> RunAsync();
         Task<TaskResult<T>> RunAsync(CancellationToken ct);
-
         Task<TaskResult<T>> RunAsync(T args, CancellationToken ct);
-        Task<TaskResult<T>> RunAsync(TaskIssueList issues, CancellationToken ct);
-
-        Task<TaskResult<T>> RunAsync(T args, TaskIssueList issues, CancellationToken ct);
     }
 }

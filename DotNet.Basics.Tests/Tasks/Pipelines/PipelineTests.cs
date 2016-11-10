@@ -31,7 +31,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var pipeline = new Pipeline<DescendantArgs>();
 
             //act
-            pipeline.AddStep((args, ct) => new AncestorStep().RunAsync(args, ct));
+            pipeline.AddStep((args,issues, ct) => new AncestorStep().RunAsync(args, ct));
             pipeline.AddStep<DescendantStep>();
 
             //assert
@@ -52,7 +52,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var stepCount = 101;
 
             for (var i = 0; i < stepCount; i++)
-                pipeline.AddStep((args, ct) => Task.FromResult(++counter));
+                pipeline.AddStep((args, issues, ct) => Task.FromResult(++counter));
 
             await pipeline.RunAsync(ts.Token).ConfigureAwait(false);
 
@@ -106,7 +106,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var runCount = 101;
 
             for (var i = 0; i < runCount; i++)
-                block.AddStep(async (args, ct) => await Task.Delay(TimeSpan.FromSeconds(1), ct));
+                block.AddStep(async (args, issues, ct) => await Task.Delay(TimeSpan.FromSeconds(1), ct));
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -124,8 +124,8 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var task1Called = false;
             var task2Called = false;
 
-            pipeline.AddBlock("1", async (args, ct) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200), ct); });
-            pipeline.AddBlock("2", (args, xct) =>
+            pipeline.AddBlock("1", async (args, issues, ct) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200), ct); });
+            pipeline.AddBlock("2", (args, issues,ct) =>
             {
                 if (task1Called == false)
                     throw new ArgumentException("Task 1 not called");

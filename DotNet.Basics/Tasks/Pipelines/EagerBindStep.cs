@@ -6,9 +6,9 @@ namespace DotNet.Basics.Tasks.Pipelines
 {
     public class EagerBindStep<T> : PipelineStep<T> where T : class, new()
     {
-        private readonly Func<T, CancellationToken, Task> _step;
+        private readonly Func<T, TaskIssueList, CancellationToken, Task> _step;
 
-        public EagerBindStep(string name, Func<T, CancellationToken, Task> step) : base(name)
+        public EagerBindStep(string name, Func<T, TaskIssueList, CancellationToken, Task> step) : base(name)
         {
             if (step == null) throw new ArgumentNullException(nameof(step));
             _step = step;
@@ -16,7 +16,7 @@ namespace DotNet.Basics.Tasks.Pipelines
 
         protected override async Task RunImpAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
-            await _step(args, ct).ConfigureAwait(false);
+            await _step(args, issues, ct).ConfigureAwait(false);
         }
     }
 }

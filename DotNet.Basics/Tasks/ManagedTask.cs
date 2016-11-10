@@ -60,20 +60,10 @@ namespace DotNet.Basics.Tasks
 
         public Task<TaskResult<T>> RunAsync(CancellationToken ct)
         {
-            return RunAsync(default(T), null, ct);
+            return RunAsync(default(T), ct);
         }
 
-        public Task<TaskResult<T>> RunAsync(T args, CancellationToken ct)
-        {
-            return RunAsync(args, null, ct);
-        }
-
-        public Task<TaskResult<T>> RunAsync(TaskIssueList issues, CancellationToken ct)
-        {
-            return RunAsync(default(T), issues, ct);
-        }
-
-        public async Task<TaskResult<T>> RunAsync(T args, TaskIssueList issues, CancellationToken ct)
+        public async Task<TaskResult<T>> RunAsync(T args, CancellationToken ct)
         {
             Exception exceptionEncountered = null;
             if (args == null)
@@ -82,8 +72,7 @@ namespace DotNet.Basics.Tasks
             {
                 Init();
                 FireStarted(new TaskStartedEventArgs(Name, TaskType, Properties));
-                if (issues == null)
-                    issues = new TaskIssueList();
+                var issues = new TaskIssueList();
                 await InnerRunAsync(args, issues, ct).ConfigureAwait(false);
                 return new TaskResult<T>(args, issues);
             }

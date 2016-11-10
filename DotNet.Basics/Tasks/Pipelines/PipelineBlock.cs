@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,21 +16,18 @@ namespace DotNet.Basics.Tasks.Pipelines
         private readonly IContainer _container;
         private readonly List<PipelineSection<T>> _subSections;
 
-        private readonly Func<T, TaskIssueList, CancellationToken, Task> _innerRun;
+        private readonly Func<T, CancellationToken, Task> _innerRun;
 
         public PipelineBlock(BlockRunType blockRunType = BlockRunType.Parallel)
             : this(null, null, blockRunType)
-        {
-        }
+        { }
 
         public PipelineBlock(string name = null, BlockRunType blockRunType = BlockRunType.Parallel)
             : this(name, null, blockRunType)
-        {
-        }
+        { }
         public PipelineBlock(IContainer container, BlockRunType blockRunType = BlockRunType.Parallel)
             : this(null, container, blockRunType)
-        {
-        }
+        { }
 
         public PipelineBlock(string name, IContainer container, BlockRunType blockRunType = BlockRunType.Parallel)
             : base(name)
@@ -61,12 +59,12 @@ namespace DotNet.Basics.Tasks.Pipelines
             return this;
         }
 
-        public PipelineBlock<T> AddStep(Func<T, CancellationToken, Task> step)
+        public PipelineBlock<T> AddStep(Func<T, TaskIssueList, CancellationToken, Task> step)
         {
             return AddStep(null, step);
         }
 
-        public PipelineBlock<T> AddStep(string name, Func<T, CancellationToken, Task> step)
+        public PipelineBlock<T> AddStep(string name, Func<T, TaskIssueList, CancellationToken, Task> step)
         {
             var eagerStep = new EagerBindStep<T>(name ?? $"{PipelineTaskTypes.Step} {_subSections.Count}", step);
             InitEvents(eagerStep);
@@ -74,12 +72,12 @@ namespace DotNet.Basics.Tasks.Pipelines
             return this;
         }
 
-        public PipelineBlock<T> AddBlock(string name, params Func<T, CancellationToken, Task>[] steps)
+        public PipelineBlock<T> AddBlock(string name, params Func<T, TaskIssueList, CancellationToken, Task>[] steps)
         {
             return AddBlock(name, BlockRunType.Parallel, steps);
         }
 
-        public PipelineBlock<T> AddBlock(string name, BlockRunType blockRunType = BlockRunType.Parallel, params Func<T, CancellationToken, Task>[] steps)
+        public PipelineBlock<T> AddBlock(string name, BlockRunType blockRunType = BlockRunType.Parallel, params Func<T, TaskIssueList, CancellationToken, Task>[] steps)
         {
             var count = _subSections.Count(s => s.TaskType == PipelineTaskTypes.Block);
             var block = new PipelineBlock<T>(name ?? $"Block {count}", _container, blockRunType);
@@ -93,20 +91,20 @@ namespace DotNet.Basics.Tasks.Pipelines
 
         protected override async Task RunImpAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
-            await _innerRun(args, issues, ct).ConfigureAwait(false);
+            await _innerRun(args, ct).ConfigureAwait(false);
         }
 
-        protected async Task InnerParallelRunAsync(T args, TaskIssueList issues, CancellationToken ct)
+        protected async Task InnerParallelRunAsync(T args, CancellationToken ct)
         {
-            DebugOut.WriteLine($"Running block {Name} in parallel");
-            await _subSections.ParallelForEachAsync(s => s.RunAsync(args, issues, ct)).ConfigureAwait(false);
+            Debug.WriteLine($"Running block {Name} in parallel");
+            await _subSections.ParallelForEachAsync(s => s.RunAsync(args, ct)).ConfigureAwait(false);
         }
-        protected async Task InnerSequentialRunAsync(T args, TaskIssueList issues, CancellationToken ct)
+        protected async Task InnerSequentialRunAsync(T args, CancellationToken ct)
         {
-            DebugOut.WriteLine($"Running block {Name} in sequence");
+            Debug.WriteLine($"Running block {Name} in sequence");
             foreach (var section in SubSections)
             {
-                await section.RunAsync(args, issues, ct).ConfigureAwait(false);
+                await section.RunAsync(args, ct).ConfigureAwait(false);
                 if (ct.IsCancellationRequested)
                     break;
             }
