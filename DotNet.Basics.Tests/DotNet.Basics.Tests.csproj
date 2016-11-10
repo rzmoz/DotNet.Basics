@@ -135,7 +135,6 @@
     <Compile Include="Tasks\Pipelines\DescendantStep.cs" />
     <Compile Include="Tasks\Pipelines\IncrementArgsStep.cs" />
     <Compile Include="Tasks\Pipelines\SimplePipeline.cs" />
-    <Compile Include="Tasks\Pipelines\PipelineBlockTests.cs" />
     <Compile Include="Tasks\Pipelines\PipelineTests.cs" />
     <Compile Include="Diagnostics\ProfileTests.cs" />
     <Compile Include="Collections\StringDictionaryTests.cs" />

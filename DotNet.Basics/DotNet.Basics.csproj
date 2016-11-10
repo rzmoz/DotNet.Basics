@@ -100,13 +100,11 @@
     <Compile Include="Sys\WindowsServiceStatus.cs" />
     <Compile Include="Tasks\LazyLoadManagedTask.cs" />
     <Compile Include="Tasks\ManagedBlock.cs" />
-    <Compile Include="Tasks\Pipelines\BlockRunType.cs" />
     <Compile Include="Tasks\Invoke.cs" />
     <Compile Include="Tasks\TaskIssue.cs" />
     <Compile Include="Tasks\TaskIssueList.cs" />
     <Compile Include="Tasks\TaskResult.cs" />
     <Compile Include="Tasks\Pipelines\PipelineStep.cs" />
-    <Compile Include="Tasks\Pipelines\PipelineSection.cs" />
     <Compile Include="Rest\HttpClientTransport.cs" />
     <Compile Include="Rest\IHttpTransport.cs" />
     <Compile Include="Rest\IRestClient.cs" />
@@ -121,10 +119,7 @@
     <Compile Include="Rest\RestResponse.cs" />
     <Compile Include="Rest\UriExtensions.cs" />
     <Compile Include="Sys\CommandPrompt.cs" />
-    <Compile Include="Tasks\Pipelines\EagerBindStep.cs" />
-    <Compile Include="Tasks\Pipelines\LazyBindSection.cs" />
     <Compile Include="Diagnostics\Profiler.cs" />
-    <Compile Include="Tasks\Pipelines\PipelineBlock.cs" />
     <Compile Include="Tasks\Pipelines\Pipeline.cs" />
     <Compile Include="Collections\KeyNotFoundMode.cs" />
     <Compile Include="Collections\DictionaryKeyMode.cs" />
@@ -137,7 +132,6 @@
     <Compile Include="Collections\StringKeyDictionary.cs" />
     <Compile Include="Tasks\ManagedTaskExtensions.cs" />
     <Compile Include="Tasks\OnceOnlyTask.cs" />
-    <Compile Include="Tasks\Pipelines\PipelineTaskTypes.cs" />
     <Compile Include="Tasks\Repeating\RepeatMaxTriesPredicate.cs" />
     <Compile Include="Sys\EnumClass.cs" />
     <Compile Include="Sys\EnumExtensions.cs" />

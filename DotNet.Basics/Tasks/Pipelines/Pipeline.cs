@@ -8,41 +8,45 @@ namespace DotNet.Basics.Tasks.Pipelines
         public Pipeline()
         { }
 
+        public Pipeline(string name) : base(name)
+        { }
+
         public Pipeline(IContainer container) : base(container)
         { }
 
-        public Pipeline(BlockRunType blockRunType) : base(blockRunType)
+        public Pipeline(Invoke invoke) : base(invoke)
         { }
 
-        public Pipeline(string name, BlockRunType blockRunType) : base(name, blockRunType)
+        public Pipeline(string name, Invoke invoke) : base(name, invoke)
         { }
 
-        public Pipeline(IContainer container, BlockRunType blockRunType) : base(container, blockRunType)
+        public Pipeline(IContainer container, Invoke invoke) : base(container, invoke)
         { }
 
-        public Pipeline(string name, IContainer container, BlockRunType blockRunType) : base(name, container, blockRunType)
+        public Pipeline(string name, IContainer container, Invoke invoke) : base(name, container, invoke)
         { }
     }
-    public class Pipeline<T> : PipelineBlock<T> where T : class, new()
+    public class Pipeline<T> : ManagedBlock<T> where T : class, new()
     {
         public Pipeline()
         { }
 
+        public Pipeline(string name) : base(name)
+        { }
+
         public Pipeline(IContainer container) : base(container)
         { }
 
-        public Pipeline(BlockRunType blockRunType) : base(blockRunType)
+        public Pipeline(Invoke invoke) : base(invoke)
         { }
 
-        public Pipeline(string name, BlockRunType blockRunType) : base(name, blockRunType)
+        public Pipeline(string name, Invoke invoke) : base(name, invoke)
         { }
 
-        public Pipeline(IContainer container, BlockRunType blockRunType) : base(container, blockRunType)
+        public Pipeline(IContainer container, Invoke invoke) : base(container, invoke)
         { }
 
-        public Pipeline(string name, IContainer container, BlockRunType blockRunType) : base(name, container, blockRunType)
+        public Pipeline(string name, IContainer container, Invoke invoke) : base(name, container, invoke)
         { }
-
-        public override string TaskType => PipelineTaskTypes.Pipeline;
     }
 }

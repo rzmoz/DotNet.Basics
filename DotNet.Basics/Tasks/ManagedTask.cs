@@ -74,7 +74,7 @@ namespace DotNet.Basics.Tasks
                 args = new T();
             try
             {
-                FireStarted(new TaskStartedEventArgs(Name, TaskType, Properties));
+                FireStarted(new TaskStartedEventArgs(Name, Properties));
                 var issues = new TaskIssueList();
                 await InnerRunAsync(args, issues, ct).ConfigureAwait(false);
                 return new TaskResult<T>(args, issues);
@@ -86,11 +86,9 @@ namespace DotNet.Basics.Tasks
             }
             finally
             {
-                FireEnded(new TaskEndedEventArgs(Name, TaskType, Properties, ct.IsCancellationRequested, exceptionEncountered));
+                FireEnded(new TaskEndedEventArgs(Name, Properties, ct.IsCancellationRequested, exceptionEncountered));
             }
         }
-
-        public virtual string TaskType => "Task";
 
         protected virtual async Task InnerRunAsync(T args, TaskIssueList issues, CancellationToken ct)
         {

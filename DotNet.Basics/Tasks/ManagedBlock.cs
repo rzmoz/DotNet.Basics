@@ -15,6 +15,9 @@ namespace DotNet.Basics.Tasks
         public ManagedBlock()
         { }
 
+        public ManagedBlock(string name) : base(name)
+        { }
+
         public ManagedBlock(IContainer container) : base(container)
         { }
 
@@ -37,6 +40,9 @@ namespace DotNet.Basics.Tasks
         private readonly Func<T, TaskIssueList, CancellationToken, Task> _innerRun;
 
         public ManagedBlock() : this(Invoke.Parallel)
+        { }
+
+        public ManagedBlock(string name) : this(name, Invoke.Parallel)
         { }
 
         public ManagedBlock(IContainer container)
@@ -113,7 +119,7 @@ namespace DotNet.Basics.Tasks
 
         public ManagedBlock<T> AddBlock(params Func<T, TaskIssueList, CancellationToken, Task>[] tasks)
         {
-            return AddBlock("", tasks);
+            return AddBlock(null, tasks);
         }
         public ManagedBlock<T> AddBlock(string name, params Func<T, TaskIssueList, CancellationToken, Task>[] tasks)
         {

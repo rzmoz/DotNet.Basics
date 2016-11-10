@@ -8,16 +8,16 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-    
+
     public class ApplicationInstallerTests
     {
         [Fact]
         public void InstallFromBytes_EnsureAppIsInstalled_AppIsInstalledInMultiThreadedEnvironment()
         {
-            var appDir = ".".ToDir("InstallFromBytes_EnsureAppIsInstalled_AppIsInstalledInMultiThreadedEnvironment");
+            var appDir = "InstallFromBytes_EnsureAppIsInstalled_AppIsInstalledInMultiThreadedEnvironment".ToDir();
             appDir.DeleteIfExists();
             var fileName = "ReturnIntConsole.Exe";
-            
+
             var installRange = Enumerable.Range(1, 50);
             Parallel.ForEach(installRange, val =>
             {
