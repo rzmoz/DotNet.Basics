@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using DotNet.Basics.AppSettings;
 using DotNet.Basics.IO;
@@ -181,7 +182,7 @@ namespace DotNet.Basics.Tests.AppSettings
         }
         private void AssertValueType<T>(string input, T expected)
         {
-            Console.WriteLine($"Asserting appsetting: {input} conversion to {typeof(T).FullName}");
+            Debug.WriteLine($"Asserting appsetting: {input} conversion to {typeof(T).FullName}");
 
             var randomKey = Guid.NewGuid().ToString("N");
             var configurationManager = Substitute.For<IConfigurationManager>();

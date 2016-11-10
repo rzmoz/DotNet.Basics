@@ -14,7 +14,9 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var counter = 0;
 
+#pragma warning disable 1998
             await Run5TimesAsync(async () =>
+#pragma warning restore 1998
             {
                 counter++;
             }).ConfigureAwait(false);
@@ -27,7 +29,9 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var counter = 0;
 
+#pragma warning disable 1998
             await Run5TimesAsync(async () =>
+#pragma warning restore 1998
             {
                 counter++;
                 throw new ArgumentException("buuh");

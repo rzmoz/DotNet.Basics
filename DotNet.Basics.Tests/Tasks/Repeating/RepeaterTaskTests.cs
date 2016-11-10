@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using DotNet.Basics.Tasks.Repeating;
 using FluentAssertions;
@@ -91,7 +92,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
                         o.RetryDelay = 10.Milliseconds();
                         o.MaxTries = until;
                         o.DontRethrowOnTaskFailedType = typeof(System.IO.IOException);
-                        o.PingOnRetry = () => { Console.WriteLine(doCounter); };
+                        o.PingOnRetry = () => { Debug.WriteLine(doCounter); };
                     })
 
                 .UntilAsync(() => false).ConfigureAwait(false);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Sys;
@@ -18,7 +19,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         protected override Task RunImpAsync(EventArgs<int> args, CancellationToken ct)
         {
             args.Value = _classThatIncrementArgsDependOn.IncrementByOne(args.Value);
-            Console.WriteLine($@"Value is now: {args.Value}");
+            Debug.WriteLine($@"Value is now: {args.Value}");
             return Task.FromResult("");
         }
     }

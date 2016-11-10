@@ -13,7 +13,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         
         protected override Task RunImpAsync(EventArgs args, CancellationToken ct)
         {
-            Console.WriteLine($@"Display name set to {Name}");
+            DebugOut.WriteLine($@"Display name set to {Name}");
             return Task.FromResult("");
         }
     }
