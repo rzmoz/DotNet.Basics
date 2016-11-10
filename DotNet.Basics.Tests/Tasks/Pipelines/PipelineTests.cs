@@ -31,7 +31,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var pipeline = new Pipeline<DescendantArgs>();
 
             //act
-            pipeline.AddStep((args,issues, ct) => new AncestorStep().RunAsync(args, ct));
+            pipeline.AddStep((args, issues, ct) => new AncestorStep().RunAsync(args, ct));
             pipeline.AddStep<DescendantStep>();
 
             //assert
@@ -40,10 +40,12 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             argsUpdated.Args.DescendantUpdated.Should().BeTrue();
         }
 
-        [Fact]
-        public async Task RunAsync_TaskCancellation_PipelineIsCancelled()
+        [Theory]
+        [InlineData(BlockRunType.Parallel)]
+        [InlineData(BlockRunType.Sequential)]
+        public async Task RunAsync_TaskCancellation_PipelineIsCancelled(BlockRunType blockRunType)
         {
-            var pipeline = new Pipeline(_builder.Container);
+            var pipeline = new Pipeline(_builder.Container, blockRunType);
 
             var ts = new CancellationTokenSource();
             ts.Cancel();
@@ -57,9 +59,10 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             await pipeline.RunAsync(ts.Token).ConfigureAwait(false);
 
             pipeline.Count().Should().Be(stepCount);
-            counter.Should().Be(1);
+            counter.Should().Be(0);
         }
-        
+
+
         [Fact]
         public async Task DisplayName_DisplayNameIsSet_DisplayNameIsUsed()
         {
@@ -125,7 +128,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var task2Called = false;
 
             pipeline.AddBlock("1", async (args, issues, ct) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200), ct); });
-            pipeline.AddBlock("2", (args, issues,ct) =>
+            pipeline.AddBlock("2", (args, issues, ct) =>
             {
                 if (task1Called == false)
                     throw new ArgumentException("Task 1 not called");

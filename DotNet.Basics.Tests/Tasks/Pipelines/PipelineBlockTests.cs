@@ -14,7 +14,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public void Add_AddGenericSteps_StepsAreAdded()
         {
-            var stepBlock = new PipelineBlock<EventArgs<int>>(null, null)
+            var stepBlock = new PipelineBlock<EventArgs<int>>()
                 .AddStep<IncrementArgsStep>()
                 .AddStep<IncrementArgsStep>()
                 .AddStep<IncrementArgsStep>()
@@ -24,21 +24,10 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             stepBlock.Count().Should().Be(5);
         }
 
-        [Fact]
-        public async Task BlockRunType_Parallel_StepsAreRunInParallel()
-        {
-            var stepCount = 101;
-            await RunBlockAndCheckConditionsAsync(stepCount, BlockRunType.Parallel);
-        }
-
-        [Fact]
-        public async Task BlockRunType_Sequence_StepsAreRunInSequence()
-        {
-            var stepCount = 10;
-            await RunBlockAndCheckConditionsAsync(stepCount, BlockRunType.Sequential);
-        }
-
-        private async Task RunBlockAndCheckConditionsAsync(int stepCount, BlockRunType blockRunType)
+        [Theory]
+        [InlineData(101, BlockRunType.Parallel)]
+        [InlineData(10, BlockRunType.Sequential)]
+        public async Task BlockRunType_Sequence_StepsAreRunInSequence(int stepCount, BlockRunType blockRunType)
         {
             var block = new PipelineBlock<EventArgs<int>>(blockRunType);
             int lockFlag = 0;

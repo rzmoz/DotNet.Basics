@@ -83,7 +83,7 @@ namespace DotNet.Basics.Tests.Tasks
             endedArgs.Name.Should().Be(startedArgs.Name);
             endedArgs.TaskProperties[myKey].Should().Be(startedArgs.TaskProperties[myKey]);
 
-            resultArgs.Value.Should().Be(argsValue);
+            resultArgs.Value.Should().Be(0);//value should not have been updatd since task was cancelled before executing
         }
 
         [Fact]

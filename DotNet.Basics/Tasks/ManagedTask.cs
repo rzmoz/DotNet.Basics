@@ -91,6 +91,8 @@ namespace DotNet.Basics.Tasks
 
         protected virtual async Task InnerRunAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
+            if (ct.IsCancellationRequested)
+                return;
             await _task(args, issues, ct).ConfigureAwait(false);
         }
 
