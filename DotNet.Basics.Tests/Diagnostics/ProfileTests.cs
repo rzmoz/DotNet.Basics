@@ -1,14 +1,14 @@
 ﻿using System;
 using DotNet.Basics.Diagnostics;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Diagnostics
 {
-    [TestFixture]
+    
     public class ProfileTests
     {
-        [Test]
+        [Fact]
         public void ToString_NotStarted_ToStringContainsStarted()
         {
             var stats = new Profiler("myStats");
@@ -18,7 +18,7 @@ namespace DotNet.Basics.Tests.Diagnostics
             toString.Should().Contain("'myStats' not started");
         }
 
-        [Test]
+        [Fact]
         public void ToString_Started_ToStringContainsFinished()
         {
             var time = new DateTime(2015, 10, 1, 12, 1, 1);
@@ -29,7 +29,7 @@ namespace DotNet.Basics.Tests.Diagnostics
             stats.ToString().Should().Be("'myStats' started");
         }
 
-        [Test]
+        [Fact]
         public void ToString_Finished_ToStringContainsFinished()
         {
             var time = DateTime.UtcNow;
@@ -41,7 +41,7 @@ namespace DotNet.Basics.Tests.Diagnostics
         }
 
 
-        [Test]
+        [Fact]
         public void Duration_TimeEvent_DurationIsCalculated()
         {
             var difference = new TimeSpan(0, 1, 1, 1, 100);

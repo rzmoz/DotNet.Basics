@@ -1,13 +1,13 @@
 ﻿using DotNet.Basics.Sys;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
 {
-    [TestFixture]
+    
     public class StringExtensionsTests
     {
-        [Test]
+        [Fact]
         public void ToTitleCase()
         {
             var input = "PoSSeSsIon sO cOMParISon inquietude 123 HE1 he LOREM";
@@ -17,7 +17,7 @@ namespace DotNet.Basics.Tests.Sys
             output.Should().Be("Possession So Comparison Inquietude 123 He1 He Lorem");
         }
 
-        [Test]
+        [Fact]
         public void CamelCaseTest()
         {
             var input = "PoSSeSsIon sO cOMParISon inquietude HE he LOREM";

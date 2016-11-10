@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks.Pipelines;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks.Pipelines
 {
-    [TestFixture]
+    
     public class PipelineBlockTests
     {
-        [Test]
+        [Fact]
         public void Add_AddGenericSteps_StepsAreAdded()
         {
             var stepBlock = new PipelineBlock<EventArgs<int>>(null, null)
@@ -25,14 +25,14 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             stepBlock.Count().Should().Be(5);
         }
 
-        [Test]
+        [Fact]
         public async Task BlockRunType_Parallel_StepsAreRunInParallel()
         {
             var stepCount = 101;
             await RunBlockAndCheckConditionsAsync(stepCount, BlockRunType.Parallel);
         }
 
-        [Test]
+        [Fact]
         public async Task BlockRunType_Sequence_StepsAreRunInSequence()
         {
             var stepCount = 10;

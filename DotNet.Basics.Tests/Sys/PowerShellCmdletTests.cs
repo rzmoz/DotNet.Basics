@@ -1,14 +1,14 @@
 ﻿using System.Linq;
 using DotNet.Basics.Sys;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
 {
-    [TestFixture]
+    
     public class PowerShellCmdletTests
     {
-        [Test]
+        [Fact]
         public void Parameters_ArrayParam_ValueIsArrayFormatting()
         {
             //arrange
@@ -27,7 +27,7 @@ namespace DotNet.Basics.Tests.Sys
             }
         }
 
-        [Test]
+        [Fact]
         public void ToScript_Call_CmdletFormatted()
         {
             //arrange

@@ -5,14 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using DotNet.Basics.Rest;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Rest
 {
-    [TestFixture]
+    
     public class UriTtests
     {
-        [Test]
+        [Fact]
         public void Ctor_FullUri_AllelementsAreSplit()
         {
             const string absoluteUri = "https://my.domain.dk:1010/folder/file?myparam=yes&nextParam=somethingElse";
@@ -27,7 +27,7 @@ namespace DotNet.Basics.Tests.Rest
             uri.Scheme.Should().Be("https");
         }
 
-        [Test]
+        [Fact]
         public void BaseUri_GetBaseUri_BaseUriIsPersed()
         {
             const string absoluteUri = "https://my.domain.dk:1010/folder/file?myparam=yes&nextParam=somethingElse";
@@ -36,9 +36,9 @@ namespace DotNet.Basics.Tests.Rest
         }
 
 
-        [Test]
-        [TestCase("/localhost/")]//no scheme
-        [TestCase("http:/localhost/")]//invalid scheme separator
+        [Theory]
+        [InlineData("/localhost/")]//no scheme
+        [InlineData("http:/localhost/")]//invalid scheme separator
         public void Ctor_NotUri_ExceptionIsThrown(string nonUri)
         {
             Action action = () => new Uri(nonUri);

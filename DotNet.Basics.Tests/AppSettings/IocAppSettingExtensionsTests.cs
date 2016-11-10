@@ -2,22 +2,20 @@
 using DotNet.Basics.AppSettings;
 using DotNet.Basics.Ioc;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.AppSettings
 {
-    [TestFixture]
     public class IocAppSettingExtensionsTests
     {
-        private IocBuilder _builder;
-
-        [SetUp]
-        public void SetUp()
+        private readonly IocBuilder _builder;
+        
+        public IocAppSettingExtensionsTests()
         {
             _builder = new IocBuilder();
         }
 
-        [Test]
+        [Fact]
         public void Verify_RequiredKeys_RequiredKeysArePresent()
         {
             _builder.RegisterAppSettings(new AppSetting<string>("RequiredKey"));
@@ -27,7 +25,7 @@ namespace DotNet.Basics.Tests.AppSettings
 
             result.AllGood.Should().BeTrue();
         }
-        [Test]
+        [Fact]
         public void Verify_RequiredKeys_RequiredKeysAreMissing()
         {
             var missingKey = "MissingKey";
@@ -43,7 +41,7 @@ namespace DotNet.Basics.Tests.AppSettings
             result.MissingKeys.Last().Should().Be(missingKey + 2);
         }
 
-        [Test]
+        [Fact]
         public void Verify_DefaultValues_SettingsWithDefaultValuesAreNotRequiredToBeSet()
         {
             var defaultValue = "MyDefaultValue%&/%&/¤%/%&";

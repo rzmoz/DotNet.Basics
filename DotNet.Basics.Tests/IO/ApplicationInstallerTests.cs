@@ -4,17 +4,17 @@ using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tests.IO.TestSources;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-    [TestFixture]
+    
     public class ApplicationInstallerTests
     {
-        [Test]
+        [Fact]
         public void InstallFromBytes_EnsureAppIsInstalled_AppIsInstalledInMultiThreadedEnvironment()
         {
-            var appDir = TestContext.CurrentContext.TestDirectory.ToDir("InstallFromBytes_EnsureAppIsInstalled_AppIsInstalledInMultiThreadedEnvironment");
+            var appDir = ".".ToDir("InstallFromBytes_EnsureAppIsInstalled_AppIsInstalledInMultiThreadedEnvironment");
             appDir.DeleteIfExists();
             var fileName = "ReturnIntConsole.Exe";
             

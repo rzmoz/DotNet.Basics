@@ -2,19 +2,20 @@
 using System.IO;
 using DotNet.Basics.IO;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-    [TestFixture]
+    
     public class FileExtensionsTests
     {
         private const string _testDirRoot = @"K:\testDir";
         private const string _testDoubleDir = @"\testa\testb";
         private const string _testFile = @"\testc\file.txt";
 
-        [TestCase("http://localhost/", "myFile")] //http file
-        [TestCase("https://localhost/", "myFile")] //https file
+        [Theory]
+        [InlineData("http://localhost/", "myFile")] //http file
+        [InlineData("https://localhost/", "myFile")] //https file
         public void FullName_Uri_ParsedPathIsUri(string uri, string segment)
         {
             var path = uri.ToFile(segment);
@@ -23,10 +24,10 @@ namespace DotNet.Basics.Tests.IO
             path.FullName.Should().Be(uri + segment);
         }
 
-        [Test]
+        [Fact]
         public void ReadAllText_ReadTextFromFile_ContentIsRead()
         {
-            var testdir = TestContext.CurrentContext.TestDirectory.ToDir("ReadAllTextAsync_ReadTextFromFile_ContentIsRead");
+            var testdir = @"ReadAllTextAsync_ReadTextFromFile_ContentIsRead".ToDir();
             testdir.CleanIfExists();
             var testFile = testdir.ToFile("blaaaah.txt");
 
@@ -39,10 +40,10 @@ namespace DotNet.Basics.Tests.IO
             read.Should().Be(testContent);
         }
 
-        [Test]
+        [Fact]
         public void Delete_DeleteFile_FileIsDeleted()
         {
-            var testdir = TestContext.CurrentContext.TestDirectory.ToDir("Delete_DeleteFile_FileIsDeleted");
+            var testdir = @"Delete_DeleteFile_FileIsDeleted".ToDir();
             testdir.CleanIfExists();
             var testFile = testdir.ToFile("blaaaah.txt");
             "blaa".WriteAllText(testFile);
@@ -54,12 +55,12 @@ namespace DotNet.Basics.Tests.IO
             testFile.Exists().Should().BeFalse("File should have been deleted");
         }
 
-        [Test]
-        [TestCase(true)]
-        [TestCase(false)]
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
         public void CopyTo_EnsureTargetdir_TargetDirIsEnsured(bool ensureTargetDir)
         {
-            var testdir = TestContext.CurrentContext.TestDirectory.ToDir("CopyTo_EnsureTargetdir_TargetDirIsEnsured");
+            var testdir = @"CopyTo_EnsureTargetdir_TargetDirIsEnsured".ToDir();
             testdir.DeleteIfExists();
             var testFile1 = new TestFile1();
             Action action = () => testFile1.CopyTo(testdir, false, ensureTargetDir);
@@ -78,10 +79,10 @@ namespace DotNet.Basics.Tests.IO
         }
 
 
-        [Test]
+        [Fact]
         public void MoveTo_RenameFileInSameFolder_FileIsRenamed()
         {
-            var testdir = TestContext.CurrentContext.TestDirectory.ToDir("MoveTo_RenameFileInSameFolder_FileIsRenamed");
+            var testdir = @"MoveTo_RenameFileInSameFolder_FileIsRenamed".ToDir();
             testdir.CleanIfExists();
             var sourceFile = testdir.ToFile("blaaOld.txt");
             var tagetFile = testdir.ToFile("blaaNew.txt");
@@ -96,7 +97,7 @@ namespace DotNet.Basics.Tests.IO
             tagetFile.Exists().Should().BeTrue("Target file after move");
         }
 
-        [Test]
+        [Fact]
         public void ToFile_CombineToFileInfo_FullNameIsCorrect()
         {
             var actual = _testDirRoot.ToFile(_testFile).FullName;
@@ -104,7 +105,7 @@ namespace DotNet.Basics.Tests.IO
             actual.Should().Be(expected);
         }
 
-        [Test]
+        [Fact]
         public void ToFile_ParentFolderCombine_FileNameIsCombined()
         {
             var file = _testDoubleDir.ToFile(_testFile);
@@ -112,7 +113,7 @@ namespace DotNet.Basics.Tests.IO
         }
 
 
-        [Test]
+        [Fact]
         public void ToTargetFile_MultipleDirCombine_TargetFileHasNewDir()
         {
             const string fileName = "myFile.temp";
@@ -123,7 +124,7 @@ namespace DotNet.Basics.Tests.IO
 
             targetfile.FullName.Should().Be(@"c:\MyPath\subfolder1\subfolder2\" + fileName);
         }
-        [Test]
+        [Fact]
         public void ToTargetFile_SingleDirCombine_TargetFileHasNewDir()
         {
             const string fileName = @"c:\Something\myFile.temp";
@@ -134,12 +135,12 @@ namespace DotNet.Basics.Tests.IO
             targetfile.FullName.Should().Be(@"c:\MyPath\myFile.temp");
         }
 
-        [Test]
-        [TestCase("MyFile", ".txt")]//has extension
-        [TestCase("MyFile", "")]//no extension
-        [TestCase("", ".txt")]//only extension
-        [TestCase(null, ".txt")]//name is null
-        [TestCase("MyFile", null)]//extension is null
+        [Theory]
+        [InlineData("MyFile", ".txt")]//has extension
+        [InlineData("MyFile", "")]//no extension
+        [InlineData("", ".txt")]//only extension
+        [InlineData(null, ".txt")]//name is null
+        [InlineData("MyFile", null)]//extension is null
         public void Extension_FileNameExtension_ExtensionIsRecognized(string name, string extension)
         {
             var expectedFullName = name + extension;

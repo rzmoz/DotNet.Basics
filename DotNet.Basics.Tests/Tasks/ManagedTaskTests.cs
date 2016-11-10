@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks
 {
-    [TestFixture]
+    
     public class ManagedTaskTests
     {
-        [Test]
+        [Fact]
         public async Task RunAsync_ArgsIsNull_ArgsIsDefault()
         {
             var argsIsNotNull = false;
@@ -22,7 +22,7 @@ namespace DotNet.Basics.Tests.Tasks
             argsIsNotNull.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public async Task RunAsync_EventRaising_StartAndEndedEventAreRaised()
         {
             var myKey = "!sfrwe";
@@ -57,7 +57,7 @@ namespace DotNet.Basics.Tests.Tasks
             resultArgs.Value.Should().Be(argsValue);
         }
 
-        [Test]
+        [Fact]
         public async Task RunAsync_Exception_ExceptionIsCapturedInTaskEndEvent()
         {
             var exMessage = "buuh";
@@ -81,7 +81,7 @@ namespace DotNet.Basics.Tests.Tasks
             endedArgs.Exception.Message.Should().Be(exMessage);
         }
 
-        [Test]
+        [Fact]
         public async Task TaskStarted_EventRaising_EndedEventIsRaised()
         {
             var eventRaised = false;
@@ -107,7 +107,7 @@ namespace DotNet.Basics.Tests.Tasks
             observedValue.Should().Be(myValue);
         }
 
-        [Test]
+        [Fact]
         public async Task RunAsync_SyncTask_TaskIsOnlyRunWhenInvoked()
         {
             var taskRan = false;
@@ -118,7 +118,7 @@ namespace DotNet.Basics.Tests.Tasks
             await task.RunAsync().ConfigureAwait(false);
             taskRan.Should().BeTrue();
         }
-        [Test]
+        [Fact]
         public async Task RunAsync_AsyncTask_TaskIsOnlyRunWhenInvoked()
         {
             var taskRan = false;

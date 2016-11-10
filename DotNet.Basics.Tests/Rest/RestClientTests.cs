@@ -10,14 +10,14 @@ using DotNet.Basics.Rest;
 using FluentAssertions;
 using Newtonsoft.Json;
 using NSubstitute;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Rest
 {
-    [TestFixture]
+    
     public class RestClientTests
     {
-        [Test]
+        [Fact]
         public async Task ExecuteTAsync_ValidRquest_RequestIsReceived()
         {
             var request = new RestRequest("https://files-stackablejs.netdna-ssl.com/stacktable.min.js", HttpMethod.Get);
@@ -28,7 +28,7 @@ namespace DotNet.Basics.Tests.Rest
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
-        [Test]
+        [Fact]
         public async Task ExecuteAsync_ValidRquest_RequestIsReceived()
         {
             var request = new RestRequest("https://files-stackablejs.netdna-ssl.com/stacktable.min.js", HttpMethod.Get);
@@ -40,7 +40,7 @@ namespace DotNet.Basics.Tests.Rest
         }
 
         /*
-        [Test]
+        [Fact]
         public void ExecuteAsync_FailedRequest_NoExceptions()
         {
             const string uri = "http://this.domain.does.not.exist/Something";
@@ -54,7 +54,7 @@ namespace DotNet.Basics.Tests.Rest
             action.ShouldThrow<RestRequestException>().WithInnerException<HttpRequestException>().Which.Request.Uri.ToString().Should().Be(uri);
         }*/
 
-        [Test]
+        [Fact]
         public void ExecuteTAsync_ContentType_ContentTypeIsAddedToContent()
         {
             var request = new RestRequest("https://files-stackablejs.netdna-ssl.com/stacktable.min.js/", HttpMethod.Post)
@@ -66,7 +66,7 @@ namespace DotNet.Basics.Tests.Rest
         }
 
 
-        [Test]
+        [Fact]
         public void ExecuteTAsync_ResponseBodyNotProperValueTo_ExceptionIsThrown()
         {
             var request = new RestRequest("https://my.server.com", HttpMethod.Get);
@@ -77,7 +77,7 @@ namespace DotNet.Basics.Tests.Rest
             action.ShouldThrow<RestReaderException>();
         }
 
-        [Test]
+        [Fact]
         public async Task ExecuteAsync_ResponseGottenAndQuotesStripped_ShouldDeserializeString()
         {
             //arrange
@@ -90,7 +90,7 @@ namespace DotNet.Basics.Tests.Rest
             restResponse.Content.Should().Be(contentWithQuotes.Trim('\"'));
         }
 
-        [Test]
+        [Fact]
         public async Task ExecuteAsync_EmptyResponse_ShouldNotThrowException()
         {
             //arrange
@@ -102,7 +102,7 @@ namespace DotNet.Basics.Tests.Rest
             restResponse.Content.Should().Be(string.Empty);
         }
 
-        [Test]
+        [Fact]
         public async Task ExecuteAsync_ResponseGotten_ShouldBeDeserialized()
         {
             //arrange
@@ -123,7 +123,7 @@ namespace DotNet.Basics.Tests.Rest
             clientFromRequest.PhoneNumbers.Should().ContainKey("Work").WhichValue.Should().Be("+380769508682");
         }
 
-        [Test]
+        [Fact]
         public void ExecuteAsync_ExceptionThrown_ShoulBeHandled()
         {
             //arrange

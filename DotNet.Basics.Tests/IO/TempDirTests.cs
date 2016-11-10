@@ -2,19 +2,19 @@
 using System.Linq;
 using DotNet.Basics.IO;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 
 namespace DotNet.Basics.Tests.IO
 {
-    [TestFixture]
+    
     public class TempDirTests
     {
-        [Test]
+        [Fact]
         public void Ctor_RandomNess_RandomDirsAreGenerated()
         {
             const int numOfDirsToGenerate = 23;//prime
-            var rootDir = TestContext.CurrentContext.TestDirectory.ToDir("Ctor_RandomNess_RandomDirsAreGenerated");
+            var rootDir = @"Ctor_RandomNess_RandomDirsAreGenerated".ToDir();
             var dirs = new Dictionary<string, TempDir>();//dic to ensure names are unique
             foreach (var i in Enumerable.Range(1, numOfDirsToGenerate))
             {

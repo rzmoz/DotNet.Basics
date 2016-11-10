@@ -5,14 +5,14 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using DotNet.Basics.Rest;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Rest
 {
-    [TestFixture]
+    
     public class RestResponseTests
     {
-        [Test]
+        [Fact]
         public async Task Headers_HeadersInResponse_Captured()
         {
             var request = new RestRequest("https://files-stackablejs.netdna-ssl.com/stacktable.min.js", HttpMethod.Get);
@@ -26,7 +26,7 @@ namespace DotNet.Basics.Tests.Rest
             response.HttpResponseMessage.Headers.Count().Should().BeGreaterOrEqualTo(15);
         }
 
-        [Test]
+        [Fact]
         public async Task ToString_Debug_StringIsDebugFriendly()
         {
             var request = new RestRequest("http://dr.dk/");
@@ -40,7 +40,7 @@ namespace DotNet.Basics.Tests.Rest
             result.Should().StartWith("StatusCode: 200, ReasonPhrase: 'OK', Version: 1.1, Content: System.Net.Http.StreamContent, Headers:");
         }
 
-        [Test]
+        [Fact]
         public void Content_TrimContent_ContentIsTrimmed()
         {
             var responseMessage = new HttpResponseMessage { Content = new StringContent(@"""Content With Quotes""") };
@@ -49,7 +49,7 @@ namespace DotNet.Basics.Tests.Rest
             response.Content.Should().Be("Content With Quotes");//but without quotes..
         }
 
-        [Test]
+        [Fact]
         public void Content_TrimContent_ContentIsNotTrimmed()
         {
             var contentWithQuotes = @"""Content With Quotes""";

@@ -4,18 +4,18 @@ using System.Linq;
 using System.Runtime.Serialization.Json;
 using DotNet.Basics.Collections;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Collections
 {
-    [TestFixture]
+    
     public class StringDictionaryTests
     {
         const string _myKey = "myKey";
         const string _myValue = "myValue";
         const string _myKeyThatDoesntExist = "SOMEKEYTHATDOESNTEXIST";
 
-        [Test]
+        [Fact]
         public void Json_Serialization_ProperJson()
         {
             //arrange 
@@ -42,7 +42,7 @@ namespace DotNet.Basics.Tests.Collections
             newKvc.Single().Value.Should().Be(kvc.Single().Value);
         }
 
-        [Test]
+        [Fact]
         public void Ctor_WithDictionaryAsArgument_ArgsAreInCollection()
         {
             var args = new Dictionary<string, string> { { _myKey, _myValue } };
@@ -52,7 +52,7 @@ namespace DotNet.Basics.Tests.Collections
             kvCollection[_myKey].Should().Be(_myValue);
         }
 
-        [Test]
+        [Fact]
         public void Enumerator_Enumerate_ItemsAreRetrived()
         {
             IEnumerable<StringPair> args = new[] { new StringPair(_myKey, _myValue) };
@@ -62,7 +62,7 @@ namespace DotNet.Basics.Tests.Collections
             kvCollection.Single().Value.Should().Be(_myValue);
         }
 
-        [Test]
+        [Fact]
         public void Ctor_WithEnumerableAsArgument_ThrowsException()
         {
             var args = new[] { new StringPair(_myKey, _myValue) };
@@ -74,7 +74,7 @@ namespace DotNet.Basics.Tests.Collections
             action.ShouldThrow<KeyNotFoundException>();
         }
 
-        [Test]
+        [Fact]
         public void Ctor_KeyModeNullIfNotFound_NullIsReturned()
         {
             var kvCollection = new StringDictionary(DictionaryKeyMode.KeyCaseSensitive, KeyNotFoundMode.ReturnDefault) { [_myKey] = _myValue };
@@ -82,7 +82,7 @@ namespace DotNet.Basics.Tests.Collections
             kvCollection[_myKeyThatDoesntExist].Should().BeNull();
         }
 
-        [Test]
+        [Fact]
         public void Ctor_KeyModeNotFoundExceptionfNotFound_ExceptionIsThrown()
         {
             var kvCollection = new StringDictionary(DictionaryKeyMode.IgnoreKeyCase, KeyNotFoundMode.ThrowKeyNotFoundException);
@@ -94,14 +94,14 @@ namespace DotNet.Basics.Tests.Collections
         }
 
 
-        [Test]
+        [Fact]
         public void SetIndexer_KeyDoesNotExist_ValueIsAdded()
         {
             var kvCollection = new StringDictionary { [_myKey] = _myValue };
 
             kvCollection[_myKey].Should().Be(_myValue);
         }
-        [Test]
+        [Fact]
         public void SetIndexer_KeyAlreadyExists_ValueIsUpdated()
         {
             var kvCollection = new StringDictionary { [_myKey] = _myValue };
@@ -112,7 +112,7 @@ namespace DotNet.Basics.Tests.Collections
             kvCollection[_myKey].Should().Be(newValue);
         }
 
-        [Test]
+        [Fact]
         public void Add_KeyDoesNotExist_ValueIsAdded()
         {
             var kvCollection = new StringDictionary { { _myKey, _myValue } };
@@ -121,7 +121,7 @@ namespace DotNet.Basics.Tests.Collections
             kvCollection[_myKey].Should().Be(_myValue);
         }
 
-        [Test]
+        [Fact]
         public void Count_Count_ItemsAreCounted()
         {
             var kvCollection = new StringDictionary();
@@ -135,7 +135,7 @@ namespace DotNet.Basics.Tests.Collections
             kvCollection.Count.Should().Be(count);
         }
 
-        [Test]
+        [Fact]
         public void ToString_Formatting_StringIsJson()
         {
             var kvc = new StringDictionary(new StringPair(_myKey, _myValue).ToEnumerable());

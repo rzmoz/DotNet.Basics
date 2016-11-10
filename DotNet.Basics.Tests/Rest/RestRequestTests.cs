@@ -2,18 +2,18 @@
 using System.Text;
 using DotNet.Basics.Rest;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Rest
 {
-    [TestFixture]
+    
     internal class RestRequestTests
     {
-        [Test]
-        [TestCase("http://localhost/", "/path")]//both hostUrl and path has slash
-        [TestCase("http://localhost", "path")]//neither hostUrl nor path has slash
-        [TestCase("http://localhost/", "path")]//only hostUrl has slash
-        [TestCase("http://localhost", "/path")]//only path has slash
+        [Theory]
+        [InlineData("http://localhost/", "/path")]//both hostUrl and path has slash
+        [InlineData("http://localhost", "path")]//neither hostUrl nor path has slash
+        [InlineData("http://localhost/", "path")]//only hostUrl has slash
+        [InlineData("http://localhost", "/path")]//only path has slash
         public void Ctor_UrlConcatanation_UrlIsConcatanedCorrectly(string hostUrl, string path)
         {
             var request = new RestRequest(hostUrl, path);
@@ -21,7 +21,7 @@ namespace DotNet.Basics.Tests.Rest
             request.Uri.ToString().Should().Be("http://localhost/path");
         }
 
-        [Test]
+        [Fact]
         public void ToString_Formatting_StringIsDebugFriendly()
         {
             var request = new RestRequest("http://dr.dk/mypath", HttpMethod.Put);
@@ -31,7 +31,7 @@ namespace DotNet.Basics.Tests.Rest
             result.Should().StartWith("Method: PUT, RequestUri: 'http://dr.dk/mypath', Version: 1.1");
         }
 
-        [Test]
+        [Fact]
         public void ToString_FormattingWithcontent_StringIsDebugFriendly()
         {
             var request = new RestRequest("http://dr.dk/mypath", HttpMethod.Post);
@@ -48,7 +48,7 @@ namespace DotNet.Basics.Tests.Rest
             result.Should().Contain("MyHeader3: HeaderValue3");
         }
 
-        [Test]
+        [Fact]
         public void Uri_Get_IsSet()
         {
             const string domain = "www.google.com";
@@ -58,7 +58,7 @@ namespace DotNet.Basics.Tests.Rest
             request.Uri.ToString().Should().Be("http://" + domain + "/");
         }
 
-        [Test]
+        [Fact]
         public void Ctor_NoProtocol_Ok()
         {
             var request = new RestRequest("localhost");
@@ -66,7 +66,7 @@ namespace DotNet.Basics.Tests.Rest
             request.Uri.ToString().Should().Be("localhost");
         }
 
-        [Test]
+        [Fact]
         public void Ctor_ValidHttpHostUrl_Ok()
         {
             var request = new RestRequest("http://localhost");
@@ -75,7 +75,7 @@ namespace DotNet.Basics.Tests.Rest
             request.Uri.Host.Should().Be("localhost");
         }
 
-        [Test]
+        [Fact]
         public void Ctor_ValidHttpHostUrlEndsWithSlash_Ok()
         {
             var request = new RestRequest("http://localhost/");
@@ -84,7 +84,7 @@ namespace DotNet.Basics.Tests.Rest
             request.Uri.Host.Should().Be("localhost");
         }
 
-        [Test]
+        [Fact]
         public void Ctor_ValidHttspHostUrl_Ok()
         {
             var request = new RestRequest("https://localhost");
@@ -93,7 +93,7 @@ namespace DotNet.Basics.Tests.Rest
             request.Uri.Host.Should().Be("localhost");
         }
 
-        [Test]
+        [Fact]
         public void Ctor_ValidHttspHostUrlEndsWithSlash_Ok()
         {
             var request = new RestRequest("https://localhost/");

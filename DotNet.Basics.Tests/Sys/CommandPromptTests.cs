@@ -2,19 +2,19 @@
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
 {
-    [TestFixture]
+    
     public class CommandPromptTests
     {
-        [Test]
+        [Fact]
         public void Run_ExitCode_ExitCodeIsReturned()
         {
             const int exitCode = 16;
             
-            var consolePath = TestContext.CurrentContext.TestDirectory.ToFile("DotNet.Basics.TestsConsole.exe");
+            var consolePath = @"DotNet.Basics.TestsConsole.exe".ToFile();
 
             var observedExitCode = CommandPrompt.Run($"{consolePath } {exitCode}");
             observedExitCode.Should().Be(exitCode);

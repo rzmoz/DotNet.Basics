@@ -2,14 +2,14 @@
 using System.Threading.Tasks;
 using DotNet.Basics.Tasks;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks
 {
-    [TestFixture]
+    
     public class OnceOnlyTaskTests
     {
-        [Test]
+        [Fact]
         public async Task AsyncTask_Run_ActionIsOnlyExecutedOnce()
         {
             var counter = 0;
@@ -22,7 +22,7 @@ namespace DotNet.Basics.Tests.Tasks
             counter.Should().Be(1);
         }
 
-        [Test]
+        [Fact]
         public async Task AsyncTask_RunWithException_ActionIsOnlyExecutedOnce()
         {
             var counter = 0;
@@ -36,7 +36,7 @@ namespace DotNet.Basics.Tests.Tasks
             counter.Should().Be(1);
         }
 
-        [Test]
+        [Fact]
         public void SyncTask_Run_ActionIsOnlyExecutedOnce()
         {
             var counter = 0;
@@ -48,7 +48,7 @@ namespace DotNet.Basics.Tests.Tasks
             counter.Should().Be(1);
         }
 
-        [Test]
+        [Fact]
         public void SyncTask_RunWithException_ActionIsOnlyExecutedOnce()
         {
             var counter = 0;

@@ -1,15 +1,15 @@
 ﻿using System;
 using DotNet.Basics.Sys;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
 {
-    [TestFixture]
+    
     public class EnumExtensionsTests
     {
 
-        [Test]
+        [Fact]
         public void IsProperFlagsEnum_Parse_IsGood()
         {
             var result = typeof(TestEnum).IsProperFlagsEnum();
@@ -17,7 +17,7 @@ namespace DotNet.Basics.Tests.Sys
             result.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public void ToName_ParseRightType_NameIsPArsedNotNumValue()
         {
             var result = TestEnum.This.ToName();
@@ -25,7 +25,7 @@ namespace DotNet.Basics.Tests.Sys
             result.Should().Be("This");
         }
 
-        [Test]
+        [Fact]
         public void IsProperFlagsEnum_MissingFlagsAttribute_IsGood()
         {
             var result = typeof(EnumWithoutFlagsAttribute).IsProperFlagsEnum();
@@ -33,7 +33,7 @@ namespace DotNet.Basics.Tests.Sys
             result.Should().BeFalse();
         }
 
-        [Test]
+        [Fact]
         public void IsProperFlagsEnum_ImProperValueSequence_IsGood()
         {
             var result = typeof(EnumWithBadFlagsValueSequence).IsProperFlagsEnum();
@@ -41,14 +41,14 @@ namespace DotNet.Basics.Tests.Sys
             result.Should().BeFalse();
         }
 
-        [Test]
+        [Fact]
         public void ToEnum_Parse_EnumIsParsed()
         {
             var @enum = "This".ToEnum<TestEnum>();
             @enum.Should().Be(TestEnum.This);
         }
 
-        [Test]
+        [Fact]
         public void ToEnum_InvalidInput_ExceptionIsThrown()
         {
             Action act = () => "SomethingNotValidxxxxxxxx".ToEnum<TestEnum>();
@@ -56,14 +56,14 @@ namespace DotNet.Basics.Tests.Sys
             act.ShouldThrow<ArgumentException>();
         }
 
-        [Test]
+        [Fact]
         public void ToEnum_ParseCaseInsensitive_EnumIsParsed()
         {
             var @enum = "tHis".ToEnum<TestEnum>();
             @enum.Should().Be(TestEnum.This);
         }
 
-        [Test]
+        [Fact]
         public void ToEnum_HasMultiple_EnumHasAll()
         {
             const TestEnum value = TestEnum.This | TestEnum.That;
@@ -72,21 +72,21 @@ namespace DotNet.Basics.Tests.Sys
             value.Has(TestEnum.That).Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public void IsEnum_Parse_True()
         {
             var result = "This".IsEnum<TestEnum>();
             result.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public void IsEnum_InvalidInput_False()
         {
             var result = "SomethingNotValidxxxxxxxx".IsEnum<TestEnum>();
             result.Should().BeFalse();
         }
 
-        [Test]
+        [Fact]
         public void FlagsEnums()
         {
             var value = TestEnum.This;

@@ -1,13 +1,13 @@
 ﻿using DotNet.Basics.IO;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-    [TestFixture]
+    
     public class TempWorkDirTests
     {
-        [Test]
+        [Fact]
         public void Use_Dir_DirExists()
         {
             PathInfo dir = null;

@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using DotNet.Basics.Collections;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Collections
 {
-    [TestFixture]
+    
     public class StringCollectionExtensionsTests
     {
         private const string _elementSomething = "myElement1";
@@ -13,7 +13,7 @@ namespace DotNet.Basics.Tests.Collections
         readonly string[] _allPattern = { "*" };
         readonly string[] _all = { _elementSomething, _elementElse };
 
-        [Test]
+        [Fact]
         public void Blacklisted_AllWildcard_WildcardsAreObeyed()
         {
             _all.Length.Should().Be(2, "all length");
@@ -26,7 +26,7 @@ namespace DotNet.Basics.Tests.Collections
 
         }
 
-        [Test]
+        [Fact]
         public void Blacklisted_MultipleWildcards_WildcardsAreObeyed()
         {
             var blacklist = new[] { "*element*".ToUpper() };//ignore case as well
@@ -40,7 +40,7 @@ namespace DotNet.Basics.Tests.Collections
 
         }
 
-        [Test]
+        [Fact]
         public void Blacklisted_WildcardEndsWith_WildcardsAreObeyed()
         {
             var blacklist = new[] { "*T1" };//ignore case
@@ -55,7 +55,7 @@ namespace DotNet.Basics.Tests.Collections
         }
 
 
-        [Test]
+        [Fact]
         public void Blacklisted_WildcardStartsWith_WildcardsAreObeyed()
         {
             var blacklist = new[] { "MY*" };//ignore case
@@ -69,7 +69,7 @@ namespace DotNet.Basics.Tests.Collections
             result.Any().Should().BeFalse();
         }
 
-        [Test]
+        [Fact]
         public void Blacklisted_ExplicitMatch_MatchIsBlacklisted()
         {
             var blacklist = new[] { _elementSomething };
@@ -83,7 +83,7 @@ namespace DotNet.Basics.Tests.Collections
             result.Single().Should().Be(_elementElse);
         }
 
-        [Test]
+        [Fact]
         public void Blacklisted_ExplicitMatchNotFound_NothingIsBlacklisted()
         {
             var exclude = new[] { "SomethingElse" };
@@ -100,7 +100,7 @@ namespace DotNet.Basics.Tests.Collections
         }
 
 
-        [Test]
+        [Fact]
         public void Whitelisted_WildcardAll_AllIsIncluded()
         {
             //act
@@ -114,7 +114,7 @@ namespace DotNet.Basics.Tests.Collections
             result.Last().Should().Be(_elementElse);
         }
 
-        [Test]
+        [Fact]
         public void Whitelisted_MultipleWildcards_WildcardsAreObeyed()
         {
             var whitelist = new[] { "*element*".ToUpper() };//ignore case as well
@@ -129,7 +129,7 @@ namespace DotNet.Basics.Tests.Collections
             result.Last().Should().Be(_elementElse);
         }
 
-        [Test]
+        [Fact]
         public void Whitelisted_WildcardEndsWith_WildcardsAreObeyed()
         {
             var whitelist = new[] { "*T1" };//ignore case
@@ -144,7 +144,7 @@ namespace DotNet.Basics.Tests.Collections
         }
 
 
-        [Test]
+        [Fact]
         public void Whitelisted_WildcardStartsWith_WildcardsAreObeyed()
         {
             var whitelist = new[] { "MY*" };//ignore case
@@ -160,7 +160,7 @@ namespace DotNet.Basics.Tests.Collections
             result.Last().Should().Be(_elementElse);
         }
 
-        [Test]
+        [Fact]
         public void Whitelisted_ExactMatch_MatchIsIncluded()
         {
             var includeWithAlreadyIncludedElements = new[] { _elementSomething };
@@ -173,7 +173,7 @@ namespace DotNet.Basics.Tests.Collections
             result.Single().Should().Be(_elementSomething);
         }
 
-        [Test]
+        [Fact]
         public void Whitelisted_ExactMatchNotFound_NothingIsReturned()
         {
             var newIncludeElement = "NewInclude";

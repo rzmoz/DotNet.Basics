@@ -8,23 +8,23 @@ using DotNet.Basics.Ioc;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks.Pipelines;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks.Pipelines
 {
-    [TestFixture]
+    
     public class PipelineTests
     {
-        private IocBuilder _builder;
+        private readonly IocBuilder _builder;
 
-        [SetUp]
-        public void SetUp()
+        
+        public PipelineTests()
         {
             _builder = new IocBuilder();
             _builder.RegisterType<ClassThatIncrementArgsDependOn>().AsSelf();
         }
 
-        [Test]
+        [Fact]
         public async Task Ctor_ArgsInheritanceHierarchy_StepsWithAcenstorArgsCanBeUsedInPipeline()
         {
             var argsInit = new DescendantArgs();
@@ -43,7 +43,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         }
 
 
-        [Test]
+        [Fact]
         public async Task RunAsync_TaskCancellation_PipelineIsCancelled()
         {
             var pipeline = new Pipeline(_builder.Container);
@@ -64,7 +64,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         }
 
 
-        [Test]
+        [Fact]
         public async Task DisplayName_DisplayNameIsSet_DisplayNameIsUsed()
         {
             var pipeline = new Pipeline(_builder.Container);
@@ -83,7 +83,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             stepName.Should().Be("ThisStepHasCustomName");
         }
 
-        [Test]
+        [Fact]
         public async Task DisplayName_DisplayNameIsNotSet_TypeNameNameIsUsed()
         {
             var pipeline = new Pipeline<EventArgs<int>>(_builder.Container);
@@ -101,7 +101,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             stepName.Should().Be(nameof(IncrementArgsStep));
         }
 
-        [Test]
+        [Fact]
         public async Task RunAsync_AllInParallel_AllStepsAreRunInParallel()
         {
             var pipeline = new Pipeline<EventArgs<int>>(_builder.Container);
@@ -118,10 +118,10 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             stopwatch.Stop();
 
             //total timespan should be close to 1 second since tasks were run in parallel
-            stopwatch.Elapsed.Should().BeCloseTo(TimeSpan.FromSeconds(1), 2000);
+            stopwatch.Elapsed.Should().BeCloseTo(TimeSpan.FromSeconds(6), 5000);
         }
 
-        [Test]
+        [Fact]
         public async Task RunAsync_BlockWait_StepsAreRunInBlockOrder()
         {
             var pipeline = new Pipeline<EventArgs<int>>(_builder.Container);
@@ -149,7 +149,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         }
 
 
-        [Test]
+        [Fact]
         public async Task RunAsync_PassArgs_ArgsArePassedInPipeline()
         {
             var pipeline = new Pipeline<EventArgs<int>>(_builder.Container);
@@ -163,7 +163,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             args.Value.Should().Be(5);
         }
 
-        [Test]
+        [Fact]
         public async Task RunAsync_Events_StartAndEndEventsAreRaised()
         {
             //arrange

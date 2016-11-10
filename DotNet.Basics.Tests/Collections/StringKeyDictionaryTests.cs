@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using DotNet.Basics.Collections;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Collections
 {
-    [TestFixture]
+    
     public class StringKeyDictionaryTests
     {
         private const string _myKey = "MyKey";
         private const string _myValue = "MyValue";
 
-        [Test]
+        [Fact]
         public void KeyNotFoundMode_ThrowException_ExceptionIsThrown()
         {
             var dic = new StringKeyDictionary<string>(DictionaryKeyMode.IgnoreKeyCase, KeyNotFoundMode.ThrowKeyNotFoundException);
@@ -21,7 +21,7 @@ namespace DotNet.Basics.Tests.Collections
             action.ShouldThrow<KeyNotFoundException>();
         }
 
-        [Test]
+        [Fact]
         public void KeyNotFoundMode_Defaukt_NullIsReturned()
         {
             var dic = new StringKeyDictionary<string>(DictionaryKeyMode.IgnoreKeyCase, KeyNotFoundMode.ReturnDefault);
@@ -32,7 +32,7 @@ namespace DotNet.Basics.Tests.Collections
 
 
 
-        [Test]
+        [Fact]
         public void Add_AddItemCaseInsensitive_ItemIsAdded()
         {
             var dic = new StringKeyDictionary<string>(DictionaryKeyMode.IgnoreKeyCase, KeyNotFoundMode.ReturnDefault);
@@ -41,7 +41,7 @@ namespace DotNet.Basics.Tests.Collections
             dic.Count.Should().Be(1);
         }
 
-        [Test]
+        [Fact]
         public void Get_GetValue_ValueIsRetrived()
         {
             var dic = new StringKeyDictionary<string>(DictionaryKeyMode.IgnoreKeyCase, KeyNotFoundMode.ReturnDefault);
@@ -52,7 +52,7 @@ namespace DotNet.Basics.Tests.Collections
             dic[_myKey.ToUpper()].Should().Be(_myValue);
         }
 
-        [Test]
+        [Fact]
         public void Get_KeyDoesntExist_ExceptionIsThrown()
         {
             var dic = new StringKeyDictionary<string>();
@@ -62,7 +62,7 @@ namespace DotNet.Basics.Tests.Collections
         }
 
 
-        [Test]
+        [Fact]
         public void Set_SetValue_ValueIsSet()
         {
             var dic = new StringKeyDictionary<string>(DictionaryKeyMode.IgnoreKeyCase, KeyNotFoundMode.ReturnDefault);

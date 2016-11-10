@@ -2,14 +2,14 @@
 using System.Threading.Tasks;
 using DotNet.Basics.Tasks.Repeating;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks.Repeating
 {
-    [TestFixture]
+    
     public class RepeaterTaskTests
     {
-        [Test]
+        [Fact]
         public void Ping_Success_PingOnImmediateSucccess_PingIsOnlyCalledOnRetry()
         {
             var pingWasCalled = false;
@@ -25,7 +25,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             taskRan.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public void Finally_NoExceptionInAction_ExceptionInfinallyIsFloated()
         {
             Action action = () => Repeat.Task(() => { })
@@ -39,7 +39,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             action.ShouldThrow<System.IO.IOException>();
         }
 
-        [Test]
+        [Fact]
         public void Finally_ExInBothFinallyAndAction_BothExceptionsAreFloated()
         {
             Action action = () => Repeat.Task(() => { throw new ApplicationException(); })
@@ -53,7 +53,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             action.ShouldThrow<AggregateException>().WithInnerException<ApplicationException>();
         }
 
-        [Test]
+        [Fact]
         public void Finally_EarlyBreak_FinallyIsExecutedEvenThoughTaskNeverCompleted()
         {
             var @finally = false;
@@ -80,7 +80,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
         }
 
 
-        [Test]
+        [Fact]
         public async Task DontRethrowOnTaskFailedType_NamedExceptionsWillBeThrownOnTaskEnd_TaskFails()
         {
             var doCounter = 0;
@@ -101,7 +101,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
         }
 
 
-        [Test]
+        [Fact]
         public void Task_ExceptionIgnoredDuringRepeatUntilPredicateSetButNeverSucceeded_ActionIsInvokedFiveTimesAndExceptionIsThrownAtTheEnd()
         {
             var doCounter = 0;
@@ -124,7 +124,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             //we can assert result as it never returned properly
         }
 
-        [Test]
+        [Fact]
         public async Task TaskAsync_InvokeFiveTimes_ActionIsInvokedFiveTimes()
         {
             var invoked = 0;
@@ -144,7 +144,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             result.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public void Task_UntilNoExceptionsAreThrown_LoopIsRunUntilNoExceptions()
         {
             const int stopThrowingExceptionsAt = 5;
@@ -163,7 +163,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             result.Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public void Task_TimeOut_ActionTimesOut()
         {
             var doCounter = 0;
@@ -180,7 +180,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             result.Should().BeFalse();
         }
 
-        [Test]
+        [Fact]
         public void Task_TimeOutWithNoUntil_ActionTimesOut()
         {
             var doCounter = 0;
@@ -199,7 +199,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
         }
 
 
-        [Test]
+        [Fact]
         public void Task_MaxTries_ActionMaxedOutOnRetries()
         {
             var doCounter = 0;
@@ -218,7 +218,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             result.Should().BeFalse();
         }
 
-        [Test]
+        [Fact]
         public void Task_InvokeAndPingback_ActionsAreInvokedTheRightNumberOfTimes()
         {
             var doCounter = 0;
@@ -240,7 +240,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             result.Should().BeFalse();
         }
 
-        [Test]
+        [Fact]
         public void TaskOnce_InvokeAndPingback_ActionsAreInvokedTheRightNumberOfTimes()
         {
             var doCounter = 0;
@@ -261,7 +261,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             //we never got a true result (the thing we were waiting for never succeeded)
             result.Should().BeFalse();
         }
-        [Test]
+        [Fact]
         public void TaskOnceAsync_InvokeAndPingback_ActionsAreInvokedTheRightNumberOfTimes()
         {
             var doCounter = 0;

@@ -1,21 +1,21 @@
 ﻿using DotNet.Basics.Sys;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
 {
-    [TestFixture]
+    
     public class ObservableTests
     {
-        private Observable<string> _primitiveObservable;
+        private readonly Observable<string> _primitiveObservable;
 
-        [SetUp]
-        public void Setup()
+        
+        public ObservableTests()
         {
             _primitiveObservable = new Observable<string>();
         }
 
-        [Test]
+        [Fact]
         public void Updated_TriggerEvent_EventIsFired()
         {
             //arrange

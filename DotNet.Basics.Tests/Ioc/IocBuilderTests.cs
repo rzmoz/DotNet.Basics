@@ -5,22 +5,22 @@ using DotNet.Basics.AppSettings;
 using DotNet.Basics.Ioc;
 using DotNet.Basics.Tests.Ioc.TestHelpers;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Ioc
 {
-    [TestFixture]
+    
     public class IocBuilderTests
     {
-        private IocBuilder _builder;
+        private readonly IocBuilder _builder;
 
-        [SetUp]
-        public void SetUp()
+        
+        public IocBuilderTests()
         {
             _builder = new IocBuilder();
         }
 
-        [Test]
+        [Fact]
         public void Register_TypeThatDependsOnContainer_TypeIsResolved()
         {
             _builder.Register(new MyIocRegistrations());
@@ -29,7 +29,7 @@ namespace DotNet.Basics.Tests.Ioc
             typeThatDependesOnContainer.Value.Should().Be(mytype.GetValue());
         }
 
-        [Test]
+        [Fact]
         public void Build_Registrations_RegistrationsAreRegistered()
         {
             var container = _builder.Build();
@@ -37,7 +37,7 @@ namespace DotNet.Basics.Tests.Ioc
             getWithoutRegistrions.ShouldThrow<ComponentNotRegisteredException>();
         }
 
-        [Test]
+        [Fact]
         public void Ctor_Registrations_RegistrationsAreRegistered()
         {
             _builder.Register(new MyIocRegistrations());
@@ -45,7 +45,7 @@ namespace DotNet.Basics.Tests.Ioc
             myResolvedType.GetType().Should().Be<MyType1>();
         }
 
-        [Test]
+        [Fact]
         public void GetInstance_Singleton_InstanceIsResolved()
         {
             const int before = 1;
@@ -67,7 +67,7 @@ namespace DotNet.Basics.Tests.Ioc
             resolved2.Value.Should().Be(type.Value);
         }
 
-        [Test]
+        [Fact]
         public void GetInstance_ByInterface_InstanceIsResolved()
         {
             _builder.RegisterType<MyType1>().As<IMyType>().AsSelf();
@@ -80,7 +80,7 @@ namespace DotNet.Basics.Tests.Ioc
             resolvedByImplementation.GetType().Should().Be<MyType1>();
         }
 
-        [Test]
+        [Fact]
         public void GetInstance_UnregisteredDefaultConstructor_InstanceIsResolved()
         {
             using (var container = _builder.Build())

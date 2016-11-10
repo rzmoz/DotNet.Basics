@@ -3,19 +3,20 @@ using System.Linq;
 using DotNet.Basics.IO;
 using FluentAssertions;
 using Newtonsoft.Json;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-    [TestFixture]
+
     public class DirExtensionsTests
     {
         private const string _testDirRoot = @"K:\testDir";
         private const string _testDoubleDir = @"\testa\testb";
         private const string _testSingleDir = @"\testk\";
 
-        [TestCase("http://localhost/", "myDir/")] //http dir
-        [TestCase("https://localhost/", "myDir/")] //https dir
+        [Theory]
+        [InlineData("http://localhost/", "myDir/")] //http dir
+        [InlineData("https://localhost/", "myDir/")] //https dir
         public void FullName_Uri_ParsedPathIsUri(string uri, string segment)
         {
             var path = uri.ToDir(segment);
@@ -24,10 +25,10 @@ namespace DotNet.Basics.Tests.IO
             path.FullName.Should().Be(uri + segment);
         }
 
-        [Test]
+        [Fact]
         public void DeleteIfExists_DirExists_DirIsDeleted()
         {
-            var dir = TestContext.CurrentContext.TestDirectory.ToDir(@"DeleteIfExists_DirExists_DirIsDeleted");
+            var dir = @"DeleteIfExists_DirExists_DirIsDeleted".ToDir();
 
             dir.CreateIfNotExists();
 
@@ -40,14 +41,14 @@ namespace DotNet.Basics.Tests.IO
         }
 
 
-        [Test]
+        [Fact]
         public void DeleteIfExists_DeleteLongNamedDir_DirIsDeleted()
         {
             //arrange
             //we set up a folder with a really long name
             const string testDirName = "DeleteIfExists_DeleteLongNamedDir_DirIsDeleted";
 
-            var rootTestdir = TestContext.CurrentContext.TestDirectory.ToDir(testDirName);
+            var rootTestdir = ".".ToDir(testDirName);
             rootTestdir.CleanIfExists();
             var identicalSubDir = rootTestdir;
             try
@@ -74,35 +75,35 @@ namespace DotNet.Basics.Tests.IO
             rootTestdir.Exists().Should().BeFalse();
         }
 
-        [Test]
+        [Fact]
         public void Parent_NameOnlySourceDir_PartenIsResolved()
         {
-            var currentDir = TestContext.CurrentContext.TestDirectory.ToDir();
-            var dir = TestContext.CurrentContext.TestDirectory.ToDir(@"Parent_NameOnlySourceDir_PartenIsResolved");
+            var currentDir = ".".ToDir();
+            var dir = currentDir.FullName.ToDir(@"Parent_NameOnlySourceDir_PartenIsResolved");
 
             dir.Parent.FullName.Should().Be(currentDir.FullName);
         }
 
-        [Test]
+        [Fact]
         public void Parent_FullSourceDir_ParenItsResolved()
         {
-            var parent = TestContext.CurrentContext.TestDirectory.ToDir();
+            var parent = ".".ToDir();
             var subCir = parent.ToDir("Parent_ParentDir_PartenIsResolved");
 
             subCir.Parent.FullName.Should().Be(parent.FullName);
         }
 
 
-        [Test]
+        [Fact]
         public void CopyTo_IncludeSubDirectories_DirIsCopied()
         {
             const int dirDepth = 3;
-            var root = TestContext.CurrentContext.TestDirectory.ToDir("CopyTo_InclSubDirs_DirIsCop");
+            var root = @"CopyTo_InclSubDirs_DirIsCop".ToDir();
             root.DeleteIfExists();
             var currentDir = CreateIdenticalSubdirs(root, dirDepth);
             "blaaaa".WriteAllText(currentDir.ToFile("myFile.txt"));
 
-            var targetRoot = TestContext.CurrentContext.TestDirectory.ToDir(root.Name + "Target");
+            var targetRoot = ".".ToDir(root.Name + "Target");
             var targetDir = targetRoot.CreateSubDir(root.Name);
             targetDir.DeleteIfExists();
             targetDir.Exists().Should().BeFalse();
@@ -113,14 +114,14 @@ namespace DotNet.Basics.Tests.IO
             GetHierarchyDepth(targetDir).Should().Be(dirDepth + 1);
         }
 
-        [Test]
+        [Fact]
         public void ConsolidateIdenticalSubfolders_LookDepthLimit_LookDepthIsObeyed()
         {
             //arrange
             //we set up a folder with an identical named subfolder with dummy content
             const string testDirName = "ConsolidateTestDir_ForLookDepthLimit";
 
-            var rootTestdir = TestContext.CurrentContext.TestDirectory.ToDir(testDirName);
+            var rootTestdir = ".".ToDir(testDirName);
             rootTestdir.CleanIfExists();
 
             var currentDir = CreateIdenticalSubdirs(rootTestdir, 2);
@@ -147,14 +148,14 @@ namespace DotNet.Basics.Tests.IO
         }
 
 
-        [Test]
+        [Fact]
         public void ConsolidateIdenticalSubfolders_IgnoreCaseWhenConsolidating_IdenticalSubfoldersAreCOnsolidated()
         {
             //arrange
             //we set up a folder with an identical named subfolder with dummy content
             const string testDirName = "ConsolidateTestDir_WithReallyLongName";
 
-            var rootTestdir = TestContext.CurrentContext.TestDirectory.ToDir(testDirName);
+            var rootTestdir = ".".ToDir(testDirName);
             rootTestdir.CleanIfExists();
 
             var currentDir = CreateIdenticalSubdirs(rootTestdir, 3);
@@ -175,11 +176,11 @@ namespace DotNet.Basics.Tests.IO
             rootTestdir.GetDirectories(testDirName).Count().Should().Be(0);//the identical named subfolder should be gone
         }
 
-        [Test]
+        [Fact]
         public void CreateIfExists_CreateOptions_ExistingDirIsCleaned()
         {
             //arrange
-            var testDir = TestContext.CurrentContext.TestDirectory.ToDir(@"CreateIfExists_CreateOptions_ExistingDirIsCleaned");
+            var testDir = @"CreateIfExists_CreateOptions_ExistingDirIsCleaned".ToDir();
             @"bllll".WriteAllText(testDir.ToFile("myFile.txt"));
 
             testDir.Exists().Should().BeTrue();
@@ -194,11 +195,11 @@ namespace DotNet.Basics.Tests.IO
             testDir.GetFiles().Count().Should().Be(0);
         }
 
-        [Test]
+        [Fact]
         public void CreateIfExists_CreateOptions_ExistingDirIsNotCleaned()
         {
             //arrange
-            var testDir = TestContext.CurrentContext.TestDirectory.ToDir(@"CreateIfExists_CreateOptions_ExistingDirIsNotCleaned");
+            var testDir = @"CreateIfExists_CreateOptions_ExistingDirIsNotCleaned".ToDir();
             testDir.DeleteIfExists();
             @"bllll".WriteAllText(testDir.ToFile("myFile.txt"));
 
@@ -213,11 +214,11 @@ namespace DotNet.Basics.Tests.IO
             testDir.GetFiles().Count().Should().Be(1);
         }
 
-        [Test]
+        [Fact]
         public void CleanIfExists_DirDoesntExists_NoActionAndNoExceptions()
         {
             //arrange
-            var testDir = TestContext.CurrentContext.TestDirectory.ToDir(@"SOMETHINGTHAT DOESNT EXIST_BLAAAAAA");
+            var testDir = @"SOMETHINGTHAT DOESNT EXIST_BLAAAAAA".ToDir();
 
             //act
             testDir.CleanIfExists();
@@ -225,11 +226,11 @@ namespace DotNet.Basics.Tests.IO
             //assert
             testDir.Exists().Should().BeFalse();
         }
-        [Test]
+        [Fact]
         public void CleanIfExists_RemoveAllContentFromADir_DirIsCleaned()
         {
             //arrange
-            var testDir = TestContext.CurrentContext.TestDirectory.ToDir(@"CleanIfExists_RemoveAllContentFromADir_DirIsCleaned");
+            var testDir = @"CleanIfExists_RemoveAllContentFromADir_DirIsCleaned".ToDir();
             testDir.CreateIfNotExists();
 
             const int numOfTestFiles = 3;
@@ -244,7 +245,7 @@ namespace DotNet.Basics.Tests.IO
             testDir.GetFiles().Count().Should().Be(0);
         }
 
-        [Test]
+        [Fact]
         public void ToDir_CombineToDir_FullNameIsCorrect()
         {
             var actual = _testDirRoot.ToDir(_testDoubleDir);
@@ -257,7 +258,7 @@ namespace DotNet.Basics.Tests.IO
             actual.FullName.Should().Be(expected);
         }
 
-        [Test]
+        [Fact]
         public void ToDir_ParentFromCombine_ParentFolderOfNewIsSameAsOrgRoot()
         {
             var rootDir = _testDirRoot.ToDir();

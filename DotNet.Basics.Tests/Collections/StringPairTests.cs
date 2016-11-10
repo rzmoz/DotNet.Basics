@@ -4,17 +4,17 @@ using System.Runtime.Serialization.Json;
 using DotNet.Basics.Collections;
 using DotNet.Basics.Sys;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Collections
 {
-    [TestFixture]
+    
     public class StringKeyValueTests
     {
         const string _myKey = "myKey";
         const string _myValue = "myValue";
 
-        [Test]
+        [Fact]
         public void Json_Serialization_ProperJson()
         {
             //arrange 
@@ -40,7 +40,7 @@ namespace DotNet.Basics.Tests.Collections
             newKv.Value.Should().Be(kv.Value);
         }
 
-        [Test]
+        [Fact]
         public void Ctor_Default_AllIsNull()
         {
             var kv = new StringPair();
@@ -48,14 +48,14 @@ namespace DotNet.Basics.Tests.Collections
             kv.Value.Should().BeNull();
         }
 
-        [Test]
+        [Fact]
         public void Ctor_Values_ValuesAreSet()
         {
             var kv = new StringPair(_myKey, _myValue);
             kv.Key.Should().Be(_myKey);
             kv.Value.Should().Be(_myValue);
         }
-        [Test]
+        [Fact]
         public void Equality_RefAndEquals_AreEquals()
         {
             var kv1 = new StringPair(_myKey, _myValue);
@@ -66,7 +66,7 @@ namespace DotNet.Basics.Tests.Collections
             kv1.Equals(kv2).Should().BeTrue();
         }
 
-        [Test]
+        [Fact]
         public void ToString_DebugInfo_KeyAndValueIsOutput()
         {
             var kv1 = new StringPair(_myKey, _myValue);
@@ -74,7 +74,7 @@ namespace DotNet.Basics.Tests.Collections
             kv1.ToString().Should().Be($"{{\"{_myKey}\":\"{_myValue}\"}}");
         }
 
-        [Test]
+        [Fact]
         public void CastOperator_CastToKeyValuePair_Equals()
         {
             var kv = new StringPair(_myKey, _myValue);

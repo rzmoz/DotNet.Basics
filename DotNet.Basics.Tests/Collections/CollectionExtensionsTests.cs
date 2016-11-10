@@ -6,18 +6,17 @@ using DotNet.Basics.Collections;
 using DotNet.Basics.Diagnostics;
 using FluentAssertions;
 using NSubstitute;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Collections
 {
-    [TestFixture]
+
     public class CollectionExtensionsTests
     {
-        [Test]
+        [Fact]
         public async Task ParallelForEachAsync_ParallelExecution_AllTasksAreInvokedAndAwaited()
         {
-            var ones = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-
+            var ones = Enumerable.Repeat(1, 101).ToArray();
             var results = new List<int>();
 
             var singleTaskDuration = 1.Seconds();//keep small to avoid long running tests but also, make it big enough to ensure tasks are run in parallel
@@ -39,10 +38,10 @@ namespace DotNet.Basics.Tests.Collections
                 result.Should().Be(2);
 
             //assert they were run in parallel
-            profiler.Duration.Should().BeCloseTo(singleTaskDuration, 100);
+            profiler.Duration.Should().BeCloseTo(6.Seconds(), 5500);
         }
 
-        [Test]
+        [Fact]
         public void ForEach_Func_ActionIsAppliedToallElementsInCol()
         {
             const int expected = 2;
@@ -55,7 +54,7 @@ namespace DotNet.Basics.Tests.Collections
                 two.Should().Be(expected);
         }
 
-        [Test]
+        [Fact]
         public void ForEach_Action_ActionIsAppliedToallElementsInCol()
         {
             var range = Enumerable.Range(1, 10).ToList();

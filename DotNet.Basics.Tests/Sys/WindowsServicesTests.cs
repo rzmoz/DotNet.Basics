@@ -3,14 +3,14 @@ using System.Security.Principal;
 using System.Threading;
 using DotNet.Basics.Sys;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
 {
-    [TestFixture]
+    
     public class WindowsServicesTests
     {
-        [Test]
+        [Fact]
         public void Exists_Exists_ServiceExists()
         {
             var serviceName = "Spooler";
@@ -20,7 +20,7 @@ namespace DotNet.Basics.Tests.Sys
             exists.Should().BeTrue($"Service exists: {serviceName}");
         }
 
-        [Test]
+        [Fact]
         public void Exists_Exists_ServiceDoesNotExist()
         {
             var serviceName = "Exists_Exists_ServiceDoesNotExist";
@@ -30,7 +30,7 @@ namespace DotNet.Basics.Tests.Sys
             exists.Should().BeFalse($"Service exists: {serviceName}");
         }
 
-        [Test]
+        [Fact]
         public void Get_Status_StatusFromServicesIsRetrieved()
         {
             var serviceName = "Spooler";

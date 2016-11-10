@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Linq;
-using System.Management.Automation;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
 {
-    [TestFixture]
+    
     public class PowerShellConsoleTests
     {
-        [Test]
+        [Fact]
         public void RunScript_ExecuteScript_HelloWorldIsOutputted()
         {
             const string greeting = @"Hello World!";
@@ -21,7 +20,7 @@ namespace DotNet.Basics.Tests.Sys
             result.Single().ToString().Should().Be(greeting);
         }
 
-        [Test]
+        [Fact]
         public void RunScript_WriteToHost_OutputToHostIsCaptured()
         {
             const string greeting = "Hello world!";
@@ -29,10 +28,10 @@ namespace DotNet.Basics.Tests.Sys
             var result = PowerShellConsole.RunScript($"Write-Host \"{greeting}\"");
         }
 
-        [Test]
+        [Fact]
         public void RemoveItem_DeleteFilesAndFolders_DirIsEmptied()
         {
-            var dir = TestContext.CurrentContext.TestDirectory.ToDir("RemoveItem_DeleteFilesAndFolders_DirIsEmptied");
+            var dir = @"RemoveItem_DeleteFilesAndFolders_DirIsEmptied".ToDir();
             dir.CreateSubDir("myDir");
             "nothing".WriteAllText(dir.ToFile("myFile.txt"));
 

@@ -3,18 +3,18 @@ using System.Linq;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-    [TestFixture]
+    
     public class RobocopyTests
     {
-        [Test]
+        [Fact]
         public void Init_FindRobocopyByDrive_RobocopyIsFound()
         {
 
-            var dir = TestContext.CurrentContext.TestDirectory.ToDir(@"Init_FindRobocopyByDrive_RobocopyIsFound");
+            var dir = @"Init_FindRobocopyByDrive_RobocopyIsFound".ToDir();
             var testFile = dir.ToFile("robocopyTestfile.text");
             dir.CleanIfExists();
 
@@ -25,12 +25,13 @@ namespace DotNet.Basics.Tests.IO
             exitCode.Should().Be(0);
         }
 
-        [Test]
+        [Fact]
         public void MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved()
         {
-            var emptyDir = TestContext.CurrentContext.TestDirectory.ToDir("MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved", "empty");
-            var sourceDir = TestContext.CurrentContext.TestDirectory.ToDir("MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved", "source");
-            var targetDir = TestContext.CurrentContext.TestDirectory.ToDir("MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved", "target");
+            var baseDir = @"MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved";
+            var emptyDir = baseDir.ToDir("empty");
+            var sourceDir = baseDir.ToDir("source");
+            var targetDir = baseDir.ToDir("target");
             var testSource = new TestFile1();
             Robocopy.CopyDir(testSource.Directory.FullName, sourceDir.FullName, true, null);
             emptyDir.CreateIfNotExists();
@@ -50,13 +51,13 @@ namespace DotNet.Basics.Tests.IO
             targetDir.GetFiles().Single().Name.Should().Be(testSource.Name);
         }
 
-        [Test]
+        [Fact]
         public void Copy_CopySingleFileSourceExists_FileIsCopied()
         {
             var sourcefile = new TestFile1();
             sourcefile.Exists().Should().BeTrue("source file should exist");
 
-            var targetFile = TestContext.CurrentContext.TestDirectory.ToFile("Copy_CopySingleFileSourceExists_FileIsCopied", sourcefile.Name);
+            var targetFile = @"Copy_CopySingleFileSourceExists_FileIsCopied".ToFile(sourcefile.Name);
             targetFile.DeleteIfExists();
             targetFile.Exists().Should().BeFalse("target file should not exist before copy");
             var result = Robocopy.CopyFile(sourcefile.FullName, targetFile.Directory.FullName);
@@ -64,11 +65,11 @@ namespace DotNet.Basics.Tests.IO
             targetFile.Exists().Should().BeTrue("target file is copied");
         }
 
-        [Test]
+        [Fact]
         public void CopyDir_CopyDirSourceExists_DirIsCopied()
         {
-            var source = TestContext.CurrentContext.TestDirectory.ToDir("CopyDir_CopyDirSourceExists_DirIsCopied", "source");
-            var target = TestContext.CurrentContext.TestDirectory.ToDir("CopyDir_CopyDirSourceExists_DirIsCopied", "target");
+            var source = @"CopyDir_CopyDirSourceExists_DirIsCopied".ToDir("source");
+            var target = @"CopyDir_CopyDirSourceExists_DirIsCopied".ToDir("target");
             var sourceFile = source.ToFile("myfile.txt");
             var targetFile = source.ToFile(sourceFile.Name);
             var fileContent = "blavlsavlsdglsdflslfsdlfsdlfsd";

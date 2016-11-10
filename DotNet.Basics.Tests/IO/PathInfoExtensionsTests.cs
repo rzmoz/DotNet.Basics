@@ -2,17 +2,17 @@
 using DotNet.Basics.IO;
 using FluentAssertions;
 using Newtonsoft.Json;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-    [TestFixture]
+    
     public class PathInfoExtensionsTests
     {
-        [Test]
+        [Fact]
         public void Serialization_JsonSerialization_DirIsSerialized()
         {
-            var dir = TestContext.CurrentContext.TestDirectory.ToPath();
+            var dir = ".".ToPath();
 
             Action action = () => JsonConvert.SerializeObject(dir);
 
@@ -20,32 +20,32 @@ namespace DotNet.Basics.Tests.IO
         }
 
 
-        [Test]
-        [TestCase("FOLDER_THAT_DOES_NOT_EXIST_WO_FOLDER_MARKER", false)]//folder that doesnt exist without marker
-        [TestCase("FOLDER_THAT_DOES_NOT_EXIST_WITH_FOLDER_MARKER//", true)]//folder that doesnt exist with marker
-        [TestCase("IsFolder_DetectIfFolder_FoldersAreDetected", true)]//folder that exists without marker
-        [TestCase("IsFolder_DetectIfFolder_FoldersAreDetected\\myfile.txt\\", false)]//file that exists with folder marker
+        [Theory]
+        [InlineData("FOLDER_THAT_DOES_NOT_EXIST_WO_FOLDER_MARKER", false)]//folder that doesnt exist without marker
+        [InlineData("FOLDER_THAT_DOES_NOT_EXIST_WITH_FOLDER_MARKER//", true)]//folder that doesnt exist with marker
+        [InlineData("IsFolder_DetectIfFolder_FoldersAreDetected", true)]//folder that exists without marker
+        [InlineData("IsFolder_DetectIfFolder_FoldersAreDetected\\myfile.txt\\", false)]//file that exists with folder marker
         public void IsFolder_DetectIfFolder_FoldersAreDetected(string input, bool expectedIsFolder)
         {
-            var dir = TestContext.CurrentContext.TestDirectory.ToDir("IsFolder_DetectIfFolder_FoldersAreDetected");
+            var dir = @"IsFolder_DetectIfFolder_FoldersAreDetected".ToDir();
             dir.CreateIfNotExists();
             "dummycontent".WriteAllText(dir.ToFile("myfile.txt"));
 
-            var path = TestContext.CurrentContext.TestDirectory.ToPath(input);
+            var path = ".".ToPath(input);
 
             path.IsFolder.Should().Be(expectedIsFolder);
         }
 
-        [Test]
-        [TestCase("Exists_TestPath_PathIsVerified", true)]//dir
-        [TestCase("Exists_TestPath_PathIsVerified\\file.txt", false)]//file
+        [Theory]
+        [InlineData("Exists_TestPath_PathIsVerified", true)]//dir
+        [InlineData("Exists_TestPath_PathIsVerified\\file.txt", false)]//file
         public void Exists_TestPath_PathIsVerified(string path, bool isFolder)
         {
             PathInfo p;
             if (isFolder)
-                p = TestContext.CurrentContext.TestDirectory.ToDir(path);
+                p = path.ToDir();
             else
-                p = TestContext.CurrentContext.TestDirectory.ToFile(path);
+                p = path.ToFile();
 
             p.DeleteIfExists();
             p.Exists().Should().BeFalse(p.FullName);
@@ -58,24 +58,24 @@ namespace DotNet.Basics.Tests.IO
             p.Exists().Should().BeTrue(p.FullName);
         }
 
-        [Test]
-        [TestCase("http://", true)]
-        [TestCase("http:/", false)]
-        [TestCase("http://folder", false)]//
+        [Theory]
+        [InlineData("http://", true)]
+        [InlineData("http:/", false)]
+        [InlineData("http://folder", false)]//
         public void IsProtocol_ProtocolIsDetected(string path, bool expected)
         {
             path.IsProtocol().Should().Be(expected);
         }
-        [Test]
-        [TestCase("http://", true)]
-        [TestCase("http:/", false)]
-        [TestCase("http://folder", true)]//
+        [Theory]
+        [InlineData("http://", true)]
+        [InlineData("http:/", false)]
+        [InlineData("http://folder", true)]//
         public void HasProtocol_ProtocolIsDetected(string path, bool expected)
         {
             path.HasProtocol().Should().Be(expected);
         }
 
-        [Test]
+        [Fact]
         public void SplitSplitSegments_UriSUpport_UriIsSPlitProperly()
         {
             var segments = new[]
@@ -92,39 +92,39 @@ namespace DotNet.Basics.Tests.IO
             split[2].Should().Be("myfile.aspx");
         }
 
-        [Test]
-        [TestCase(PathDelimiter.Slash, '/')]
-        [TestCase(PathDelimiter.Backslash, '\\')]
+        [Theory]
+        [InlineData(PathDelimiter.Slash, '/')]
+        [InlineData(PathDelimiter.Backslash, '\\')]
         public void ToChar_DelimiterToChar_DelimiterIsConverted(PathDelimiter delimiter, char expectedChar)
         {
             var foundChar = delimiter.ToChar();
             foundChar.Should().Be(expectedChar);
         }
 
-        [Test]
-        [TestCase('/', PathDelimiter.Slash)]
-        [TestCase('\\', PathDelimiter.Backslash)]
+        [Theory]
+        [InlineData('/', PathDelimiter.Slash)]
+        [InlineData('\\', PathDelimiter.Backslash)]
         public void ToPathDelimiter_CharToDelimiter_CharIsConverted(char delimiter, PathDelimiter expectedPathDelimiter)
         {
             var foundPathDelimiter = delimiter.ToPathDelimiter();
             foundPathDelimiter.Should().Be(expectedPathDelimiter);
         }
 
-        [Test]
-        [TestCase('a')]
-        [TestCase('1')]
-        [TestCase('¤')]
+        [Theory]
+        [InlineData('a')]
+        [InlineData('1')]
+        [InlineData('¤')]
         public void ToPathDelimiter_UnsupportedChar_ExceptionIsThrown(char delimiter)
         {
             Action action = () => delimiter.ToPathDelimiter();
             action.ShouldThrow<NotSupportedException>();
         }
 
-        [Test]
-        [TestCase("//pt101", "pt2", PathDelimiter.Slash)]//file
-        [TestCase("\\pt101", "pt2", PathDelimiter.Backslash)]//file
-        [TestCase("//pt101", "pt2/", PathDelimiter.Slash)]//dir
-        [TestCase("\\pt101", "pt2\\", PathDelimiter.Backslash)]//dir
+        [Theory]
+        [InlineData("//pt101", "pt2", PathDelimiter.Slash)]//file
+        [InlineData("\\pt101", "pt2", PathDelimiter.Backslash)]//file
+        [InlineData("//pt101", "pt2/", PathDelimiter.Slash)]//dir
+        [InlineData("\\pt101", "pt2\\", PathDelimiter.Backslash)]//dir
         public void ToPath_Combine_PathIsGenerated(string pt1, string pt2, PathDelimiter pathDelimiter)
         {
             var path = pt1.ToPath(pt2);
@@ -137,8 +137,8 @@ namespace DotNet.Basics.Tests.IO
         }
 
 
-        [Test]
-        [TestCase("http://localhost/", "myFolder/myFile.html")]//url
+        [Theory]
+        [InlineData("http://localhost/", "myFolder/myFile.html")]//url
         public void ToPath_Uris_PathIsGenerated(string pt1, string pt2)
         {
             var path = pt1.ToPath(pt2);
@@ -146,9 +146,9 @@ namespace DotNet.Basics.Tests.IO
         }
 
 
-        [Test]
-        [TestCase("mypath", false)]//file
-        [TestCase("mypath", true)]//file
+        [Theory]
+        [InlineData("mypath", false)]//file
+        [InlineData("mypath", true)]//file
         public void IsFolder_Set_IsFolderIsSet(string pth, bool isFolder)
         {
             PathInfo p;

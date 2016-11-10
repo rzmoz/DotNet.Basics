@@ -5,14 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using DotNet.Basics.IO;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-    [TestFixture]
+    
     public class FileTypeTests
     {
-        [Test]
+        [Fact]
         public void Ctor_ExtensionWithDot_ExtensionHasDot()
         {
             const string extensionWithDot = ".xml";
@@ -22,7 +22,7 @@ namespace DotNet.Basics.Tests.IO
             fileType.Extension.Should().Be(extensionWithDot);
 
         }
-        [Test]
+        [Fact]
         public void Ctor_ExtensionWithoutDot_ExtensionHasDot()
         {
             const string extensionWithoutDot = "xml";
@@ -32,7 +32,7 @@ namespace DotNet.Basics.Tests.IO
             fileType.Extension.Should().Be("." + extensionWithoutDot);
         }
 
-        [Test]
+        [Fact]
         public void IsType_TwoPartExtensionIsSupport_FileNameIsDetected()
         {
             const string twoPartExtension = ".config.disabled";
