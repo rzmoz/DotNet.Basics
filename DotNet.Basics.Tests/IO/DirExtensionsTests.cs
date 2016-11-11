@@ -6,24 +6,12 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-
     public class DirExtensionsTests
     {
         private const string _testDirRoot = @"K:\testDir";
         private const string _testDoubleDir = @"\testa\testb";
         private const string _testSingleDir = @"\testk\";
-
-        [Theory]
-        [InlineData("http://localhost/", "myDir/")] //http dir
-        [InlineData("https://localhost/", "myDir/")] //https dir
-        public void FullName_Uri_ParsedPathIsUri(string uri, string segment)
-        {
-            var path = uri.ToDir(segment);
-            Action action = () => new Uri(path.FullName);
-            action.ShouldNotThrow<UriFormatException>(path.FullName);
-            path.FullName.Should().Be(uri + segment);
-        }
-
+        
         [Fact]
         public void DeleteIfExists_DirExists_DirIsDeleted()
         {

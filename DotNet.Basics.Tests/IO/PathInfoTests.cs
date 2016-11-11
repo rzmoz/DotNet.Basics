@@ -36,7 +36,6 @@ namespace DotNet.Basics.Tests.IO
 
             sp.Segments.Count.Should().Be(3);
             sp.IsFolder.Should().BeTrue(nameof(sp.IsFolder));
-            sp.IsUri.Should().BeTrue(nameof(sp.IsUri));
             sp.Delimiter.Should().Be(PathDelimiter.Slash);
         }
 
@@ -53,7 +52,6 @@ namespace DotNet.Basics.Tests.IO
             sp.Segments.Count.Should().Be(segments.Length + 1);
             sp.Segments.All(s => s == path).Should().BeTrue();
             sp.IsFolder.Should().Be(isFolder);
-            sp.IsUri.Should().BeFalse();
             sp.Delimiter.Should().Be(delimiter);
 
         }
@@ -80,18 +78,7 @@ namespace DotNet.Basics.Tests.IO
             var sp = new PathInfo(path);
             sp.IsFolder.Should().Be(expected);
         }
-
-        [Theory]
-        [InlineData("http://localhost/", "myDir/")] //http dir
-        [InlineData("http://localhost/", "myFile")] //http file
-        [InlineData("https://localhost/", "myDir/")] //https dir
-        [InlineData("https://localhost/", "myFile")] //https file
-        public void Ctor_IsUriDetection_UriIsDetected(string path, string segment)
-        {
-            var sp = new PathInfo(path, segment);
-            sp.IsUri.Should().BeTrue();
-        }
-
+        
         [Fact]
         public void Ctor_PathInSegments_PathsAreParsed()
         {
@@ -112,7 +99,7 @@ namespace DotNet.Basics.Tests.IO
             //act
             string serialized = JsonConvert.SerializeObject(sp);
             //assert
-            serialized.Should().Be(@"{""Name"":""MyPath"",""IsUri"":false,""IsFolder"":false,""Delimiter"":""Backslash"",""Segments"":[""MyPath"",""MyPath"",""MyPath"",""MyPath""]}");
+            serialized.Should().Be(@"{""Name"":""MyPath"",""IsFolder"":false,""Delimiter"":""Backslash"",""Segments"":[""MyPath"",""MyPath"",""MyPath"",""MyPath""]}");
         }
     }
 }

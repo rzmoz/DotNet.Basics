@@ -7,23 +7,11 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-    
     public class FileExtensionsTests
     {
         private const string _testDirRoot = @"K:\testDir";
         private const string _testDoubleDir = @"\testa\testb";
         private const string _testFile = @"\testc\file.txt";
-
-        [Theory]
-        [InlineData("http://localhost/", "myFile")] //http file
-        [InlineData("https://localhost/", "myFile")] //https file
-        public void FullName_Uri_ParsedPathIsUri(string uri, string segment)
-        {
-            var path = uri.ToFile(segment);
-            Action action = () => new Uri(path.FullName);
-            action.ShouldNotThrow<UriFormatException>();
-            path.FullName.Should().Be(uri + segment);
-        }
 
         [Fact]
         public void ReadAllText_ReadTextFromFile_ContentIsRead()

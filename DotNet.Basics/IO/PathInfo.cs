@@ -40,14 +40,8 @@ namespace DotNet.Basics.IO
         {
             Segments = FlattenSegments(segments);
             IsFolder = isFolder;
-            //detect IsUri
-            IsUri = DetectIsUri(segments);
-            Delimiter = IsUri ? PathDelimiter.Slash : delimiter;
-
-            if (IsUri)
-                _resolveFullName = () => RawName;
-            else
-                _resolveFullName = () => SystemIoPath.GetFullPath(RawName);
+            Delimiter = delimiter;
+            _resolveFullName = () => SystemIoPath.GetFullPath(RawName);
 
             //init name
             Name = Segments.LastOrDefault() ?? string.Empty;
@@ -56,7 +50,7 @@ namespace DotNet.Basics.IO
         }
 
         public string Name { get; }
-        public bool IsUri { get; }
+
         public bool IsFolder { get; }
         [JsonConverter(typeof(StringEnumConverter))]
         public PathDelimiter Delimiter { get; }
