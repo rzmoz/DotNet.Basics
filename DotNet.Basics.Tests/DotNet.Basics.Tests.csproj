@@ -107,10 +107,11 @@
     <Compile Include="IO\PathInfoExtensionsTests.cs" />
     <Compile Include="IO\PathTests.cs" />
     <Compile Include="IO\RobocopyTests.cs" />
+    <Compile Include="IO\PathInfoTests.cs" />
     <Compile Include="IO\SystemIoPathTests.cs" />
     <Compile Include="IO\TempDirTests.cs" />
     <Compile Include="IO\TempWorkDirTests.cs" />
-    <Compile Include="IO\TestFile1.cs" />
+    <Compile Include="IO\TestSources\TestFile1.cs" />
     <Compile Include="IO\TestSources\IoTestResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

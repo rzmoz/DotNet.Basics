@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace DotNet.Basics.IO
 {
@@ -8,11 +9,10 @@ namespace DotNet.Basics.IO
             : this(new[] { fullPath })
         { }
 
-        public FilePath(string[] pathSegments)
-            : this(pathSegments, PathDelimiter.Backslash)
+        public FilePath(IReadOnlyCollection<string> pathSegments) : base(pathSegments)
         { }
 
-        public FilePath(string[] pathSegments, PathDelimiter delimiter)
+        public FilePath(IReadOnlyCollection<string> pathSegments, PathDelimiter delimiter)
             : base(pathSegments, false, delimiter)
         { }
 

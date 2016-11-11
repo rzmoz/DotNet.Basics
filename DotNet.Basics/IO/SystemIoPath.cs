@@ -19,7 +19,7 @@ namespace DotNet.Basics.IO
             EnsureLongPathsAreEnabled();
 
             //init normalize path
-            var type = typeof(Path);
+            var type = typeof(System.IO.Path);
             string methodName = "NormalizePath";
             _normalizePath = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
                                         .Where(m => m.Name == methodName)

@@ -1,5 +1,6 @@
 ﻿using DotNet.Basics.IO;
-namespace DotNet.Basics.Tests.IO
+
+namespace DotNet.Basics.Tests.IO.TestSources
 {
     public class TestFile1 : FilePath
     {

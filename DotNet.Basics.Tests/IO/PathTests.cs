@@ -1,12 +1,10 @@
-﻿using System;
-using DotNet.Basics.IO;
+﻿using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using FluentAssertions;
 using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-    
     public class PathTests
     {
         [Theory]
@@ -22,9 +20,7 @@ namespace DotNet.Basics.Tests.IO
         {
             var path = p.ToPath();
 
-            var expectedP = p;
-            if (expectedP.StartsWith("."))
-                expectedP = ".".ToPath(path.IsFolder).Add(p.RemovePrefix(".\\")).FullName;
+            var expectedP = SystemIoPath.GetFullPath(p);
 
             path.FullName.Should().Be(expectedP);//no exceptions
         }
@@ -39,29 +35,6 @@ namespace DotNet.Basics.Tests.IO
             System.IO.Path.GetFullPath(path.FullName).Should().Be(systemIo.FullName);
         }
 
-        [Theory]
-        [InlineData("http://localhost/myDir/")] //http dir
-        [InlineData("http://localhost/myFile")] //http file
-        [InlineData("https://localhost/myDir/")] //https dir
-        [InlineData("https://localhost/myFile/")] //https file
-        public void FullName_Uri_UrisDontGetFileSystemAppended(string uri)
-        {
-            var path = uri.ToPath();
-            path.FullName.Should().Be(uri);
-        }
-
-        [Theory]
-        [InlineData("http://localhost/", "myDir/")] //http dir
-        [InlineData("http://localhost/", "myFile")] //http file
-        [InlineData("https://localhost/", "myDir/")] //https dir
-        [InlineData("https://localhost/", "myFile")] //https file
-        public void FullName_Uri_ParsedPathIsUri(string uri,string segments)
-        {
-            var path = uri.ToPath(segments);
-            Action action = ()=> new Uri(path.FullName);
-            action.ShouldNotThrow<UriFormatException>();
-        }
-
         [Fact]
         public void Add_Immutable_AddShouldBeImmutable()
         {
@@ -70,8 +43,9 @@ namespace DotNet.Basics.Tests.IO
             root.Add("sazas");//no change to original path
             root.RawName.Should().Be(path);
         }
-        
+
         [Theory]
+        [InlineData(@"c:\", null)]
         [InlineData(@"myFolder\", null)]
         [InlineData(@"myParent\myFolder\", @"myParent\")]
         [InlineData(@"myParent\myFile", @"myParent\")]
@@ -81,9 +55,8 @@ namespace DotNet.Basics.Tests.IO
         {
             var path = folder.ToPath();
 
-            var parent = path.Parent;
-
-            parent.RawName.Should().Be(expectedParent??".".ToDir().FullName);
+            var found = path.Parent?.RawName;
+            found.Should().Be(expectedParent, folder);
         }
 
         [Theory]
@@ -91,7 +64,7 @@ namespace DotNet.Basics.Tests.IO
         [InlineData(@"c:\myParent\myFile", false)]
         public void Directory_GetDir_Dir(string folder, bool isFolder)
         {
-            var path = folder.ToPath(isFolder);
+            var path = folder.ToPath();
 
             var dir = path.Directory;
 
@@ -130,35 +103,35 @@ namespace DotNet.Basics.Tests.IO
         }
 
         [Theory]
-        [InlineData("myFolder\\myFolder\\", "myFolder", true)]//folder with trailing delimiter
-        [InlineData("myFolder\\myFolder", "myFolder", true)]//folder without trailing delimiter
-        [InlineData("myFolder\\myFile.txt", "myFile.txt", false)]//file with extension
-        public void Name_Parsing_NameIsParsed(string fullPath, string expectedName, bool isFolder)
+        [InlineData("myFolder\\myFolder\\", "myFolder")]//folder with trailing delimiter
+        [InlineData("myFolder\\myFolder", "myFolder")]//folder without trailing delimiter
+        [InlineData("myFolder\\myFile.txt", "myFile.txt")]//file with extension
+        public void Name_Parsing_NameIsParsed(string fullPath, string expectedName)
         {
-            var path = fullPath.ToPath(isFolder);
+            var path = fullPath.ToPath();
             //assert
             path.Name.Should().Be(expectedName);
         }
 
         [Theory]
-        [InlineData("myFolder\\myFolder\\", "", true)]//folder
-        [InlineData("myFolder\\myFolder", "", false)]//folder without extension
-        [InlineData("myFile.txt", ".txt", false)]//file with extension
-        public void Extensions_Parsing_ExtensionIsParsed(string name, string extension, bool isFolder)
+        [InlineData("myFolder\\myFolder\\", "")]//folder
+        [InlineData("myFolder\\myFolder", "")]//folder without extension
+        [InlineData("myFile.txt", ".txt")]//file with extension
+        public void Extensions_Parsing_ExtensionIsParsed(string name, string extension)
         {
-            var path = name.ToPath(isFolder);
+            var path = name.ToPath();
             //assert
             path.Extension.Should().Be(extension);
         }
 
         [Theory]
         [InlineData("myFolder\\myFolder\\", "myFolder", true)]//folder with trailing delimiter
-        [InlineData("myFolder\\myFolder", "myFolder", true)]//folder without trailing delimiter
+        [InlineData("myFolder\\myFolder", "myFolder", false)]//folder without trailing delimiter
         [InlineData("myFolder\\myFile", "myFile", false)]//file without extension
         [InlineData("myFolder\\myFile.txt", "myFile.txt", false)]//file with extension
         public void RawName_Parsing_NameIsParsed(string fullPath, string expectedName, bool isFolder)
         {
-            var path = fullPath.ToPath(isFolder);
+            var path = fullPath.ToPath();
 
             if (isFolder)
                 fullPath = fullPath.EnsureSuffix(path.Delimiter.ToChar());
@@ -172,11 +145,11 @@ namespace DotNet.Basics.Tests.IO
         [InlineData("myFolder\\myFile.txt", "myFile", false)]//file with extension
         public void NameWithoutExtension_Parsing_NameIsParsed(string fullPath, string expectedName, bool isFolder)
         {
-            var path = fullPath.ToPath(isFolder);
+            var path = fullPath.ToPath();
             //assert
             path.NameWithoutExtension.Should().Be(expectedName);
         }
-        
+
         [Theory]
         [InlineData("myFolder/DetectDelimiter/", PathDelimiter.Slash)]//delimiter detected
         [InlineData("myFolder\\DetectDelimiter\\", PathDelimiter.Backslash)]//delimiter detected
@@ -186,7 +159,7 @@ namespace DotNet.Basics.Tests.IO
         public void Delimiter_Detection_DelimiterDetected(string pathInput, PathDelimiter delimiter)
         {
             var path = pathInput.ToPath();
-            path.Delimiter.Should().Be(delimiter);
+            path.Delimiter.Should().Be(delimiter, pathInput);
         }
 
         [Theory]
@@ -201,11 +174,11 @@ namespace DotNet.Basics.Tests.IO
 
         [Theory]
         [InlineData("myFolder/DetectDelimiter/", true)]//folder with delimiter in the end
-        [InlineData("myFolder/DetectDelimiter", true)]//folder withouth delimiter in the end
+        [InlineData("myFolder/DetectDelimiter", false)]//folder withouth delimiter in the end
         [InlineData("myFolder/myFile.txt", false)]//delimiter fallback
         public void IsFolder_Formatting_FolderExtensionIsOutput(string pathInput, bool isFolder)
         {
-            var path = pathInput.ToPath(isFolder);
+            var path = pathInput.ToPath();
             path.IsFolder.Should().Be(isFolder);
             var formatted = path.ToString();
             if (isFolder)

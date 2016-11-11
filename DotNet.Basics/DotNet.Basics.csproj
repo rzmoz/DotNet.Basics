@@ -82,12 +82,11 @@
     <Compile Include="IO\FileType.cs" />
     <Compile Include="IO\FileTypeCollection.cs" />
     <Compile Include="IO\IoLock.cs" />
+    <Compile Include="IO\PathChars.cs" />
     <Compile Include="IO\PathInfo.cs" />
     <Compile Include="IO\PathException.cs" />
     <Compile Include="IO\PathExtensions.cs" />
-    <Compile Include="IO\PathFileSystemExtensions.cs" />
-    <Compile Include="IO\PathInfoFactory.cs" />
-    <Compile Include="IO\PathNotFoundException.cs" />
+    <Compile Include="IO\PathInfoExtensions.cs" />
     <Compile Include="IO\Robocopy.cs" />
     <Compile Include="IO\IoExtensions.cs" />
     <Compile Include="IO\SystemIoPath.cs" />

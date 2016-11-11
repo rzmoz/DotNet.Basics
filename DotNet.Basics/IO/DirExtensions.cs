@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Security.AccessControl;
@@ -31,6 +32,31 @@ namespace DotNet.Basics.IO
             var subDir = dir.Add(path);
             subDir.CreateIfNotExists();
             return subDir;
+        }
+
+        public static DirPath[] GetDirectories(this DirPath dp, string searchPattern = null, bool recurse = false)
+        {
+            return System.IO.Directory.GetDirectories(dp.FullName, searchPattern ?? "*", ToSearchOption(recurse)).Select(dir => dir.ToDir()).ToArray();
+        }
+        public static FilePath[] GetFiles(this DirPath dp, string searchPattern = null, bool recurse = false)
+        {
+            return System.IO.Directory.GetFiles(dp.FullName, searchPattern ?? "*", ToSearchOption(recurse)).Select(dir => dir.ToFile()).ToArray();
+        }
+        public static PathInfo[] GetPaths(this DirPath dp, string searchPattern = null, bool recurse = false)
+        {
+            return System.IO.Directory.GetFileSystemEntries(dp.FullName, searchPattern ?? "*", ToSearchOption(recurse)).Select(dir => dir.ToPath()).ToArray();
+        }
+        public static IEnumerable<DirPath> EnumerateDirectories(this DirPath dp, string searchPattern = null, bool recurse = false)
+        {
+            return System.IO.Directory.EnumerateDirectories(dp.FullName, searchPattern ?? "*", ToSearchOption(recurse)).Select(dir => dir.ToDir());
+        }
+        public static IEnumerable<FilePath> EnumerateFiles(this DirPath dp, string searchPattern = null, bool recurse = false)
+        {
+            return System.IO.Directory.EnumerateFiles(dp.FullName, searchPattern ?? "*", ToSearchOption(recurse)).Select(file => file.ToFile());
+        }
+        public static IEnumerable<PathInfo> EnumeratePaths(this DirPath dp, string searchPattern = null, bool recurse = false)
+        {
+            return System.IO.Directory.EnumerateFileSystemEntries(dp.FullName, searchPattern ?? "*", ToSearchOption(recurse)).Select(fse => fse.ToPath());
         }
 
         public static void ConsolidateIdenticalSubfolders(this DirPath dir, int lookDepth = int.MaxValue)
@@ -165,6 +191,13 @@ namespace DotNet.Basics.IO
             dir.SetAccessControl(directorySecurity);
         }
 
+        private static SearchOption ToSearchOption(bool recurse)
+        {
+            return recurse ?
+                SearchOption.AllDirectories :
+                SearchOption.TopDirectoryOnly;
+        }
+
         private static void CanonicalizeDacl(NativeObjectSecurity objectSecurity)
         {
             if (objectSecurity == null) { throw new ArgumentNullException(nameof(objectSecurity)); }
@@ -202,20 +235,20 @@ namespace DotNet.Basics.IO
 
             // A canonical ACL must have ACES sorted according to the following order:
             //   1. Access-denied on the object
-            Add(newDacl, commonAces.Where(ace => ace.AceType == AceType.AccessDenied), ref aceIndex);
+            AddAce(newDacl, commonAces.Where(ace => ace.AceType == AceType.AccessDenied), ref aceIndex);
             //   2. Access-denied on a child or property
-            Add(newDacl, commonAces.Where(ace => ace.AceType == AceType.AccessAllowedObject), ref aceIndex);
+            AddAce(newDacl, commonAces.Where(ace => ace.AceType == AceType.AccessAllowedObject), ref aceIndex);
             //   3. Access-allowed on the object
-            Add(newDacl, commonAces.Where(ace => ace.AceType == AceType.AccessAllowed), ref aceIndex);
+            AddAce(newDacl, commonAces.Where(ace => ace.AceType == AceType.AccessAllowed), ref aceIndex);
             //   4. Access-allowed on a child or property
-            Add(newDacl, commonAces.Where(ace => ace.AceType == AceType.AccessAllowedObject), ref aceIndex);
+            AddAce(newDacl, commonAces.Where(ace => ace.AceType == AceType.AccessAllowedObject), ref aceIndex);
             //   5. All inherited ACEs 
-            Add(newDacl, commonAces.Where(ace => (ace.AceFlags & AceFlags.Inherited) == AceFlags.Inherited), ref aceIndex);
+            AddAce(newDacl, commonAces.Where(ace => (ace.AceFlags & AceFlags.Inherited) == AceFlags.Inherited), ref aceIndex);
 
             return new CanonicalizeResult(aceIndex, newDacl);
         }
 
-        private static void Add(RawAcl acl, IEnumerable<CommonAce> aces, ref int aceIndex)
+        private static void AddAce(RawAcl acl, IEnumerable<CommonAce> aces, ref int aceIndex)
         {
             foreach (var ace in aces)
                 acl.InsertAce(aceIndex++, ace);

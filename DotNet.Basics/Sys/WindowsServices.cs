@@ -6,7 +6,7 @@ namespace DotNet.Basics.Sys
 {
     public static class WindowsServices
     {
-        public static TimeSpan DefaultTimeout => 30.Seconds();
+        public static TimeSpan DefaultTimeout => TimeSpan.FromSeconds(30);
 
         public static bool Exists(string serviceName)
         {

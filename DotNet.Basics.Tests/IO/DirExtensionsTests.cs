@@ -2,7 +2,6 @@
 using System.Linq;
 using DotNet.Basics.IO;
 using FluentAssertions;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace DotNet.Basics.Tests.IO
@@ -21,7 +20,7 @@ namespace DotNet.Basics.Tests.IO
         {
             var path = uri.ToDir(segment);
             Action action = () => new Uri(path.FullName);
-            action.ShouldNotThrow<UriFormatException>();
+            action.ShouldNotThrow<UriFormatException>(path.FullName);
             path.FullName.Should().Be(uri + segment);
         }
 
@@ -29,14 +28,13 @@ namespace DotNet.Basics.Tests.IO
         public void DeleteIfExists_DirExists_DirIsDeleted()
         {
             var dir = @"DeleteIfExists_DirExists_DirIsDeleted".ToDir();
-
             dir.CreateIfNotExists();
-
             dir.Exists().Should().BeTrue();
 
             //act
             dir.DeleteIfExists();
 
+            //assert
             dir.Exists().Should().BeFalse();
         }
 

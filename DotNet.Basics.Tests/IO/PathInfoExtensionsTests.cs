@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using DotNet.Basics.IO;
 using FluentAssertions;
 using Newtonsoft.Json;
@@ -6,7 +7,7 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-    
+
     public class PathInfoExtensionsTests
     {
         [Fact]
@@ -66,31 +67,6 @@ namespace DotNet.Basics.Tests.IO
         {
             path.IsProtocol().Should().Be(expected);
         }
-        [Theory]
-        [InlineData("http://", true)]
-        [InlineData("http:/", false)]
-        [InlineData("http://folder", true)]//
-        public void HasProtocol_ProtocolIsDetected(string path, bool expected)
-        {
-            path.HasProtocol().Should().Be(expected);
-        }
-
-        [Fact]
-        public void SplitSplitSegments_UriSUpport_UriIsSPlitProperly()
-        {
-            var segments = new[]
-            {
-                "http://localhost:80/",
-                "myfile.aspx"
-            };
-
-            var split = segments.SplitToSegments();
-
-            split.Length.Should().Be(3);
-            split[0].Should().Be("http://");
-            split[1].Should().Be("localhost:80");
-            split[2].Should().Be("myfile.aspx");
-        }
 
         [Theory]
         [InlineData(PathDelimiter.Slash, '/')]
@@ -121,10 +97,10 @@ namespace DotNet.Basics.Tests.IO
         }
 
         [Theory]
-        [InlineData("//pt101", "pt2", PathDelimiter.Slash)]//file
-        [InlineData("\\pt101", "pt2", PathDelimiter.Backslash)]//file
-        [InlineData("//pt101", "pt2/", PathDelimiter.Slash)]//dir
-        [InlineData("\\pt101", "pt2\\", PathDelimiter.Backslash)]//dir
+        [InlineData("//pt101", "pt21", PathDelimiter.Slash)]//file
+        [InlineData("\\pt102", "pt22", PathDelimiter.Backslash)]//file
+        [InlineData("//pt103", "pt23/", PathDelimiter.Slash)]//dir
+        [InlineData("\\pt104", "pt24\\", PathDelimiter.Backslash)]//dir
         public void ToPath_Combine_PathIsGenerated(string pt1, string pt2, PathDelimiter pathDelimiter)
         {
             var path = pt1.ToPath(pt2);
