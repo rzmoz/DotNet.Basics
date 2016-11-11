@@ -69,6 +69,12 @@ namespace DotNet.Basics.IO
             }
         }
 
+
+        public bool Exists(bool throwIoExceptionIfNotExists = false)
+        {
+            return SystemIoPath.Exists(FullName, IsFolder, throwIoExceptionIfNotExists);
+        }
+
         /// <summary>
         /// Returns a new Path where original and added paths are combined
         /// </summary>

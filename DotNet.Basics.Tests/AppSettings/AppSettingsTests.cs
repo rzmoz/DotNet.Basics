@@ -44,24 +44,6 @@ namespace DotNet.Basics.Tests.AppSettings
             Action action = () => setting.GetValue();
             action.ShouldThrow<RequiredConfigurationKeyNotSetException>().And.MissingKeys.Single().Should().Be(key);
         }
-
-        /************** DotNet.Basics Types **************/
-        [Theory]
-        [InlineData(@"c:\mypath\")]//absolute path
-        [InlineData(@"\mypath\")]//relative path
-        public void GetValue_DirPath_ValueIsRightType(string path)
-        {
-            AssertValueType<DirPath>(path.ToDir());
-        }
-
-        [Theory]
-        [InlineData(@"c:\mypath\myfile.txt")]//absolute path
-        [InlineData(@"\mypath\myfile.txt")]//relative path
-        public void GetValue_FilePath_ValueIsRightType(string path)
-        {
-            AssertValueType<FilePath>(path.ToFile());
-        }
-
         /************** Non-Simple System Types **************/
 
         [Fact]

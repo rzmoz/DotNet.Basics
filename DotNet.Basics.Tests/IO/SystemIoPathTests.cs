@@ -6,7 +6,6 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-    
     public class SystemIoPathTests
     {
         [Fact]
@@ -37,7 +36,7 @@ namespace DotNet.Basics.Tests.IO
 
             path.DeleteIfExists();
 
-            Action action = () => SystemIoPath.Exists(path, throwIoExceptionIfNotExists: true);
+            Action action = () => SystemIoPath.Exists(path.FullName, path.IsFolder, throwIoExceptionIfNotExists: true);
 
             action.ShouldThrow<IOException>().WithMessage($"{path.FullName} not found");
         }
@@ -48,11 +47,11 @@ namespace DotNet.Basics.Tests.IO
 
             path.DeleteIfExists();
 
-            SystemIoPath.Exists(path).Should().BeFalse();
+            SystemIoPath.Exists(path.FullName, path.IsFolder).Should().BeFalse();
 
             path.CreateIfNotExists();
 
-            SystemIoPath.Exists(path).Should().BeTrue();
+            SystemIoPath.Exists(path.FullName, path.IsFolder).Should().BeTrue();
         }
 
         [Fact]
@@ -60,7 +59,7 @@ namespace DotNet.Basics.Tests.IO
         {
             var path = ".".ToDir("Exists_LongPaths_NoExceptionIsThrownxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
-            SystemIoPath.Exists(path).Should().BeFalse();
+            SystemIoPath.Exists(path.FullName, path.IsFolder).Should().BeFalse();
         }
     }
 }

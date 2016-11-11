@@ -78,11 +78,6 @@ namespace DotNet.Basics.IO
             }
         }
 
-        public static bool Exists(this PathInfo path, bool throwIoExceptionIfNotExists = false)
-        {
-            return Exists(path.FullName, path.IsFolder, throwIoExceptionIfNotExists);
-        }
-
         public static bool Exists(string path, bool isFolder, bool throwIoExceptionIfNotExists = false)
         {
             bool found;

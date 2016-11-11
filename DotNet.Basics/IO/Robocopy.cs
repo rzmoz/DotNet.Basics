@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
@@ -61,8 +62,7 @@ namespace DotNet.Basics.IO
                 options += $" {extraOptions}";//space in front of options
             return Run(sourceDir, targetDir, null, options);
         }
-
-
+        
         public static int MoveFolder(string sourceDir, string targetDir, string filter = null, bool recurse = false, string extraOptions = null)
         {
             string options = $"{_moveOption} {extraOptions}";
@@ -80,7 +80,7 @@ namespace DotNet.Basics.IO
         public static int MoveContent(string sourceDir, string targetDir, string filter = null, bool recurse = false, string extraOptions = null)
         {
             var result = MoveFolder(sourceDir, targetDir, filter, recurse, extraOptions);
-            sourceDir.ToDir().CreateIfNotExists();
+            Directory.CreateDirectory(sourceDir);
             return result;
         }
 
