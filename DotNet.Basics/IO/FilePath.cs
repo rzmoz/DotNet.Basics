@@ -12,7 +12,7 @@ namespace DotNet.Basics.IO
         public FilePath(IReadOnlyCollection<string> pathSegments) : base(pathSegments)
         { }
 
-        public FilePath(IReadOnlyCollection<string> pathSegments, PathDelimiter delimiter)
+        public FilePath(IReadOnlyCollection<string> pathSegments, char delimiter)
             : base(pathSegments, false, delimiter)
         { }
 

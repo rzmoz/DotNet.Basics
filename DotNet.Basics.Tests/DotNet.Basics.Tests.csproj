@@ -99,7 +99,7 @@
     <Compile Include="Ioc\TestHelpers\TestSettingsProvider.cs" />
     <Compile Include="Ioc\TestHelpers\TypeThatDependesOnContainer.cs" />
     <Compile Include="Ioc\TestHelpers\TypeWithValue.cs" />
-    <Compile Include="IO\ApplicationInstallerTests.cs" />
+    <Compile Include="IO\ExecutableInstallerTests.cs" />
     <Compile Include="IO\FileTypeTests.cs" />
     <Compile Include="IO\DirExtensionsTests.cs" />
     <Compile Include="IO\FileExtensionsTests.cs" />

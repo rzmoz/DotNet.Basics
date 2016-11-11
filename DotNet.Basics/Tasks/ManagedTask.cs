@@ -41,8 +41,6 @@ namespace DotNet.Basics.Tasks
             if (task == null) throw new ArgumentNullException(nameof(task));
             _task = task;
             Name = name;
-            PreConditionsAsync = null;
-            PostConditionsAsync = null;
         }
 
         public event TaskEventHandler Started;
@@ -53,9 +51,6 @@ namespace DotNet.Basics.Tasks
             get { return _name; }
             set { _name = value ?? GetType().Name; }
         }
-
-        public Func<T, TaskIssueList, CancellationToken, Task<bool>> PreConditionsAsync { get; set; }
-        public Func<T, TaskIssueList, CancellationToken, Task<bool>> PostConditionsAsync { get; set; }
 
         public Task<TaskResult<T>> RunAsync()
         {
@@ -77,18 +72,8 @@ namespace DotNet.Basics.Tasks
             FireStarted(new TaskArgs(Name, ct.IsCancellationRequested));
             try
             {
-                var preconditionsMet = await InnerPreConditionsAsync(args, issues, ct).ConfigureAwait(false);
-                if (preconditionsMet == false)
-                    issues.Add("Pre-Conditions not met. Inspect issues for details");
-                else if (ct.IsCancellationRequested == false)
-                {
+                if (ct.IsCancellationRequested == false)
                     await InnerRunAsync(args, issues, ct).ConfigureAwait(false);
-
-                    var postConditionsMet = await InnerPostConditionsAsync(args, issues, ct).ConfigureAwait(false);
-                    if (postConditionsMet == false)
-                        issues.Add("POST-Conditions not met. Inspect issues for details");
-                }
-
                 return new TaskResult<T>(args, issues);
             }
             catch (Exception e)
@@ -100,16 +85,6 @@ namespace DotNet.Basics.Tasks
             {
                 FireEnded(new TaskArgs(Name, ct.IsCancellationRequested, issues, exceptionEncountered));
             }
-        }
-
-        protected virtual Task<bool> InnerPreConditionsAsync(T args, TaskIssueList issues, CancellationToken ct)
-        {
-            return PreConditionsAsync?.Invoke(args, issues, ct) ?? Task.FromResult(true);
-        }
-
-        protected virtual Task<bool> InnerPostConditionsAsync(T args, TaskIssueList issues, CancellationToken ct)
-        {
-            return PostConditionsAsync?.Invoke(args, issues, ct) ?? Task.FromResult(true);
         }
 
         protected virtual async Task InnerRunAsync(T args, TaskIssueList issues, CancellationToken ct)

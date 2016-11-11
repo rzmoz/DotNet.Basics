@@ -235,7 +235,7 @@ namespace DotNet.Basics.Tests.IO
         public void ToDir_CombineToDir_FullNameIsCorrect()
         {
             var actual = _testDirRoot.ToDir(_testDoubleDir);
-            var expected = _testDirRoot + _testDoubleDir + actual.Delimiter.ToChar();
+            var expected = _testDirRoot + _testDoubleDir + actual.Delimiter;
             actual.FullName.Should().Be(expected);
 
 

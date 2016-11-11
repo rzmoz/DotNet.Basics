@@ -73,7 +73,7 @@
     <Compile Include="AppSettings\IocAppSettingExtensions.cs" />
     <Compile Include="Ioc\IIocRegistrations.cs" />
     <Compile Include="Ioc\IocContainer.cs" />
-    <Compile Include="IO\ApplicationInstaller.cs" />
+    <Compile Include="IO\ExecutableInstaller.cs" />
     <Compile Include="IO\FileApplication.cs" />
     <Compile Include="IO\DirExtensions.cs" />
     <Compile Include="IO\DirPath.cs" />
@@ -82,13 +82,10 @@
     <Compile Include="IO\FileType.cs" />
     <Compile Include="IO\FileTypeCollection.cs" />
     <Compile Include="IO\IoLock.cs" />
-    <Compile Include="IO\PathChars.cs" />
+    <Compile Include="IO\PathDelimiter.cs" />
     <Compile Include="IO\PathInfo.cs" />
-    <Compile Include="IO\PathException.cs" />
-    <Compile Include="IO\PathExtensions.cs" />
     <Compile Include="IO\PathInfoExtensions.cs" />
     <Compile Include="IO\Robocopy.cs" />
-    <Compile Include="IO\IoExtensions.cs" />
     <Compile Include="IO\SystemIoPath.cs" />
     <Compile Include="IO\TempDir.cs" />
     <Compile Include="AppSettings\AppSetting.cs" />
@@ -125,7 +122,6 @@
     <Compile Include="Collections\DictionaryKeyMode.cs" />
     <Compile Include="Collections\StringPair.cs" />
     <Compile Include="Collections\StringDictionary.cs" />
-    <Compile Include="IO\PathDelimiter.cs" />
     <Compile Include="Sys\PowerShellCmdlet.cs" />
     <Compile Include="Sys\PowerShellConsole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

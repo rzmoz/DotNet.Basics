@@ -15,7 +15,7 @@ namespace DotNet.Basics.Compression
     {
         private readonly Lazy<ZipArchive> _archiveLoader;
         private readonly Lazy<StringKeyDictionary<ZipArchiveEntry>> _entryLoader;
-        
+
         public ZipReader(FilePath path)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
@@ -69,12 +69,12 @@ namespace DotNet.Basics.Compression
             //look for explicit folder match first
             if (path.EndsWith("/"))
                 return (from entry in _entryLoader.Value
-                       where entry.Key.Equals(path, StringComparison.OrdinalIgnoreCase)
-                       select entry.Value).FirstOrDefault();
+                        where entry.Key.Equals(path, StringComparison.OrdinalIgnoreCase)
+                        select entry.Value).FirstOrDefault();
 
             //Look for file or folder
             return (from entry in _entryLoader.Value
-                    where entry.Key.RemoveSuffix("/").Equals(path,StringComparison.OrdinalIgnoreCase)//we don't distinguish between files nor folders. Files are found before folders
+                    where entry.Key.RemoveSuffix("/").Equals(path, StringComparison.OrdinalIgnoreCase)//we don't distinguish between files nor folders. Files are found before folders
                     select entry.Value).FirstOrDefault();
         }
 
@@ -84,7 +84,7 @@ namespace DotNet.Basics.Compression
             Repeat.Task(() => archive = ZipFile.Open(Path.FullName, ZipArchiveMode.Read))
                 .WithOptions(o =>
                     {
-                        o.RetryDelay = 1.Seconds();
+                        o.RetryDelay = TimeSpan.FromSeconds(1);
                         o.MaxTries = 10;
                     })
                     .Until(() => archive != null);

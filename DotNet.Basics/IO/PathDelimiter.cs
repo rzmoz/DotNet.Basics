@@ -1,8 +1,8 @@
 ﻿namespace DotNet.Basics.IO
 {
-    public enum PathDelimiter
+    public static class PathDelimiter
     {
-        Slash,
-        Backslash
+        public const char Slash = '/';
+        public const char Backslash = '\\';
     }
 }

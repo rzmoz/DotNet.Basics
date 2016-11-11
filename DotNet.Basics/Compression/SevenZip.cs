@@ -21,10 +21,10 @@ namespace DotNet.Basics.Compression
 
         public int CreateFromDirectory(string sourceDirPath, string archivePath, bool overwrite = false)
         {
-            if (overwrite == false && archivePath.ToPath().Exists())
+            if (overwrite == false && archivePath.ToFile().Exists())
                 throw new System.IO.IOException($"Target archive path already exists: {archivePath}. Set overwrite to true to ignore");
 
-            archivePath.ToPath().DeleteIfExists();
+            archivePath.ToFile().DeleteIfExists();
             return ExecuteSevenZip("a", $"\"{archivePath}\"", $"\"{sourceDirPath.ToDir().FullName}\\*\"", "-tzip", "-mx3", "-mmt");
         }
 
@@ -38,7 +38,7 @@ namespace DotNet.Basics.Compression
 
         private string InstallsevenZip()
         {
-            var appInstaller = new ApplicationInstaller(_appRootDir.ToDir("SevenZip"), "7za.exe");
+            var appInstaller = new ExecutableInstaller(_appRootDir.ToDir("SevenZip"), "7za.exe");
             appInstaller.AddFromBytes(appInstaller.EntryFile.Name, CompressionResources._7za);
             appInstaller.AddFromBytes("7za.dll", CompressionResources._7za1);
             appInstaller.AddFromBytes("7zxa.dll", CompressionResources._7zxa);

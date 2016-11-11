@@ -8,8 +8,7 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-
-    public class ApplicationInstallerTests
+    public class ExecutableInstallerTests
     {
         [Fact]
         public void InstallFromBytes_EnsureAppIsInstalled_AppIsInstalledInMultiThreadedEnvironment()
@@ -21,7 +20,7 @@ namespace DotNet.Basics.Tests.IO
             var installRange = Enumerable.Range(1, 50);
             Parallel.ForEach(installRange, val =>
             {
-                var installer = new ApplicationInstaller(appDir, fileName);
+                var installer = new ExecutableInstaller(appDir, fileName);
                 installer.AddFromBytes(fileName, IoTestResources.ReturnIntConsole);
                 installer.Install();
 

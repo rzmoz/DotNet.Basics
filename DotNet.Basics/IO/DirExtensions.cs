@@ -44,7 +44,7 @@ namespace DotNet.Basics.IO
         }
         public static PathInfo[] GetPaths(this DirPath dp, string searchPattern = null, bool recurse = false)
         {
-            return System.IO.Directory.GetFileSystemEntries(dp.FullName, searchPattern ?? "*", ToSearchOption(recurse)).Select(dir =>new PathInfo(dir)).ToArray();
+            return System.IO.Directory.GetFileSystemEntries(dp.FullName, searchPattern ?? "*", ToSearchOption(recurse)).Select(dir => new PathInfo(dir)).ToArray();
         }
         public static IEnumerable<DirPath> EnumerateDirectories(this DirPath dp, string searchPattern = null, bool recurse = false)
         {
@@ -62,7 +62,7 @@ namespace DotNet.Basics.IO
         public static void ConsolidateIdenticalSubfolders(this DirPath dir, int lookDepth = int.MaxValue)
         {
             if (dir.Exists() == false)
-                throw new PathException(dir);
+                throw new IOException($"Directory not foud: {dir.FullName}");
 
             //depth first recursive
             if (lookDepth > 0)//we only look to a certain depth

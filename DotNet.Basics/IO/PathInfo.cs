@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks.Repeating;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace DotNet.Basics.IO
 {
@@ -29,15 +28,15 @@ namespace DotNet.Basics.IO
             : this(segments, DetectIsFolder(segments), DetectDelimiter(segments))
         { }
 
-        public PathInfo(string path, IReadOnlyCollection<string> segments, bool isFolder, PathDelimiter delimiter)
+        public PathInfo(string path, IReadOnlyCollection<string> segments, bool isFolder, char delimiter)
             : this(Join(path, segments), isFolder, delimiter)
         { }
 
-        public PathInfo(string path, bool isFolder, PathDelimiter delimiter)
+        public PathInfo(string path, bool isFolder, char delimiter)
             : this(Join(path), isFolder, delimiter)
         { }
 
-        public PathInfo(IReadOnlyCollection<string> segments, bool isFolder, PathDelimiter delimiter)
+        public PathInfo(IReadOnlyCollection<string> segments, bool isFolder, char delimiter)
         {
             Segments = FlattenSegments(segments);
             IsFolder = isFolder;
@@ -53,8 +52,7 @@ namespace DotNet.Basics.IO
         public string Name { get; }
 
         public bool IsFolder { get; }
-        [JsonConverter(typeof(StringEnumConverter))]
-        public PathDelimiter Delimiter { get; }
+        public char Delimiter { get; }
         public IReadOnlyCollection<string> Segments { get; }
 
         [JsonIgnore]
@@ -92,7 +90,7 @@ namespace DotNet.Basics.IO
 
         public bool DeleteIfExists(TimeSpan timeout)
         {
-            
+
             if (Exists() == false)
                 return true;
 
@@ -140,7 +138,7 @@ namespace DotNet.Basics.IO
             return ToString(Delimiter);
         }
 
-        public string ToString(PathDelimiter delimiter)
+        public string ToString(char delimiter)
         {
             return GetRawName(Segments, IsFolder, delimiter);
         }
@@ -185,24 +183,15 @@ namespace DotNet.Basics.IO
             if (SystemIoPath.Exists(fullName, false))
                 return false;
 
-            return segments.Last().EndsWith(PathChars.Slash.ToString()) || segments.Last().EndsWith(PathChars.Backslash.ToString());
+            return segments.Last().EndsWith(PathDelimiter.Slash.ToString()) || segments.Last().EndsWith(PathDelimiter.Backslash.ToString());
         }
 
-        private static bool DetectIsUri(IEnumerable<string> segments)
-        {
-            return segments.FirstOrDefault(s =>
-            s.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
-                        s.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
-                        s.StartsWith("ftp://", StringComparison.OrdinalIgnoreCase) ||
-                        s.StartsWith("sftp://", StringComparison.OrdinalIgnoreCase)) != null;
-        }
-
-        private static PathDelimiter DetectDelimiter(IReadOnlyCollection<string> segments)
+        private static char DetectDelimiter(IReadOnlyCollection<string> segments)
         {
             foreach (var segment in segments)
             {
-                var slashIndex = segment.IndexOf(PathChars.Slash);
-                var backslashIndex = segment.IndexOf(PathChars.Backslash);
+                var slashIndex = segment.IndexOf(PathDelimiter.Slash);
+                var backslashIndex = segment.IndexOf(PathDelimiter.Backslash);
 
                 if (slashIndex < 0 && backslashIndex < 0)
                     continue;
@@ -216,22 +205,22 @@ namespace DotNet.Basics.IO
             return PathDelimiter.Backslash;
         }
 
-        private static string GetRawName(IEnumerable<string> segments, bool isFolder = true, PathDelimiter delimiter = PathDelimiter.Slash)
+        private static string GetRawName(IEnumerable<string> segments, bool isFolder = true, char delimiter = PathDelimiter.Slash)
         {
             var path = string.Empty;
             foreach (var segment in segments)
             {
-                if (segment.IsProtocol())
+                if (segment.EndsWith("://"))//is protocol
                     path += segment;
                 else
-                    path += $"{segment}{delimiter.ToChar()}";
+                    path += $"{segment}{delimiter}";
             }
 
-            path = isFolder ? path : path.RemoveSuffix(delimiter.ToChar());
+            path = isFolder ? path : path.RemoveSuffix(delimiter);
 
             return delimiter == PathDelimiter.Slash ?
-                path.Replace(PathChars.Backslash, PathChars.Slash) :
-                path.Replace(PathChars.Slash, PathChars.Backslash);
+                path.Replace(PathDelimiter.Backslash, PathDelimiter.Slash) :
+                path.Replace(PathDelimiter.Slash, PathDelimiter.Backslash);
         }
 
         private static IReadOnlyCollection<string> FlattenSegments(IReadOnlyCollection<string> pathSegments)
@@ -257,7 +246,7 @@ namespace DotNet.Basics.IO
                     toBesplit = toBesplit.Substring(capture.Length);//remove protocol
                 }
 
-                var splits = toBesplit.Split(new[] { PathChars.Slash, PathChars.Backslash },
+                var splits = toBesplit.Split(new[] { PathDelimiter.Slash, PathDelimiter.Backslash },
                     StringSplitOptions.RemoveEmptyEntries);
                 updatedSegments.AddRange(splits);
             }

@@ -134,7 +134,7 @@ namespace DotNet.Basics.Tests.IO
             var path = fullPath.ToPath();
 
             if (isFolder)
-                fullPath = fullPath.EnsureSuffix(path.Delimiter.ToChar());
+                fullPath = fullPath.EnsureSuffix(path.Delimiter);
 
             path.RawName.Should().Be(fullPath);
         }
@@ -156,7 +156,7 @@ namespace DotNet.Basics.Tests.IO
         [InlineData("myFolder/DetectDelimiter\\", PathDelimiter.Slash)]//delimiter detected
         [InlineData("myFolder\\DetectDelimiter//", PathDelimiter.Backslash)]//delimiter detected
         [InlineData("DetectDelimiter", PathDelimiter.Backslash)]//delimiter fallback
-        public void Delimiter_Detection_DelimiterDetected(string pathInput, PathDelimiter delimiter)
+        public void Delimiter_Detection_DelimiterDetected(string pathInput, char delimiter)
         {
             var path = pathInput.ToPath();
             path.Delimiter.Should().Be(delimiter, pathInput);
@@ -182,9 +182,9 @@ namespace DotNet.Basics.Tests.IO
             path.IsFolder.Should().Be(isFolder);
             var formatted = path.ToString();
             if (isFolder)
-                formatted.Should().EndWith(path.Delimiter.ToChar().ToString());
+                formatted.Should().EndWith(path.Delimiter.ToString());
             else
-                formatted.Should().NotEndWith(path.Delimiter.ToChar().ToString());
+                formatted.Should().NotEndWith(path.Delimiter.ToString());
         }
 
         [Theory]
@@ -197,8 +197,8 @@ namespace DotNet.Basics.Tests.IO
             var pathWithSlash = path.ToString(PathDelimiter.Slash);
             var pathWithBackSlash = path.ToString(PathDelimiter.Backslash);
 
-            pathWithSlash.Should().Be(pathInput.Replace('\\', '/'), PathDelimiter.Slash.ToName());
-            pathWithBackSlash.Should().Be(pathInput.Replace('/', '\\'), PathDelimiter.Backslash.ToName());
+            pathWithSlash.Should().Be(pathInput.Replace('\\', '/'), PathDelimiter.Slash.ToString());
+            pathWithBackSlash.Should().Be(pathInput.Replace('/', '\\'), PathDelimiter.Backslash.ToString());
         }
     }
 }

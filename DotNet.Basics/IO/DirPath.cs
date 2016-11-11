@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Management.Automation;
 using System.Security.AccessControl;
 using DotNet.Basics.Sys;
@@ -14,14 +15,14 @@ namespace DotNet.Basics.IO
         public DirPath(IReadOnlyCollection<string> pathSegments) : base(pathSegments)
         { }
 
-        public DirPath(IReadOnlyCollection<string> pathSegments, PathDelimiter delimiter)
+        public DirPath(IReadOnlyCollection<string> pathSegments, char delimiter)
             : base(pathSegments, true, delimiter)
         { }
 
         public void CleanIfExists()
         {
             if (IsFolder == false)
-                throw new PathException($"Can't clean path because it's not a folder", this);
+                throw new IOException($"Can't clean path because path object is not a folder. IsFolder:{IsFolder}");
             try
             {
                 PowerShellConsole.RemoveItem($"{FullName}\\*", force: true, recurse: true);
@@ -32,11 +33,11 @@ namespace DotNet.Basics.IO
 
         public void CreateIfNotExists()
         {
-            if (this.Exists())
+            if (Exists())
                 return;
 
             if (IsFolder == false)
-                throw new PathException($"Can't create path because it's not a folder {FullName}", this);
+                throw new IOException($"Can't clean path because path object is not a folder. IsFolder:{IsFolder}");
 
             try
             {

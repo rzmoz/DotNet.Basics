@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Management.Automation;
-using DotNet.Basics.Sys;
-using DotNet.Basics.Tasks.Repeating;
-
-namespace DotNet.Basics.IO
+﻿namespace DotNet.Basics.IO
 {
     public static class PathInfoExtensions
     {

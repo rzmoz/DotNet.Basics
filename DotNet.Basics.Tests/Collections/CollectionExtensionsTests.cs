@@ -10,7 +10,6 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Collections
 {
-
     public class CollectionExtensionsTests
     {
         [Fact]

@@ -64,14 +64,14 @@ namespace DotNet.Basics.IO
 
         public static void WriteAllText(this string content, string target, bool overwrite = true)
         {
-            content.WriteAllText(target.ToPath(), overwrite);
+            content.WriteAllText(target.ToFile(), overwrite);
         }
         public static void WriteAllText(this string content, PathInfo target, bool overwrite = true)
         {
             if (target.IsFolder)
                 throw new ArgumentException($"Cannot write text. Target is a folder: {target}");
 
-            content.WriteAllText(target as FilePath, overwrite);
+            content.WriteAllText(target.ToFile(), overwrite);
         }
 
         public static void WriteAllText(this string content, FilePath targetFile, bool overwrite = true)

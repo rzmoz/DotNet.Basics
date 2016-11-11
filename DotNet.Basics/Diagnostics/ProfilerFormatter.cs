@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Diagnostics
 {
@@ -21,7 +20,6 @@ namespace DotNet.Basics.Diagnostics
             return Format(name, state, () =>
               {
                   double value;
-                  string unit = formattingUnit.ToName().ToLowerInvariant();
                   switch (formattingUnit)
                   {
                       case DurationFormattingUnit.MilliSeconds:
@@ -40,10 +38,11 @@ namespace DotNet.Basics.Diagnostics
                           value = duration.TotalDays;
                           break;
                       default:
-                          throw new ArgumentException($"DurationFormattingUnit not supported: {formattingUnit.ToName()}");
+                          throw new ArgumentException($"DurationFormattingUnit not supported: {formattingUnit}");
                   }
                   if (cultureInfo == null)
                       cultureInfo = new CultureInfo("en-US");
+                  var unit = Enum.GetName(typeof(DurationFormattingUnit), formattingUnit) ?? formattingUnit.ToString();
                   var output = $"finished in {value.ToString("0.00", cultureInfo)} {unit}";
 
                   if (string.IsNullOrWhiteSpace(name) == false)

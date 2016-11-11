@@ -62,7 +62,7 @@ namespace DotNet.Basics.Tests.IO
         [InlineData("myFolder/myFolder", PathDelimiter.Slash)]//slash
         [InlineData("myFolder/myFolder\\", PathDelimiter.Slash)]//mixed delimiters - first is picked
         [InlineData("myFolder", PathDelimiter.Backslash)]//default fallback
-        public void Ctor_DelimiterDetection_DelimiterIsDetected(string path, PathDelimiter expected)
+        public void Ctor_DelimiterDetection_DelimiterIsDetected(string path, char expected)
         {
             var sp = new PathInfo(path);
             sp.Delimiter.Should().Be(expected, path);
@@ -85,7 +85,7 @@ namespace DotNet.Basics.Tests.IO
             var pathInSegment = "dir/dir/dir/dir/dir/dir/dir";
             var sp = new PathInfo(pathInSegment, pathInSegment);
             sp.Segments.Count.Should().Be(14);
-            sp.Segments.Any(s => s.Contains(PathChars.Slash)).Should().BeFalse();
+            sp.Segments.Any(s => s.Contains(PathDelimiter.Slash)).Should().BeFalse();
             sp.Segments.All(s => s == "dir").Should().BeTrue();
         }
 
@@ -99,7 +99,7 @@ namespace DotNet.Basics.Tests.IO
             //act
             string serialized = JsonConvert.SerializeObject(sp);
             //assert
-            serialized.Should().Be(@"{""Name"":""MyPath"",""IsFolder"":false,""Delimiter"":""Backslash"",""Segments"":[""MyPath"",""MyPath"",""MyPath"",""MyPath""]}");
+            serialized.Should().Be(@"{""Name"":""MyPath"",""IsFolder"":false,""Delimiter"":""\\"",""Segments"":[""MyPath"",""MyPath"",""MyPath"",""MyPath""]}");
         }
     }
 }

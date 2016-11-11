@@ -9,8 +9,7 @@ namespace DotNet.Basics.IO
 
         public TempDir(string dirPrefix = null)
             : this(GetTempDir(), dirPrefix)
-        {
-        }
+        { }
 
         public TempDir(DirPath parent, string dirPrefix = null)
         {

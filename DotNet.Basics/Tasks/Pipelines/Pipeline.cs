@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
-using DotNet.Basics.Collections;
 using DotNet.Basics.Ioc;
 
 namespace DotNet.Basics.Tasks.Pipelines
@@ -147,11 +146,13 @@ namespace DotNet.Basics.Tasks.Pipelines
             DebugOut.WriteLine($"Running block {Name} in parallel");
             if (ct.IsCancellationRequested)
                 return;
-            await Tasks.ParallelForEachAsync(async s =>
+            var tasks = Tasks.Select(async t =>
             {
-                var result = await s.RunAsync(args, ct).ConfigureAwait(false);
+                var result = await t.RunAsync(args, ct).ConfigureAwait(false);
                 issues.Add(result.Issues);
-            }).ConfigureAwait(false);
+
+            }).ToList();
+            await Task.WhenAll(tasks).ConfigureAwait(false);
         }
         protected async Task InnerSequentialRunAsync(T args, TaskIssueList issues, CancellationToken ct)
         {

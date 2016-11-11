@@ -60,55 +60,36 @@ namespace DotNet.Basics.Tests.IO
         }
 
         [Theory]
-        [InlineData("http://", true)]
-        [InlineData("http:/", false)]
-        [InlineData("http://folder", false)]//
-        public void IsProtocol_ProtocolIsDetected(string path, bool expected)
-        {
-            path.IsProtocol().Should().Be(expected);
-        }
-
-        [Theory]
         [InlineData(PathDelimiter.Slash, '/')]
         [InlineData(PathDelimiter.Backslash, '\\')]
-        public void ToChar_DelimiterToChar_DelimiterIsConverted(PathDelimiter delimiter, char expectedChar)
+        public void ToChar_DelimiterToChar_DelimiterIsConverted(char delimiter, char expectedChar)
         {
-            var foundChar = delimiter.ToChar();
+            var foundChar = delimiter;
             foundChar.Should().Be(expectedChar);
         }
 
         [Theory]
         [InlineData('/', PathDelimiter.Slash)]
         [InlineData('\\', PathDelimiter.Backslash)]
-        public void ToPathDelimiter_CharToDelimiter_CharIsConverted(char delimiter, PathDelimiter expectedPathDelimiter)
+        public void ToPathDelimiter_CharToDelimiter_CharIsConverted(char delimiter, char expectedPathDelimiter)
         {
-            var foundPathDelimiter = delimiter.ToPathDelimiter();
+            var foundPathDelimiter = delimiter;
             foundPathDelimiter.Should().Be(expectedPathDelimiter);
         }
-
-        [Theory]
-        [InlineData('a')]
-        [InlineData('1')]
-        [InlineData('¤')]
-        public void ToPathDelimiter_UnsupportedChar_ExceptionIsThrown(char delimiter)
-        {
-            Action action = () => delimiter.ToPathDelimiter();
-            action.ShouldThrow<NotSupportedException>();
-        }
-
+        
         [Theory]
         [InlineData("//pt101", "pt21", PathDelimiter.Slash)]//file
         [InlineData("\\pt102", "pt22", PathDelimiter.Backslash)]//file
         [InlineData("//pt103", "pt23/", PathDelimiter.Slash)]//dir
         [InlineData("\\pt104", "pt24\\", PathDelimiter.Backslash)]//dir
-        public void ToPath_Combine_PathIsGenerated(string pt1, string pt2, PathDelimiter pathDelimiter)
+        public void ToPath_Combine_PathIsGenerated(string pt1, string pt2, char pathDelimiter)
         {
             var path = pt1.ToPath(pt2);
 
-            var refPath = pt1 + pathDelimiter.ToChar() + pt2;
+            var refPath = pt1 + pathDelimiter + pt2;
             if (path.IsFolder == false)
-                refPath = refPath.TrimEnd(pathDelimiter.ToChar());
-            refPath = refPath.TrimStart(pathDelimiter.ToChar());
+                refPath = refPath.TrimEnd(pathDelimiter);
+            refPath = refPath.TrimStart(pathDelimiter);
             path.RawName.Should().Be(refPath);
         }
 

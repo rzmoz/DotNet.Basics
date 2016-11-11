@@ -4,14 +4,14 @@ using System.IO;
 
 namespace DotNet.Basics.IO
 {
-    public class ApplicationInstaller
+    public class ExecutableInstaller
     {
         private const string _installingHandleName = "installing.dat";
         private const string _installedHandleName = "installed.dat";
         private readonly FilePath _installedHandle;
         private readonly IList<Action> _installActions;
 
-        public ApplicationInstaller(DirPath installDir, string executableFilename)
+        public ExecutableInstaller(DirPath installDir, string executableFilename)
         {
             if (installDir == null) throw new ArgumentNullException(nameof(installDir));
             InstallDir = installDir;
@@ -20,7 +20,7 @@ namespace DotNet.Basics.IO
             _installActions = new List<Action>();
         }
 
-        public ApplicationInstaller(DirPath applicationsRoot, string applicationName, string executableFilename)
+        public ExecutableInstaller(DirPath applicationsRoot, string applicationName, string executableFilename)
             : this(applicationsRoot.ToDir(applicationName), executableFilename)
         {
             if (applicationsRoot == null) throw new ArgumentNullException(nameof(applicationsRoot));
