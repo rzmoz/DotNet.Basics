@@ -84,8 +84,9 @@
     <Compile Include="IO\IoLock.cs" />
     <Compile Include="IO\PathInfo.cs" />
     <Compile Include="IO\PathException.cs" />
-    <Compile Include="IO\PathInfoExtensions.cs" />
+    <Compile Include="IO\PathExtensions.cs" />
     <Compile Include="IO\PathFileSystemExtensions.cs" />
+    <Compile Include="IO\PathInfoFactory.cs" />
     <Compile Include="IO\PathNotFoundException.cs" />
     <Compile Include="IO\Robocopy.cs" />
     <Compile Include="IO\IoExtensions.cs" />
