@@ -69,7 +69,7 @@
     <Compile Include="DebugOut.cs" />
     <Compile Include="Diagnostics\ProfilerFormatter.cs" />
     <Compile Include="Diagnostics\DurationFormattingUnit.cs" />
-    <Compile Include="Diagnostics\ProfilerStates.cs" />
+    <Compile Include="Diagnostics\ProfilerState.cs" />
     <Compile Include="AppSettings\IocAppSettingExtensions.cs" />
     <Compile Include="Ioc\IIocRegistrations.cs" />
     <Compile Include="Ioc\IocContainer.cs" />

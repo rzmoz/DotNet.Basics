@@ -20,7 +20,7 @@ namespace DotNet.Basics.Diagnostics
             Name = name ?? string.Empty;
             StartTime = startTime;
             EndTime = endTime;
-            State = ProfilerStates.NotStarted;
+            State = ProfilerState.NotStarted;
             if (isFinished)
             {
                 InternalStart(startTime);
@@ -33,7 +33,7 @@ namespace DotNet.Basics.Diagnostics
         public DateTime StartTime { get; private set; }
         public DateTime EndTime { get; private set; }
         public TimeSpan Duration => EndTime - StartTime;
-        public ProfilerStates State { get; private set; }
+        public ProfilerState State { get; private set; }
         public bool Start()
         {
             return Start(DateTime.UtcNow);
@@ -60,7 +60,7 @@ namespace DotNet.Basics.Diagnostics
             StartTime = start;
             InternalStart = Passive;
             InternalStop = ActiveStop;
-            State = ProfilerStates.Running;
+            State = ProfilerState.Running;
             return true;
         }
 
@@ -68,7 +68,7 @@ namespace DotNet.Basics.Diagnostics
         {
             EndTime = end;
             InternalStop = Passive;
-            State = ProfilerStates.Finished;
+            State = ProfilerState.Finished;
             return true;
         }
 
@@ -79,11 +79,11 @@ namespace DotNet.Basics.Diagnostics
 
         public override string ToString()
         {
-            return _formatter.Format(this);
+            return _formatter.Format(Name, State, Duration);
         }
         public string ToString(DurationFormattingUnit durationFormattingUnit)
         {
-            return _formatter.Format(this, durationFormattingUnit);
+            return _formatter.Format(Name, State, Duration, durationFormattingUnit);
         }
     }
 }

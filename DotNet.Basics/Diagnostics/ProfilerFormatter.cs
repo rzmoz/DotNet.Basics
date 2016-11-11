@@ -6,73 +6,65 @@ namespace DotNet.Basics.Diagnostics
 {
     public class ProfilerFormatter
     {
-        public string Format(Profiler profiler)
+        public string Format(string name, ProfilerState state, TimeSpan duration)
         {
-            return Format(profiler, p =>
+            return Format(name, state, () =>
             {
-                var output = $"finished in {profiler.Duration.ToString(string.Empty, new CultureInfo("en-US"))}";
-
-                if (string.IsNullOrWhiteSpace(profiler.Name) == false)
-                    output = $"'{profiler.Name}' {output}";
-
+                var output = $"finished in {duration.ToString(string.Empty, new CultureInfo("en-US"))}";
+                if (string.IsNullOrWhiteSpace(name) == false)
+                    output = $"'{name}' {output}";
                 return output;
             });
         }
-        public string Format(Profiler profiler, DurationFormattingUnit formattingUnit, CultureInfo cultureInfo = null)
+        public string Format(string name, ProfilerState state, TimeSpan duration, DurationFormattingUnit formattingUnit, CultureInfo cultureInfo = null)
         {
-            return Format(profiler, p =>
-            {
-                double value;
-                string unit;
-                switch (formattingUnit)
-                {
-                    case DurationFormattingUnit.MilliSeconds:
-                        value = profiler.Duration.TotalMilliseconds;
-                        unit = "milliseconds";
-                        break;
-                    case DurationFormattingUnit.Seconds:
-                        value = profiler.Duration.TotalSeconds;
-                        unit = "seconds";
-                        break;
-                    case DurationFormattingUnit.Minutes:
-                        value = profiler.Duration.TotalMinutes;
-                        unit = "minutes";
-                        break;
-                    case DurationFormattingUnit.Hours:
-                        value = profiler.Duration.TotalHours;
-                        unit = "hours";
-                        break;
-                    case DurationFormattingUnit.Days:
-                        value = profiler.Duration.TotalDays;
-                        unit = "days";
-                        break;
-                    default:
-                        throw new ArgumentException($"DurationFormattingUnit not supported: {formattingUnit.ToName()}");
-                }
-                if (cultureInfo == null)
-                    cultureInfo = new CultureInfo("en-US");
-                var output = $"finished in {value.ToString("0.00", cultureInfo)} {unit}";
+            return Format(name, state, () =>
+              {
+                  double value;
+                  string unit = formattingUnit.ToName().ToLowerInvariant();
+                  switch (formattingUnit)
+                  {
+                      case DurationFormattingUnit.MilliSeconds:
+                          value = duration.TotalMilliseconds;
+                          break;
+                      case DurationFormattingUnit.Seconds:
+                          value = duration.TotalSeconds;
+                          break;
+                      case DurationFormattingUnit.Minutes:
+                          value = duration.TotalMinutes;
+                          break;
+                      case DurationFormattingUnit.Hours:
+                          value = duration.TotalHours;
+                          break;
+                      case DurationFormattingUnit.Days:
+                          value = duration.TotalDays;
+                          break;
+                      default:
+                          throw new ArgumentException($"DurationFormattingUnit not supported: {formattingUnit.ToName()}");
+                  }
+                  if (cultureInfo == null)
+                      cultureInfo = new CultureInfo("en-US");
+                  var output = $"finished in {value.ToString("0.00", cultureInfo)} {unit}";
 
-                if (string.IsNullOrWhiteSpace(profiler.Name) == false)
-                    output = $"'{profiler.Name}' {output}";
+                  if (string.IsNullOrWhiteSpace(name) == false)
+                      output = $"'{name}' {output}";
 
-                return output;
-            });
+                  return output;
+              });
         }
 
-        private string Format(Profiler profiler, Func<Profiler, string> formatting)
+        private string Format(string name, ProfilerState state, Func<string> formatDuration)
         {
-            if (profiler == null) throw new ArgumentNullException(nameof(profiler));
-            switch (profiler.State)
+            switch (state)
             {
-                case ProfilerStates.NotStarted:
-                    return $"'{profiler.Name}' not started";
-                case ProfilerStates.Running:
-                    return $"'{profiler.Name}' started";
-                case ProfilerStates.Finished:
-                    return formatting(profiler);
+                case ProfilerState.NotStarted:
+                    return $"'{name}' not started";
+                case ProfilerState.Running:
+                    return $"'{name}' started";
+                case ProfilerState.Finished:
+                    return formatDuration();
                 default:
-                    throw new ArgumentException($"Profile state not supported: {profiler.State}");
+                    throw new ArgumentException($"Profile state not supported: {state}");
             }
         }
     }
