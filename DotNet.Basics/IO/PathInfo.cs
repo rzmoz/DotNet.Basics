@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Management.Automation;
 using System.Text.RegularExpressions;
 using DotNet.Basics.Sys;
+using DotNet.Basics.Tasks.Repeating;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -77,6 +78,37 @@ namespace DotNet.Basics.IO
                 return null;
             var parentSegments = Segments.Reverse().Skip(1).Reverse().ToArray();
             return new DirPath(parentSegments, Delimiter);
+        }
+
+        public bool Exists(bool throwIoExceptionIfNotExists = false)
+        {
+            return SystemIoPath.Exists(FullName, IsFolder, throwIoExceptionIfNotExists);
+        }
+
+        public bool DeleteIfExists()
+        {
+            return DeleteIfExists(30.Seconds());
+        }
+
+        public bool DeleteIfExists(TimeSpan timeout)
+        {
+            
+            if (Exists() == false)
+                return true;
+
+            Repeat.Task(() =>
+            {
+                PowerShellConsole.RemoveItem(FullName, force: true, recurse: true);
+            })
+            .WithOptions(o =>
+            {
+                o.Timeout = timeout;
+                o.RetryDelay = 2.Seconds();
+                o.DontRethrowOnTaskFailedType = typeof(ItemNotFoundException);
+            })
+            .Until(() => Exists() == false);
+
+            return Exists() == false;
         }
 
         /// <summary>

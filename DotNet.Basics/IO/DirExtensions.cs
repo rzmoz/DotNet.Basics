@@ -44,7 +44,7 @@ namespace DotNet.Basics.IO
         }
         public static PathInfo[] GetPaths(this DirPath dp, string searchPattern = null, bool recurse = false)
         {
-            return System.IO.Directory.GetFileSystemEntries(dp.FullName, searchPattern ?? "*", ToSearchOption(recurse)).Select(dir => dir.ToPath()).ToArray();
+            return System.IO.Directory.GetFileSystemEntries(dp.FullName, searchPattern ?? "*", ToSearchOption(recurse)).Select(dir =>new PathInfo(dir)).ToArray();
         }
         public static IEnumerable<DirPath> EnumerateDirectories(this DirPath dp, string searchPattern = null, bool recurse = false)
         {
@@ -56,7 +56,7 @@ namespace DotNet.Basics.IO
         }
         public static IEnumerable<PathInfo> EnumeratePaths(this DirPath dp, string searchPattern = null, bool recurse = false)
         {
-            return System.IO.Directory.EnumerateFileSystemEntries(dp.FullName, searchPattern ?? "*", ToSearchOption(recurse)).Select(fse => fse.ToPath());
+            return System.IO.Directory.EnumerateFileSystemEntries(dp.FullName, searchPattern ?? "*", ToSearchOption(recurse)).Select(fse => new PathInfo(fse));
         }
 
         public static void ConsolidateIdenticalSubfolders(this DirPath dir, int lookDepth = int.MaxValue)
