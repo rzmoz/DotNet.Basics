@@ -61,5 +61,28 @@ namespace DotNet.Basics.IO
             File.Copy(source.FullName, target.FullName, overwrite);
             File.SetAttributes(target.FullName, FileAttributes.Normal);
         }
+
+        public static void WriteAllText(this string content, string target, bool overwrite = true)
+        {
+            content.WriteAllText(target.ToPath(), overwrite);
+        }
+        public static void WriteAllText(this string content, PathInfo target, bool overwrite = true)
+        {
+            if (target.IsFolder)
+                throw new ArgumentException($"Cannot write text. Target is a folder: {target}");
+
+            content.WriteAllText(target as FilePath, overwrite);
+        }
+
+        public static void WriteAllText(this string content, FilePath targetFile, bool overwrite = true)
+        {
+            if (targetFile == null) throw new ArgumentNullException(nameof(targetFile));
+            if (overwrite == false && targetFile.Exists())
+                throw new IOException($"Cannot write text. Target file already exists. Set overwrite to true to ignore existing file: {targetFile.FullName}");
+
+            targetFile.Directory.CreateIfNotExists();
+            File.WriteAllText(targetFile.FullName, content ?? string.Empty);
+        }
+
     }
 }
