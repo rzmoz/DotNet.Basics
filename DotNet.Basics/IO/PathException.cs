@@ -7,8 +7,7 @@ namespace DotNet.Basics.IO
     {
         public PathException(PathInfo path)
             : this($"Path not found: {path?.FullName}", path)
-        {
-        }
+        { }
 
         public PathException(string message, PathInfo path) : base($"{message} :{path?.FullName}")
         {

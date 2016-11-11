@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Globalization;
-using DotNet.Basics.IO;
 
 namespace DotNet.Basics.AppSettings
 {
     public class AppSetting : AppSetting<string>
     {
         public AppSetting(string key, Func<string, string> customParser = null, IConfigurationManager configurationManager = null) : base(key, customParser, configurationManager)
-        {
-        }
+        { }
 
         /// <summary>
         /// 
@@ -18,8 +16,7 @@ namespace DotNet.Basics.AppSettings
         /// <param name="customParser"></param>
         /// <param name="configurationManager"></param>
         public AppSetting(string key, string defaultValue, Func<string, string> customParser = null, IConfigurationManager configurationManager = null) : base(key, defaultValue, customParser, configurationManager)
-        {
-        }
+        { }
     }
 
     public class AppSetting<T> : IAppSetting
@@ -89,10 +86,6 @@ namespace DotNet.Basics.AppSettings
             var parseType = typeof(T).FullName;
             switch (parseType)
             {
-                case "DotNet.Basics.IO.DirPath":
-                    return value.ToString().ToDir();
-                case "DotNet.Basics.IO.FilePath":
-                    return value.ToString().ToFile();
                 case "System.String":
                     return value;
                 case "System.Char":

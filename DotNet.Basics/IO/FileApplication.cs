@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace DotNet.Basics.IO
+﻿namespace DotNet.Basics.IO
 {
     public class FileApplication
     {
@@ -16,9 +14,7 @@ namespace DotNet.Basics.IO
         public DirPath Root { get; }
 
         public void Install(params byte[] files)
-        {
-            
-        }
+        { }
 
         private void Extract(string fileName, byte[] bytes)
         {

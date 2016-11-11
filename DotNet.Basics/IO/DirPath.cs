@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
@@ -29,8 +28,7 @@ namespace DotNet.Basics.IO
                 PowerShellConsole.RemoveItem($"{FullName}\\*", force: true, recurse: true);
             }
             catch (ItemNotFoundException)
-            {
-            }
+            { }
         }
 
         public void CreateIfNotExists()

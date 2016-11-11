@@ -1,6 +1,4 @@
 ﻿using System.IO;
-using System.Linq;
-using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.ServiceProcess;
-using DotNet.Basics.Tasks.Repeating;
 
 namespace DotNet.Basics.Sys
 {

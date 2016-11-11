@@ -1,5 +1,4 @@
 ﻿using System;
-using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Tasks.Repeating
 {
@@ -7,7 +6,7 @@ namespace DotNet.Basics.Tasks.Repeating
     {
         public RepeatOptions()
         {
-            RetryDelay = 250.MilliSeconds();
+            RetryDelay = TimeSpan.FromMilliseconds(250);
         }
 
         public TimeSpan RetryDelay { get; set; }

@@ -26,7 +26,5 @@ namespace DotNet.Basics.IO
             targetFile.Directory.CreateIfNotExists();
             File.WriteAllText(targetFile.FullName, content ?? string.Empty);
         }
-
-
     }
 }
