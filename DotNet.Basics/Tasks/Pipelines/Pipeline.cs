@@ -38,14 +38,14 @@ namespace DotNet.Basics.Tasks.Pipelines
         private readonly ConcurrentQueue<ManagedTask<T>> _tasks;
         private readonly Func<T, TaskIssueList, CancellationToken, Task> _innerRun;
 
-        public Pipeline() : this(Invoke.Parallel)
+        public Pipeline() : this(Invoke.Sequential)
         { }
 
-        public Pipeline(string name) : this(name, Invoke.Parallel)
+        public Pipeline(string name) : this(name, Invoke.Sequential)
         { }
 
         public Pipeline(IContainer container)
-            : this(null, container, Invoke.Parallel)
+            : this(null, container, Invoke.Sequential)
         { }
 
         public Pipeline(Invoke invoke)
