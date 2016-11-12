@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks
 {
-    public class ManagedTask<T> : ITask<T> where T : class, new()
+    public class ManagedTask<T> : ITask where T : class, new()
     {
         private readonly Func<T, TaskIssueList, CancellationToken, Task> _task;
         private string _name;

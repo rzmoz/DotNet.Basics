@@ -62,7 +62,7 @@ namespace DotNet.Basics.Tasks.Pipelines
         public Pipeline(string name, IContainer container, Invoke invoke)
             : base(name)
         {
-            _container = container ?? new IocBuilder().Container;
+            _container = container ?? new IocBuilder(true).Container;
             _tasks = new ConcurrentQueue<ManagedTask<T>>();
             Invoke = invoke;
             switch (Invoke)

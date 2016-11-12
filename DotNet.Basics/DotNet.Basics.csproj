@@ -72,7 +72,9 @@
     <Compile Include="Diagnostics\ProfilerState.cs" />
     <Compile Include="AppSettings\IocAppSettingExtensions.cs" />
     <Compile Include="Ioc\IIocRegistrations.cs" />
-    <Compile Include="Ioc\IocContainer.cs" />
+    <Compile Include="Ioc\IocBuilder.cs" />
+    <Compile Include="Ioc\IocExtensions.cs" />
+    <Compile Include="Tasks\Pipelines\IocExtensions.cs" />
     <Compile Include="IO\ExecutableInstaller.cs" />
     <Compile Include="IO\FileApplication.cs" />
     <Compile Include="IO\DirExtensions.cs" />
@@ -95,6 +97,7 @@
     <Compile Include="Sys\StringExtensions.cs" />
     <Compile Include="Sys\WindowsServices.cs" />
     <Compile Include="Sys\WindowsServiceStatus.cs" />
+    <Compile Include="Tasks\Pipelines\IPipelineStep.cs" />
     <Compile Include="Tasks\Pipelines\LazyLoadStep.cs" />
     <Compile Include="Tasks\Pipelines\Pipeline.cs" />
     <Compile Include="Tasks\Invoke.cs" />

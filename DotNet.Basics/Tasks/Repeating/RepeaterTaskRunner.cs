@@ -6,7 +6,7 @@ namespace DotNet.Basics.Tasks.Repeating
 {
     public class RepeaterTaskRunner
     {
-        public async Task<bool> RunAsync(ITask task, Func<Exception, bool> untilPredicate, RepeatOptions options = null)
+        public async Task<bool> RunAsync(ManagedTask<EventArgs> task, Func<Exception, bool> untilPredicate, RepeatOptions options = null)
         {
             if (task == null)
                 return false;

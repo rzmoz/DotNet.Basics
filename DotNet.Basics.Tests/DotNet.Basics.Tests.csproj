@@ -95,6 +95,7 @@
     <Compile Include="Compression\SevenZipTests.cs" />
     <Compile Include="Compression\ZipReaderTests.cs" />
     <Compile Include="Ioc\IocBuilderTests.cs" />
+    <Compile Include="Ioc\IocExtensionsTests.cs" />
     <Compile Include="Ioc\TestHelpers\MyIocRegistrations.cs" />
     <Compile Include="Ioc\TestHelpers\TestSettingsProvider.cs" />
     <Compile Include="Ioc\TestHelpers\TypeThatDependesOnContainer.cs" />

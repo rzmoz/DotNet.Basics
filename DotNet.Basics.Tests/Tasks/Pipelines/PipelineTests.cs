@@ -3,8 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Autofac;
-using DotNet.Basics.Ioc;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
 using DotNet.Basics.Tasks.Pipelines;
@@ -15,14 +13,6 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 {
     public class PipelineTests
     {
-        private readonly IocBuilder _builder;
-
-        public PipelineTests()
-        {
-            _builder = new IocBuilder();
-            _builder.RegisterType<ClassThatIncrementArgsDependOn>().AsSelf();
-        }
-
         [Theory]
         [InlineData(Invoke.Parallel)]
         [InlineData(Invoke.Sequential)]
@@ -71,7 +61,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [InlineData(Invoke.Sequential)]
         public async Task RunAsync_TaskCancellation_PipelineIsCancelled(Invoke invoke)
         {
-            var pipeline = new Pipeline(_builder.Container, invoke);
+            var pipeline = new Pipeline(invoke);
 
             var ts = new CancellationTokenSource();
             ts.Cancel();
@@ -91,7 +81,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public async Task DisplayName_DisplayNameIsNotSet_TypeNameNameIsUsed()
         {
-            var pipeline = new Pipeline<EventArgs<int>>(_builder.Container);
+            var pipeline = new Pipeline<EventArgs<int>>();
             pipeline.AddStep<IncrementArgsStep>();
             string stepName = null;
 
@@ -109,7 +99,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public async Task RunAsync_AllInParallel_AllStepsAreRunInParallel()
         {
-            var pipeline = new Pipeline(_builder.Container);
+            var pipeline = new Pipeline();
             var block = pipeline.AddBlock("ParallelBlock", Invoke.Parallel);
 
             var runCount = 101;
@@ -129,7 +119,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public async Task RunAsync_BlockWait_StepsAreRunInBlockOrder()
         {
-            var pipeline = new Pipeline(_builder.Container);
+            var pipeline = new Pipeline();
             var task1Called = false;
             var task2Called = false;
 
@@ -156,7 +146,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public async Task RunAsync_PassArgs_ArgsArePassedInPipeline()
         {
-            var pipeline = new Pipeline<EventArgs<int>>(_builder.Container);
+            var pipeline = new Pipeline<EventArgs<int>>();
             pipeline.AddStep<IncrementArgsStep>();
             pipeline.AddStep<IncrementArgsStep>();
             pipeline.AddBlock("1").AddStep<IncrementArgsStep>();
@@ -178,7 +168,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             string stepStarted = string.Empty;
             string stepEnded = string.Empty;
 
-            var pipeline = new Pipeline<EventArgs<int>>(_builder.Container);
+            var pipeline = new Pipeline<EventArgs<int>>();
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
 
             pipeline.Started += args =>

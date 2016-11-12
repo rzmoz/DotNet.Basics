@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Autofac;
 using Autofac.Core.Registration;
 using DotNet.Basics.AppSettings;
@@ -9,15 +11,26 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Ioc
 {
-    
+
     public class IocBuilderTests
     {
         private readonly IocBuilder _builder;
-
         
         public IocBuilderTests()
         {
             _builder = new IocBuilder();
+        }
+
+        [Fact]
+        public void RegisterAll_TypeBasedRegistrations_AllDescendantTypesAreRegistered_TypeIsResolved()
+        {
+            _builder.RegisterAll<IMyType>();
+
+            var myType1 = _builder.Container.Resolve<MyType1>();
+            var myType2 = _builder.Container.Resolve<MyType2>();
+
+            myType1.Should().NotBeNull();
+            myType2.Should().NotBeNull();
         }
 
         [Fact]
@@ -83,7 +96,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Fact]
         public void GetInstance_UnregisteredDefaultConstructor_InstanceIsResolved()
         {
-            using (var container = _builder.Build())
+            using (var container = new IocBuilder(true).Container)
             {
                 var resolvedByImplementation = container.Resolve<MyType1>();
 
