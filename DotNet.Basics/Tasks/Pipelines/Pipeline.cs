@@ -17,7 +17,7 @@ namespace DotNet.Basics.Tasks.Pipelines
         public Pipeline(string name) : base(name)
         { }
 
-        public Pipeline(IContainer container) : base(container)
+        public Pipeline(Func<IContainer> getContainer) : base(getContainer)
         { }
 
         public Pipeline(Invoke invoke) : base(invoke)
@@ -26,15 +26,15 @@ namespace DotNet.Basics.Tasks.Pipelines
         public Pipeline(string name, Invoke invoke) : base(name, invoke)
         { }
 
-        public Pipeline(IContainer container, Invoke invoke) : base(container, invoke)
+        public Pipeline(Func<IContainer> getContainer, Invoke invoke) : base(getContainer, invoke)
         { }
 
-        public Pipeline(string name, IContainer container, Invoke invoke) : base(name, container, invoke)
+        public Pipeline(string name, Func<IContainer> getContainer, Invoke invoke) : base(name, getContainer, invoke)
         { }
     }
     public class Pipeline<T> : ManagedTask<T> where T : class, new()
     {
-        private readonly IContainer _container;
+        private readonly Lazy<IContainer> _getContainer;
         private readonly ConcurrentQueue<ManagedTask<T>> _tasks;
         private readonly Func<T, TaskIssueList, CancellationToken, Task> _innerRun;
 
@@ -44,8 +44,8 @@ namespace DotNet.Basics.Tasks.Pipelines
         public Pipeline(string name) : this(name, Invoke.Sequential)
         { }
 
-        public Pipeline(IContainer container)
-            : this(null, container, Invoke.Sequential)
+        public Pipeline(Func<IContainer> getContainer)
+            : this(null, getContainer, Invoke.Sequential)
         { }
 
         public Pipeline(Invoke invoke)
@@ -55,14 +55,14 @@ namespace DotNet.Basics.Tasks.Pipelines
         public Pipeline(string name, Invoke invoke)
             : this(name, null, invoke)
         { }
-        public Pipeline(IContainer container, Invoke invoke)
-            : this(null, container, invoke)
+        public Pipeline(Func<IContainer> getContainer, Invoke invoke)
+            : this(null, getContainer, invoke)
         { }
 
-        public Pipeline(string name, IContainer container, Invoke invoke)
+        public Pipeline(string name, Func<IContainer> getContainer, Invoke invoke)
             : base(name)
         {
-            _container = container ?? new IocBuilder(true).Container;
+            _getContainer = new Lazy<IContainer>(() => getContainer?.Invoke() ?? new IocBuilder(true).Container);
             _tasks = new ConcurrentQueue<ManagedTask<T>>();
             Invoke = invoke;
             switch (Invoke)
@@ -82,7 +82,7 @@ namespace DotNet.Basics.Tasks.Pipelines
 
         public Pipeline<T> AddStep<TTask>(string name = null) where TTask : ManagedTask<T>
         {
-            var lazyTask = new LazyLoadStep<T, TTask>(name, _container.Resolve<TTask>);
+            var lazyTask = new LazyLoadStep<T, TTask>(name, () => _getContainer.Value.Resolve<TTask>());
             InitEvents(lazyTask);
             _tasks.Enqueue(lazyTask);
             return this;
@@ -98,7 +98,7 @@ namespace DotNet.Basics.Tasks.Pipelines
             var mt = new ManagedTask<T>(name, task);
             return AddStep(mt);
         }
-        public Pipeline<T> AddStep(Func<T, TaskIssueList, CancellationToken, System.Threading.Tasks.Task> task)
+        public Pipeline<T> AddStep(Func<T, TaskIssueList, CancellationToken, Task> task)
         {
             var mt = new ManagedTask<T>(task);
             return AddStep(mt);
@@ -127,8 +127,8 @@ namespace DotNet.Basics.Tasks.Pipelines
 
         public Pipeline<T> AddBlock(string name, Invoke invoke = Invoke.Parallel, params Func<T, TaskIssueList, CancellationToken, Task>[] tasks)
         {
-            var count = _tasks.Count(s => s.GetType() == typeof(Pipeline<T>));
-            var block = new Pipeline<T>(name ?? $"Block {count}", invoke);
+            var count = _tasks.Count(s => s.GetType() == typeof(Pipeline<>));
+            var block = new Pipeline<T>(name ?? $"Block {count}", () => _getContainer.Value, invoke);
             foreach (var task in tasks)
                 block.AddStep(task);
             InitEvents(block);

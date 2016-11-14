@@ -135,7 +135,7 @@
     <Compile Include="Tasks\Pipelines\AddIssueStep.cs" />
     <Compile Include="Tasks\Pipelines\AncestorArgs.cs" />
     <Compile Include="Tasks\Pipelines\AncestorStep.cs" />
-    <Compile Include="Tasks\Pipelines\ClassThatIncrementArgsDependOn.cs" />
+    <Compile Include="Tasks\Pipelines\ClassThatTakesAnAbstractClassAsCtorParam.cs" />
     <Compile Include="Tasks\Pipelines\DescendantArgs.cs" />
     <Compile Include="Tasks\Pipelines\DescendantStep.cs" />
     <Compile Include="Tasks\Pipelines\IncrementArgsStep.cs" />
@@ -151,6 +151,7 @@
     <Compile Include="Sys\ObservableTests.cs" />
     <Compile Include="Sys\SysExtensionsTests.cs" />
     <Compile Include="Tasks\ManagedTaskTests.cs" />
+    <Compile Include="Tasks\Pipelines\GenericThatTakesAnotherConcreteClassAsArgStep.cs" />
     <Compile Include="Tasks\Repeating\OnceOnlyTaskTests.cs" />
     <Compile Include="Tasks\TaskIssueTests.cs" />
     <Compile Include="Tasks\TaskResultTests.cs" />

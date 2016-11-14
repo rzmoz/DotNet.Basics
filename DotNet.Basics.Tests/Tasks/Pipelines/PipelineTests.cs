@@ -3,6 +3,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Autofac;
+using DotNet.Basics.Ioc;
+using DotNet.Basics.Rest;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
 using DotNet.Basics.Tasks.Pipelines;
@@ -13,6 +16,44 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 {
     public class PipelineTests
     {
+        [Fact]
+        public void RegisterPipelineSteps_PreviousRegistrationsAreNotOverridden_BlocksAreRegistered()
+        {
+            AssertRegisterPipelineSteps(p => { p.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(); });
+        }
+        [Fact]
+        public void RegisterPipelineSteps_RegisterSteps_StepsAndCtorParamsAreRegisteredRecursive()
+        {
+            AssertRegisterPipelineSteps(p => { p.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(); });
+        }
+        [Fact]
+        public void RegisterPipelineSteps_RegisterBlock_BlocksAreRegistered()
+        {
+            AssertRegisterPipelineSteps(p => { p.AddBlock("MyBlock"); });
+        }
+        [Fact]
+        public void LazyLoad_RegisterStepsInBlock_StepsAndCtorParamsAreRegisteredRecursive()
+        {
+            AssertRegisterPipelineSteps(p => { p.AddBlock("MyBlock").AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(); });
+        }
+
+        private void AssertRegisterPipelineSteps(Action<Pipeline> addAction)
+        {
+            var builder = new IocBuilder(resolveConcreteTypesNotAlreadyRegistered: false);
+
+            //register abstract types specifically
+            builder.RegisterType<RestClient>().As<IRestClient>();
+
+            //abstract dependency registrations are not overridden
+            builder.RegisterPipelineSteps(typeof(PipelineTests).Assembly);
+            var pipeline = new Pipeline(() => builder.Container);
+            addAction(pipeline);
+
+            Action action = async () => await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
+
+            action.ShouldNotThrow();
+        }
+
         [Theory]
         [InlineData(Invoke.Parallel)]
         [InlineData(Invoke.Sequential)]
