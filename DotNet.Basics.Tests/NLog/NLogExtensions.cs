@@ -24,11 +24,20 @@ namespace DotNet.Basics.Tests.NLog
 
             logger.Name.Should().Be(loggerName);
         }
-
         [Fact]
         public void NLog_Generic_LoggerNameIsResolved()
         {
             var logger = this.NLog<NLogEvent>();
+
+            logger.Name.Should().Be(typeof(NLogEvent).FullName);
+        }
+
+        [Fact]
+        public void NLog_Type_LoggerNameIsResolved()
+        {
+            var @event = new NLogEvent();
+
+            var logger = this.NLog(@event.GetType());
 
             logger.Name.Should().Be(typeof(NLogEvent).FullName);
         }
