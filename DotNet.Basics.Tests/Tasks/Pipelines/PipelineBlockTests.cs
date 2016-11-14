@@ -62,18 +62,20 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
                         raceConditionEncountered++;
                 });
 
-            var result = await block.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            var argsParam = new EventArgs<int>();
+
+            var result = await block.RunAsync(argsParam, CancellationToken.None).ConfigureAwait(false);
 
             result.Issues.Count.Should().Be(stepCount);
 
             if (invoke == Invoke.Parallel)
             {
-                result.Args.Value.Should().BeLessThan(stepCount);
+                argsParam.Value.Should().BeLessThan(stepCount);
                 raceConditionEncountered.Should().BeGreaterThan(0);
             }
             else
             {
-                result.Args.Value.Should().Be(stepCount);
+                argsParam.Value.Should().Be(stepCount);
                 raceConditionEncountered.Should().Be(0);
             }
         }

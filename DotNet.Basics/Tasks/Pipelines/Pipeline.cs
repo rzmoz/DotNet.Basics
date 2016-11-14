@@ -149,7 +149,7 @@ namespace DotNet.Basics.Tasks.Pipelines
             var tasks = Tasks.Select(async t =>
             {
                 var result = await t.RunAsync(args, ct).ConfigureAwait(false);
-                issues.Add(result.Issues);
+                issues.AddRange(result.Issues);
 
             }).ToList();
             await Task.WhenAll(tasks).ConfigureAwait(false);
@@ -162,7 +162,7 @@ namespace DotNet.Basics.Tasks.Pipelines
                 if (ct.IsCancellationRequested)
                     break;
                 var result = await task.RunAsync(args, ct).ConfigureAwait(false);
-                issues.Add(result.Issues);
+                issues.AddRange(result.Issues);
             }
         }
 

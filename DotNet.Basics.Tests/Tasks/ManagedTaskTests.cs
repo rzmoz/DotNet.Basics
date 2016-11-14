@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNet.Basics.Collections;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
 using FluentAssertions;
@@ -17,8 +18,7 @@ namespace DotNet.Basics.Tests.Tasks
             var task = new ManagedTask<EventArgs>((args, issues, ct) => { });
             var result = await task.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
-            result.Args.Should().NotBeNull();
-            result.NoIssues.Should().BeTrue();
+            result.Issues.None().Should().BeTrue();
         }
 
         [Fact]
@@ -35,8 +35,7 @@ namespace DotNet.Basics.Tests.Tasks
             });
             var result = await task.RunAsync(inputArgs, CancellationToken.None).ConfigureAwait(false);
 
-            result.Args.Value.Should().Be(inputValue + 1);
-            result.NoIssues.Should().BeFalse();
+            result.Issues.Any().Should().BeTrue();
             result.Issues.Single().Message.Should().Be(issueMessage);
         }
 
@@ -56,30 +55,27 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var argsValue = 12312313;
 
-            TaskArgs startedArgs = null;
-            TaskArgs  endedArgs = null;
-            EventArgs<int> resultArgs = null;
+            TaskResult startedArgs = null;
+            TaskResult endedArgs = null;
+            
             var ctSource = new CancellationTokenSource();
             ctSource.Cancel();
 
             var task = new ManagedTask<EventArgs<int>>((args, issues, ct) => { args.Value = argsValue; });
             
-
             task.Started += (args) => { startedArgs = args; };
             task.Ended += (args) => { endedArgs = args; };
 
-            resultArgs = (await task.RunAsync(ctSource.Token)).Args;
+            await task.RunAsync(ctSource.Token).ConfigureAwait(false);
 
             //assert - started
             startedArgs.Should().NotBeNull();
             startedArgs.Should().NotBeNull();
             startedArgs.Name.Should().Be(task.GetType().Name, "Expected Name");
 
-            endedArgs.Exception.Should().BeNull();
-            endedArgs.WasCancelled.Should().BeTrue();
+            endedArgs.Exceptions.Should().BeEmpty();
+            
             endedArgs.Name.Should().Be(startedArgs.Name);
-
-            resultArgs.Value.Should().Be(0);//value should not have been updatd since task was cancelled before executing
         }
 
         [Fact]
@@ -88,7 +84,7 @@ namespace DotNet.Basics.Tests.Tasks
             var exMessage = "buuh";
             var task = new ManagedTask<EventArgs<int>>((args, issues, ct) => { throw new ArgumentException(exMessage); });
 
-            TaskArgs endedArgs = null;
+            TaskResult endedArgs = null;
 
             task.Ended += (args) => { endedArgs = args; };
 
@@ -102,8 +98,8 @@ namespace DotNet.Basics.Tests.Tasks
             }
 
             //assert
-            endedArgs.Exception.Should().BeOfType<ArgumentException>();
-            endedArgs.Exception.Message.Should().Be(exMessage);
+            endedArgs.Exceptions.Single().Should().BeOfType<ArgumentException>();
+            endedArgs.Exceptions.Single().Message.Should().Be(exMessage);
         }
 
         [Fact]

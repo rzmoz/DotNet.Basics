@@ -4,67 +4,41 @@ using System.Linq;
 
 namespace DotNet.Basics.Tasks
 {
-    public class TaskResult : TaskResult<EventArgs>
+    public class TaskResult
     {
         public TaskResult()
+            : this(null, new List<TaskIssue>())
         { }
-
-        public TaskResult(EventArgs args) : base(args)
-        { }
-
-        public TaskResult(Action<TaskIssueList> addIssues) : base(addIssues)
-        { }
-
-        public TaskResult(TaskIssueList issues) : base(issues)
-        { }
-
-        public TaskResult(EventArgs args, Action<TaskIssueList> addIssues) : base(args, addIssues)
-        { }
-
-        public TaskResult(EventArgs args, TaskIssueList issues) : base(args, issues)
-        { }
-    }
-
-    public class TaskResult<T> where T : class, new()
-    {
-        public TaskResult()
-            : this(null, new TaskIssueList())
-        { }
-
-        public TaskResult(T args)
-            : this(args, issues => { })
+        public TaskResult(string taskName)
+            : this(taskName, new List<TaskIssue>())
         { }
 
         public TaskResult(Action<TaskIssueList> addIssues)
-            : this(null, addIssues)
+            : this(null, ConstructList(addIssues))
         { }
 
-        public TaskResult(TaskIssueList issues)
-            : this(null, issues)
+        public TaskResult(string taskName, Action<TaskIssueList> addIssues)
+            : this(taskName, ConstructList(addIssues))
         { }
 
-        public TaskResult(T args, Action<TaskIssueList> addIssues)
-            : this(args, ConstructList(addIssues))
-        { }
-
-        public TaskResult(T args, TaskIssueList issues)
+        public TaskResult(string taskName, IEnumerable<TaskIssue> issues)
         {
-            Args = args ?? new T();
-            Issues = (issues ?? new TaskIssueList()).ToList();
-            NoIssues = Issues.Count == 0;
+            Name = taskName ?? string.Empty;
+            Issues = issues?.ToList() ?? new List<TaskIssue>();
+            Exceptions = Issues.Where(i => i.Exception != null).Select(i => i.Exception).ToList();
         }
 
-        public T Args { get; }
+        public string Name { get; }
         public IReadOnlyCollection<TaskIssue> Issues { get; }
-        public bool NoIssues { get; }
+        public IReadOnlyCollection<Exception> Exceptions { get; }
 
-        public TaskResult<T> Append(Action<TaskIssueList> addIssues)
+        public TaskResult Append(Action<TaskIssueList> addIssues)
         {
-            return new TaskResult<T>(Args, issues =>
-             {
-                 issues.Add(Issues);
-                 addIssues?.Invoke(issues);
-             });
+            return new TaskResult(Name, issues =>
+            {
+                issues.AddRange(Issues);
+                addIssues?.Invoke(issues);
+            });
         }
 
         private static TaskIssueList ConstructList(Action<TaskIssueList> addIssues)

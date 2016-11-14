@@ -88,8 +88,8 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 
             //assert
             var argsUpdated = await pipeline.RunAsync(argsInit, CancellationToken.None).ConfigureAwait(false);
-            argsUpdated.Args.AncestorUpdated.Should().BeTrue();
-            argsUpdated.Args.DescendantUpdated.Should().BeTrue();
+            argsInit.AncestorUpdated.Should().BeTrue();
+            argsInit.DescendantUpdated.Should().BeTrue();
         }
 
         [Theory]
@@ -189,8 +189,9 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             pipeline.AddStep<IncrementArgsStep>();
             pipeline.AddBlock("2").AddStep<IncrementArgsStep>();
 
-            var args = await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
-            args.Args.Value.Should().Be(5);
+            var resultArgs = new EventArgs<int>();
+            await pipeline.RunAsync(resultArgs ,CancellationToken.None).ConfigureAwait(false);
+            resultArgs.Value.Should().Be(5);
         }
 
         [Fact]

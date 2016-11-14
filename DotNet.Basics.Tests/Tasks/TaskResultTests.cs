@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using DotNet.Basics.Collections;
 using DotNet.Basics.Tasks;
 using FluentAssertions;
 using Xunit;
@@ -15,7 +16,7 @@ namespace DotNet.Basics.Tests.Tasks
             //act
             var result = new TaskResult();
 
-            result.NoIssues.Should().BeTrue();
+            result.Issues.None().Should().BeTrue();
             result.Issues.Any().Should().BeFalse();
         }
 
@@ -30,7 +31,7 @@ namespace DotNet.Basics.Tests.Tasks
                 issues.Add(issueMessage);
             });
 
-            result.NoIssues.Should().BeFalse();
+            result.Issues.None().Should().BeFalse();
             result.Issues.Single().Message.Should().Be(issueMessage);
         }
 
@@ -40,26 +41,25 @@ namespace DotNet.Basics.Tests.Tasks
             var issueMessage = "Ctor_Append_NewIssuesAreAppended_";
 
             var initialIssueMessage = issueMessage + "Initial";
-            var initialException = new IOException();
-            var appendedIssueMessage = issueMessage + "Appended";
-            var appendedException = new ArgumentException();
-
+            
             //act
             var initialResult = new TaskResult(issues =>
             {
-                issues.Add(initialIssueMessage, initialException);
+                issues.Add(initialIssueMessage, new IOException());
             });
 
-            initialResult.NoIssues.Should().BeFalse();
+            initialResult.Issues.None().Should().BeFalse();
             initialResult.Issues.Single().Message.Should().Be(initialIssueMessage);
             initialResult.Issues.Single().Exception.Should().BeOfType<IOException>();
 
+            var appendedIssueMessage = issueMessage + "Appended";
+            
             var joinedResult = initialResult.Append(issues =>
             {
-                issues.Add(appendedIssueMessage, appendedException);
+                issues.Add(appendedIssueMessage, new ArgumentException());
             });
 
-            joinedResult.NoIssues.Should().BeFalse();
+            joinedResult.Issues.None().Should().BeFalse();
             joinedResult.Issues.Count.Should().Be(2);
             joinedResult.Issues.First().Message.Should().Be(initialIssueMessage);
             joinedResult.Issues.First().Exception.Should().BeOfType<IOException>();

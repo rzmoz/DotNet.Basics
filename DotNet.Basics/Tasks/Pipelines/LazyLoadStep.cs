@@ -20,7 +20,7 @@ namespace DotNet.Basics.Tasks.Pipelines
         {
             var mt = _getTask();
             var result = await mt.RunAsync(args, ct).ConfigureAwait(false);
-            issues.Add(result.Issues);
+            issues.AddRange(result.Issues);
         }
     }
 }

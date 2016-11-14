@@ -95,13 +95,12 @@
     <Compile Include="Sys\StringExtensions.cs" />
     <Compile Include="Sys\WindowsServices.cs" />
     <Compile Include="Sys\WindowsServiceStatus.cs" />
+    <Compile Include="Tasks\TaskIssueList.cs" />
     <Compile Include="Tasks\Pipelines\IocExtensions.cs" />
     <Compile Include="Tasks\Pipelines\LazyLoadStep.cs" />
     <Compile Include="Tasks\Pipelines\Pipeline.cs" />
     <Compile Include="Tasks\Invoke.cs" />
-    <Compile Include="Tasks\TaskArgs.cs" />
     <Compile Include="Tasks\TaskIssue.cs" />
-    <Compile Include="Tasks\TaskIssueList.cs" />
     <Compile Include="Tasks\TaskResult.cs" />
     <Compile Include="Tasks\Pipelines\PipelineStep.cs" />
     <Compile Include="Rest\HttpClientTransport.cs" />
