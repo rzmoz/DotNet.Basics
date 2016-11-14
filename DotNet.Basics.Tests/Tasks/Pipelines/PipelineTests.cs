@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNet.Basics.Ioc;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
 using DotNet.Basics.Tasks.Pipelines;
@@ -13,6 +14,35 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 {
     public class PipelineTests
     {
+        [Fact]
+        public void LazyLoad_RegisterBlock_BlocksAreRegistered()
+        {
+            AssertRegisterPipelineSteps(p => { p.AddBlock("MyBlock"); });
+        }
+
+        [Fact]
+        public void LazyLoad_RegisterSteps_StepsAndCtorParamsAreRegisteredRecursive()
+        {
+            AssertRegisterPipelineSteps(p => { p.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(); });
+        }
+        [Fact]
+        public void LazyLoad_RegisterStepsInBlock_StepsAndCtorParamsAreRegisteredRecursive()
+        {
+            AssertRegisterPipelineSteps(p => { p.AddBlock("MyBlock").AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(); });
+        }
+
+        private void AssertRegisterPipelineSteps(Action<Pipeline> addAction)
+        {
+            var builder = new IocBuilder(resolveConcreteTypesNotAlreadyRegistered: false);
+            builder.RegisterPipelineSteps(typeof(PipelineTests).Assembly);
+            var pipeline = new Pipeline(builder.Container);
+            addAction(pipeline);
+
+            Action action = async () => await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
+
+            action.ShouldNotThrow();
+        }
+
         [Theory]
         [InlineData(Invoke.Parallel)]
         [InlineData(Invoke.Sequential)]

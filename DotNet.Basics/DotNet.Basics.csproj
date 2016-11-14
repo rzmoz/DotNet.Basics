@@ -95,7 +95,7 @@
     <Compile Include="Sys\StringExtensions.cs" />
     <Compile Include="Sys\WindowsServices.cs" />
     <Compile Include="Sys\WindowsServiceStatus.cs" />
-    <Compile Include="Tasks\Pipelines\IPipelineStep.cs" />
+    <Compile Include="Tasks\Pipelines\IocExtensions.cs" />
     <Compile Include="Tasks\Pipelines\LazyLoadStep.cs" />
     <Compile Include="Tasks\Pipelines\Pipeline.cs" />
     <Compile Include="Tasks\Invoke.cs" />

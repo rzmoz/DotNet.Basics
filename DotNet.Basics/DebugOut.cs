@@ -12,6 +12,7 @@ namespace DotNet.Basics
         {
             Out?.Invoke(msg);
 #if DEBUG
+            //TODO:doesn't work in xunit
             Console.WriteLine(msg);
 #endif
         }

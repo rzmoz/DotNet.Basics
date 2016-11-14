@@ -98,7 +98,7 @@ namespace DotNet.Basics.Tasks.Pipelines
             var mt = new ManagedTask<T>(name, task);
             return AddStep(mt);
         }
-        public Pipeline<T> AddStep(Func<T, TaskIssueList, CancellationToken, System.Threading.Tasks.Task> task)
+        public Pipeline<T> AddStep(Func<T, TaskIssueList, CancellationToken, Task> task)
         {
             var mt = new ManagedTask<T>(task);
             return AddStep(mt);
@@ -127,7 +127,7 @@ namespace DotNet.Basics.Tasks.Pipelines
 
         public Pipeline<T> AddBlock(string name, Invoke invoke = Invoke.Parallel, params Func<T, TaskIssueList, CancellationToken, Task>[] tasks)
         {
-            var count = _tasks.Count(s => s.GetType() == typeof(Pipeline<T>));
+            var count = _tasks.Count(s => s.GetType() == typeof(Pipeline<>));
             var block = new Pipeline<T>(name ?? $"Block {count}", invoke);
             foreach (var task in tasks)
                 block.AddStep(task);
