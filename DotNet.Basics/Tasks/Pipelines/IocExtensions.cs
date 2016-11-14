@@ -8,6 +8,11 @@ namespace DotNet.Basics.Tasks.Pipelines
 {
     public static class IocExtensions
     {
+        public static void RegisterPipelineSteps<T>(this IocBuilder builder, params Assembly[] assemblies)
+        {
+            builder.RegisterPipelineSteps(assemblies.Concat(new[] { typeof(T).Assembly }).ToArray());
+        }
+
         public static void RegisterPipelineSteps(this IocBuilder builder, params Assembly[] assemblies)
         {
             if (builder == null) throw new ArgumentNullException(nameof(builder));
@@ -17,14 +22,14 @@ namespace DotNet.Basics.Tasks.Pipelines
             builder.RegisterGeneric(typeof(Pipeline<>)).ExternallyOwned();
             //get all steps
             var pipelineSteps = assemblies.SelectMany(a =>
-                                a.GetTypes().Where(t => t.BaseType != null &&
-                                t.BaseType.IsGenericType &&
-                                t.BaseType.GetGenericTypeDefinition() == typeof(PipelineStep<>))).ToList();
+                a.GetTypes().Where(t => t.BaseType != null &&
+                                        t.BaseType.IsGenericType &&
+                                        t.BaseType.GetGenericTypeDefinition() == typeof(PipelineStep<>))).ToList();
 
             foreach (var pipelineStep in pipelineSteps)
                 pipelineStep.RegisterType(builder, pipelineStep);
         }
-        
+
         private static void RegisterType(this Type type, IocBuilder builder, Type pipelineStepType)
         {
             if (type.IsAbstract)

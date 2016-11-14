@@ -82,22 +82,30 @@ namespace DotNet.Basics.Tasks.Pipelines
 
         public IReadOnlyCollection<ManagedTask<T>> Tasks => _tasks.ToList();
         public Invoke Invoke { get; }
-        
-        private TaskResult Assert(IEnumerable<ManagedTask<T>> tasks)
+
+        public TaskResult AssertLazyLoadSteps()
+        {
+            return AssertLazyLoadSteps(Tasks);
+        }
+
+        private TaskResult AssertLazyLoadSteps(IReadOnlyCollection<ITask> tasks)
         {
             return new TaskResult(issues =>
             {
-                foreach (var task in tasks)
+                foreach (var pipeline in tasks.OfType<IPipeline>())
+                    issues.AddRange(AssertLazyLoadSteps(pipeline.Tasks).Issues);
+                foreach (var lazyLoadStep in tasks.OfType<ILazyLoadStep>())
                 {
                     try
                     {
-
+                        lazyLoadStep.GetTask();
                     }
                     catch (Exception e)
                     {
-                        issues.Add($"");
+                        issues.Add($"Lazy Step failed to load: {lazyLoadStep.Name} - {e.Message}", e);
                     }
                 }
+
             });
         }
 

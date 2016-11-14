@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Autofac;
 using Autofac.Core;
+using Autofac.Core.Registration;
 using DotNet.Basics.Ioc;
 using DotNet.Basics.Tasks;
 using DotNet.Basics.Tasks.Pipelines;
@@ -17,6 +19,26 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 {
     public class LazyLoadStepTests
     {
+        private readonly IocBuilder _builder;
+
+        public LazyLoadStepTests()
+        {
+            _builder = new IocBuilder(false);
+        }
+
+        [Fact]
+        public void AssertLazyLoadSteps_MissingRegistrations_AssertFails()
+        {
+            var pipeline = new Pipeline(() => _builder.Container);
+
+            pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
+
+            var assert = pipeline.AssertLazyLoadSteps();
+
+            assert.Issues.Count.Should().Be(1);
+            assert.Issues.Single().Message.Should().StartWith("Lazy Step failed to load: GenericThatTakesAnotherConcreteClassAsArgStep`1 - The requested service 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.GenericThatTakesAnotherConcreteClassAsArgStep`1[[System.EventArgs, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]' has not been registered. To avoid this exception, either register a component to provide the service, check for service registration using IsRegistered(), or use the ResolveOptional() method to resolve an optional dependency.");
+        }
+
         [Fact]
         public void GetTask_TaskExist_TaskIsRetrieved()
         {
@@ -39,8 +61,8 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public async Task AddStep_StepIsRegisteredInContainer_StepIsResovled()
         {
-            var builder = new IocBuilder();
-            var pipeline = new Pipeline(() => builder.Container);
+            var pipeline = new Pipeline(() => _builder.Container);
+            _builder.RegisterPipelineSteps<AddIssueStep>();
 
             pipeline.AddStep<AddIssueStep>();
 
@@ -60,8 +82,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public async Task AddStep_StepIsNotRegisteredProperlyInContainer_ExceptionIsThrownOnRun()
         {
-            var builder = new IocBuilder();
-            var pipeline = new Pipeline(() => builder.Container);
+            var pipeline = new Pipeline(() => _builder.Container);
 
             pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
 
@@ -74,7 +95,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             {
                 exceptionEncountered = e;
             }
-            exceptionEncountered.Should().BeOfType<DependencyResolutionException>();
+            exceptionEncountered.Should().BeOfType<ComponentNotRegisteredException>();
         }
     }
 }
