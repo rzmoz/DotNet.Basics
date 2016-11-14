@@ -15,6 +15,11 @@ namespace DotNet.Basics.Tasks.Pipelines
             return _getTask();
         }
 
+        public Type GetTaskType()
+        {
+            return typeof(TTask);
+        }
+
         public LazyLoadStep(string name, Func<TTask> getTask) : base(name ?? typeof(TTask).Name)
         {
             if (getTask == null) throw new ArgumentNullException(nameof(getTask));

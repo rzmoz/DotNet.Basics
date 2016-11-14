@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
-using Autofac.Core;
 using Autofac.Core.Registration;
 using DotNet.Basics.Ioc;
 using DotNet.Basics.Tasks;
@@ -27,7 +23,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         }
 
         [Fact]
-        public void AssertLazyLoadSteps_MissingRegistrations_AssertFails()
+        public void AssertLazyLoadSteps_MissingDirectRegistration_AssertHasIssues()
         {
             var pipeline = new Pipeline(() => _builder.Container);
 
@@ -36,7 +32,22 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var assert = pipeline.AssertLazyLoadSteps();
 
             assert.Issues.Count.Should().Be(1);
-            assert.Issues.Single().Message.Should().StartWith("Lazy Step failed to load: GenericThatTakesAnotherConcreteClassAsArgStep`1 - The requested service 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.GenericThatTakesAnotherConcreteClassAsArgStep`1[[System.EventArgs, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]' has not been registered. To avoid this exception, either register a component to provide the service, check for service registration using IsRegistered(), or use the ResolveOptional() method to resolve an optional dependency.");
+            assert.Issues.Single().Message.Should().Be("Step not registered: GenericThatTakesAnotherConcreteClassAsArgStep`1");
+            assert.Issues.Single().Exception.Should().BeOfType<ComponentNotRegisteredException>();
+        }
+
+        [Fact]
+        public void AssertLazyLoadSteps_MissingCtorRegistration_AssertHasIssues()
+        {
+            var pipeline = new Pipeline(() => _builder.Container);
+            _builder.RegisterGeneric(typeof(GenericThatTakesAnotherConcreteClassAsArgStep<>));
+
+            pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
+
+            var assert = pipeline.AssertLazyLoadSteps();
+
+            assert.Issues.Count.Should().Be(1);
+            assert.Issues.Single().Message.Should().Be("Step ctor failed in Step GenericThatTakesAnotherConcreteClassAsArgStep`1: None of the constructors found with 'Autofac.Core.Activators.Reflection.DefaultConstructorFinder' on type 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.GenericThatTakesAnotherConcreteClassAsArgStep`1[System.EventArgs]' can be invoked with the available services and parameters:\r\nCannot resolve parameter 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.ClassThatTakesAnAbstractClassAsCtorParam argStepDependsOn' of constructor 'Void .ctor(DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.ClassThatTakesAnAbstractClassAsCtorParam)'.");
         }
 
         [Fact]

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
+using Autofac.Core;
+using Autofac.Core.Registration;
 using DotNet.Basics.Ioc;
 
 namespace DotNet.Basics.Tasks.Pipelines
@@ -96,13 +98,20 @@ namespace DotNet.Basics.Tasks.Pipelines
                     issues.AddRange(AssertLazyLoadSteps(pipeline.Tasks).Issues);
                 foreach (var lazyLoadStep in tasks.OfType<ILazyLoadStep>())
                 {
+
                     try
                     {
                         lazyLoadStep.GetTask();
                     }
-                    catch (Exception e)
+                    catch (ComponentNotRegisteredException cnre)
                     {
-                        issues.Add($"Lazy Step failed to load: {lazyLoadStep.Name} - {e.Message}", e);
+                        issues.Add($"Step not registered: {lazyLoadStep.GetTaskType().Name}", cnre);
+                    }
+                    catch (DependencyResolutionException dre)
+                    {
+                        if(dre.InnerException!=null)
+
+                        issues.Add($"Step ctor failed in Step {lazyLoadStep.GetTaskType().Name}: {dre.InnerException.Message}", dre);
                     }
                 }
 
