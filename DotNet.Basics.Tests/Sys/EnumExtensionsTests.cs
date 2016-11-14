@@ -5,10 +5,8 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
 {
-    
     public class EnumExtensionsTests
     {
-
         [Fact]
         public void IsProperFlagsEnum_Parse_IsGood()
         {

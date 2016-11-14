@@ -9,7 +9,6 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Rest
 {
-    
     public class RestResponseTests
     {
         [Fact]

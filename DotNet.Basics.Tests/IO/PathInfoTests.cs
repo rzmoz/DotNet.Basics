@@ -25,7 +25,6 @@ namespace DotNet.Basics.Tests.IO
             pi.Segments.Skip(2).First().Should().Be("myfile.aspx");
         }
 
-
         [Fact]
         public void Ctor_IsUri_DelimiterIsAlwaysSlash()
         {

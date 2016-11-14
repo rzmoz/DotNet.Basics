@@ -4,11 +4,9 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
 {
-    
     public class ObservableTests
     {
         private readonly Observable<string> _primitiveObservable;
-
         
         public ObservableTests()
         {

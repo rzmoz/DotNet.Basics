@@ -8,7 +8,6 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Collections
 {
-    
     public class StringDictionaryTests
     {
         const string _myKey = "myKey";

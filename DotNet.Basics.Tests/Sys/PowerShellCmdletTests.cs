@@ -5,7 +5,6 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
 {
-    
     public class PowerShellCmdletTests
     {
         [Fact]

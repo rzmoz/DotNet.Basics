@@ -6,7 +6,6 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Collections
 {
-    
     public class StringKeyDictionaryTests
     {
         private const string _myKey = "MyKey";

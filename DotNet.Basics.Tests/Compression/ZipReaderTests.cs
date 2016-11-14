@@ -5,12 +5,10 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Compression
 {
-
     public class ZipReaderTests
     {
         private readonly FilePath _testSource;
-
-
+        
         public ZipReaderTests()
         {
             var archiveSource = @"Compression".ToFile("NewFolder.zip");

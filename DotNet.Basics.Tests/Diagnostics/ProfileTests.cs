@@ -5,7 +5,6 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Diagnostics
 {
-    
     public class ProfileTests
     {
         [Fact]

@@ -17,8 +17,7 @@ namespace DotNet.Basics.Tests.IO
 
             fullPath.Should().EndWith(longPath);//no exception is thrown
         }
-
-
+        
         [Fact]
         public void GetFullPath_CallSystemIo_PathsAreIdentical()
         {
@@ -29,6 +28,7 @@ namespace DotNet.Basics.Tests.IO
 
             systemIoPath.Should().Be(systemDotIoDotPath);
         }
+
         [Fact]
         public void Exists_ThrowIfNotFound_ExceptionIsThrown()
         {
@@ -40,6 +40,7 @@ namespace DotNet.Basics.Tests.IO
 
             action.ShouldThrow<IOException>().WithMessage($"{path.FullName} not found");
         }
+
         [Fact]
         public void Exists_PathExists_Works()
         {

@@ -4,7 +4,6 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-    
     public class TempWorkDirTests
     {
         [Fact]

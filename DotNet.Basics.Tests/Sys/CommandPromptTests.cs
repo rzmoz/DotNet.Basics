@@ -1,12 +1,10 @@
-﻿using System;
-using DotNet.Basics.IO;
+﻿using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using FluentAssertions;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
 {
-    
     public class CommandPromptTests
     {
         [Fact]

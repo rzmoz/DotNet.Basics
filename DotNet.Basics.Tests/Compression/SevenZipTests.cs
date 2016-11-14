@@ -9,7 +9,6 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Compression
 {
-
     public class SevenZipTests
     {
         private readonly SevenZip _sevenZip;

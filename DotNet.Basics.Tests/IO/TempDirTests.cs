@@ -4,10 +4,8 @@ using DotNet.Basics.IO;
 using FluentAssertions;
 using Xunit;
 
-
 namespace DotNet.Basics.Tests.IO
 {
-    
     public class TempDirTests
     {
         [Fact]

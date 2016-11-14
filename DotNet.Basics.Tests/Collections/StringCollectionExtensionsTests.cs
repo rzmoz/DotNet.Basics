@@ -5,7 +5,6 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Collections
 {
-    
     public class StringCollectionExtensionsTests
     {
         private const string _elementSomething = "myElement1";

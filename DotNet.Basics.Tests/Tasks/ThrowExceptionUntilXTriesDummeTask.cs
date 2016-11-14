@@ -22,8 +22,7 @@ namespace DotNet.Basics.Tests.Tasks
             _tries++;
             if (_tries <= SwitchStateAfterTries)
                 throw new T();
-            else
-                return () => { };
+            return () => { };
         }
     }
 }

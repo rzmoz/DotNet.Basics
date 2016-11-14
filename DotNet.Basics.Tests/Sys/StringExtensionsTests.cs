@@ -4,7 +4,6 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
 {
-    
     public class StringExtensionsTests
     {
         [Fact]

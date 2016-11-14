@@ -1,14 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization.Json;
 using DotNet.Basics.Collections;
-using DotNet.Basics.Sys;
 using FluentAssertions;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Collections
 {
-    
     public class StringKeyValueTests
     {
         const string _myKey = "myKey";

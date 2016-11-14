@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using DotNet.Basics.IO;
 using FluentAssertions;
 using Newtonsoft.Json;
@@ -7,7 +6,6 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-
     public class PathInfoExtensionsTests
     {
         [Fact]
@@ -19,7 +17,6 @@ namespace DotNet.Basics.Tests.IO
 
             action.ShouldNotThrow();
         }
-
 
         [Theory]
         [InlineData("FOLDER_THAT_DOES_NOT_EXIST_WO_FOLDER_MARKER", false)]//folder that doesnt exist without marker

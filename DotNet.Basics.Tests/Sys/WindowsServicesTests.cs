@@ -1,13 +1,9 @@
-﻿using System;
-using System.Security.Principal;
-using System.Threading;
-using DotNet.Basics.Sys;
+﻿using DotNet.Basics.Sys;
 using FluentAssertions;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
 {
-    
     public class WindowsServicesTests
     {
         [Fact]

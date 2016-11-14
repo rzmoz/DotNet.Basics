@@ -6,7 +6,6 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Rest
 {
-    
     internal class RestRequestTests
     {
         [Theory]

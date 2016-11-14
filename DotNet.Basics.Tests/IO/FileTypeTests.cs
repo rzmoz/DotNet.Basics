@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DotNet.Basics.IO;
+﻿using DotNet.Basics.IO;
 using FluentAssertions;
 using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-    
     public class FileTypeTests
     {
         [Fact]
