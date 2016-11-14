@@ -14,15 +14,15 @@ namespace DotNet.Basics.Tests.Rest
         [Fact]
         public async Task Headers_HeadersInResponse_Captured()
         {
-            var request = new RestRequest("https://files-stackablejs.netdna-ssl.com/stacktable.min.js", HttpMethod.Get);
-
+            var request = new RestRequest("https://www.google.com/", HttpMethod.Get);
+            
             IRestClient client = new RestClient();
 
             var response = await client.ExecuteAsync<string>(request);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            response.HttpResponseMessage.Headers.GetValues("X-Cache").Single().Should().Be("EXPIRED");
-            response.HttpResponseMessage.Headers.GetValues("Connection").Single().Should().Be("keep-alive");
-            response.HttpResponseMessage.Headers.Count().Should().BeGreaterOrEqualTo(15);
+            response.HttpResponseMessage.Headers.GetValues("Cache-Control").Single().Should().Be("max-age=0, private");
+            response.HttpResponseMessage.Headers.GetValues("Server").Single().Should().Be("gws");
+            response.HttpResponseMessage.Headers.Count().Should().BeGreaterOrEqualTo(11);
         }
 
         [Fact]
