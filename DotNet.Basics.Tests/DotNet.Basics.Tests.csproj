@@ -131,8 +131,8 @@
     <Compile Include="Ioc\TestHelpers\MyType2.cs" />
     <Compile Include="Sys\StringExtensionsTests.cs" />
     <Compile Include="Sys\WindowsServicesTests.cs" />
+    <Compile Include="Tasks\Pipelines\LazyLoadStepTests.cs" />
     <Compile Include="Tasks\Pipelines\PipelineHelpers\PipelineWithContainer.cs" />
-    <Compile Include="Tasks\Pipelines\PipelineBlockTests.cs" />
     <Compile Include="Tasks\Pipelines\PipelineHelpers\AddIssueStep.cs" />
     <Compile Include="Tasks\Pipelines\PipelineHelpers\AncestorArgs.cs" />
     <Compile Include="Tasks\Pipelines\PipelineHelpers\AncestorStep.cs" />
