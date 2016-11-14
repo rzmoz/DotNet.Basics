@@ -17,11 +17,6 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
     public class PipelineTests
     {
         [Fact]
-        public void RegisterPipelineSteps_PreviousRegistrationsAreNotOverridden_BlocksAreRegistered()
-        {
-            AssertRegisterPipelineSteps(p => { p.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(); });
-        }
-        [Fact]
         public void RegisterPipelineSteps_RegisterSteps_StepsAndCtorParamsAreRegisteredRecursive()
         {
             AssertRegisterPipelineSteps(p => { p.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(); });
@@ -43,7 +38,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 
             //register abstract types specifically
             builder.RegisterType<RestClient>().As<IRestClient>();
-
+            builder.RegisterType<ClassThatTakesAnAbstractClassAsCtorParam>();
             //abstract dependency registrations are not overridden
             builder.RegisterPipelineSteps(typeof(PipelineTests).Assembly);
             var pipeline = new Pipeline(() => builder.Container);

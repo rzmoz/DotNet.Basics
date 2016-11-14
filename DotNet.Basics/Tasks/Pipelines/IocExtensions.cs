@@ -22,34 +22,25 @@ namespace DotNet.Basics.Tasks.Pipelines
                                 t.BaseType.GetGenericTypeDefinition() == typeof(PipelineStep<>))).ToList();
 
             foreach (var pipelineStep in pipelineSteps)
-            {
-                pipelineStep.RegisterType(builder);
-                //resolve ctor params recursive
-                pipelineStep.RegisterCtorParams(builder);
-            }
+                pipelineStep.RegisterType(builder, pipelineStep);
         }
-
-        private static void RegisterCtorParams(this Type type, IocBuilder builder)
-        {
-            var ctors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
-            foreach (var ctor in ctors)
-            {
-                foreach (var ctorParam in ctor.GetParameters())
-                {
-                    ctorParam.ParameterType.RegisterType(builder);
-                    ctorParam.ParameterType.RegisterCtorParams(builder);
-                }
-            }
-        }
-
-        private static void RegisterType(this Type type, IocBuilder builder)
+        
+        private static void RegisterType(this Type type, IocBuilder builder, Type pipelineStepType)
         {
             if (type.IsAbstract)
                 return;
-            if (type.IsGenericType)
-                builder.RegisterGeneric(type);
-            else
-                builder.RegisterType(type).AsSelf().AsImplementedInterfaces();
+            try
+            {
+                if (type.IsGenericType)
+                    builder.RegisterGeneric(type);
+                else
+                    builder.RegisterType(type).AsSelf().AsImplementedInterfaces();
+            }
+            catch (Exception)
+            {
+                DebugOut.WriteLine($"Failed to register {type} in pipeline step: {pipelineStepType}");
+                throw;
+            }
         }
     }
 }
