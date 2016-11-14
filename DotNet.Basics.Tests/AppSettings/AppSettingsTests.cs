@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using DotNet.Basics.AppSettings;
-using DotNet.Basics.IO;
 using FluentAssertions;
 using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
 
-
 namespace DotNet.Basics.Tests.AppSettings
 {
-
     public class AppSettingsTests
     {
         [Fact]

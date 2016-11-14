@@ -73,8 +73,6 @@
     <Compile Include="AppSettings\IocAppSettingExtensions.cs" />
     <Compile Include="Ioc\IIocRegistrations.cs" />
     <Compile Include="Ioc\IocBuilder.cs" />
-    <Compile Include="Ioc\IocExtensions.cs" />
-    <Compile Include="Tasks\Pipelines\IocExtensions.cs" />
     <Compile Include="IO\ExecutableInstaller.cs" />
     <Compile Include="IO\FileApplication.cs" />
     <Compile Include="IO\DirExtensions.cs" />

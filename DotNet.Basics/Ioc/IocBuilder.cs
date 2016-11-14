@@ -8,9 +8,9 @@ namespace DotNet.Basics.Ioc
     {
         private readonly Lazy<IContainer> _getContainer;
 
-        public IocBuilder(bool resolveTypesNotAlreadyRegistered = false)
+        public IocBuilder(bool resolveConcreteTypesNotAlreadyRegistered = true)
         {
-            if (resolveTypesNotAlreadyRegistered)
+            if (resolveConcreteTypesNotAlreadyRegistered)
                 this.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource());
 
             _getContainer = new Lazy<IContainer>(() => Build());

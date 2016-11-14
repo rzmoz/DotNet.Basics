@@ -11,26 +11,33 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Ioc
 {
-
     public class IocBuilderTests
     {
         private readonly IocBuilder _builder;
-        
+
         public IocBuilderTests()
         {
             _builder = new IocBuilder();
         }
 
         [Fact]
-        public void RegisterAll_TypeBasedRegistrations_AllDescendantTypesAreRegistered_TypeIsResolved()
+        public void Ctor_ResolveConcreteTypesNotRegisteredFalse_ExceptionIsThrown()
         {
-            _builder.RegisterAll<IMyType>();
+            var build = new IocBuilder(false);
 
-            var myType1 = _builder.Container.Resolve<MyType1>();
-            var myType2 = _builder.Container.Resolve<MyType2>();
+            Action action = () => build.Container.Resolve<MyType1>();
 
-            myType1.Should().NotBeNull();
-            myType2.Should().NotBeNull();
+            action.ShouldThrow<ComponentNotRegisteredException>().WithMessage("The requested service 'DotNet.Basics.Tests.Ioc.TestHelpers.MyType1' has not been registered. To avoid this exception, either register a component to provide the service, check for service registration using IsRegistered(), or use the ResolveOptional() method to resolve an optional dependency.");
+        }
+
+        [Fact]
+        public void Ctor_ResolveConcreteTypesNotRegisteredDefault_ConcreteTypesAreResolved()
+        {
+            var build = new IocBuilder();
+
+            Action action = () => build.Container.Resolve<MyType1>();
+
+            action.ShouldNotThrow<ComponentNotRegisteredException>();
         }
 
         [Fact]
