@@ -4,7 +4,7 @@ using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
 using DotNet.Basics.Tasks.Pipelines;
 
-namespace DotNet.Basics.Tests.Tasks.Pipelines
+namespace DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers
 {
     public class IncrementArgsStep : PipelineStep<EventArgs<int>>
     {

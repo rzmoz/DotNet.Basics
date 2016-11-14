@@ -77,8 +77,29 @@ namespace DotNet.Basics.Tasks.Pipelines
                     throw new ArgumentException($"{nameof(Invoke)} not supported: {Invoke }");
             }
         }
+
+        protected IContainer Container => _getContainer.Value;
+
         public IReadOnlyCollection<ManagedTask<T>> Tasks => _tasks.ToList();
         public Invoke Invoke { get; }
+        
+        private TaskResult Assert(IEnumerable<ManagedTask<T>> tasks)
+        {
+            return new TaskResult(issues =>
+            {
+                foreach (var task in tasks)
+                {
+                    try
+                    {
+
+                    }
+                    catch (Exception e)
+                    {
+                        issues.Add($"");
+                    }
+                }
+            });
+        }
 
         public Pipeline<T> AddStep<TTask>(string name = null) where TTask : ManagedTask<T>
         {
@@ -93,16 +114,19 @@ namespace DotNet.Basics.Tasks.Pipelines
             var mt = new ManagedTask<T>(task);
             return AddStep(mt);
         }
+
         public Pipeline<T> AddStep(string name, Action<T, TaskIssueList, CancellationToken> task)
         {
             var mt = new ManagedTask<T>(name, task);
             return AddStep(mt);
         }
+
         public Pipeline<T> AddStep(Func<T, TaskIssueList, CancellationToken, Task> task)
         {
             var mt = new ManagedTask<T>(task);
             return AddStep(mt);
         }
+
         public Pipeline<T> AddStep(string name, Func<T, TaskIssueList, CancellationToken, Task> task)
         {
             var mt = new ManagedTask<T>(name, task);
@@ -120,6 +144,7 @@ namespace DotNet.Basics.Tasks.Pipelines
         {
             return AddBlock(null, tasks);
         }
+
         public Pipeline<T> AddBlock(string name, params Func<T, TaskIssueList, CancellationToken, Task>[] tasks)
         {
             return AddBlock(name, Invoke.Parallel, tasks);

@@ -8,17 +8,17 @@ namespace DotNet.Basics.Tasks.Pipelines
         where T : class, new()
         where TTask : ManagedTask<T>
     {
-        private readonly Func<TTask> _getTask;
+        public Func<TTask> GetTask { get; }
 
         public LazyLoadStep(string name, Func<TTask> getTask) : base(name ?? typeof(TTask).Name)
         {
             if (getTask == null) throw new ArgumentNullException(nameof(getTask));
-            _getTask = getTask;
+            GetTask = getTask;
         }
 
         protected override async Task InnerRunAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
-            var mt = _getTask();
+            var mt = GetTask();
             var result = await mt.RunAsync(args, ct).ConfigureAwait(false);
             issues.AddRange(result.Issues);
         }
