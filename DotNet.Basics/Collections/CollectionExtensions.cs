@@ -7,6 +7,15 @@ namespace DotNet.Basics.Collections
 {
     public static class CollectionExtensions
     {
+        public static bool None<TSource>(this IEnumerable<TSource> source)
+        {
+            return source.Any() == false;
+        }
+        public static bool None<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+        {
+            return source.Any(predicate) == false;
+        }
+        
         public static void ParallelForEach<T>(this IEnumerable<T> col, Action<T> forEachAction)
         {
             Parallel.ForEach(col, forEachAction);

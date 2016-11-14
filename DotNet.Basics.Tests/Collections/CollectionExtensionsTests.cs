@@ -12,6 +12,28 @@ namespace DotNet.Basics.Tests.Collections
     public class CollectionExtensionsTests
     {
         [Fact]
+        public void None_EmptyList_NoneFound()
+        {
+            var ints = new int[0];
+
+            ints.None().Should().BeTrue();
+            ints.None(i => i == 0).Should().BeTrue();
+            ints.None(i => i != 0).Should().BeTrue();
+        }
+
+        [Fact]
+        public void None_FilledList_NoneFound()
+        {
+            const int expected = 1;
+
+            var ones = new[] { expected, expected, expected, expected, expected, expected };
+
+            ones.None().Should().BeFalse();
+            ones.None(o => o == expected).Should().BeFalse();
+            ones.None(o => o != expected).Should().BeTrue();
+        }
+        
+        [Fact]
         public async Task ParallelForEachAsync_ParallelExecution_AllTasksAreInvokedAndAwaited()
         {
             var ones = Enumerable.Repeat(1, 101).ToArray();
