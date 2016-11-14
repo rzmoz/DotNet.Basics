@@ -32,7 +32,18 @@ namespace DotNet.Basics.Tests.Collections
             ones.None(o => o == expected).Should().BeFalse();
             ones.None(o => o != expected).Should().BeTrue();
         }
-        
+
+        [Fact]
+        public void Contains_Predicated_NoneFound()
+        {
+            const int expected = 1;
+
+            var ones = new[] { expected, expected, expected, expected, expected, expected };
+            
+            ones.Contains(o => o == expected).Should().BeTrue();
+            ones.Contains(o => o != expected).Should().BeFalse();
+        }
+
         [Fact]
         public async Task ParallelForEachAsync_ParallelExecution_AllTasksAreInvokedAndAwaited()
         {

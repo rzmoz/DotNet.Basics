@@ -16,6 +16,11 @@ namespace DotNet.Basics.Collections
             return source.Any(predicate) == false;
         }
         
+        public static bool Contains<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+        {
+            return source.Any(predicate);
+        }
+
         public static void ParallelForEach<T>(this IEnumerable<T> col, Action<T> forEachAction)
         {
             Parallel.ForEach(col, forEachAction);
