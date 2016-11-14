@@ -39,7 +39,7 @@ namespace DotNet.Basics.Tasks.Pipelines
                 if (type.IsGenericType)
                     builder.RegisterGeneric(type);
                 else
-                    builder.RegisterType(type).AsSelf().AsImplementedInterfaces();
+                    builder.RegisterType(type).AsSelf();
             }
             catch (Exception)
             {
