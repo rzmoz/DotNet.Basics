@@ -7,11 +7,43 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-    public class FileExtensionsTests
+    public class FilePathTests
     {
         private const string _testDirRoot = @"K:\testDir";
         private const string _testDoubleDir = @"\testa\testb";
         private const string _testFile = @"\testc\file.txt";
+        
+        [Fact]
+        public void ReadAllTextThrowIfNotExists_SilenceWhenDirNotFound_NullIsReturned()
+        {
+            var file = @"ReadAllTextThrowIfNotExists_SilenceWhenDirNotFound_NullIsReturned".ToFile("NotFOundxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.asd");
+            var content= file.ReadAllText(false);
+            content.Should().BeNull();
+        }
+        [Fact]
+        public void ReadAllTextThrowIfNotExists_SilenceWhenFileNotFound_NullIsReturned()
+        {
+            var file = @"ReadAllTextThrowIfNotExists_SilenceWhenFileNotFound_NullIsReturned".ToFile("NotFOundxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.asd");
+            file.Directory.CreateIfNotExists();
+            var content = file.ReadAllText(false);
+            content.Should().BeNull();
+        }
+
+        [Fact]
+        public void ReadAllTextThrowIfNotExists_ThrowWhenDirNotFound_ExceptionIsThrown()
+        {
+            var file = @"ReadAllTextThrowIfNotExists_ThrowWhenDirNotFound_ExceptionIsThrown".ToFile("NotFOundxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.asd");
+            Action action = () => file.ReadAllText();
+            action.ShouldThrow<DirectoryNotFoundException>();
+        }
+        [Fact]
+        public void ReadAllTextThrowIfNotExists_ThrowWhenFileNotFound_ExceptionIsThrown()
+        {
+            var file = @"ReadAllTextThrowIfNotExists_ThrowWhenFileNotFound_ExceptionIsThrown".ToFile("NotFOundxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.asd");
+            file.Directory.CreateIfNotExists();
+            Action action = () => file.ReadAllText();
+            action.ShouldThrow<FileNotFoundException>();
+        }
 
         [Fact]
         public void ReadAllText_ReadTextFromFile_ContentIsRead()

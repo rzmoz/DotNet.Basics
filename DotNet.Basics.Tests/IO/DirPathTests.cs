@@ -6,7 +6,7 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-    public class DirExtensionsTests
+    public class DirPathTests
     {
         private const string _testDirRoot = @"K:\testDir";
         private const string _testDoubleDir = @"\testa\testb";

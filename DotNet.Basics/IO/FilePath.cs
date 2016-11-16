@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace DotNet.Basics.IO
@@ -7,14 +8,17 @@ namespace DotNet.Basics.IO
     {
         public FilePath(string fullPath)
             : this(new[] { fullPath })
-        { }
+        {
+        }
 
         public FilePath(IReadOnlyCollection<string> pathSegments) : base(pathSegments)
-        { }
+        {
+        }
 
         public FilePath(IReadOnlyCollection<string> pathSegments, char delimiter)
             : base(pathSegments, false, delimiter)
-        { }
+        {
+        }
 
         /// <summary>
         /// Returns a new Path where original and added paths are combined
@@ -34,9 +38,23 @@ namespace DotNet.Basics.IO
             return Name.EndsWith(fileType.Extension, true, null);
         }
 
-        public string ReadAllText()
+        public string ReadAllText(bool throwIfNotExists = true)
         {
-            return File.ReadAllText(FullName);
+            try
+            {
+                return File.ReadAllText(FullName);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                if (throwIfNotExists)
+                    throw;
+            }
+            catch (FileNotFoundException)
+            {
+                if (throwIfNotExists)
+                    throw;
+            }
+            return null;
         }
     }
 }
