@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.Tasks
+﻿namespace DotNet.Basics.Tasks.Pipelines
 {
     public enum Invoke
     {

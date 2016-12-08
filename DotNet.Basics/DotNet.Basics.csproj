@@ -101,7 +101,7 @@
     <Compile Include="Tasks\Pipelines\IocExtensions.cs" />
     <Compile Include="Tasks\Pipelines\LazyLoadStep.cs" />
     <Compile Include="Tasks\Pipelines\Pipeline.cs" />
-    <Compile Include="Tasks\Invoke.cs" />
+    <Compile Include="Tasks\Pipelines\Invoke.cs" />
     <Compile Include="Tasks\TaskIssue.cs" />
     <Compile Include="Tasks\TaskResult.cs" />
     <Compile Include="Tasks\Pipelines\PipelineStep.cs" />
