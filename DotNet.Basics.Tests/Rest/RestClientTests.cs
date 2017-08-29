@@ -19,7 +19,7 @@ namespace DotNet.Basics.Tests.Rest
         [Fact]
         public async Task ExecuteTAsync_ValidRquest_RequestIsReceived()
         {
-            var request = new RestRequest("https://files-stackablejs.netdna-ssl.com/stacktable.min.js", HttpMethod.Get);
+            var request = new RestRequest("https://code.jquery.com/jquery-1.12.4.min.js", HttpMethod.Get);
             var client = new RestClient();
 
             var response = await client.ExecuteAsync<string>(request).ConfigureAwait(false);
@@ -30,7 +30,7 @@ namespace DotNet.Basics.Tests.Rest
         [Fact]
         public async Task ExecuteAsync_ValidRquest_RequestIsReceived()
         {
-            var request = new RestRequest("https://files-stackablejs.netdna-ssl.com/stacktable.min.js", HttpMethod.Get);
+            var request = new RestRequest("https://code.jquery.com/jquery-1.12.4.min.js", HttpMethod.Get);
             var client = new RestClient();
 
             var response = await client.ExecuteAsync(request).ConfigureAwait(false);

@@ -185,7 +185,6 @@ namespace DotNet.Basics.Tasks.Pipelines
 
         protected async Task InnerParallelRunAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
-            DebugOut.WriteLine($"Running block {Name} in parallel");
             if (ct.IsCancellationRequested)
                 return;
             var tasks = Tasks.Select(async t =>
@@ -198,7 +197,6 @@ namespace DotNet.Basics.Tasks.Pipelines
         }
         protected async Task InnerSequentialRunAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
-            DebugOut.WriteLine($"Running block {Name} in sequence");
             foreach (var task in Tasks)
             {
                 if (ct.IsCancellationRequested)

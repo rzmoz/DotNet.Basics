@@ -13,7 +13,10 @@ namespace DotNet.Basics.Tests.IO
         {
             var dir = ".".ToPath();
 
-            Action action = () => JsonConvert.SerializeObject(dir);
+            Action action = () => JsonConvert.SerializeObject(dir, new JsonSerializerSettings
+            {
+                ContractResolver = new PathInfoSerializeContractResolver()
+            });
 
             action.ShouldNotThrow();
         }

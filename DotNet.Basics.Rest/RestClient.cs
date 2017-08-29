@@ -7,6 +7,7 @@ namespace DotNet.Basics.Rest
     public class RestClient : IRestClient
     {
         private readonly IHttpTransport _transport;
+        private Action<string> _debugOut = (msg) => { };//defaults to void
 
         public RestClient(IHttpTransport transport)
         {
@@ -26,13 +27,13 @@ namespace DotNet.Basics.Rest
 
             try
             {
-                DebugOut.WriteLine($"Executing Rest request: {request}");
+                _debugOut($"Executing Rest request: {request}");
                 response = await _transport.SendRequestAsync(request).ConfigureAwait(false);
-                DebugOut.WriteLine($"Rest response received: {response}");
+                _debugOut($"Rest response received: {response}");
             }
             catch (Exception e)
             {
-                DebugOut.WriteLine($"Rest request {request.Uri} failed: {e}");
+                _debugOut($"Rest request {request.Uri} failed: {e}");
                 throw new RestRequestException(request.Uri.ToString() + " failed", e, request, response);
             }
             return new RestResponse<T>(request.Uri, response, responseFormatting);

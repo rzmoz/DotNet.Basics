@@ -1,7 +1,9 @@
 ﻿using System.Linq;
+using System.Reflection;
 using DotNet.Basics.IO;
 using FluentAssertions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Xunit;
 
 namespace DotNet.Basics.Tests.IO
@@ -77,7 +79,7 @@ namespace DotNet.Basics.Tests.IO
             var sp = new PathInfo(path);
             sp.IsFolder.Should().Be(expected);
         }
-        
+
         [Fact]
         public void Ctor_PathInSegments_PathsAreParsed()
         {
@@ -96,9 +98,14 @@ namespace DotNet.Basics.Tests.IO
             var sp = new PathInfo(path, path, path, path);
 
             //act
-            string serialized = JsonConvert.SerializeObject(sp);
+            string serialized = JsonConvert.SerializeObject(sp, new JsonSerializerSettings
+            {
+                ContractResolver = new PathInfoSerializeContractResolver()
+            });
             //assert
             serialized.Should().Be(@"{""Name"":""MyPath"",""IsFolder"":false,""Delimiter"":""\\"",""Segments"":[""MyPath"",""MyPath"",""MyPath"",""MyPath""]}");
         }
+
+        
     }
 }

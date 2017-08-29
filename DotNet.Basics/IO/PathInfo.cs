@@ -5,7 +5,6 @@ using System.Management.Automation;
 using System.Text.RegularExpressions;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks.Repeating;
-using Newtonsoft.Json;
 
 namespace DotNet.Basics.IO
 {
@@ -55,19 +54,12 @@ namespace DotNet.Basics.IO
         public char Delimiter { get; }
         public IReadOnlyCollection<string> Segments { get; }
 
-        [JsonIgnore]
         public bool IsRooted => System.IO.Path.IsPathRooted(RawName);
-        [JsonIgnore]
         public string FullName => _resolveFullName();
-        [JsonIgnore]
         public string NameWithoutExtension { get; }
-        [JsonIgnore]
         public string Extension { get; }
-        [JsonIgnore]
         public string RawName => ToString(Delimiter);
-        [JsonIgnore]
         public DirPath Directory => IsFolder ? new DirPath(RawName) : Parent;
-        [JsonIgnore]
         public DirPath Parent => GetParent();
 
         private DirPath GetParent()

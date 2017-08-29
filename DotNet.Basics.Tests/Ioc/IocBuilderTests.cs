@@ -1,7 +1,6 @@
 ﻿using System;
 using Autofac;
 using Autofac.Core.Registration;
-using DotNet.Basics.AppSettings;
 using DotNet.Basics.Ioc;
 using DotNet.Basics.Tests.Ioc.TestHelpers;
 using FluentAssertions;
@@ -41,7 +40,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Fact]
         public void Register_TypeThatDependsOnContainer_TypeIsResolved()
         {
-            _builder.Register(new MyIocRegistrations());
+            new MyIocRegistrations().RegisterIn(_builder);
             var mytype = _builder.Container.Resolve<IMyType>();
             var typeThatDependesOnContainer = _builder.Container.Resolve<TypeThatDependesOnContainer>();
             typeThatDependesOnContainer.Value.Should().Be(mytype.GetValue());
@@ -58,7 +57,7 @@ namespace DotNet.Basics.Tests.Ioc
         [Fact]
         public void Ctor_Registrations_RegistrationsAreRegistered()
         {
-            _builder.Register(new MyIocRegistrations());
+            new MyIocRegistrations().RegisterIn(_builder);
             var myResolvedType = _builder.Build().Resolve<IMyType>();
             myResolvedType.GetType().Should().Be<MyType1>();
         }

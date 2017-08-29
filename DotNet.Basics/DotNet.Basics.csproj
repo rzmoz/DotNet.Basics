@@ -32,21 +32,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=4.2.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\packages\Autofac.4.2.1\lib\net45\Autofac.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Autofac, Version=4.6.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.6.1\lib\net45\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.PowerShell.5.ReferenceAssemblies.1.0.0\lib\net4\System.Management.Automation.dll</HintPath>
+      <HintPath>..\packages\Microsoft.PowerShell.5.ReferenceAssemblies.1.1.0\lib\net4\System.Management.Automation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http" />
@@ -54,9 +49,6 @@
     <Reference Include="System.ServiceProcess" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppSettings\AppSettingsVerificationResult.cs" />
-    <Compile Include="AppSettings\IAppSetting.cs" />
-    <Compile Include="AppSettings\RequiredConfigurationKeyNotSetException.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\StringCollectionExtensions.cs" />
     <Compile Include="Compression\CompressionResources.Designer.cs">
@@ -70,8 +62,6 @@
     <Compile Include="Diagnostics\ProfilerFormatter.cs" />
     <Compile Include="Diagnostics\DurationFormattingUnit.cs" />
     <Compile Include="Diagnostics\ProfilerState.cs" />
-    <Compile Include="AppSettings\IocAppSettingExtensions.cs" />
-    <Compile Include="Ioc\IIocRegistrations.cs" />
     <Compile Include="Ioc\IocBuilder.cs" />
     <Compile Include="IO\ExecutableInstaller.cs" />
     <Compile Include="IO\FileApplication.cs" />
@@ -88,36 +78,21 @@
     <Compile Include="IO\Robocopy.cs" />
     <Compile Include="IO\SystemIoPath.cs" />
     <Compile Include="IO\TempDir.cs" />
-    <Compile Include="AppSettings\AppSetting.cs" />
-    <Compile Include="AppSettings\SystemConfigurationManager.cs" />
-    <Compile Include="AppSettings\IConfigurationManager.cs" />
     <Compile Include="Sys\EventArgs.cs" />
     <Compile Include="Sys\StringExtensions.cs" />
     <Compile Include="Sys\WindowsServices.cs" />
     <Compile Include="Sys\WindowsServiceStatus.cs" />
+    <Compile Include="Ioc\IIocRegistrations.cs" />
     <Compile Include="Tasks\Pipelines\ILazyLoadStep.cs" />
+    <Compile Include="Tasks\Pipelines\IocExtensions.cs" />
     <Compile Include="Tasks\Pipelines\IPipeline.cs" />
     <Compile Include="Tasks\TaskIssueList.cs" />
-    <Compile Include="Tasks\Pipelines\IocExtensions.cs" />
     <Compile Include="Tasks\Pipelines\LazyLoadStep.cs" />
     <Compile Include="Tasks\Pipelines\Pipeline.cs" />
     <Compile Include="Tasks\Pipelines\Invoke.cs" />
     <Compile Include="Tasks\TaskIssue.cs" />
     <Compile Include="Tasks\TaskResult.cs" />
     <Compile Include="Tasks\Pipelines\PipelineStep.cs" />
-    <Compile Include="Rest\HttpClientTransport.cs" />
-    <Compile Include="Rest\IHttpTransport.cs" />
-    <Compile Include="Rest\IRestClient.cs" />
-    <Compile Include="Rest\IRestRequest.cs" />
-    <Compile Include="Rest\IRestResponse.cs" />
-    <Compile Include="Rest\JsonContent.cs" />
-    <Compile Include="Rest\ResponseFormatting.cs" />
-    <Compile Include="Rest\RestClient.cs" />
-    <Compile Include="Rest\RestReaderException.cs" />
-    <Compile Include="Rest\RestRequest.cs" />
-    <Compile Include="Rest\RestRequestException.cs" />
-    <Compile Include="Rest\RestResponse.cs" />
-    <Compile Include="Rest\UriExtensions.cs" />
     <Compile Include="Sys\CommandPrompt.cs" />
     <Compile Include="Diagnostics\Profiler.cs" />
     <Compile Include="Collections\KeyNotFoundMode.cs" />
