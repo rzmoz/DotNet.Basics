@@ -16,14 +16,14 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void ReadAllTextThrowIfNotExists_SilenceWhenDirNotFound_NullIsReturned()
         {
-            var file = @"ReadAllTextThrowIfNotExists_SilenceWhenDirNotFound_NullIsReturned".ToFile("NotFOundxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.asd");
+            var file = TestRoot.CurrentDir.Add(@"ReadAllTextThrowIfNotExists_SilenceWhenDirNotFound_NullIsReturned").ToFile("NotFOundxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.asd");
             var content= file.ReadAllText(false);
             content.Should().BeNull();
         }
         [Fact]
         public void ReadAllTextThrowIfNotExists_SilenceWhenFileNotFound_NullIsReturned()
         {
-            var file = @"ReadAllTextThrowIfNotExists_SilenceWhenFileNotFound_NullIsReturned".ToFile("NotFOundxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.asd");
+            var file = TestRoot.CurrentDir.Add(@"ReadAllTextThrowIfNotExists_SilenceWhenFileNotFound_NullIsReturned").ToFile("NotFOundxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.asd");
             file.Directory.CreateIfNotExists();
             var content = file.ReadAllText(false);
             content.Should().BeNull();
@@ -32,14 +32,14 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void ReadAllTextThrowIfNotExists_ThrowWhenDirNotFound_ExceptionIsThrown()
         {
-            var file = @"ReadAllTextThrowIfNotExists_ThrowWhenDirNotFound_ExceptionIsThrown".ToFile("NotFOundxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.asd");
+            var file = TestRoot.CurrentDir.Add(@"ReadAllTextThrowIfNotExists_ThrowWhenDirNotFound_ExceptionIsThrown").ToFile("NotFOundxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.asd");
             Action action = () => file.ReadAllText();
             action.ShouldThrow<DirectoryNotFoundException>();
         }
         [Fact]
         public void ReadAllTextThrowIfNotExists_ThrowWhenFileNotFound_ExceptionIsThrown()
         {
-            var file = @"ReadAllTextThrowIfNotExists_ThrowWhenFileNotFound_ExceptionIsThrown".ToFile("NotFOundxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.asd");
+            var file = TestRoot.CurrentDir.Add(@"ReadAllTextThrowIfNotExists_ThrowWhenFileNotFound_ExceptionIsThrown").ToFile("NotFOundxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.asd");
             file.Directory.CreateIfNotExists();
             Action action = () => file.ReadAllText();
             action.ShouldThrow<FileNotFoundException>();
@@ -48,7 +48,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void ReadAllText_ReadTextFromFile_ContentIsRead()
         {
-            var testdir = @"ReadAllTextAsync_ReadTextFromFile_ContentIsRead".ToDir();
+            var testdir = TestRoot.CurrentDir.Add(@"ReadAllTextAsync_ReadTextFromFile_ContentIsRead").ToDir();
             testdir.CleanIfExists();
             var testFile = testdir.ToFile("blaaaah.txt");
 
@@ -64,7 +64,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void Delete_DeleteFile_FileIsDeleted()
         {
-            var testdir = @"Delete_DeleteFile_FileIsDeleted".ToDir();
+            var testdir = TestRoot.CurrentDir.Add(@"Delete_DeleteFile_FileIsDeleted").ToDir();
             testdir.CleanIfExists();
             var testFile = testdir.ToFile("blaaaah.txt");
             "blaa".WriteAllText(testFile);
@@ -81,7 +81,7 @@ namespace DotNet.Basics.Tests.IO
         [InlineData(false)]
         public void CopyTo_EnsureTargetdir_TargetDirIsEnsured(bool ensureTargetDir)
         {
-            var testdir = @"CopyTo_EnsureTargetdir_TargetDirIsEnsured".ToDir();
+            var testdir = TestRoot.CurrentDir.Add(@"CopyTo_EnsureTargetdir_TargetDirIsEnsured").ToDir();
             testdir.DeleteIfExists();
             var testFile1 = new TestFile1();
             Action action = () => testFile1.CopyTo(testdir, false, ensureTargetDir);
@@ -103,7 +103,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void MoveTo_RenameFileInSameFolder_FileIsRenamed()
         {
-            var testdir = @"MoveTo_RenameFileInSameFolder_FileIsRenamed".ToDir();
+            var testdir = TestRoot.CurrentDir.Add(@"MoveTo_RenameFileInSameFolder_FileIsRenamed").ToDir();
             testdir.CleanIfExists();
             var sourceFile = testdir.ToFile("blaaOld.txt");
             var tagetFile = testdir.ToFile("blaaNew.txt");

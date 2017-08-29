@@ -22,7 +22,7 @@ namespace DotNet.Basics.Tests.Compression
         public void CreateFromDirectory_DontOverWrite_ExceptionWhenTargetAlreadyExists()
         {
             //arrange
-            var targetPath = @"CreateFromDirectory_DontOverWrite_ExceptionWhenTargetAlreadyExists".ToFile("myArchive.zip");
+            var targetPath = TestRoot.CurrentDir.Add(@"CreateFromDirectory_DontOverWrite_ExceptionWhenTargetAlreadyExists").ToFile("myArchive.zip");
             targetPath.DeleteIfExists();
             "dummyContent".WriteAllText(targetPath);
             targetPath.Exists().Should().BeTrue();
@@ -37,13 +37,13 @@ namespace DotNet.Basics.Tests.Compression
         public void CreateFromDirectory_Zip_ContentIsZipped()
         {
             //arrange
-            var sourceDir = @"CreateFromDirectory_Zip_ContentIsZipped".ToDir("source");
+            var sourceDir = TestRoot.CurrentDir.Add(@"CreateFromDirectory_Zip_ContentIsZipped").ToDir("source");
             var dummyfile = sourceDir.Add("myfile.txt").ToFile();
             var dummycontent = "dummyContent";
 
             dummycontent.WriteAllText(dummyfile);
 
-            var targetZip = @"CreateFromDirectory_Zip_ContentIsZipped".ToFile("myArchive.zip");
+            var targetZip = TestRoot.CurrentDir.Add(@"CreateFromDirectory_Zip_ContentIsZipped").ToFile("myArchive.zip");
             targetZip.DeleteIfExists();
 
             targetZip.Exists().Should().BeFalse();
@@ -69,9 +69,9 @@ namespace DotNet.Basics.Tests.Compression
         public void ExtractToDirectory_TargetDirDoesntExist_ArchiveIsExtractedToNewDir()
         {
             //arrange
-            var targetDir = @"ExtractToDirectory_TargetDirDoesntExist_ArchiveIsExtractedToNewDir".ToDir("out");
+            var targetDir = TestRoot.CurrentDir.Add(@"ExtractToDirectory_TargetDirDoesntExist_ArchiveIsExtractedToNewDir").ToDir("out");
             var targetFile = targetDir.Add("myfile.txt").ToFile();
-            var sourceZip = @"compression".ToFile("myArchive.zip");
+            var sourceZip = TestRoot.CurrentDir.Add(@"compression").ToFile("myArchive.zip");
             targetDir.DeleteIfExists();
             targetDir.Exists().Should().BeFalse();
             targetFile.Exists().Should().BeFalse();

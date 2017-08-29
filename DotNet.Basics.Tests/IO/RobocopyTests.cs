@@ -12,7 +12,7 @@ namespace DotNet.Basics.Tests.IO
         public void Init_FindRobocopyByDrive_RobocopyIsFound()
         {
 
-            var dir = @"Init_FindRobocopyByDrive_RobocopyIsFound".ToDir();
+            var dir = TestRoot.CurrentDir.Add(@"Init_FindRobocopyByDrive_RobocopyIsFound").ToDir();
             var testFile = dir.ToFile("robocopyTestfile.text");
             dir.CleanIfExists();
 
@@ -26,7 +26,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved()
         {
-            var baseDir = @"MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved";
+            var baseDir = TestRoot.CurrentDir.Add(@"MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved");
             var emptyDir = baseDir.ToDir("empty");
             var sourceDir = baseDir.ToDir("source");
             var targetDir = baseDir.ToDir("target");
@@ -55,7 +55,7 @@ namespace DotNet.Basics.Tests.IO
             var sourcefile = new TestFile1();
             sourcefile.Exists().Should().BeTrue("source file should exist");
 
-            var targetFile = @"Copy_CopySingleFileSourceExists_FileIsCopied".ToFile(sourcefile.Name);
+            var targetFile = TestRoot.CurrentDir.Add(@"Copy_CopySingleFileSourceExists_FileIsCopied").ToFile(sourcefile.Name);
             targetFile.DeleteIfExists();
             targetFile.Exists().Should().BeFalse("target file should not exist before copy");
             var result = Robocopy.CopyFile(sourcefile.FullName, targetFile.Directory.FullName);
@@ -66,8 +66,8 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void CopyDir_CopyDirSourceExists_DirIsCopied()
         {
-            var source = @"CopyDir_CopyDirSourceExists_DirIsCopied".ToDir("source");
-            var target = @"CopyDir_CopyDirSourceExists_DirIsCopied".ToDir("target");
+            var source = TestRoot.CurrentDir.Add(@"CopyDir_CopyDirSourceExists_DirIsCopied").ToDir("source");
+            var target = TestRoot.CurrentDir.Add(@"CopyDir_CopyDirSourceExists_DirIsCopied").ToDir("target");
             var sourceFile = source.ToFile("myfile.txt");
             var targetFile = source.ToFile(sourceFile.Name);
             var fileContent = "blavlsavlsdglsdflslfsdlfsdlfsd";

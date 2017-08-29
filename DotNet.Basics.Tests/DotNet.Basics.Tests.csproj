@@ -153,6 +153,7 @@
     <Compile Include="Tasks\ThrowExceptionUntilXTriesDummeTask.cs" />
     <Compile Include="Tasks\Repeating\RepeaterTaskTests.cs" />
     <Compile Include="Sys\TimeSpanExtensionsTests.cs" />
+    <Compile Include="TestRoot.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
