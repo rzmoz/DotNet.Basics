@@ -18,14 +18,14 @@ namespace DotNet.Basics.Rest
 
         public Uri BaseUri
         {
-            get => HttpClient.BaseAddress;
-            set => HttpClient.BaseAddress = value;
+            get { return HttpClient.BaseAddress; }
+            set { HttpClient.BaseAddress = value; }
         }
 
         public TimeSpan Timeout
         {
-            get => HttpClient.Timeout;
-            set => HttpClient.Timeout = value;
+            get { return HttpClient.Timeout; }
+            set { HttpClient.Timeout = value; }
         }
 
 
