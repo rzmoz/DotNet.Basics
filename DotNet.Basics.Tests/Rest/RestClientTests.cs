@@ -17,6 +17,37 @@ namespace DotNet.Basics.Tests.Rest
     public class RestClientTests
     {
         [Fact]
+        public async Task DefaultRequestHeaderes_DefaultHeaders_HeadersAreSet()
+        {
+            var headerKey = "X-DotNet.Basics";
+            var headerValue = "yEs";
+
+            var client = new RestClient("https://code.jquery.com/");
+            client.DefaultRequestHeaders.Add(headerKey, headerValue);
+
+            var request = new RestRequest("jquery-1.12.4.min.js", HttpMethod.Get);
+            var response = await client.ExecuteAsync<string>(request).ConfigureAwait(false);
+
+            var requestHeaders = response.HttpResponseMessage.RequestMessage.Headers.GetValues(headerKey).ToList();
+            requestHeaders.Count.Should().Be(1);
+            requestHeaders.Single().Should().Be(headerValue);
+        }
+
+        [Fact]
+        public async Task BaseUri_BaseUriIsSet_UriIsProper()
+        {
+            var baseUri = "https://code.jquery.com/";
+
+            var client = new RestClient(baseUri);
+
+            var request = new RestRequest("jquery-1.12.4.min.js", HttpMethod.Get);
+            var response = await client.ExecuteAsync<string>(request).ConfigureAwait(false);
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+
+        [Fact]
         public async Task ExecuteTAsync_ValidRquest_RequestIsReceived()
         {
             var request = new RestRequest("https://code.jquery.com/jquery-1.12.4.min.js", HttpMethod.Get);

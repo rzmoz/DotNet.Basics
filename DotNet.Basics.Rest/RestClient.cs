@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace DotNet.Basics.Rest
@@ -7,17 +8,24 @@ namespace DotNet.Basics.Rest
     public class RestClient : IRestClient
     {
         private readonly IHttpTransport _transport;
-        private Action<string> _debugOut = (msg) => { };//defaults to void
+        private readonly Action<string> _debugOut = (msg) => { };//defaults to void
+
+        public RestClient()
+            : this(new HttpClientTransport())
+        {
+        }
+
+        public RestClient(string baseUri)
+            : this(new HttpClientTransport(new Uri(baseUri)))
+        {
+        }
 
         public RestClient(IHttpTransport transport)
         {
             _transport = transport;
         }
 
-        public RestClient()
-            : this(new HttpClientTransport())
-        {
-        }
+        public HttpRequestHeaders DefaultRequestHeaders => _transport.DefaultRequestHeaders;
 
         public async Task<IRestResponse<T>> ExecuteAsync<T>(IRestRequest request, ResponseFormatting responseFormatting = ResponseFormatting.Raw)
         {
