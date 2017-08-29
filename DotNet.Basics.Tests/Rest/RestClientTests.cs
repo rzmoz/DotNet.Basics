@@ -17,6 +17,22 @@ namespace DotNet.Basics.Tests.Rest
     public class RestClientTests
     {
         [Fact]
+        public void Timeout_PropagatedToTransportLayer_TimeoutIsSet()
+        {
+            var customTimeout = TimeSpan.FromTicks(143423);
+            var transport = new HttpClientTransport();
+            transport.HttpClient.Timeout.Should().NotBe(customTimeout);
+
+            var client = new RestClient(transport)
+            {
+                Timeout = customTimeout
+            };
+
+            client.Timeout.Should().Be(transport.HttpClient.Timeout);
+            transport.HttpClient.Timeout.Should().Be(customTimeout);
+        }
+        
+        [Fact]
         public async Task DefaultRequestHeaderes_DefaultHeaders_HeadersAreSet()
         {
             var headerKey = "X-DotNet.Basics";

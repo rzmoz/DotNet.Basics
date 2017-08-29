@@ -13,15 +13,21 @@ namespace DotNet.Basics.Rest
         {
             HttpClient = new HttpClient();
         }
-        public HttpClientTransport(Uri baseUri)
-        {
-            HttpClient = new HttpClient
-            {
-                BaseAddress = baseUri
-            };
-        }
 
         public HttpRequestHeaders DefaultRequestHeaders => HttpClient.DefaultRequestHeaders;
+
+        public Uri BaseUri
+        {
+            get => HttpClient.BaseAddress;
+            set => HttpClient.BaseAddress = value;
+        }
+
+        public TimeSpan Timeout
+        {
+            get => HttpClient.Timeout;
+            set => HttpClient.Timeout = value;
+        }
+
 
         public async Task<HttpResponseMessage> SendRequestAsync(IRestRequest request)
         {

@@ -16,7 +16,10 @@ namespace DotNet.Basics.Rest
         }
 
         public RestClient(string baseUri)
-            : this(new HttpClientTransport(new Uri(baseUri)))
+            : this(new HttpClientTransport
+            {
+                BaseUri = new Uri(baseUri)
+            })
         {
         }
 
@@ -26,6 +29,18 @@ namespace DotNet.Basics.Rest
         }
 
         public HttpRequestHeaders DefaultRequestHeaders => _transport.DefaultRequestHeaders;
+
+        public Uri BaseUri
+        {
+            get => _transport.BaseUri;
+            set => _transport.BaseUri = value;
+        }
+
+        public TimeSpan Timeout
+        {
+            get => _transport.Timeout;
+            set => _transport.Timeout = value;
+        }
 
         public async Task<IRestResponse<T>> ExecuteAsync<T>(IRestRequest request, ResponseFormatting responseFormatting = ResponseFormatting.Raw)
         {
