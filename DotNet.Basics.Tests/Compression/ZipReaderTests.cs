@@ -11,8 +11,8 @@ namespace DotNet.Basics.Tests.Compression
         
         public ZipReaderTests()
         {
-            var archiveSource = @"Compression".ToFile("NewFolder.zip");
-            _testSource = @"ZipReaderTests".ToFile(archiveSource.Name);
+            var archiveSource = TestRoot.CurrentDir.Add(@"Compression").ToFile("NewFolder.zip");
+            _testSource = TestRoot.CurrentDir.Add(@"ZipReaderTests").ToFile(archiveSource.Name);
             archiveSource.CopyTo(_testSource, overwrite: true);
 
             _testSource.Exists().Should().BeTrue(_testSource.FullName, true);
