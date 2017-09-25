@@ -18,7 +18,7 @@ namespace DotNet.Basics.Tests.Collections
             _all.Length.Should().Be(2, "all length");
 
             //act
-            var result = _all.Blacklisted(_allPattern);
+            var result = _all.Blacklist(_allPattern);
 
             //assert
             result.Any().Should().BeFalse();
@@ -32,7 +32,7 @@ namespace DotNet.Basics.Tests.Collections
             _all.Length.Should().Be(2, "all length");
 
             //act
-            var result = _all.Blacklisted(blacklist);
+            var result = _all.Blacklist(blacklist);
 
             //assert
             result.Any().Should().BeFalse();
@@ -47,7 +47,7 @@ namespace DotNet.Basics.Tests.Collections
             blacklist.Length.Should().Be(1, "exclude length");
 
             //act
-            var result = _all.Blacklisted(blacklist).ToArray();
+            var result = _all.Blacklist(blacklist).ToArray();
 
             //assert
             result.Single().Should().Be(_elementElse);
@@ -62,7 +62,7 @@ namespace DotNet.Basics.Tests.Collections
             blacklist.Length.Should().Be(1, "exclude length");
 
             //act
-            var result = _all.Blacklisted(blacklist);
+            var result = _all.Blacklist(blacklist);
 
             //assert
             result.Any().Should().BeFalse();
@@ -76,7 +76,7 @@ namespace DotNet.Basics.Tests.Collections
             blacklist.Length.Should().Be(1);
 
             //act
-            var result = _all.Blacklisted(blacklist);
+            var result = _all.Blacklist(blacklist);
 
             //assert
             result.Single().Should().Be(_elementElse);
@@ -90,7 +90,7 @@ namespace DotNet.Basics.Tests.Collections
             exclude.Length.Should().Be(1);
 
             //act
-            var result = _all.Blacklisted(exclude).ToList();
+            var result = _all.Blacklist(exclude).ToList();
 
             //assert
             result.Count.Should().Be(2);
@@ -103,7 +103,7 @@ namespace DotNet.Basics.Tests.Collections
         public void Whitelisted_WildcardAll_AllIsIncluded()
         {
             //act
-            var result = _all.Whitelisted(_allPattern).ToList();
+            var result = _all.Whitelist(_allPattern).ToList();
             _all.Length.Should().Be(2);
             _allPattern.Length.Should().Be(1);
 
@@ -120,7 +120,7 @@ namespace DotNet.Basics.Tests.Collections
             _all.Length.Should().Be(2, "all length");
 
             //act
-            var result = _all.Whitelisted(whitelist).ToList();
+            var result = _all.Whitelist(whitelist).ToList();
 
             //assert
             result.Count.Should().Be(2);
@@ -136,7 +136,7 @@ namespace DotNet.Basics.Tests.Collections
             whitelist.Length.Should().Be(1, "exclude length");
 
             //act
-            var result = _all.Whitelisted(whitelist).ToArray();
+            var result = _all.Whitelist(whitelist).ToArray();
 
             //assert
             result.Single().Should().Be(_elementSomething);
@@ -151,7 +151,7 @@ namespace DotNet.Basics.Tests.Collections
             whitelist.Length.Should().Be(1, "exclude length");
 
             //act
-            var result = _all.Whitelisted(whitelist).ToList();
+            var result = _all.Whitelist(whitelist).ToList();
 
             //assert
             result.Count.Should().Be(2);
@@ -166,7 +166,7 @@ namespace DotNet.Basics.Tests.Collections
             includeWithAlreadyIncludedElements.Length.Should().Be(1);
 
             //act
-            var result = _all.Whitelisted(includeWithAlreadyIncludedElements);
+            var result = _all.Whitelist(includeWithAlreadyIncludedElements);
 
             //assert
             result.Single().Should().Be(_elementSomething);
@@ -183,7 +183,7 @@ namespace DotNet.Basics.Tests.Collections
 
 
             //act
-            var result = _all.Whitelisted(newIncludes);
+            var result = _all.Whitelist(newIncludes);
 
             //assert
             result.Any().Should().BeFalse();

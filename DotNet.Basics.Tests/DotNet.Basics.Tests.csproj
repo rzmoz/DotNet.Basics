@@ -1,218 +1,23 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{75DE822F-B08D-480C-A124-984EA8795642}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DotNet.Basics.Tests</RootNamespace>
-    <AssemblyName>DotNet.Basics.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <TargetFrameworkProfile />
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Autofac, Version=4.6.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\packages\Autofac.4.6.1\lib\net45\Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="FluentAssertions, Version=4.19.4.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentAssertions.4.19.4\lib\net45\FluentAssertions.dll</HintPath>
-    </Reference>
-    <Reference Include="FluentAssertions.Core, Version=4.19.4.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentAssertions.4.19.4\lib\net45\FluentAssertions.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
-    </Reference>
-    <Reference Include="NSubstitute, Version=2.0.3.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
-      <HintPath>..\packages\NSubstitute.2.0.3\lib\net45\NSubstitute.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.PowerShell.5.ReferenceAssemblies.1.1.0\lib\net4\System.Management.Automation.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Runtime.Caching" />
-    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.0.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <HintPath>..\packages\xunit.abstractions.2.0.1\lib\net35\xunit.abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="xunit.assert, Version=2.2.0.3545, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <HintPath>..\packages\xunit.assert.2.2.0\lib\netstandard1.1\xunit.assert.dll</HintPath>
-    </Reference>
-    <Reference Include="xunit.core, Version=2.2.0.3545, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <HintPath>..\packages\xunit.extensibility.core.2.2.0\lib\netstandard1.1\xunit.core.dll</HintPath>
-    </Reference>
-    <Reference Include="xunit.execution.dotnet, Version=2.2.0.3545, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <HintPath>..\packages\xunit.extensibility.execution.2.2.0\lib\netstandard1.1\xunit.execution.dotnet.dll</HintPath>
-    </Reference>
+    <PackageReference Include="FluentAssertions" Version="4.19.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
+    <PackageReference Include="NSubstitute" Version="2.0.3" />
+    <PackageReference Include="xunit" Version="2.2.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.0-beta5-build3769" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Collections\CollectionExtensionsTests.cs" />
-    <Compile Include="Collections\StringCollectionExtensionsTests.cs" />
-    <Compile Include="Collections\StringKeyDictionaryTests.cs" />
-    <Compile Include="Compression\SevenZipTests.cs" />
-    <Compile Include="Compression\ZipReaderTests.cs" />
-    <Compile Include="Ioc\IocBuilderTests.cs" />
-    <Compile Include="Ioc\TestHelpers\MyIocRegistrations.cs" />
-    <Compile Include="Ioc\TestHelpers\TypeThatDependesOnContainer.cs" />
-    <Compile Include="Ioc\TestHelpers\TypeWithValue.cs" />
-    <Compile Include="IO\ExecutableInstallerTests.cs" />
-    <Compile Include="IO\FileTypeTests.cs" />
-    <Compile Include="IO\DirPathTests.cs" />
-    <Compile Include="IO\FilePathTests.cs" />
-    <Compile Include="IO\IoExtensionsTests.cs" />
-    <Compile Include="IO\PathInfoExtensionsTests.cs" />
-    <Compile Include="IO\PathInfoSerializeContractResolver.cs" />
-    <Compile Include="IO\PathTests.cs" />
-    <Compile Include="IO\RobocopyTests.cs" />
-    <Compile Include="IO\PathInfoTests.cs" />
-    <Compile Include="IO\SystemIoPathTests.cs" />
-    <Compile Include="IO\TempDirTests.cs" />
-    <Compile Include="IO\TempWorkDirTests.cs" />
-    <Compile Include="IO\TestSources\TestFile1.cs" />
-    <Compile Include="IO\TestSources\IoTestResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>IoTestResources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="NLog\NLogExtensions.cs" />
-    <Compile Include="Rest\RestClientTests.cs" />
-    <Compile Include="Rest\RestRequestTests.cs" />
-    <Compile Include="Rest\RestResponseTests.cs" />
-    <Compile Include="Rest\UriTtests.cs" />
-    <Compile Include="Sys\CommandPromptTests.cs" />
-    <Compile Include="Ioc\TestHelpers\IMyType.cs" />
-    <Compile Include="Ioc\TestHelpers\MyType1.cs" />
-    <Compile Include="Ioc\TestHelpers\MyType2.cs" />
-    <Compile Include="Sys\StringExtensionsTests.cs" />
-    <Compile Include="Sys\WindowsServicesTests.cs" />
-    <Compile Include="Tasks\Pipelines\LazyLoadStepTests.cs" />
-    <Compile Include="Tasks\Pipelines\PipelineHelpers\PipelineWithContainer.cs" />
-    <Compile Include="Tasks\Pipelines\PipelineHelpers\AddIssueStep.cs" />
-    <Compile Include="Tasks\Pipelines\PipelineHelpers\AncestorArgs.cs" />
-    <Compile Include="Tasks\Pipelines\PipelineHelpers\AncestorStep.cs" />
-    <Compile Include="Tasks\Pipelines\PipelineHelpers\ClassThatTakesAnAbstractClassAsCtorParam.cs" />
-    <Compile Include="Tasks\Pipelines\PipelineHelpers\DescendantArgs.cs" />
-    <Compile Include="Tasks\Pipelines\PipelineHelpers\DescendantStep.cs" />
-    <Compile Include="Tasks\Pipelines\PipelineHelpers\IncrementArgsStep.cs" />
-    <Compile Include="Tasks\Pipelines\PipelineHelpers\SimplePipeline.cs" />
-    <Compile Include="Tasks\Pipelines\PipelineTests.cs" />
-    <Compile Include="Diagnostics\ProfileTests.cs" />
-    <Compile Include="Collections\StringDictionaryTests.cs" />
-    <Compile Include="Collections\StringPairTests.cs" />
-    <Compile Include="Sys\PowerShellCmdletTests.cs" />
-    <Compile Include="Sys\PowerShellConsoleTests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sys\EnumExtensionsTests.cs" />
-    <Compile Include="Sys\ObservableTests.cs" />
-    <Compile Include="Sys\SysExtensionsTests.cs" />
-    <Compile Include="Tasks\ManagedTaskTests.cs" />
-    <Compile Include="Tasks\Pipelines\PipelineHelpers\GenericThatTakesAnotherConcreteClassAsArgStep.cs" />
-    <Compile Include="Tasks\Repeating\OnceOnlyTaskTests.cs" />
-    <Compile Include="Tasks\TaskIssueTests.cs" />
-    <Compile Include="Tasks\TaskResultTests.cs" />
-    <Compile Include="Tasks\ThrowExceptionUntilXTriesDummeTask.cs" />
-    <Compile Include="Tasks\Repeating\RepeaterTaskTests.cs" />
-    <Compile Include="Sys\TimeSpanExtensionsTests.cs" />
-    <Compile Include="TestRoot.cs" />
+    <ProjectReference Include="..\DotNet.Basics.Win32\DotNet.Basics.Win32.csproj" />
+    <ProjectReference Include="..\DotNet.BasicsTests.EchoOut\DotNet.Basics.Tests.EchoOut.csproj" />
+    <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="Compression\myArchive.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Compression\NewFolder.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Greetings.ps1">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DotNet.Basics.NLog\DotNet.Basics.NLog.csproj">
-      <Project>{f6afae2e-99fd-45cc-a4df-add078276307}</Project>
-      <Name>DotNet.Basics.NLog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DotNet.Basics.Rest\DotNet.Basics.Rest.csproj">
-      <Project>{001c4d7d-fd0e-4789-9a38-21214393f744}</Project>
-      <Name>DotNet.Basics.Rest</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DotNet.Basics.TestsConsole\DotNet.Basics.TestsConsole.csproj">
-      <Project>{391cf41a-e1c9-4670-b1b5-c92fddc0fb3d}</Project>
-      <Name>DotNet.Basics.TestsConsole</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj">
-      <Project>{A0144B4E-EE9C-4914-82F1-DCC0D9D5196F}</Project>
-      <Name>DotNet.Basics</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="IO\TestSources\ReturnIntConsole.exe" />
-    <Content Include="IO\TestSources\TextFile1.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="IO\TestSources\IoTestResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>IoTestResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

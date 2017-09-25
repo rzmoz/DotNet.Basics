@@ -4,7 +4,6 @@ namespace DotNet.Basics.Tasks.Repeating
 {
     public class RepeatTimeoutPredicate
     {
-
         private DateTime _startTime;
 
         public RepeatTimeoutPredicate(TimeSpan timeout)
@@ -27,7 +26,6 @@ namespace DotNet.Basics.Tasks.Repeating
         }
 
         public void LoopCallback()
-        {
-        }
+        { }
     }
 }

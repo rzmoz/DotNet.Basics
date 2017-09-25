@@ -47,5 +47,17 @@ namespace DotNet.Basics.Collections
         {
             return new[] { t };
         }
+        public static IEnumerable<T> ToEnumerable<T>(this T t, IEnumerable<T> concat)
+        {
+            return t.ToEnumerable().Concat(concat);
+        }
+        public static List<T> ToList<T>(this T t, IEnumerable<T> concat)
+        {
+            return t.ToEnumerable(concat).ToList();
+        }
+        public static T[] ToArray<T>(this T t, IEnumerable<T> concat)
+        {
+            return t.ToEnumerable(concat).ToArray();
+        }
     }
 }

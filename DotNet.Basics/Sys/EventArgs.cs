@@ -6,8 +6,7 @@ namespace DotNet.Basics.Sys
     {
         public EventArgs()
             : this(default(T))
-        {
-        }
+        { }
 
         public EventArgs(T value)
         {

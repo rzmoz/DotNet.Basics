@@ -6,12 +6,11 @@ namespace DotNet.Basics.Tasks
     {
         public TaskIssue(string message)
             : this(message, null)
-        {
-        }
+        { }
+
         public TaskIssue(Exception exception)
             : this(exception?.Message, exception)
-        {
-        }
+        { }
 
         public TaskIssue(string message, Exception exception)
         {

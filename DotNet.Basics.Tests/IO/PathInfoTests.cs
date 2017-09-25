@@ -1,111 +1,44 @@
-﻿using System.Linq;
-using System.Reflection;
+﻿using System.IO;
+using System.Linq;
 using DotNet.Basics.IO;
 using FluentAssertions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
     public class PathInfoTests
     {
-        [Fact]
-        public void SplitSplitSegments_UriSUpport_UriIsSPlitProperly()
-        {
-            var segments = new[]
-            {
-                "http://localhost:80/",
-                "myfile.aspx"
-            };
-
-            var pi = new PathInfo(segments);
-
-            pi.Segments.Count.Should().Be(3);
-            pi.Segments.First().Should().Be("http://");
-            pi.Segments.Skip(1).First().Should().Be("localhost:80");
-            pi.Segments.Skip(2).First().Should().Be("myfile.aspx");
-        }
-
-        [Fact]
-        public void Ctor_IsUri_DelimiterIsAlwaysSlash()
-        {
-            var path = "http://localhost\\mydir";
-            var delimiter = PathDelimiter.Slash;
-
-            var sp = new PathInfo(path, true, delimiter);
-
-            sp.Segments.Count.Should().Be(3);
-            sp.IsFolder.Should().BeTrue(nameof(sp.IsFolder));
-            sp.Delimiter.Should().Be(PathDelimiter.Slash);
-        }
-
-        [Fact]
-        public void Ctor_Properties_PropertiesAreSet()
-        {
-            var path = "sdfsersfsf";
-            var segments = new[] { "sdfsersfsf", "sdfsersfsf", "sdfsersfsf", "sdfsersfsf" };
-            var isFolder = true;
-            var delimiter = PathDelimiter.Slash;
-
-            var sp = new PathInfo(path, segments, isFolder, delimiter);
-
-            sp.Segments.Count.Should().Be(segments.Length + 1);
-            sp.Segments.All(s => s == path).Should().BeTrue();
-            sp.IsFolder.Should().Be(isFolder);
-            sp.Delimiter.Should().Be(delimiter);
-
-        }
-
         [Theory]
-        [InlineData("myFolder\\myFolder/", PathDelimiter.Backslash)]//mixed delimiters - first is picked
-        [InlineData("myFolder\\myFolder", PathDelimiter.Backslash)]//backslash
-        [InlineData("myFolder/myFolder", PathDelimiter.Slash)]//slash
-        [InlineData("myFolder/myFolder\\", PathDelimiter.Slash)]//mixed delimiters - first is picked
-        [InlineData("myFolder", PathDelimiter.Backslash)]//default fallback
-        public void Ctor_DelimiterDetection_DelimiterIsDetected(string path, char expected)
+        //files
+        [InlineData(@"c:\my\path", @"c:\my\path")]//absolute single path
+        [InlineData(@"my\path", @"\my\path")]//relative single path with starting delimiter
+        [InlineData(@"my\path", @"my\path")]//relative single path without starting delimiter
+        //dirs
+        [InlineData(@"c:\my\path\", @"c:\my\path\")]//absolute single path
+        [InlineData(@"my\path\", @"\my\path\")]//relative single path with starting delimiter
+        [InlineData(@"my\path\", @"my\path\")]//relative single path without starting delimiter
+        //segments
+        [InlineData(@"c:\my\path\", @"c:\my\", @"\path\")]//absolute segmented path
+        [InlineData(@"my\path\", @"\my\", @"\path\")]//relative segmented path with starting delimiter
+        [InlineData(@"my\path\", @"my\", @"\path\")]//relative segmented path without starting delimiter
+        public void RawPath_RawPathParsing_RawPathIsParsed(string expected, string path, params string[] segments)
         {
-            var sp = new PathInfo(path);
-            sp.Delimiter.Should().Be(expected, path);
+            //def path separator
+            var pi = new PathInfo(path, segments);
+            pi.RawPath.Should().Be(expected);
+
+            //alt path separator
+            var altPath = ToAlt(path);
+            var altSegments = segments.Select(ToAlt).ToArray();
+            var altExpected = ToAlt(expected);
+
+            var altPathInfo = new PathInfo(altPath, altSegments);
+            altPathInfo.RawPath.Should().Be(altExpected);
         }
 
-        [Theory]
-        [InlineData("myFolder\\myFolder/", true)]//folder with trailing slash
-        [InlineData("myFolder\\myFolder\\", true)]//folder with trailing backslash
-        [InlineData("myFolder\\myFile", false)]//file without extension
-        [InlineData("myFolder\\myFile.txt", false)]//file with extension
-        public void Ctor_IsFolderDetection_FolderIsDetected(string path, bool expected)
+        private string ToAlt(string p)
         {
-            var sp = new PathInfo(path);
-            sp.IsFolder.Should().Be(expected);
+            return p.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         }
-
-        [Fact]
-        public void Ctor_PathInSegments_PathsAreParsed()
-        {
-            var pathInSegment = "dir/dir/dir/dir/dir/dir/dir";
-            var sp = new PathInfo(pathInSegment, pathInSegment);
-            sp.Segments.Count.Should().Be(14);
-            sp.Segments.Any(s => s.Contains(PathDelimiter.Slash)).Should().BeFalse();
-            sp.Segments.All(s => s == "dir").Should().BeTrue();
-        }
-
-        [Fact]
-        public void Serialization_JsonSerialization_PathIsSerializedButNotDeserialized()
-        {
-            var path = "MyPath";
-
-            var sp = new PathInfo(path, path, path, path);
-
-            //act
-            string serialized = JsonConvert.SerializeObject(sp, new JsonSerializerSettings
-            {
-                ContractResolver = new PathInfoSerializeContractResolver()
-            });
-            //assert
-            serialized.Should().Be(@"{""Name"":""MyPath"",""IsFolder"":false,""Delimiter"":""\\"",""Segments"":[""MyPath"",""MyPath"",""MyPath"",""MyPath""]}");
-        }
-
-        
     }
 }

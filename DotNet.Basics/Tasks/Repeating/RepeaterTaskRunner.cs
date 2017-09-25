@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -89,7 +90,7 @@ namespace DotNet.Basics.Tasks.Repeating
             }
             catch (Exception e)
             {
-                DebugOut.WriteLine(e.ToString());
+                //TODO: Write to debug
             }
         }
 
@@ -106,7 +107,7 @@ namespace DotNet.Basics.Tasks.Repeating
                 if (options.DontRethrowOnTaskFailedType == null)
                     throw lastException;
 
-                if (lastException.GetType().IsSubclassOf(options.DontRethrowOnTaskFailedType) ||
+                if (lastException.GetType().GetTypeInfo().IsSubclassOf(options.DontRethrowOnTaskFailedType) ||
                     lastException.GetType() == options.DontRethrowOnTaskFailedType)
                     return false;
 

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using DotNet.Basics.Collections;
 using DotNet.Basics.Tasks;
+using DotNet.Basics.Collections;
 using FluentAssertions;
 using Xunit;
 

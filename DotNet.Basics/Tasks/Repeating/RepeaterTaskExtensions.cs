@@ -9,6 +9,7 @@ namespace DotNet.Basics.Tasks.Repeating
         {
             return new OnceOnlyTask(task).RunSync;
         }
+
         public static Func<Task> ToOnceOnly(this Func<Task> task)
         {
             return new OnceOnlyTask(task).RunAsync;
@@ -30,6 +31,7 @@ namespace DotNet.Basics.Tasks.Repeating
         {
             return await task.UntilAsync(e => untilPredicate()).ConfigureAwait(false);
         }
+
         private static async Task<bool> UntilAsync(this RepeaterTask task, Func<Exception, bool> untilPredicate)
         {
             try

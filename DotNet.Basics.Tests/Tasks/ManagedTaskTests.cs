@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using DotNet.Basics.Collections;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
+using DotNet.Basics.Collections;
 using FluentAssertions;
 using Xunit;
 

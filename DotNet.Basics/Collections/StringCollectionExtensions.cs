@@ -7,7 +7,7 @@ namespace DotNet.Basics.Collections
 {
     public static class StringCollectionExtensions
     {
-        public static IEnumerable<string> Whitelisted(this IEnumerable<string> all, IEnumerable<string> whitelist = null, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
+        public static IEnumerable<string> Whitelist(this IEnumerable<string> all, IEnumerable<string> whitelist = null, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
         {
             if (all == null) throw new ArgumentNullException(nameof(all));
 
@@ -22,7 +22,7 @@ namespace DotNet.Basics.Collections
             }
         }
 
-        public static IEnumerable<string> Blacklisted(this IEnumerable<string> all, IEnumerable<string> blacklist = null, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
+        public static IEnumerable<string> Blacklist(this IEnumerable<string> all, IEnumerable<string> blacklist = null, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
         {
             if (all == null) throw new ArgumentNullException(nameof(all));
 

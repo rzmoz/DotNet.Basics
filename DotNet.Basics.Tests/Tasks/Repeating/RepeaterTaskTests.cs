@@ -6,7 +6,6 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks.Repeating
 {
-
     public class RepeaterTaskTests
     {
         [Fact]
@@ -42,7 +41,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
         [Fact]
         public void Finally_ExInBothFinallyAndAction_BothExceptionsAreFloated()
         {
-            Action action = () => Repeat.Task(() => { throw new ApplicationException(); })
+            Action action = () => Repeat.Task(() => { throw new ArithmeticException(); })
            .WithOptions(o =>
            {
                o.MaxTries = 2;
@@ -50,7 +49,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
            })
            .UntilNoExceptions();
 
-            action.ShouldThrow<AggregateException>().WithInnerException<ApplicationException>();
+            action.ShouldThrow<AggregateException>().WithInnerException<ArithmeticException>();
         }
 
         [Fact]
@@ -61,7 +60,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
 
             try
             {
-                var result = Repeat.Task(() => { throw new ApplicationException(); })
+                var result = Repeat.Task(() => { throw new ArithmeticException(); })
                     .WithOptions(o =>
                     {
                         o.MaxTries = 2;
@@ -71,7 +70,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
 
                 result.Should().BeFalse();
             }
-            catch (ApplicationException)
+            catch (ArithmeticException)
             {
                 actionExceptionCaught = true;
             }
@@ -91,7 +90,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
                         o.RetryDelay = 10.Milliseconds();
                         o.MaxTries = until;
                         o.DontRethrowOnTaskFailedType = typeof(System.IO.IOException);
-                        o.PingOnRetry = () => { DebugOut.WriteLine(doCounter); };
+                        o.PingOnRetry = () => { Console.WriteLine(doCounter); };
                     })
 
                 .UntilAsync(() => false).ConfigureAwait(false);

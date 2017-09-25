@@ -1,23 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.10
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics", "DotNet.Basics\DotNet.Basics.csproj", "{A0144B4E-EE9C-4914-82F1-DCC0D9D5196F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics", "DotNet.Basics\DotNet.Basics.csproj", "{79E3A43F-0D6E-4D50-89FC-506BE2E91323}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.Tests", "DotNet.Basics.Tests\DotNet.Basics.Tests.csproj", "{75DE822F-B08D-480C-A124-984EA8795642}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.Tests", "DotNet.Basics.Tests\DotNet.Basics.Tests.csproj", "{780CDF96-0F69-4715-BA5E-AA1B401C743F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{CF5747AC-FFBB-4D69-96B8-447202608D3A}"
-	ProjectSection(SolutionItems) = preProject
-		lib.release.json = lib.release.json
-		README.md = README.md
-	EndProjectSection
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{4F8D1747-682B-4A10-A618-26DB3A7B2B2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.TestsConsole", "DotNet.Basics.TestsConsole\DotNet.Basics.TestsConsole.csproj", "{391CF41A-E1C9-4670-B1B5-C92FDDC0FB3D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8D2438BF-0158-46EE-9734-92B712CF5479}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.NLog", "DotNet.Basics.NLog\DotNet.Basics.NLog.csproj", "{F6AFAE2E-99FD-45CC-A4DF-ADD078276307}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.Tests.EchoOut", "DotNet.BasicsTests.EchoOut\DotNet.Basics.Tests.EchoOut.csproj", "{9D9807DD-B34A-421F-962D-4E3A470526D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.Rest", "DotNet.Basics.Rest\DotNet.Basics.Rest.csproj", "{001C4D7D-FD0E-4789-9A38-21214393F744}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.Win32", "DotNet.Basics.Win32\DotNet.Basics.Win32.csproj", "{429CD748-13AB-4D26-8AED-C840011973D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,31 +21,33 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A0144B4E-EE9C-4914-82F1-DCC0D9D5196F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A0144B4E-EE9C-4914-82F1-DCC0D9D5196F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A0144B4E-EE9C-4914-82F1-DCC0D9D5196F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A0144B4E-EE9C-4914-82F1-DCC0D9D5196F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{75DE822F-B08D-480C-A124-984EA8795642}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{75DE822F-B08D-480C-A124-984EA8795642}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{75DE822F-B08D-480C-A124-984EA8795642}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{75DE822F-B08D-480C-A124-984EA8795642}.Release|Any CPU.Build.0 = Release|Any CPU
-		{391CF41A-E1C9-4670-B1B5-C92FDDC0FB3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{391CF41A-E1C9-4670-B1B5-C92FDDC0FB3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{391CF41A-E1C9-4670-B1B5-C92FDDC0FB3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{391CF41A-E1C9-4670-B1B5-C92FDDC0FB3D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F6AFAE2E-99FD-45CC-A4DF-ADD078276307}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F6AFAE2E-99FD-45CC-A4DF-ADD078276307}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F6AFAE2E-99FD-45CC-A4DF-ADD078276307}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F6AFAE2E-99FD-45CC-A4DF-ADD078276307}.Release|Any CPU.Build.0 = Release|Any CPU
-		{001C4D7D-FD0E-4789-9A38-21214393F744}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{001C4D7D-FD0E-4789-9A38-21214393F744}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{001C4D7D-FD0E-4789-9A38-21214393F744}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{001C4D7D-FD0E-4789-9A38-21214393F744}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79E3A43F-0D6E-4D50-89FC-506BE2E91323}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79E3A43F-0D6E-4D50-89FC-506BE2E91323}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79E3A43F-0D6E-4D50-89FC-506BE2E91323}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79E3A43F-0D6E-4D50-89FC-506BE2E91323}.Release|Any CPU.Build.0 = Release|Any CPU
+		{780CDF96-0F69-4715-BA5E-AA1B401C743F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{780CDF96-0F69-4715-BA5E-AA1B401C743F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{780CDF96-0F69-4715-BA5E-AA1B401C743F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{780CDF96-0F69-4715-BA5E-AA1B401C743F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D9807DD-B34A-421F-962D-4E3A470526D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D9807DD-B34A-421F-962D-4E3A470526D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D9807DD-B34A-421F-962D-4E3A470526D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D9807DD-B34A-421F-962D-4E3A470526D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{429CD748-13AB-4D26-8AED-C840011973D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{429CD748-13AB-4D26-8AED-C840011973D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{429CD748-13AB-4D26-8AED-C840011973D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{429CD748-13AB-4D26-8AED-C840011973D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{79E3A43F-0D6E-4D50-89FC-506BE2E91323} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
+		{780CDF96-0F69-4715-BA5E-AA1B401C743F} = {8D2438BF-0158-46EE-9734-92B712CF5479}
+		{9D9807DD-B34A-421F-962D-4E3A470526D5} = {8D2438BF-0158-46EE-9734-92B712CF5479}
+		{429CD748-13AB-4D26-8AED-C840011973D2} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
+	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {06DFDB46-AFB7-4E70-80A7-A4D33859B37E}
+		SolutionGuid = {8CBE2111-AC24-4AFA-9537-5FD16E0BF1E5}
 	EndGlobalSection
 EndGlobal
