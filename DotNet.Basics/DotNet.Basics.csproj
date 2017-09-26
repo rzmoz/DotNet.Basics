@@ -17,8 +17,4 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="IO\" />
-  </ItemGroup>
-
 </Project>

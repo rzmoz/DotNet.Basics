@@ -4,6 +4,15 @@ namespace DotNet.Basics.Sys
 {
     public static class PathExtensions
     {
+        public static PathInfo ToPath(this PathInfo pi, params string[] segments)
+        {
+            return new PathInfo(pi.RawPath, segments);
+        }
+        public static PathInfo ToPath(this string path, params string[] segments)
+        {
+            return new PathInfo(path, segments);
+        }
+
         public static PathDir ToDir(this PathInfo pi, params string[] segments)
         {
             return new PathDir(pi.RawPath, segments);
@@ -31,7 +40,7 @@ namespace DotNet.Basics.Sys
                 case PathFile file:
                     return file.ToFile(segments) as T;
                 default:
-                    throw new NotSupportedException($"Type not supported. Was: {typeof(T)}");
+                    return pi.ToPath(segments) as T;
             }
         }
     }
