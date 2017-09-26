@@ -10,7 +10,11 @@ namespace DotNet.Basics.Sys
         {
         }
 
-        public PathFile(string path, char pathSeparator, params string[] segments) : base(path, pathSeparator, segments)
+        public PathFile(string path, IsFolder isFolder, params string[] segments) : base(path, isFolder, segments)
+        {
+        }
+
+        public PathFile(string path, IsFolder isFolder, PathSeparator pathSeparator, params string[] segments) : base(path, isFolder, pathSeparator, segments)
         {
         }
     }

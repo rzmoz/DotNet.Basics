@@ -9,14 +9,14 @@ namespace DotNet.Basics.Tests.Sys
     public class PathInfoTests
     {
         [Theory]
-        [InlineData(@"c:\my\path", @"c:\my\path",'\\')]//std to std
-        [InlineData(@"c:\my\path", @"c:/my/path", '/')]//std to alt
-        [InlineData(@"c:/my/path", @"c:/my/path", '/')]//alt to alt
-        [InlineData(@"c:/my/path", @"c:\my\path", '\\')]//alt to std
-        public void RawPath_PathSeparator_SeparatorIsOverridden(string path, string expected, char separator)
+        [InlineData(@"c:\my\path", @"c:\my\path", PathSeparator.Backslash)]//bs to bs
+        [InlineData(@"c:\my\path", @"c:/my/path", PathSeparator.Slash)]//bs to bs
+        [InlineData(@"c:/my/path", @"c:/my/path", PathSeparator.Slash)]//s to  s
+        [InlineData(@"c:/my/path", @"c:\my\path", PathSeparator.Backslash)]//s to bs
+        public void RawPath_PathSeparator_SeparatorIsOverridden(string path, string expected, PathSeparator separator)
         {
             //def path separator
-            var pi = new PathInfo(path, separator);
+            var pi = new PathInfo(path, IsFolder.Unknown, separator);
             pi.RawPath.Should().Be(expected);
         }
 

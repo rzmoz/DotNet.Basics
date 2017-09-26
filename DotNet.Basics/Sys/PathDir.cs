@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DotNet.Basics.Sys
+﻿namespace DotNet.Basics.Sys
 {
     public class PathDir : PathInfo
     {
@@ -10,7 +6,11 @@ namespace DotNet.Basics.Sys
         {
         }
 
-        public PathDir(string path, char pathSeparator, params string[] segments) : base(path, pathSeparator, segments)
+        public PathDir(string path, IsFolder isFolder, params string[] segments) : base(path, isFolder, segments)
+        {
+        }
+
+        public PathDir(string path, IsFolder isFolder, PathSeparator pathSeparator, params string[] segments) : base(path, isFolder, pathSeparator, segments)
         {
         }
     }
