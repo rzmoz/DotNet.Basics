@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.Tests.Win32
+﻿namespace DotNet.Basics.Tests.Shell
 {
     public class RobocopyTests
     {

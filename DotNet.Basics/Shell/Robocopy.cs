@@ -2,7 +2,7 @@
 using System.IO;
 using DotNet.Basics.Sys;
 
-namespace DotNet.Basics.Win32
+namespace DotNet.Basics.Shell
 {
     /// <summary>
     /// http://ss64.com/nt/robocopy.html
@@ -29,7 +29,7 @@ namespace DotNet.Basics.Win32
                 command += $" \"{filesToCopy}\" ";
             command += options ?? string.Empty;
             command += " /np /ndl /nfl";//we don't want progress by default
-            return CommandPrompt.Run(command);
+            return CmdPrompt.Run(command);
         }
 
         /// <summary>

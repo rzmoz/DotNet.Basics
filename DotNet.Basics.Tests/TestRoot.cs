@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Reflection;
 using DotNet.Basics.Sys;
-using DotNet.Basics.Tests.Win32;
+using DotNet.Basics.Tests.Shell;
 
 namespace DotNet.Basics.Tests
 {

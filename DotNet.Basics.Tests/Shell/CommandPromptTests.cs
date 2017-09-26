@@ -1,8 +1,8 @@
-﻿using DotNet.Basics.Win32;
+﻿using DotNet.Basics.Shell;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Win32
+namespace DotNet.Basics.Tests.Shell
 {
     public class CommandPromptTests
     {
@@ -10,7 +10,7 @@ namespace DotNet.Basics.Tests.Win32
         public void Run_ExitCode_ExitCodeIsReturned()
         {
             const int expected = 16;
-            var result = CommandPrompt.Run($"robocopy");//returns 16 when no params
+            var result = CmdPrompt.Run($"robocopy");//returns 16 when no params
             result.Item1.Should().Be(expected);
         }
     }

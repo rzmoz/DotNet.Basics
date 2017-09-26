@@ -1,11 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
+using DotNet.Basics.Shell;
 using DotNet.Basics.Sys;
-using DotNet.Basics.Win32;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Win32
+namespace DotNet.Basics.Tests.Shell
 {
     public class ExecutableTests
     {
