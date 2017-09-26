@@ -9,6 +9,18 @@ namespace DotNet.Basics.Tests.IO
     public class PathInfoTests
     {
         [Theory]
+        [InlineData(@"c:\my\path", @"c:\my\path",'\\')]//std to std
+        [InlineData(@"c:\my\path", @"c:/my/path", '/')]//std to alt
+        [InlineData(@"c:/my/path", @"c:/my/path", '/')]//alt to alt
+        [InlineData(@"c:/my/path", @"c:\my\path", '\\')]//alt to std
+        public void RawPath_PathSeparator_SeparatorIsOverridden(string path, string expected, char separator)
+        {
+            //def path separator
+            var pi = new PathInfo(path, separator);
+            pi.RawPath.Should().Be(expected);
+        }
+
+        [Theory]
         //files
         [InlineData(@"c:\my\path", @"c:\my\path")]//absolute single path
         [InlineData(@"my\path", @"\my\path")]//relative single path with starting delimiter
@@ -42,3 +54,4 @@ namespace DotNet.Basics.Tests.IO
         }
     }
 }
+

@@ -12,12 +12,18 @@ namespace DotNet.Basics.IO
         private readonly char _pathSeparatorChar;
         private readonly char _altPathSeparatorChar;
 
+
         public PathInfo(string path, params string[] segments)
+            : this(path, DetectPathSeparator(path.ToArray(segments)).pathSeperator,segments)
+        {
+        }
+
+        public PathInfo(string path, char pathSeparator, params string[] segments)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
 
-            //detect separators
-            var separators = DetectPathSeparator(path.ToArray(segments));
+            //set path separators
+            var separators = GetPathSeparatorPair(pathSeparator);
             _pathSeparatorChar = separators.Item1;
             _altPathSeparatorChar = separators.Item2;
 
@@ -69,7 +75,15 @@ namespace DotNet.Basics.IO
             return split;
         }
 
-        private (char pathSeperator, char altPathSeperator) DetectPathSeparator(string[] segments)
+        private (char pathSeperator, char altPathSeperator) GetPathSeparatorPair(char pathSeparator)
+        {
+            var sepChar = pathSeparator;
+            var altSepChar = pathSeparator != Path.DirectorySeparatorChar ? Path.DirectorySeparatorChar : Path.AltDirectorySeparatorChar;
+            return (sepChar, altSepChar);
+        }
+
+
+        private static (char pathSeperator, char altPathSeperator) DetectPathSeparator(string[] segments)
         {
             var sepChar = Path.DirectorySeparatorChar;
             var altSepChar = Path.AltDirectorySeparatorChar;
@@ -83,7 +97,7 @@ namespace DotNet.Basics.IO
             return (sepChar, altSepChar);
         }
 
-        private int CharCount(string[] segments, char @char)
+        private static int CharCount(string[] segments, char @char)
         {
             return segments.Sum(segment => segment.Count(c => c == @char));
         }
