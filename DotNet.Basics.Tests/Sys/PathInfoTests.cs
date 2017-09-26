@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using System.Linq;
-using DotNet.Basics.IO;
+using DotNet.Basics.Sys;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.IO
+namespace DotNet.Basics.Tests.Sys
 {
     public class PathInfoTests
     {

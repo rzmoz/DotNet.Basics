@@ -5,16 +5,15 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using DotNet.Basics.Collections;
 
-namespace DotNet.Basics.IO
+namespace DotNet.Basics.Sys
 {
     public class PathInfo
     {
         private readonly char _pathSeparatorChar;
         private readonly char _altPathSeparatorChar;
 
-
         public PathInfo(string path, params string[] segments)
-            : this(path, DetectPathSeparator(path.ToArray(segments)).pathSeperator,segments)
+            : this(path, DetectPathSeparator(path.ToArray(segments)).pathSeperator, segments)
         {
         }
 
@@ -36,22 +35,9 @@ namespace DotNet.Basics.IO
 
         public string RawPath { get; }
 
-        public string FullName => RawPath;
-
-        public bool Exists()
-        {
-            var fp = FullName;
-            return File.Exists(fp) || Directory.Exists(fp);
-        }
-
-        public PathInfo Combine(params string[] segments)
-        {
-            return new PathInfo(RawPath, segments);
-        }
-
         public override string ToString()
         {
-            return FullName;
+            return RawPath;
         }
 
         private IEnumerable<string> CleanSegments(string path, params string[] segments)
@@ -81,7 +67,6 @@ namespace DotNet.Basics.IO
             var altSepChar = pathSeparator != Path.DirectorySeparatorChar ? Path.DirectorySeparatorChar : Path.AltDirectorySeparatorChar;
             return (sepChar, altSepChar);
         }
-
 
         private static (char pathSeperator, char altPathSeperator) DetectPathSeparator(string[] segments)
         {

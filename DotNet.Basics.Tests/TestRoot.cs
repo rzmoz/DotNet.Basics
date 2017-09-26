@@ -1,8 +1,7 @@
 ﻿using System.IO;
 using System.Reflection;
-using DotNet.Basics.IO;
+using DotNet.Basics.Sys;
 using DotNet.Basics.Tests.Win32;
-using DotNet.Basics.Tests.Sys;
 
 namespace DotNet.Basics.Tests
 {
@@ -12,9 +11,9 @@ namespace DotNet.Basics.Tests
         {
             var entryPath = typeof(ExecutableTests).GetTypeInfo().Assembly.Location;
             var dir = Path.GetDirectoryName(entryPath);
-            CurrentDir = dir.ToPath();
+            CurrentDir = dir.ToDir();
         }
 
-        public static PathInfo CurrentDir { get; }
+        public static PathDir CurrentDir { get; }
     }
 }
