@@ -12,6 +12,9 @@ namespace DotNet.Basics.Sys
         private static readonly char _backslash = '\\';
         private static readonly char _slash = '/';
 
+        private readonly char _separator;
+        private readonly string[] _segments;
+
         public PathInfo(string path, params string[] segments)
             : this(path, Sys.IsFolder.Unknown, PathSeparator.Unknown, segments)
         { }
@@ -29,29 +32,26 @@ namespace DotNet.Basics.Sys
 
             IsFolder = isFolder == Sys.IsFolder.Unknown ? DetectIsFolder(path, segments) : isFolder == Sys.IsFolder.True;
 
-            Separator = DetectPathSeparator(pathSeparator, combinedSegments);
+            _separator = DetectPathSeparator(pathSeparator, combinedSegments);
 
             //Clean segments
-            Segments = CleanSegments(combinedSegments).ToArray();
+            _segments = CleanSegments(combinedSegments).ToArray();
 
             //set rawpath
-            RawPath = string.Join(Separator.ToString(), Segments);
+            RawPath = string.Join(_separator.ToString(), _segments);
             if (IsFolder)
-                RawPath = RawPath.EnsureSuffix(Separator);
+                RawPath = RawPath.EnsureSuffix(_separator);
         }
 
         public string RawPath { get; }
-        public char Separator { get; }
+        public PathDir Directory => IsFolder ? this.ToDir() : Parent;
         public bool IsFolder { get; }
-        public IReadOnlyCollection<string> Segments { get; }
-
-        //lazy loaded
-        public PathDir Parent => GetParent();
+        public PathDir Parent => GetParent();//lazy loaded
 
         private PathDir GetParent()
         {
-            var parentSegments = Segments.Take(Segments.Count - 1).ToArray();
-            return parentSegments.Length <= 0 ? null : new PathDir(null, Sys.IsFolder.True, ToPathSeparator(Separator), parentSegments);
+            var parentSegments = _segments.Take(_segments.Length - 1).ToArray();
+            return parentSegments.Length <= 0 ? null : new PathDir(null, Sys.IsFolder.True, ToPathSeparator(_separator), parentSegments);
         }
 
         public override string ToString()
@@ -62,16 +62,16 @@ namespace DotNet.Basics.Sys
         private IEnumerable<string> CleanSegments(IEnumerable<string> combinedSegments)
         {
             //to single string
-            var joined = string.Join(Separator.ToString(), combinedSegments);
+            var joined = string.Join(_separator.ToString(), combinedSegments);
             //conform path separators
-            joined = joined.Replace(_backslash, Separator);
-            joined = joined.Replace(_slash, Separator);
+            joined = joined.Replace(_backslash, _separator);
+            joined = joined.Replace(_slash, _separator);
 
             //remove duplicate path separators
-            joined = Regex.Replace(joined, $@"[\{Separator}]{{2,}}", Separator.ToString(), RegexOptions.None);
+            joined = Regex.Replace(joined, $@"[\{_separator}]{{2,}}", _separator.ToString(), RegexOptions.None);
 
             //to segments
-            return joined.Split(new[] { Separator }, StringSplitOptions.RemoveEmptyEntries);
+            return joined.Split(new[] { _separator }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         private static bool DetectIsFolder(string path, string[] segments)
