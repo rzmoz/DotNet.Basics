@@ -13,31 +13,31 @@ namespace DotNet.Basics.Sys
             return new PathInfo(path, segments);
         }
 
-        public static PathDir ToDir(this PathInfo pi, params string[] segments)
+        public static DirPath ToDir(this PathInfo pi, params string[] segments)
         {
-            return new PathDir(pi.RawPath, segments);
+            return new DirPath(pi.RawPath, segments);
         }
-        public static PathDir ToDir(this string path, params string[] segments)
+        public static DirPath ToDir(this string path, params string[] segments)
         {
-            return new PathDir(path, segments);
+            return new DirPath(path, segments);
         }
 
-        public static PathFile ToFile(this PathInfo pi, params string[] segments)
+        public static FilePath ToFile(this PathInfo pi, params string[] segments)
         {
-            return new PathFile(pi.RawPath, segments);
+            return new FilePath(pi.RawPath, segments);
         }
-        public static PathFile ToFile(this string path, params string[] segments)
+        public static FilePath ToFile(this string path, params string[] segments)
         {
-            return new PathFile(path, segments);
+            return new FilePath(path, segments);
         }
 
         public static T Add<T>(this T pi, params string[] segments) where T : PathInfo
         {
             switch (pi)
             {
-                case PathDir dir:
+                case DirPath dir:
                     return dir.ToDir(segments) as T;
-                case PathFile file:
+                case FilePath file:
                     return file.ToFile(segments) as T;
                 default:
                     return pi.ToPath(segments) as T;

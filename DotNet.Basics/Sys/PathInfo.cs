@@ -44,14 +44,14 @@ namespace DotNet.Basics.Sys
         }
 
         public string RawPath { get; }
-        public PathDir Directory => IsFolder ? this.ToDir() : Parent;
+        public DirPath Directory => IsFolder ? this.ToDir() : Parent;
         public bool IsFolder { get; }
-        public PathDir Parent => GetParent();//lazy loaded
+        public DirPath Parent => GetParent();//lazy loaded
 
-        private PathDir GetParent()
+        private DirPath GetParent()
         {
             var parentSegments = _segments.Take(_segments.Length - 1).ToArray();
-            return parentSegments.Length <= 0 ? null : new PathDir(null, Sys.IsFolder.True, ToPathSeparator(_separator), parentSegments);
+            return parentSegments.Length <= 0 ? null : new DirPath(null, Sys.IsFolder.True, ToPathSeparator(_separator), parentSegments);
         }
 
         public override string ToString()

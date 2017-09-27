@@ -14,7 +14,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             var dir = _path.ToDir().Add(_segment);
 
-            dir.Should().BeOfType<PathDir>();
+            dir.Should().BeOfType<DirPath>();
             dir.RawPath.Should().Be(_path + $"/{_segment }");
         }
 
@@ -23,7 +23,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             var dir = _path.ToFile().Add(_segment);
 
-            dir.Should().BeOfType<PathFile>();
+            dir.Should().BeOfType<FilePath>();
             dir.RawPath.Should().Be(_path + $"/{_segment }");
         }
 
@@ -32,7 +32,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             var dir = _path.ToDir().ToFile().ToDir(_segment);//different extension methods
 
-            dir.Should().BeOfType<PathDir>();
+            dir.Should().BeOfType<DirPath>();
             dir.RawPath.Should().Be(_path + $"/{_segment }");
         }
 
@@ -41,7 +41,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             var file = _path.ToFile().ToDir().ToFile(_segment);//different extension methods
 
-            file.Should().BeOfType<PathFile>();
+            file.Should().BeOfType<FilePath>();
             file.RawPath.Should().Be(_path + $"/{_segment }");
         }
     }

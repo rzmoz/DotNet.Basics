@@ -14,6 +14,6 @@ namespace DotNet.Basics.Tests
             CurrentDir = dir.ToDir();
         }
 
-        public static PathDir CurrentDir { get; }
+        public static DirPath CurrentDir { get; }
     }
 }

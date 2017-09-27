@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {
-    public static class IoPathDirExtensions
+    public static class IoDirPathExtensions
     {
-        public static void CreateIfNotExists(this PathDir dir)
+        public static void CreateIfNotExists(this DirPath dir)
         {
             if (dir == null) throw new ArgumentNullException(nameof(dir));
             if (dir.Exists())
                 return;
-            
+
+            System.IO.Directory.CreateDirectory(dir.FullPath());
         }
     }
 }

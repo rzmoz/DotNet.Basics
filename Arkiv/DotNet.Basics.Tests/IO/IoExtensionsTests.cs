@@ -8,6 +8,7 @@ namespace DotNet.Basics.Tests.IO
 {
     public class IoExtensionsTests
     {
+        /* MOVED
         [Fact]
         public void WriteAllText_WhenOverwriteIsFalseAndTargetExists_ExceptionIsThrown()
         {
@@ -39,6 +40,6 @@ namespace DotNet.Basics.Tests.IO
             updatedContent.WriteAllText(targetFile, overwrite: true);
 
             File.ReadAllText(targetFile.FullName).Should().Be(updatedContent);
-        }
+        }*/
     }
 }

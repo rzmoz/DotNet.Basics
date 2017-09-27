@@ -10,6 +10,10 @@ namespace DotNet.Basics.IO
     {
         private static readonly MethodInfo _normalizePath;
 
+        private static readonly object _win32FileSystem;
+        private static readonly MethodInfo _dirExists;
+        private static readonly MethodInfo _fileExists;
+
         static IoPathInfoExtensions()
         {
             var privateCoreLib = Assembly.Load("System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e");
@@ -21,8 +25,12 @@ namespace DotNet.Basics.IO
                 throw new InvalidOperationException($"{ methodName } not found in {pathHelper.FullName}");
 
             //init internal exists
-            //_dirInternalExists = InitInternalExists(typeof(System.IO.Directory));
-            //_fileInternalExists = InitInternalExists(typeof(System.IO.File));
+            var systemIoFilesystem = typeof(System.IO.Directory).Assembly;
+            var win32FileSystemType = systemIoFilesystem.GetType("System.IO.Win32FileSystem");
+            _win32FileSystem = Activator.CreateInstance(win32FileSystemType);
+
+            _dirExists = win32FileSystemType.GetMethod("DirectoryExists", BindingFlags.Public | BindingFlags.Instance);
+            _fileExists = win32FileSystemType.GetMethod("FileExists", BindingFlags.Public | BindingFlags.Instance);
         }
 
         public static string FullPath(this PathInfo pi)
@@ -47,23 +55,34 @@ namespace DotNet.Basics.IO
             }
         }
 
-        private static MethodInfo InitInternalExists(Type type)
+        public static bool Exists(this PathInfo pi, bool throwIoExceptionIfNotExists = false)
         {
-            var methodName = "InternalExists";
-
-            var method = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
-                .Where(m => m.Name == methodName)
-                .OrderBy(m => m.GetParameters().Length)
-                .FirstOrDefault();
-
-            if (method == null)
-                throw new InvalidOperationException($"{methodName } not found in {type.FullName}");
-
-            return method;
+            return pi.FullPath().Exists(pi.IsFolder ? _dirExists : _fileExists, throwIoExceptionIfNotExists);
         }
-        public static bool Exists(this PathInfo pi)
+        private static bool Exists(this string fullPath, MethodInfo mi, bool throwIoExceptionIfNotExists = false)
         {
-            return File.Exists(pi.RawPath) || Directory.Exists(pi.RawPath);
+            bool found;
+
+            if (fullPath == null)
+                found = false;
+            else
+            {
+                var @params = new object[] { fullPath };
+
+                try
+                {
+                    var result = mi.Invoke(_win32FileSystem, @params);
+                    found = bool.Parse(result.ToString());
+                }
+                catch (TargetInvocationException e)
+                {
+                    throw e.InnerException;
+                }
+            }
+
+            if (found == false && throwIoExceptionIfNotExists)
+                throw new IOException($"{fullPath} not found");
+            return found;
         }
     }
 }
