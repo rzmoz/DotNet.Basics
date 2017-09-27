@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tests.IO.Testa;
@@ -11,6 +10,53 @@ namespace DotNet.Basics.Tests.IO
 {
     public class IoPathInfoExtensionsTests
     {
+        
+        [Fact]
+        public void GetFullPath_CallSystemIo_PathsAreIdentical()
+        {
+            var relativePath = "GetFullPath_CallSystemIo_PathsAreIdentical";
+
+            var systemDotIoDotPath = System.IO.Path.GetFullPath(relativePath);
+            var systemIoPath = IoPathInfoExtensions.GetFullPath(relativePath);
+
+            systemIoPath.Should().Be(systemDotIoDotPath);
+        }
+
+        [Fact]
+        public void Exists_ThrowIfNotFound_ExceptionIsThrown()
+        {
+            var path = @"Exists_ThrowIfNotFound_ExceptionIsThrown".ToDir();
+
+            path.DeleteIfExists();
+
+            Action action = () => path.Exists(throwIoExceptionIfNotExists: true);
+
+            action.ShouldThrow<IOException>().WithMessage($"{path.FullPath()} not found");
+        }
+
+        [Fact]
+        public void Exists_PathExists_Works()
+        {
+            var path = @"Exists_PathExists_Works".ToDir();
+
+            path.DeleteIfExists();
+
+            path.Exists().Should().BeFalse();
+
+            path.CreateIfNotExists();
+
+            path.Exists().Should().BeTrue();
+        }
+
+        [Fact]
+        public void Exists_LongPaths_NoExceptionIsThrown()
+        {
+            var path = ".".ToDir("Exists_LongPaths_NoExceptionIsThrownxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+
+            path.Exists().Should().BeFalse();
+        }
+
+
         [Theory]
         //relative dir
         [InlineData(".\\DirWithMoreThan260Chars\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\")]
@@ -20,7 +66,7 @@ namespace DotNet.Basics.Tests.IO
         [InlineData(".\\FileWithMoreThan260Chars\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")]
         //absolute file
         [InlineData("c:\\FileWithMoreThan260Chars\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")]
-        public void FullName_LongPath_LongPathsAreSupported(string p)
+        public void FullPath_LongPath_LongPathsAreSupported(string p)
         {
             var path = p.ToPath();
 
@@ -30,7 +76,7 @@ namespace DotNet.Basics.Tests.IO
         }
 
         [Fact]
-        public void GetFullPath_Resolve_FullPathIsResolved()
+        public void FullPath_Resolve_FullPathIsResolved()
         {
             var inputPath = "io".ToFile("testa", "TextFile1.txt");
             var expectedPath = new TestFile1().RawPath;
@@ -38,17 +84,5 @@ namespace DotNet.Basics.Tests.IO
 
             inputPath.FullPath().ToLowerInvariant().Should().Be(expectedPath.ToLowerInvariant());
         }
-
-        [Fact]
-        public void FullName_SystemIoCompliance_RelativePathsAreResolvedToSame()
-        {
-            var relativePath = "myfile.txt";
-            var systemIo = new System.IO.FileInfo(relativePath);
-            var path = relativePath.ToPath();
-
-            path.FullPath().Should().Be(systemIo.FullName);
-        }
-
-        
     }
 }
