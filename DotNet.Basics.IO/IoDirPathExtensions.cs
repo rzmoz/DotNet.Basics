@@ -14,6 +14,8 @@ namespace DotNet.Basics.IO
     {
         public static bool IsEmpty(this DirPath pi)
         {
+            if (pi.Exists() == false)
+                return false;
             return pi.EnumeratePaths().None();
         }
 
@@ -25,17 +27,10 @@ namespace DotNet.Basics.IO
         {
             if (pi.Exists() == false)
                 return true;
-
-            var paths = pi.EnumeratePaths().ToList();
-
-            foreach (var path in paths)
+            
+            Parallel.ForEach(pi.EnumeratePaths(), path =>
             {
                 path.DeleteIfExists();
-            }
-
-            Parallel.ForEach(paths, path =>
-            {
-                
             });
 
             return pi.GetPaths().Length == 0;

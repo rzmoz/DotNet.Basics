@@ -79,7 +79,7 @@ namespace DotNet.Basics.Tests.IO
 
             subCir.Parent.FullName.Should().Be(parent.FullName);
         }
-        */
+        
 
         [Fact]
         public void CopyTo_IncludeSubDirectories_DirIsCopied()
