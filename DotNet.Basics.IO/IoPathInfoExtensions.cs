@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks.Repeating;
 
@@ -38,7 +39,7 @@ namespace DotNet.Basics.IO
             _fileExists = win32FileSystemType.GetMethod("FileExists", BindingFlags.Public | BindingFlags.Instance);
             _deleteFile = win32FileSystemType.GetMethod("DeleteFile", BindingFlags.Public | BindingFlags.Instance);
         }
-        
+
         public static DirPath Directory(this PathInfo pi)
         {
             return pi.IsFolder ? pi.ToDir() : pi.Parent;
@@ -51,15 +52,33 @@ namespace DotNet.Basics.IO
 
         public static bool DeleteIfExists(this PathInfo pi, TimeSpan timeout)
         {
-
             if (pi.Exists() == false)
                 return true;
 
-            var @params = pi.IsFolder ? new object[] { pi.FullPath(), true } : new object[] { pi.FullPath() }; ;
-            var mi = pi.IsFolder ? _deleteDir : _deleteFile;
+            var dirDelete = new
+            {
+                Mi = _deleteDir,
+                Params = new object[] { pi.FullPath(), true }
+            };
+            var fileDelete = new
+            {
+                Mi = _deleteFile,
+                Params = new object[] { pi.FullPath() }
+            };
             Repeat.Task(() =>
                 {
-                    Win32System(mi, @params);
+                    try
+                    {
+                        Win32System(dirDelete.Mi, dirDelete.Params);
+                    }
+                    catch (IOException )
+                    { }
+                    try
+                    {
+                        Win32System(fileDelete.Mi, fileDelete.Params);
+                    }
+                    catch (IOException)
+                    { }
                 })
                 .WithOptions(o =>
                 {
@@ -96,7 +115,8 @@ namespace DotNet.Basics.IO
 
         public static bool Exists(this PathInfo pi, bool throwIoExceptionIfNotExists = false)
         {
-            return pi.FullPath().Exists(pi.IsFolder ? _dirExists : _fileExists, throwIoExceptionIfNotExists);
+            var fullPath = pi.FullPath();
+            return fullPath.Exists(_dirExists) | fullPath.Exists(_fileExists);
         }
         private static bool Exists(this string fullPath, MethodInfo mi, bool throwIoExceptionIfNotExists = false)
         {

@@ -163,7 +163,7 @@ namespace DotNet.Basics.Tests.IO
             rootTestdir.GetFiles().Count().Should().Be(1);
             rootTestdir.GetDirectories(testDirName).Count().Should().Be(0);//the identical named subfolder should be gone
         }
-
+        /*MOVED
         [Fact]
         public void CreateIfExists_CreateOptions_ExistingDirIsCleaned()
         {
@@ -201,7 +201,7 @@ namespace DotNet.Basics.Tests.IO
             testDir.Exists().Should().BeTrue();
             testDir.GetFiles().Count().Should().Be(1);
         }
-
+        
         [Fact]
         public void CleanIfExists_DirDoesntExists_NoActionAndNoExceptions()
         {
@@ -232,28 +232,6 @@ namespace DotNet.Basics.Tests.IO
 
             testDir.GetFiles().Count().Should().Be(0);
         }
-
-        [Fact]
-        public void ToDir_CombineToDir_FullNameIsCorrect()
-        {
-            var actual = _testDirRoot.ToDir(_testDoubleDir);
-            var expected = _testDirRoot + _testDoubleDir + actual.Delimiter;
-            actual.FullName.Should().Be(expected);
-
-
-            actual = @"c:\BuildLibrary\Folder\Module 2.0.1".ToDir("Website");
-            expected = @"c:\BuildLibrary\Folder\Module 2.0.1\Website\";
-            actual.FullName.Should().Be(expected);
-        }
-
-        [Fact]
-        public void ToDir_ParentFromCombine_ParentFolderOfNewIsSameAsOrgRoot()
-        {
-            var rootDir = _testDirRoot.ToDir();
-            var dir = rootDir.ToDir(_testSingleDir);
-            dir.Parent.Name.Should().Be(rootDir.Name);
-        }
-
         private void AddTestContent(DirPath dir, int numOfTestDirs, int numOfTestFiles)
         {
             for (var i = 0; i < numOfTestDirs; i++)
@@ -266,7 +244,7 @@ namespace DotNet.Basics.Tests.IO
                 "blaaaaa".WriteAllText(dir.ToFile($"myFile{i}.txt"));
         }
 
-
+    
         private DirPath CreateIdenticalSubdirs(DirPath root, int maxDepth)
         {
             try
@@ -285,6 +263,6 @@ namespace DotNet.Basics.Tests.IO
                 root.CleanIfExists();
             }
             return root;
-        }
+        }*/
     }
 }
