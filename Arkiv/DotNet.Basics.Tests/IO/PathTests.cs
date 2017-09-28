@@ -7,6 +7,7 @@ namespace DotNet.Basics.Tests.IO
 {
     public class PathTests
     {
+        /*MOVED
         [Theory]
         //relative dir
         [InlineData(".\\DirWithMoreThan260Chars\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\")]
@@ -43,7 +44,7 @@ namespace DotNet.Basics.Tests.IO
             root.Add("sazas");//no change to original path
             root.RawName.Should().Be(path);
         }
-
+        
         [Theory]
         [InlineData(@"c:\", null)]
         [InlineData(@"myFolder\", null)]
@@ -101,7 +102,7 @@ namespace DotNet.Basics.Tests.IO
             //assert
             path.RawName.Should().Be(root);
         }
-
+        */
         [Theory]
         [InlineData("myFolder\\myFolder\\", "myFolder")]//folder with trailing delimiter
         [InlineData("myFolder\\myFolder", "myFolder")]//folder without trailing delimiter
