@@ -14,10 +14,10 @@ namespace DotNet.Basics.Tests.Sys
         [InlineData(@"c:\my\path", @"c:/my/path", PathSeparator.Slash)]//bs to bs
         [InlineData(@"c:/my/path", @"c:/my/path", PathSeparator.Slash)]//s to  s
         [InlineData(@"c:/my/path", @"c:\my\path", PathSeparator.Backslash)]//s to bs
-        public void RawPath_PathSeparator_SeparatorIsOverridden(string path, string expected, PathSeparator separator)
+        public void RawPath_PathSeparator_SeparatorIsOverridden(string path, string expected, char separator)
         {
             //def path separator
-            var pi = path.ToPath(IsFolder.Unknown, separator);
+            var pi = path.ToPath(separator);
             pi.RawPath.Should().Be(expected);
         }
 
@@ -41,12 +41,10 @@ namespace DotNet.Basics.Tests.Sys
             pi.RawPath.Should().Be(expected);
 
             //alt path separator
-            var altPath = ToAlt(path);
-            var altSegments = segments.Select(ToAlt).ToArray();
-            var altExpected = ToAlt(expected);
+            var altPi = path.ToPath(PathSeparator.Slash, segments);
+            var altExpected = pi.RawPath.Replace(PathSeparator.Backslash, PathSeparator.Slash);
 
-            var altPathInfo = altPath.ToPath(altSegments);
-            altPathInfo.RawPath.Should().Be(altExpected);
+            altPi.RawPath.Should().Be(altExpected);
         }
 
         [Fact]
@@ -69,14 +67,78 @@ namespace DotNet.Basics.Tests.Sys
             file.Name.Should().Be(expected, nameof(file.Name));
         }
 
+
+        [Theory]
+        [InlineData("myFolder\\myFolder\\", "myFolder")]//folder with trailing delimiter
+        [InlineData("myFolder\\myFolder", "myFolder")]//folder without trailing delimiter
+        [InlineData("myFolder\\myFile.txt", "myFile.txt")]//file with extension
+        public void Name_Parsing_NameIsParsed(string fullPath, string expectedName)
+        {
+            var path = fullPath.ToPath();
+            //assert
+            path.Name.Should().Be(expectedName);
+        }
+
+        [Theory]
+        [InlineData("myFolder/DetectDelimiter/", PathSeparator.Slash)]//delimiter detected
+        [InlineData("myFolder\\DetectDelimiter\\", PathSeparator.Backslash)]//delimiter detected
+        [InlineData("myFolder/DetectDelimiter\\", PathSeparator.Slash)]//delimiter detected
+        [InlineData("myFolder\\DetectDelimiter//", PathSeparator.Backslash)]//delimiter detected
+        [InlineData("DetectDelimiter", PathSeparator.Backslash)]//delimiter fallback
+        public void Delimiter_Detection_DelimiterDetected(string pathInput, char delimiter)
+        {
+            var path = pathInput.ToPath();
+            path.Separator.Should().Be(delimiter, pathInput);
+        }
+
+        [Theory]
+        [InlineData("myFolder/DetectDelimiter/", true)]//delimiter detected
+        [InlineData("myFolder\\DetectDelimiter\\", true)]//delimiter detected
+        [InlineData("myFolder/DetectDelimiter", false)]//delimiter fallback
+        public void IsFolder_Detection_IsFolderIsDetected(string pathInput, bool isFolder)
+        {
+            var path = pathInput.ToPath();
+            path.IsFolder.Should().Be(isFolder);
+        }
+
+        [Theory]
+        [InlineData("myFolder/DetectDelimiter/", true)]//folder with delimiter in the end
+        [InlineData("myFolder/DetectDelimiter", false)]//folder withouth delimiter in the end
+        [InlineData("myFolder/myFile.txt", false)]//delimiter fallback
+        public void IsFolder_Formatting_FolderExtensionIsOutput(string pathInput, bool isFolder)
+        {
+            var path = pathInput.ToPath();
+            path.IsFolder.Should().Be(isFolder);
+            var formatted = path.ToString();
+            if (isFolder)
+                formatted.Should().EndWith(path.Separator.ToString());
+            else
+                formatted.Should().NotEndWith(path.Separator.ToString());
+        }
+
+        [Theory]
+        [InlineData("myFolder/DetectDelimiter/")]
+        [InlineData("myFolder\\DetectDelimiter\\")]
+        public void ToString_Autodetect_DelimiterIsDetected(string pathInput)
+        {
+            var path = pathInput.ToPath();
+
+            var pathWithSlash = path.ToString().Replace(PathSeparator.Backslash, PathSeparator.Slash);
+            var pathWithBackSlash = path.ToString().Replace(PathSeparator.Slash, PathSeparator.Backslash);
+
+            pathWithSlash.Should().Be(pathInput.Replace('\\', '/'), PathSeparator.Slash.ToString());
+            pathWithBackSlash.Should().Be(pathInput.Replace('/', '\\'), PathSeparator.Backslash.ToString());
+        }
+
+
         [Theory]
         [InlineData(null, null)]
-        /*[InlineData(@"c:\", null)]
+        [InlineData(@"c:\", null)]
         [InlineData(@"myFolder\", null)]
         [InlineData(@"myParent\myFolder\", @"myParent\")]
         [InlineData(@"myParent\myFile.txt", @"myParent\")]
         [InlineData(@"c:\myParent\myFolder\", @"c:\myParent\")]
-        [InlineData(@"c:\myParent\myFile.txt", @"c:\myParent\")]*/
+        [InlineData(@"c:\myParent\myFile.txt", @"c:\myParent\")]
         public void Parent_DirUp_GetParent(string folder, string expectedParent)
         {
             var path = folder.ToPath();
@@ -95,10 +157,6 @@ namespace DotNet.Basics.Tests.Sys
             var dir = path.Directory();
 
             dir.FullPath().Should().Be(isFolder ? path.FullPath() : path.Parent.FullPath());
-        }
-        private string ToAlt(string p)
-        {
-            return p.Replace('\\', '/');
         }
     }
 }

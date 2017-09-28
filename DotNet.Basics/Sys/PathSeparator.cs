@@ -1,9 +1,9 @@
 ﻿namespace DotNet.Basics.Sys
 {
-    public enum PathSeparator
+    public class PathSeparator
     {
-        Unknown,
-        Slash,
-        Backslash
+        public const char Unknown = '¤';
+        public const char Slash = '/';
+        public const char Backslash = '\\';
     }
 }

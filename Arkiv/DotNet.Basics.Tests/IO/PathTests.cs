@@ -102,7 +102,7 @@ namespace DotNet.Basics.Tests.IO
             //assert
             path.RawName.Should().Be(root);
         }
-        */
+        
         [Theory]
         [InlineData("myFolder\\myFolder\\", "myFolder")]//folder with trailing delimiter
         [InlineData("myFolder\\myFolder", "myFolder")]//folder without trailing delimiter
@@ -200,6 +200,6 @@ namespace DotNet.Basics.Tests.IO
 
             pathWithSlash.Should().Be(pathInput.Replace('\\', '/'), PathDelimiter.Slash.ToString());
             pathWithBackSlash.Should().Be(pathInput.Replace('/', '\\'), PathDelimiter.Backslash.ToString());
-        }
+        }*/
     }
 }

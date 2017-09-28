@@ -12,7 +12,7 @@ namespace DotNet.Basics.Sys
         {
         }
 
-        public FilePath(string path, PathSeparator pathSeparator, params string[] segments)
+        public FilePath(string path, char pathSeparator, params string[] segments)
             : base(path, Sys.IsFolder.False, pathSeparator, segments)
         {
             NameWoExtension = Path.GetFileNameWithoutExtension(Name);

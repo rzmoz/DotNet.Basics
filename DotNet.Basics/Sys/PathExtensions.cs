@@ -6,11 +6,15 @@
         {
             return path.ToPath(IsFolder.Unknown, segments);
         }
-        public static PathInfo ToPath(this string path, IsFolder isfolder, params string[] segments)
+        public static PathInfo ToPath(this string path, IsFolder isFolder, params string[] segments)
         {
-            return path.ToPath(isfolder, PathSeparator.Unknown, segments);
+            return path.ToPath(isFolder, PathSeparator.Unknown, segments);
         }
-        public static PathInfo ToPath(this string path, IsFolder isFolder, PathSeparator pathSeparator, params string[] segments)
+        public static PathInfo ToPath(this string path, char pathSeparator, params string[] segments)
+        {
+            return path.ToPath(IsFolder.Unknown, pathSeparator, segments);
+        }
+        public static PathInfo ToPath(this string path, IsFolder isFolder, char pathSeparator, params string[] segments)
         {
             if (isFolder == IsFolder.Unknown)
                 isFolder = PathInfo.DetectIsFolder(path, segments) ? IsFolder.True : IsFolder.False;
@@ -19,9 +23,9 @@
         }
         public static DirPath ToDir(this PathInfo pi, params string[] segments)
         {
-            return pi.ToDir(pi.PathSeparator, segments);
+            return pi.ToDir(pi.Separator, segments);
         }
-        public static DirPath ToDir(this PathInfo pi, PathSeparator pathSeparator, params string[] segments)
+        public static DirPath ToDir(this PathInfo pi, char pathSeparator, params string[] segments)
         {
             return pi.RawPath.ToDir(pathSeparator, segments);
         }
@@ -29,17 +33,16 @@
         {
             return path.ToDir(PathSeparator.Unknown, segments);
         }
-        public static DirPath ToDir(this string path, PathSeparator pathSeparator, params string[] segments)
+        public static DirPath ToDir(this string path, char pathSeparator, params string[] segments)
         {
             return new DirPath(path, pathSeparator, segments);
         }
 
-
         public static FilePath ToFile(this PathInfo pi, params string[] segments)
         {
-            return pi.ToFile(pi.PathSeparator, segments);
+            return pi.ToFile(pi.Separator, segments);
         }
-        public static FilePath ToFile(this PathInfo pi, PathSeparator pathSeparator, params string[] segments)
+        public static FilePath ToFile(this PathInfo pi, char pathSeparator, params string[] segments)
         {
             return pi.RawPath.ToFile(pathSeparator, segments);
         }
@@ -47,7 +50,7 @@
         {
             return path.ToFile(PathSeparator.Unknown, segments);
         }
-        public static FilePath ToFile(this string path, PathSeparator pathSeparator, params string[] segments)
+        public static FilePath ToFile(this string path, char pathSeparator, params string[] segments)
         {
             return new FilePath(path, pathSeparator, segments);
         }
