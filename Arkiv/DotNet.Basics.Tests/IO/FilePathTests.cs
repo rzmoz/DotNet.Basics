@@ -155,7 +155,7 @@ namespace DotNet.Basics.Tests.IO
 
             targetfile.FullName.Should().Be(@"c:\MyPath\myFile.temp");
         }
-
+        /*MOVED
         [Theory]
         [InlineData("MyFile", ".txt")]//has extension
         [InlineData("MyFile", "")]//no extension
@@ -170,6 +170,6 @@ namespace DotNet.Basics.Tests.IO
             file.Name.Should().Be(expectedFullName, nameof(file.Name));
             file.NameWithoutExtension.Should().Be(name ?? "", "NameWithoutExtension");
             file.Extension.Should().Be(extension ?? "");
-        }
+        }*/
     }
 }

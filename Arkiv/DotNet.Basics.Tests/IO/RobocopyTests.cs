@@ -7,7 +7,7 @@ using Xunit;
 namespace DotNet.Basics.Tests.IO
 {
     public class RobocopyTests
-    {
+    {/*MOVED
         [Fact]
         public void Init_FindRobocopyByDrive_RobocopyIsFound()
         {
@@ -86,6 +86,6 @@ namespace DotNet.Basics.Tests.IO
             target.Exists().Should().BeTrue();
             targetFile.Exists().Should().BeTrue();
             targetFile.ReadAllText().Should().Be(fileContent);
-        }
+        }*/
     }
 }

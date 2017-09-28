@@ -59,6 +59,17 @@ namespace DotNet.Basics.Tests.Sys
         }
 
         [Theory]
+        [InlineData("SomeDir\\MyFile.txt", "MyFile.txt")]//has extension
+        [InlineData("SomeDir\\MyFile", "MyFile")]//no extension
+        [InlineData("SomeDir\\.txt", ".txt")]//only extension
+        [InlineData(null, "")]//name is null
+        public void Name_NameWithExtension_NameIsFound(string name, string expected)
+        {
+            var file = name.ToFile();
+            file.Name.Should().Be(expected, nameof(file.Name));
+        }
+
+        [Theory]
         [InlineData(null, null)]
         [InlineData(@"c:\", null)]
         [InlineData(@"myFolder\", null)]

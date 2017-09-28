@@ -43,12 +43,11 @@ namespace DotNet.Basics.Sys
 
             //set name
             Name = Path.GetFileName(RawPath);
-            NameWoExtension = Path.GetFileNameWithoutExtension(Name);
         }
 
         public string RawPath { get; }
         public string Name { get; }
-        public string NameWoExtension { get; }
+        
         public bool IsFolder { get; }
         public DirPath Parent => GetParent();//lazy loaded
         public DirPath Directory => IsFolder ? this.ToDir() : Parent;//lazy loaded
