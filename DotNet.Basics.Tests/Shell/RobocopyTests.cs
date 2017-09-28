@@ -24,7 +24,7 @@ namespace DotNet.Basics.Tests.Shell
             var sourceDir = baseDir.ToDir("source");
             var targetDir = baseDir.ToDir("target");
             var testSource = new TestFile1();
-            Robocopy.CopyDir(testSource.Directory.FullPath(), sourceDir.FullPath(), true, null);
+            Robocopy.CopyDir(testSource.Directory().FullPath(), sourceDir.FullPath(), true, null);
             emptyDir.CreateIfNotExists();
             emptyDir.CleanIfExists();
             emptyDir.GetPaths().Length.Should().Be(0);//empty dir
@@ -55,7 +55,7 @@ namespace DotNet.Basics.Tests.Shell
             targetFile.Exists().Should().BeFalse("target file should not exist before copy");
 
             //act
-            var result = Robocopy.CopyFile(sourcefile.Directory.FullPath(), sourcefile.Name, targetFile.Directory.FullPath());
+            var result = Robocopy.CopyFile(sourcefile.Directory().FullPath(), sourcefile.Name, targetFile.Directory().FullPath());
             DebugOut.WriteLine(result.Output);
 
             result.ExitCode.Should().BeLessThan(8); //http://ss64.com/nt/robocopy-exit.html

@@ -38,6 +38,12 @@ namespace DotNet.Basics.IO
             _fileExists = win32FileSystemType.GetMethod("FileExists", BindingFlags.Public | BindingFlags.Instance);
             _deleteFile = win32FileSystemType.GetMethod("DeleteFile", BindingFlags.Public | BindingFlags.Instance);
         }
+        
+        public static DirPath Directory(this PathInfo pi)
+        {
+            return pi.IsFolder ? pi.ToDir() : pi.Parent;
+        }
+
         public static bool DeleteIfExists(this PathInfo pi)
         {
             return pi.DeleteIfExists(30.Seconds());

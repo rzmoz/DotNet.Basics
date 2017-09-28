@@ -10,9 +10,71 @@ namespace DotNet.Basics.Tests.IO
 {
     public class IoPathInfoExtensionsTests
     {
-        private const string _testDirRoot = @"K:\testDir";
-        private const string _testDoubleDir = @"\testa\testb";
-        private const string _testSingleDir = @"\testk\";
+        [Fact]
+        public void Parent_FullPath_ParentIsResolved()
+        {
+            var currentDir = TestRoot.Dir;
+            var dir = currentDir.Add(@"Parent_NameOnlySourceDir_ParentIsResolved");
+
+            dir.Parent.FullPath().Should().Be(currentDir.FullPath());
+        }
+        [Theory]
+        [InlineData(@"c:\", null)]
+        [InlineData(@"myFolder\", null)]
+        [InlineData(@"myParent\myFolder\", @"myParent\")]
+        [InlineData(@"myParent\myFile", @"myParent\")]
+        [InlineData(@"c:\myParent\myFolder\", @"c:\myParent\")]
+        [InlineData(@"c:\myParent\myFile", @"c:\myParent\")]
+        public void Parent_DirUp_GetParent(string folder, string expectedParent)
+        {
+            var path = folder.ToPath();
+
+            var found = path.Parent?.RawPath;
+            found.Should().Be(expectedParent, folder);
+        }
+
+        [Theory]
+        [InlineData(@"c:\myParent\myFolder\", true)]
+        [InlineData(@"c:\myParent\myFile", false)]
+        public void Directory_GetDir_Dir(string folder, bool isFolder)
+        {
+            var path = folder.ToPath();
+
+            var dir = path.Directory();
+
+            dir.FullPath().Should().Be(isFolder ? path.FullPath(): path.Parent.FullPath());
+        }
+
+        [Theory]
+        [InlineData("myFolder\\", "dir\\", true)]//backslash all dirs
+        [InlineData("myFolder\\", "file.txt", true)]//backslash dir remains when file added
+        [InlineData("myfile", "dir//", false)]//slash file remains when dir added - should throw exception?
+        [InlineData("myfile.txt", "file.txt", false)]//slash file remains when dir added - should throw exception?
+        public void Add_KeepIsFolder_IsFolderIsUnchagedRegardlesOfSegmentsAdded(string root, string newSegment, bool expectedIsFolder)
+        {
+            var path = root.ToPath();
+
+            //assert before add
+            path.IsFolder.Should().Be(expectedIsFolder);
+
+            //act
+            path = path.Add(newSegment);
+
+            //assert
+            path.IsFolder.Should().Be(expectedIsFolder);
+        }
+
+        [Theory]
+        [InlineData("myFolder", "")]//empty
+        [InlineData("myFolder", null)]//null
+        [InlineData("myFolder", "  ")]//spaces
+        public void Add_EmptySegments_PathIsUnchanged(string root, string newSegment)
+        {
+            var path = root.ToPath().Add(newSegment);
+
+            //assert
+            path.RawPath.Should().Be(root);
+        }
 
         [Fact]
         public void DeleteIfExists_DirExists_DirIsDeleted()

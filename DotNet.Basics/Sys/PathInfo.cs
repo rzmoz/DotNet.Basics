@@ -7,23 +7,20 @@ using DotNet.Basics.Collections;
 
 namespace DotNet.Basics.Sys
 {
-    public class PathInfo
+    public abstract class PathInfo
     {
         private static readonly char _backslash = '\\';
         private static readonly char _slash = '/';
 
-        private readonly char _separator;
-        private readonly string[] _segments;
-
-        public PathInfo(string path, params string[] segments)
+        protected PathInfo(string path, params string[] segments)
             : this(path, Sys.IsFolder.Unknown, segments)
         { }
 
-        public PathInfo(string path, Sys.IsFolder isFolder, params string[] segments)
+        protected PathInfo(string path, Sys.IsFolder isFolder, params string[] segments)
             : this(path, isFolder, PathSeparator.Unknown, segments)
         { }
 
-        public PathInfo(string path, Sys.IsFolder isFolder, PathSeparator pathSeparator, params string[] segments)
+        protected PathInfo(string path, Sys.IsFolder isFolder, PathSeparator pathSeparator, params string[] segments)
         {
             if (path == null)
                 path = string.Empty;
@@ -32,74 +29,75 @@ namespace DotNet.Basics.Sys
 
             IsFolder = isFolder == Sys.IsFolder.Unknown ? DetectIsFolder(path, segments) : isFolder == Sys.IsFolder.True;
 
-            _separator = DetectPathSeparator(pathSeparator, combinedSegments);
+            PathSeparator = DetectPathSeparator(pathSeparator, combinedSegments);
+            var separatorChar = ToChar(PathSeparator);
 
             //Clean segments
-            _segments = CleanSegments(combinedSegments).ToArray();
+            Segments = CleanSegments(combinedSegments, separatorChar).ToArray();
 
             //Set rawpath
-            RawPath = string.Join(_separator.ToString(), _segments);
-            RawPath = IsFolder ? RawPath.EnsureSuffix(_separator) : RawPath.RemoveSuffix(_separator);
+            RawPath = string.Join(separatorChar.ToString(), Segments);
+            RawPath = IsFolder ? RawPath.EnsureSuffix(separatorChar) : RawPath.RemoveSuffix(separatorChar);
 
             //set name
             Name = Path.GetFileName(RawPath);
         }
 
+
         public string RawPath { get; }
         public string Name { get; }
-        
         public bool IsFolder { get; }
-        public DirPath Parent => GetParent();//lazy loaded
-        public DirPath Directory => IsFolder ? this.ToDir() : Parent;//lazy loaded
 
-        private DirPath GetParent()
-        {
-            var parentSegments = _segments.Take(_segments.Length - 1).ToArray();
-            return parentSegments.Length <= 0 ? null : new DirPath(null, ToPathSeparator(_separator), parentSegments);
-        }
+        public DirPath Parent => Segments.Count <= 1 ? null : new DirPath(null, Segments.Take(Segments.Count - 1).ToArray());
+        public PathSeparator PathSeparator { get; }
+        public IReadOnlyCollection<string> Segments;
 
         public override string ToString()
         {
             return RawPath;
         }
 
-        private IEnumerable<string> CleanSegments(IEnumerable<string> combinedSegments)
+        private IEnumerable<string> CleanSegments(IEnumerable<string> combinedSegments, char separatorChar)
         {
             //to single string
-            var joined = string.Join(_separator.ToString(), combinedSegments);
+            var joined = string.Join(separatorChar.ToString(), combinedSegments);
             //conform path separators
-            joined = joined.Replace(_backslash, _separator);
-            joined = joined.Replace(_slash, _separator);
+            joined = joined.Replace(_backslash, separatorChar);
+            joined = joined.Replace(_slash, separatorChar);
 
             //remove duplicate path separators
-            joined = Regex.Replace(joined, $@"[\{_separator}]{{2,}}", _separator.ToString(), RegexOptions.None);
+            joined = Regex.Replace(joined, $@"[\{separatorChar}]{{2,}}", separatorChar.ToString(), RegexOptions.None);
 
             //to segments
-            return joined.Split(new[] { _separator }, StringSplitOptions.RemoveEmptyEntries);
+            return joined.Split(new[] { separatorChar }, StringSplitOptions.RemoveEmptyEntries).Where(seg => String.IsNullOrWhiteSpace(seg) == false);
         }
 
-        private static bool DetectIsFolder(string path, string[] segments)
+        public static bool DetectIsFolder(string path, string[] segments)
         {
             var lookingAt = path;
             if (segments.Length > 0)
                 lookingAt = segments.Last();
 
+            if (lookingAt == null)
+                return false;
+
             return lookingAt.EndsWith(_backslash) || lookingAt.EndsWith(_slash);
         }
 
-        private PathSeparator ToPathSeparator(char separator)
+        private static char ToChar(PathSeparator pathSeparator)
         {
-            if (separator == _slash)
-                return PathSeparator.Slash;
-            if (separator == _backslash)
-                return PathSeparator.Backslash;
-            return PathSeparator.Unknown;
+            switch (pathSeparator)
+            {
+                case PathSeparator.Backslash:
+                    return _backslash;
+                case PathSeparator.Slash:
+                    return _slash;
+                default:
+                    throw new NotSupportedException($"PathSeparator was {pathSeparator}");
+            }
         }
-
-        private static char DetectPathSeparator(PathSeparator pathSeparator, IEnumerable<string> segments)
+        private static PathSeparator DetectPathSeparator(PathSeparator pathSeparator, IEnumerable<string> segments)
         {
-            if (segments == null)
-                return _backslash;
             switch (pathSeparator)
             {
                 case PathSeparator.Unknown:
@@ -113,15 +111,12 @@ namespace DotNet.Basics.Sys
 
                         var separatorIndex = segment.IndexOfAny(separators);
                         if (separatorIndex >= 0)
-                            return segment[separatorIndex];
+                            return segment[separatorIndex] == _backslash ? PathSeparator.Backslash : PathSeparator.Slash;
                     }
-                    return _backslash;
-                case PathSeparator.Backslash:
-                    return _backslash;
-                case PathSeparator.Slash:
-                    return _slash;
+                    return PathSeparator.Backslash;
+
                 default:
-                    throw new NotSupportedException($"Separator not supported: {pathSeparator}");
+                    return pathSeparator;
             }
         }
     }

@@ -12,6 +12,7 @@ namespace DotNet.Basics.Tests.IO
         private const string _testDoubleDir = @"\testa\testb";
         private const string _testSingleDir = @"\testk\";
         
+        /*
         [Fact]
         public void DeleteIfExists_DirExists_DirIsDeleted()
         {
@@ -60,7 +61,7 @@ namespace DotNet.Basics.Tests.IO
             deleted.Should().BeTrue();
             rootTestdir.Exists().Should().BeFalse();
         }
-
+        
         [Fact]
         public void Parent_NameOnlySourceDir_PartenIsResolved()
         {
@@ -78,7 +79,7 @@ namespace DotNet.Basics.Tests.IO
 
             subCir.Parent.FullName.Should().Be(parent.FullName);
         }
-
+        */
 
         [Fact]
         public void CopyTo_IncludeSubDirectories_DirIsCopied()
@@ -99,6 +100,7 @@ namespace DotNet.Basics.Tests.IO
             targetDir.Exists().Should().BeTrue();
             GetHierarchyDepth(targetDir).Should().Be(dirDepth + 1);
         }
+        
 
         [Fact]
         public void ConsolidateIdenticalSubfolders_LookDepthLimit_LookDepthIsObeyed()

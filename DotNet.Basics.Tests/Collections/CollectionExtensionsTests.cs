@@ -44,7 +44,7 @@ namespace DotNet.Basics.Tests.Collections
         }
 
         [Fact]
-        public async Task ParallelForEachAsync_ParallelExecution_AllTasksAreInvokedAndAwaited()
+        public void ParallelForEachAsync_ParallelExecution_AllTasksAreInvokedAndAwaited()
         {
             var ones = Enumerable.Repeat(1, 101).ToArray();
             var results = new List<int>();

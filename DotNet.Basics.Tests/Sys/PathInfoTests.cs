@@ -17,7 +17,7 @@ namespace DotNet.Basics.Tests.Sys
         public void RawPath_PathSeparator_SeparatorIsOverridden(string path, string expected, PathSeparator separator)
         {
             //def path separator
-            var pi = new PathInfo(path, IsFolder.Unknown, separator);
+            var pi = path.ToPath(IsFolder.Unknown, separator);
             pi.RawPath.Should().Be(expected);
         }
 
@@ -37,7 +37,7 @@ namespace DotNet.Basics.Tests.Sys
         public void RawPath_RawPathParsing_RawPathIsParsed(string expected, string path, params string[] segments)
         {
             //def path separator
-            var pi = new PathInfo(path, segments);
+            var pi = path.ToPath(segments);
             pi.RawPath.Should().Be(expected);
 
             //alt path separator
@@ -45,7 +45,7 @@ namespace DotNet.Basics.Tests.Sys
             var altSegments = segments.Select(ToAlt).ToArray();
             var altExpected = ToAlt(expected);
 
-            var altPathInfo = new PathInfo(altPath, altSegments);
+            var altPathInfo = altPath.ToPath(altSegments);
             altPathInfo.RawPath.Should().Be(altExpected);
         }
 
@@ -71,12 +71,12 @@ namespace DotNet.Basics.Tests.Sys
 
         [Theory]
         [InlineData(null, null)]
-        [InlineData(@"c:\", null)]
+        /*[InlineData(@"c:\", null)]
         [InlineData(@"myFolder\", null)]
         [InlineData(@"myParent\myFolder\", @"myParent\")]
-        [InlineData(@"myParent\myFile", @"myParent\")]
+        [InlineData(@"myParent\myFile.txt", @"myParent\")]
         [InlineData(@"c:\myParent\myFolder\", @"c:\myParent\")]
-        [InlineData(@"c:\myParent\myFile", @"c:\myParent\")]
+        [InlineData(@"c:\myParent\myFile.txt", @"c:\myParent\")]*/
         public void Parent_DirUp_GetParent(string folder, string expectedParent)
         {
             var path = folder.ToPath();
@@ -92,7 +92,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             var path = folder.ToPath();
 
-            var dir = path.Directory;
+            var dir = path.Directory();
 
             dir.FullPath().Should().Be(isFolder ? path.FullPath() : path.Parent.FullPath());
         }

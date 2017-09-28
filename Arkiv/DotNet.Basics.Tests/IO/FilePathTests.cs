@@ -75,7 +75,7 @@ namespace DotNet.Basics.Tests.IO
 
             testFile.Exists().Should().BeFalse("File should have been deleted");
         }
-        */
+        *//*
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
@@ -117,7 +117,7 @@ namespace DotNet.Basics.Tests.IO
             sourceFile.Exists().Should().BeFalse("Source file after move");
             tagetFile.Exists().Should().BeTrue("Target file after move");
         }
-
+        
         [Fact]
         public void ToFile_CombineToFileInfo_FullNameIsCorrect()
         {
@@ -155,7 +155,7 @@ namespace DotNet.Basics.Tests.IO
 
             targetfile.FullName.Should().Be(@"c:\MyPath\myFile.temp");
         }
-        /*MOVED
+        
         [Theory]
         [InlineData("MyFile", ".txt")]//has extension
         [InlineData("MyFile", "")]//no extension

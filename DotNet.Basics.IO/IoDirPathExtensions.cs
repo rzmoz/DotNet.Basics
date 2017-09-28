@@ -67,7 +67,7 @@ namespace DotNet.Basics.IO
         }
         public static PathInfo[] GetPaths(this DirPath dp, string searchPattern = null, bool recurse = false)
         {
-            return System.IO.Directory.GetFileSystemEntries(dp.FullPath(), searchPattern ?? "*", ToSearchOption(recurse)).Select(dir => new PathInfo(dir)).ToArray();
+            return System.IO.Directory.GetFileSystemEntries(dp.FullPath(), searchPattern ?? "*", ToSearchOption(recurse)).Select(dir => dir.ToPath()).ToArray();
         }
         public static IEnumerable<DirPath> EnumerateDirectories(this DirPath dp, string searchPattern = null, bool recurse = false)
         {
@@ -79,7 +79,7 @@ namespace DotNet.Basics.IO
         }
         public static IEnumerable<PathInfo> EnumeratePaths(this DirPath dp, string searchPattern = null, bool recurse = false)
         {
-            return System.IO.Directory.EnumerateFileSystemEntries(dp.FullPath(), searchPattern ?? "*", ToSearchOption(recurse)).Select(fse => new PathInfo(fse));
+            return System.IO.Directory.EnumerateFileSystemEntries(dp.FullPath(), searchPattern ?? "*", ToSearchOption(recurse)).Select(fse => fse.ToPath());
         }
         private static SearchOption ToSearchOption(bool recurse)
         {
