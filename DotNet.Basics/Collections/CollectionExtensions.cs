@@ -21,12 +21,12 @@ namespace DotNet.Basics.Collections
             return source.Any(predicate);
         }
 
-        public static void ParallelForEach<T>(this IEnumerable<T> col, Action<T> forEachAction)
+        public static void ForEachParallel<T>(this IEnumerable<T> col, Action<T> forEachAction)
         {
             Parallel.ForEach(col, forEachAction);
         }
 
-        public static async Task ParallelForEachAsync<T>(this IEnumerable<T> col, Func<T, Task> forEachAction)
+        public static async Task ForEachParallelAsync<T>(this IEnumerable<T> col, Func<T, Task> forEachAction)
         {
             var tasks = col.ForEach(forEachAction);
             await Task.WhenAll(tasks).ConfigureAwait(false);
