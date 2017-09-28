@@ -37,15 +37,21 @@ namespace DotNet.Basics.Sys
             //Clean segments
             _segments = CleanSegments(combinedSegments).ToArray();
 
-            //set rawpath
+            //Set rawpath
             RawPath = string.Join(_separator.ToString(), _segments);
             RawPath = IsFolder ? RawPath.EnsureSuffix(_separator) : RawPath.RemoveSuffix(_separator);
+
+            //set name
+            Name = Path.GetFileName(RawPath);
+            NameWoExtension = Path.GetFileNameWithoutExtension(Name);
         }
 
         public string RawPath { get; }
-        public DirPath Directory => IsFolder ? this.ToDir() : Parent;
+        public string Name { get; }
+        public string NameWoExtension { get; }
         public bool IsFolder { get; }
         public DirPath Parent => GetParent();//lazy loaded
+        public DirPath Directory => IsFolder ? this.ToDir() : Parent;//lazy loaded
 
         private DirPath GetParent()
         {

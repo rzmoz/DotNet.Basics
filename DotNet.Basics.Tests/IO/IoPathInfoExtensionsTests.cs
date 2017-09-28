@@ -63,6 +63,20 @@ namespace DotNet.Basics.Tests.IO
             rootTestdir.Exists().Should().BeFalse();
         }
 
+        [Fact]
+        public void Delete_DeleteFile_FileIsDeleted()
+        {
+            var testdir = TestRoot.Dir.Add(@"Delete_DeleteFile_FileIsDeleted").ToDir();
+            testdir.CleanIfExists();
+            var testFile = testdir.ToFile("blaaaah.txt").WriteAllText("Blaaaah!");
+
+            testFile.Exists().Should().BeTrue("File should have been created");
+
+            testFile.DeleteIfExists();
+
+            testFile.Exists().Should().BeFalse("File should have been deleted");
+        }
+
 
         [Fact]
         public void GetFullPath_CallSystemIo_PathsAreIdentical()

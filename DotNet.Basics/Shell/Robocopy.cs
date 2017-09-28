@@ -24,7 +24,7 @@ namespace DotNet.Basics.Shell
             if (source == null) { throw new ArgumentNullException(nameof(source)); }
             if (target == null) { throw new ArgumentNullException(nameof(target)); }
 
-            var command = $"{_fileName} '{source.RemoveSuffix('\\')}' '{target.RemoveSuffix('\\')}'";
+            var command = $@"{_fileName} ""{source.RemoveSuffix('\\')}"" ""{target.RemoveSuffix('\\')}""";
             if (string.IsNullOrWhiteSpace(filesToCopy) == false)
                 command += $" \"{filesToCopy}\" ";
             command += options ?? string.Empty;
@@ -37,15 +37,12 @@ namespace DotNet.Basics.Shell
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static (int ExitCode, string Output) CopyFile(string sourceFile, string targetDir, string extraOptions = null)
+        public static (int ExitCode, string Output) CopyFile(string sourceDir, string sourceFileName, string targetDir, string extraOptions = null)
         {
-            throw new NotImplementedException();
-            /*
+            if (sourceFileName == null) throw new ArgumentNullException(nameof(sourceFileName));
             if (targetDir == null) throw new ArgumentNullException(nameof(targetDir));
-            if (string.IsNullOrEmpty(sourceFile)) throw new ArgumentException(nameof(sourceFile));
-            var file = sourceFile.ToFile();
-            return Run(file.Directory.FullName, targetDir, file.Name, extraOptions ?? "/np");
-            */
+            if (string.IsNullOrEmpty(sourceDir)) throw new ArgumentException(nameof(sourceDir));
+            return Run(sourceDir, targetDir, sourceFileName, extraOptions ?? "/np");
         }
 
         /// <summary>

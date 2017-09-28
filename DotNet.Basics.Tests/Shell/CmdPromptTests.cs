@@ -4,7 +4,7 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Shell
 {
-    public class CommandPromptTests
+    public class CmdPromptTests
     {
         [Fact]
         public void Run_ExitCode_ExitCodeIsReturned()

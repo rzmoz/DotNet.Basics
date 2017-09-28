@@ -6,7 +6,7 @@ namespace DotNet.Basics.IO
 {
     public static class IoFilePathExtensions
     {
-        public static void WriteAllText(this FilePath targetFile, string content, bool overwrite = true)
+        public static FilePath WriteAllText(this FilePath targetFile, string content, bool overwrite = true)
         {
             if (targetFile == null) throw new ArgumentNullException(nameof(targetFile));
             if (overwrite == false && targetFile.Exists())
@@ -14,6 +14,7 @@ namespace DotNet.Basics.IO
 
             targetFile.Directory.CreateIfNotExists();
             File.WriteAllText(targetFile.FullPath(), content ?? string.Empty);
+            return targetFile;
         }
         public static string ReadAllText(this FilePath file, bool throwIfNotExists = true)
         {

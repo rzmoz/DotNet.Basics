@@ -60,7 +60,7 @@ namespace DotNet.Basics.Tests.IO
 
             read.Should().Be(testContent);
         }
-        */
+        
         [Fact]
         public void Delete_DeleteFile_FileIsDeleted()
         {
@@ -75,7 +75,7 @@ namespace DotNet.Basics.Tests.IO
 
             testFile.Exists().Should().BeFalse("File should have been deleted");
         }
-
+        */
         [Theory]
         [InlineData(true)]
         [InlineData(false)]

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using DotNet.Basics.Collections;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks.Repeating;
 
@@ -10,6 +11,11 @@ namespace DotNet.Basics.IO
 {
     public static class IoDirPathExtensions
     {
+        public static bool IsEmpty(this DirPath pi)
+        {
+            return pi.EnumeratePaths().None();
+        }
+
         public static bool CleanIfExists(this DirPath pi)
         {
             return pi.CleanIfExists(1.Minutes());
@@ -37,7 +43,7 @@ namespace DotNet.Basics.IO
                     o.RetryDelay = 2.Seconds();
                     o.DontRethrowOnTaskFailedType = typeof(IOException);
                 })
-                .Until(() => pi.GetPaths().Length==0);
+                .Until(() => pi.GetPaths().Length == 0);
 
             return pi.Exists() == false;
         }
