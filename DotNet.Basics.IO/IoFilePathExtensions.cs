@@ -15,5 +15,23 @@ namespace DotNet.Basics.IO
             targetFile.Directory.CreateIfNotExists();
             File.WriteAllText(targetFile.FullPath(), content ?? string.Empty);
         }
+        public static string ReadAllText(this FilePath file, bool throwIfNotExists = true)
+        {
+            try
+            {
+                return File.ReadAllText(file.FullPath());
+            }
+            catch (DirectoryNotFoundException)
+            {
+                if (throwIfNotExists)
+                    throw;
+            }
+            catch (FileNotFoundException)
+            {
+                if (throwIfNotExists)
+                    throw;
+            }
+            return null;
+        }
     }
 }

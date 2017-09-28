@@ -12,7 +12,7 @@ namespace DotNet.Basics.Tests.IO
         private const string _testDirRoot = @"K:\testDir";
         private const string _testDoubleDir = @"\testa\testb";
         private const string _testFile = @"\testc\file.txt";
-        
+        /*MOVED
         [Fact]
         public void ReadAllTextThrowIfNotExists_SilenceWhenDirNotFound_NullIsReturned()
         {
@@ -60,7 +60,7 @@ namespace DotNet.Basics.Tests.IO
 
             read.Should().Be(testContent);
         }
-
+        */
         [Fact]
         public void Delete_DeleteFile_FileIsDeleted()
         {
