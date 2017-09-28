@@ -112,18 +112,6 @@ namespace DotNet.Basics.Tests.Rest
             request.Content.Headers.First().Value.First().Should().Be("my/content; charset=utf-8");
         }
 
-
-        [Fact]
-        public void ExecuteTAsync_ResponseBodyNotProperValueTo_ExceptionIsThrown()
-        {
-            var request = new RestRequest("https://my.server.com", HttpMethod.Get);
-            var client = GetRestClientWithResponseContent("string.not.int");
-
-            Func<Task> action = async () => await client.ExecuteAsync<int>(request).ConfigureAwait(false);
-
-            action.ShouldThrow<RestReaderException>();
-        }
-
         [Fact]
         public async Task ExecuteAsync_ResponseGottenAndQuotesStripped_ShouldDeserializeString()
         {

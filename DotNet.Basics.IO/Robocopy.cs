@@ -1,8 +1,9 @@
 ﻿using System;
 using System.IO;
+using DotNet.Basics.Shell;
 using DotNet.Basics.Sys;
 
-namespace DotNet.Basics.Shell
+namespace DotNet.Basics.IO
 {
     /// <summary>
     /// http://ss64.com/nt/robocopy.html

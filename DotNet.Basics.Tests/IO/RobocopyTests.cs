@@ -1,13 +1,11 @@
 ﻿using System.Linq;
 using DotNet.Basics.IO;
-using DotNet.Basics.Shell;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tests.IO.Testa;
 using FluentAssertions;
 using Xunit;
-using Xunit.Abstractions;
 
-namespace DotNet.Basics.Tests.Shell
+namespace DotNet.Basics.Tests.IO
 {
     public class RobocopyTests
     {
