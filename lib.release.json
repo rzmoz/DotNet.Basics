@@ -1,8 +1,20 @@
 [
 	{
-      "name": "netcore.basics",
-      "major" : "0",
-	  "minor" : "5",
+      "name": "dotnet.basics",
+      "major" : "8",
+	  "minor" : "0",
 	  "prerelease" : "beta"	  
+    },
+	{
+      "name": "dotnet.basics.io",
+      "major" : "8",
+	  "minor" : "0",
+	  "prerelease" : "beta"	  
+    },
+	{
+      "name": "dotnet.basics.rest",
+      "major" : "8",
+	  "minor" : "0",
+	  "prerelease" : "beta"
     }
 ]
