@@ -10,11 +10,6 @@ namespace DotNet.Basics.Tests.IO
 {
     public class IoDirPathExtensionsTests
     {
-        public IoDirPathExtensionsTests(ITestOutputHelper output)
-        {
-            DebugOut.Out += output.WriteLine;
-        }
-
         [Fact]
         public void CreateIfExists_CreateOptions_ExistingDirIsCleaned()
         {

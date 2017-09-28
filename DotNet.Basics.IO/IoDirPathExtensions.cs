@@ -107,13 +107,11 @@ namespace DotNet.Basics.IO
         {
             if (source.Exists() == false)
             {
-                DebugOut.WriteLine($"Source '{source.FullPath()}' not found. Aborting");
                 return;
             }
 
             if (source.FullPath().Equals(target.FullPath(), StringComparison.OrdinalIgnoreCase))
             {
-                DebugOut.WriteLine($"Source and Target are the same '{source.FullPath()}'. Aborting");
                 return;
             }
 
@@ -139,7 +137,6 @@ namespace DotNet.Basics.IO
             }
             catch (Exception e)
             {
-                DebugOut.WriteLine($"Fast copy failed for copying {source} to {target} - falling back to use robocopy\r\n{e}");
                 Robocopy.CopyDir(source.FullPath(), target.FullPath(), includeSubFolders: includeSubfolders);
             }
         }

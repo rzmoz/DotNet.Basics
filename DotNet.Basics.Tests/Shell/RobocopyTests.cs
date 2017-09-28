@@ -11,11 +11,6 @@ namespace DotNet.Basics.Tests.Shell
 {
     public class RobocopyTests
     {
-        public RobocopyTests(ITestOutputHelper output)
-        {
-            DebugOut.Out += output.WriteLine;
-        }
-        
         [Fact]
         public void MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved()
         {
@@ -33,10 +28,8 @@ namespace DotNet.Basics.Tests.Shell
             targetDir.Exists().Should().BeFalse(targetDir.FullPath());
 
             //act
-            var result1 = Robocopy.MoveContent(sourceDir.FullPath(), targetDir.FullPath(), null, true, null);
-            DebugOut.WriteLine(result1.Output);
-            var result2 = Robocopy.MoveContent(emptyDir.FullPath(), targetDir.FullPath(), null, true, null);//move empty dir to ensure target dir is not cleaned
-            DebugOut.WriteLine(result2.Output);
+            Robocopy.MoveContent(sourceDir.FullPath(), targetDir.FullPath(), null, true, null);
+            Robocopy.MoveContent(emptyDir.FullPath(), targetDir.FullPath(), null, true, null);//move empty dir to ensure target dir is not cleaned
 
             //assert
             sourceDir.Exists().Should().BeTrue(sourceDir.FullPath());
@@ -56,7 +49,6 @@ namespace DotNet.Basics.Tests.Shell
 
             //act
             var result = Robocopy.CopyFile(sourcefile.Directory().FullPath(), sourcefile.Name, targetFile.Directory().FullPath());
-            DebugOut.WriteLine(result.Output);
 
             result.ExitCode.Should().BeLessThan(8); //http://ss64.com/nt/robocopy-exit.html
             targetFile.Exists().Should().BeTrue("target file is copied");
@@ -81,7 +73,6 @@ namespace DotNet.Basics.Tests.Shell
             var result = Robocopy.CopyDir(source.FullPath(), target.FullPath(), true);
 
             //assert
-            DebugOut.WriteLine(result.Output);
             result.ExitCode.Should().BeLessThan(8); //http://ss64.com/nt/robocopy-exit.html
             target.Exists().Should().BeTrue();
             targetFile.Exists().Should().BeTrue();
