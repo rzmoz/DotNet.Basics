@@ -2,15 +2,12 @@
 {
     public class DirPath : PathInfo
     {
-        public DirPath(string path, params string[] segments) : base(path, segments)
+        public DirPath(string path, params string[] segments) : this(path, PathSeparator.Unknown, segments)
         {
         }
 
-        public DirPath(string path, IsFolder isFolder, params string[] segments) : base(path, isFolder, segments)
-        {
-        }
-
-        public DirPath(string path, IsFolder isFolder, PathSeparator pathSeparator, params string[] segments) : base(path, isFolder, pathSeparator, segments)
+        public DirPath(string path, PathSeparator pathSeparator, params string[] segments)
+            : base(path, Sys.IsFolder.True, pathSeparator, segments)
         {
         }
     }

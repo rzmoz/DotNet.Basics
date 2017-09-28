@@ -14,7 +14,7 @@ namespace DotNet.Basics.Tests.Shell
         {
             const string expected = "sdsdfsdfsdf";
 
-            var fullPath = TestRoot.CurrentDir.Add("NetCore.Basics.Tests.EchoOut.exe").RawPath;
+            var fullPath = TestRoot.Dir.ToFile("NetCore.Basics.Tests.EchoOut.exe").RawPath;
 
             var result = Executable.Run(fullPath, $"{expected}");
 
@@ -26,7 +26,7 @@ namespace DotNet.Basics.Tests.Shell
         {
             const int expected = 16;
 
-            var fullPath = TestRoot.CurrentDir.Add("NetCore.Basics.Tests.EchoOut.exe").RawPath;
+            var fullPath = TestRoot.Dir.ToFile("NetCore.Basics.Tests.EchoOut.exe").RawPath;
 
             var result = Executable.Run(fullPath, $"{expected}");
 
@@ -36,7 +36,7 @@ namespace DotNet.Basics.Tests.Shell
         [Fact]
         public void Run_ExeNotFound_ExceptionIsThrown()
         {
-            var fullPath = TestRoot.CurrentDir.Add("Run_ExeNotFound_ExceptionIsThrown").RawPath;
+            var fullPath = TestRoot.Dir.Add("Run_ExeNotFound_ExceptionIsThrown").RawPath;
 
             Action action = () => Executable.Run(fullPath);
 

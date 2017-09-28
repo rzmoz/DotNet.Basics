@@ -16,7 +16,7 @@ namespace DotNet.Basics.Sys
         private readonly string[] _segments;
 
         public PathInfo(string path, params string[] segments)
-            : this(path, Sys.IsFolder.Unknown, PathSeparator.Unknown, segments)
+            : this(path, Sys.IsFolder.Unknown, segments)
         { }
 
         public PathInfo(string path, Sys.IsFolder isFolder, params string[] segments)
@@ -39,8 +39,7 @@ namespace DotNet.Basics.Sys
 
             //set rawpath
             RawPath = string.Join(_separator.ToString(), _segments);
-            if (IsFolder)
-                RawPath = RawPath.EnsureSuffix(_separator);
+            RawPath = IsFolder ? RawPath.EnsureSuffix(_separator) : RawPath.RemoveSuffix(_separator);
         }
 
         public string RawPath { get; }
@@ -51,7 +50,7 @@ namespace DotNet.Basics.Sys
         private DirPath GetParent()
         {
             var parentSegments = _segments.Take(_segments.Length - 1).ToArray();
-            return parentSegments.Length <= 0 ? null : new DirPath(null, Sys.IsFolder.True, ToPathSeparator(_separator), parentSegments);
+            return parentSegments.Length <= 0 ? null : new DirPath(null, ToPathSeparator(_separator), parentSegments);
         }
 
         public override string ToString()

@@ -14,7 +14,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void WriteAllText_WhenOverwriteIsFalseAndTargetExists_ExceptionIsThrown()
         {
-            var targetFile = TestRoot.CurrentDir.ToFile(@"WriteAllText_WhenOverwriteIsFalseAndTargetExists_ExceptionIsThrown", "target.txt");
+            var targetFile = TestRoot.Dir.ToFile(@"WriteAllText_WhenOverwriteIsFalseAndTargetExists_ExceptionIsThrown", "target.txt");
             targetFile.Directory.CreateIfNotExists();
             //ensure file exists
             File.WriteAllText(targetFile.FullPath(), @"mycontent");
@@ -32,7 +32,7 @@ namespace DotNet.Basics.Tests.IO
             var initialContent = "WriteAllText_WhenOverwriteIsTrueAndTargetExists_ContentIsReplaced";
             var updatedContent = "UpdatedContent";
 
-            var targetFile = TestRoot.CurrentDir.ToFile(@"WriteAllText_WhenOverwriteIsTrueAndTargetExists_ContentIsReplaced", "target.txt");
+            var targetFile = TestRoot.Dir.ToFile(@"WriteAllText_WhenOverwriteIsTrueAndTargetExists_ContentIsReplaced", "target.txt");
             targetFile.Directory.CreateIfNotExists();
             File.WriteAllText(targetFile.FullPath(), initialContent);
             targetFile.Exists().Should().BeTrue();

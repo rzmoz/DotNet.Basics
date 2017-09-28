@@ -7,6 +7,7 @@ namespace DotNet.Basics.Tests.Sys
 {
     public class TimeSpanExtensionsTests
     {
+        /*MOVED
         [Fact]
         public void ToTimeSpan_MilliSeconds_IsParsed()
         {
@@ -74,5 +75,6 @@ namespace DotNet.Basics.Tests.Sys
 
             act.ShouldThrow<FormatException>().WithMessage("Input must be in format {time}{unit} where time is an integer and unit is ms|s|m|h|d|t. Was: " + input);
         }
+        */
     }
 }

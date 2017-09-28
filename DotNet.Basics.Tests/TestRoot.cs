@@ -11,9 +11,9 @@ namespace DotNet.Basics.Tests
         {
             var entryPath = typeof(ExecutableTests).GetTypeInfo().Assembly.Location;
             var dir = Path.GetDirectoryName(entryPath);
-            CurrentDir = dir.ToDir();
+            Dir = dir.ToDir();
         }
 
-        public static DirPath CurrentDir { get; }
+        public static DirPath Dir { get; }
     }
 }

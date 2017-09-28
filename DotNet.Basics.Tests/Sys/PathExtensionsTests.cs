@@ -15,7 +15,7 @@ namespace DotNet.Basics.Tests.Sys
             var dir = _path.ToDir().Add(_segment);
 
             dir.Should().BeOfType<DirPath>();
-            dir.RawPath.Should().Be(_path + $"/{_segment }");
+            dir.RawPath.Should().Be(_path + $"/{_segment }/");
         }
 
         [Fact]
@@ -33,7 +33,7 @@ namespace DotNet.Basics.Tests.Sys
             var dir = _path.ToDir().ToFile().ToDir(_segment);//different extension methods
 
             dir.Should().BeOfType<DirPath>();
-            dir.RawPath.Should().Be(_path + $"/{_segment }");
+            dir.RawPath.Should().Be(_path + $"/{_segment }/");
         }
 
         [Fact]
