@@ -71,7 +71,7 @@ namespace DotNet.Basics.IO
                     {
                         Win32System(dirDelete.Mi, dirDelete.Params);
                     }
-                    catch (IOException )
+                    catch (IOException)
                     { }
                     try
                     {
@@ -116,7 +116,7 @@ namespace DotNet.Basics.IO
         public static bool Exists(this PathInfo pi, bool throwIoExceptionIfNotExists = false)
         {
             var fullPath = pi.FullPath();
-            return fullPath.Exists(_dirExists) | fullPath.Exists(_fileExists);
+            return fullPath.Exists(_dirExists, throwIoExceptionIfNotExists) | fullPath.Exists(_fileExists, throwIoExceptionIfNotExists);
         }
         private static bool Exists(this string fullPath, MethodInfo mi, bool throwIoExceptionIfNotExists = false)
         {
