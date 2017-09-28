@@ -37,7 +37,7 @@ namespace DotNet.Basics.IO
                     o.RetryDelay = 2.Seconds();
                     o.DontRethrowOnTaskFailedType = typeof(IOException);
                 })
-                .Until(() => pi.Exists() == false);
+                .Until(() => pi.GetPaths().Length==0);
 
             return pi.Exists() == false;
         }
