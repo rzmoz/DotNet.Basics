@@ -28,9 +28,9 @@ namespace DotNet.Basics.Shell
                     return (process.ExitCode, result.TrimEnd(' ', '\r', '\n'));
                 }
             }
-            catch (Win32Exception)
+            catch (Win32Exception e)
             {
-                throw new Win32Exception($"Failed to start process: {path} {args}");
+                throw new Win32Exception($"Failed to start process: {path} {args}", e);
             }
         }
     }
