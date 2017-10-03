@@ -1,7 +1,7 @@
 ﻿using System;
 using NLog;
 
-namespace DotNet.Basics.NLog
+namespace DotNet.Basics.Extensions.NLog
 {
     public static class NLogExtensions
     {

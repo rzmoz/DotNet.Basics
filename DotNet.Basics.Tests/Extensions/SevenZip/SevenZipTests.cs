@@ -2,21 +2,19 @@
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using DotNet.Basics.Compression;
 using DotNet.Basics.IO;
-using DotNet.Basics.Sys;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Compression
+namespace DotNet.Basics.Tests.Extensions.SevenZip
 {
     public class SevenZipTests
     {
-        private readonly SevenZip _sevenZip;
+        private readonly Basics.Compression.SevenZip _sevenZip;
 
         public SevenZipTests()
         {
-            _sevenZip = new SevenZip(TestRoot.Dir);
+            _sevenZip = new Basics.Compression.SevenZip(TestRoot.Dir);
         }
 
         [Fact]
@@ -72,7 +70,7 @@ namespace DotNet.Basics.Tests.Compression
             //arrange
             var targetDir = TestRoot.Dir.Add(@"ExtractToDirectory_TargetDirDoesntExist_ArchiveIsExtractedToNewDir", "out");
             var targetFile = targetDir.ToFile("myfile.txt");
-            var sourceZip = TestRoot.Dir.ToFile(@"compression", "myArchive.zip");
+            var sourceZip = TestRoot.Dir.ToFile(@"Extensions", "SevenZip", "myArchive.zip");
             targetDir.DeleteIfExists();
             targetDir.Exists().Should().BeFalse();
             targetFile.Exists().Should().BeFalse();

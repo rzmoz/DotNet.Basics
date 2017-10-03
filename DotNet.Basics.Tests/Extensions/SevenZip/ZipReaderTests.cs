@@ -1,10 +1,9 @@
 ﻿using DotNet.Basics.Compression;
 using DotNet.Basics.IO;
-using DotNet.Basics.Sys;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Compression
+namespace DotNet.Basics.Tests.Extensions.SevenZip
 {
     public class ZipReaderTests
     {
@@ -12,8 +11,8 @@ namespace DotNet.Basics.Tests.Compression
 
         public ZipReaderTests()
         {
-            var archiveSource = TestRoot.Dir.ToFile(@"Compression", "NewFolder.zip");
-            _testSource = TestRoot.Dir.ToFile(@"ZipReaderTests", archiveSource.Name);
+            var archiveSource = TestRoot.Dir.ToFile("Extensions", "SevenZip", "NewFolder.zip");
+            _testSource = TestRoot.Dir.ToFile("ZipReaderTests", archiveSource.Name);
             archiveSource.CopyTo(_testSource, overwrite: true);
 
             _testSource.Exists().Should().BeTrue(_testSource.FullPath(), true);

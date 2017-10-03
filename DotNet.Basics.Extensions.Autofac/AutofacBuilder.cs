@@ -2,7 +2,7 @@
 using Autofac;
 using Autofac.Features.ResolveAnything;
 
-namespace DotNet.Basics.Autofac
+namespace DotNet.Basics.Extensions.Autofac
 {
     public class AutofacBuilder : ContainerBuilder
     {

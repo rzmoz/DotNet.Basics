@@ -33,16 +33,18 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DotNet.Basics.Compression\DotNet.Basics.Compression.csproj" />
+    <ProjectReference Include="..\DotNet.Basics.Extensions.Autofac\DotNet.Basics.Extensions.Autofac.csproj" />
+    <ProjectReference Include="..\DotNet.Basics.Extensions.SevenZip\DotNet.Basics.Extensions.SevenZip.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Rest\DotNet.Basics.Rest.csproj" />
     <ProjectReference Include="..\DotNet.BasicsTests.EchoOut\DotNet.Basics.Tests.EchoOut.csproj" />
     <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Compression\myArchive.zip">
+    <None Update="Extensions\SevenZip\myArchive.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Compression\NewFolder.zip">
+    <None Update="Extensions\SevenZip\NewFolder.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="IO\Testa\TextFile1.txt">
@@ -51,7 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Compression\" />
+    <Folder Include="Extensions\SevenZip\" />
   </ItemGroup>
 
 </Project>
