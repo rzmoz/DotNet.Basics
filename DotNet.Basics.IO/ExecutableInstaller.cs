@@ -31,7 +31,7 @@ namespace DotNet.Basics.IO
         public DirPath InstallDir { get; }
         public FilePath EntryFile { get; }
 
-        public void AddFromStream(string filename, Stream content)
+        public void AddFromStream(string filename, Stream content, bool dispoaseStreamWhenDone = true)
         {
             var target = InstallDir.ToFile(filename);
             _installActions.Add(() =>
@@ -39,6 +39,9 @@ namespace DotNet.Basics.IO
                 target.DeleteIfExists();//we ensure file integrity if we got this far. No guarantess that corrupt files haven't been left behind by a faulty installation
                 using (var fsDst = new FileStream(target.FullPath(), FileMode.Create, FileAccess.Write))
                     content.CopyTo(fsDst);
+
+                if (dispoaseStreamWhenDone)
+                    content?.Dispose();
             });
         }
 

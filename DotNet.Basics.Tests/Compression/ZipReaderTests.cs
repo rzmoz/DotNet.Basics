@@ -1,5 +1,6 @@
 ﻿using DotNet.Basics.Compression;
 using DotNet.Basics.IO;
+using DotNet.Basics.Sys;
 using FluentAssertions;
 using Xunit;
 
@@ -8,16 +9,16 @@ namespace DotNet.Basics.Tests.Compression
     public class ZipReaderTests
     {
         private readonly FilePath _testSource;
-        
+
         public ZipReaderTests()
         {
-            var archiveSource = TestRoot.CurrentDir.Add(@"Compression").ToFile("NewFolder.zip");
-            _testSource = TestRoot.CurrentDir.Add(@"ZipReaderTests").ToFile(archiveSource.Name);
+            var archiveSource = TestRoot.Dir.ToFile(@"Compression", "NewFolder.zip");
+            _testSource = TestRoot.Dir.ToFile(@"ZipReaderTests", archiveSource.Name);
             archiveSource.CopyTo(_testSource, overwrite: true);
 
-            _testSource.Exists().Should().BeTrue(_testSource.FullName, true);
+            _testSource.Exists().Should().BeTrue(_testSource.FullPath(), true);
         }
-        /*MOVED
+
         [Theory]
         [InlineData("myfile.txt", false)]//file in root not found
         [InlineData("mydir/", false)]//explicit dir in root not found
@@ -38,6 +39,6 @@ namespace DotNet.Basics.Tests.Compression
             {
                 reader.HasEntry(path).Should().Be(expected, path);
             }
-        }*/
+        }
     }
 }

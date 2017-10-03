@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using DotNet.Basics.Compression;
 using DotNet.Basics.IO;
+using DotNet.Basics.Sys;
 using FluentAssertions;
 using Xunit;
 
@@ -15,20 +16,20 @@ namespace DotNet.Basics.Tests.Compression
 
         public SevenZipTests()
         {
-            _sevenZip = new SevenZip(".".ToDir());
+            _sevenZip = new SevenZip(TestRoot.Dir);
         }
-        /*MOVED
+
         [Fact]
         public void CreateFromDirectory_DontOverWrite_ExceptionWhenTargetAlreadyExists()
         {
             //arrange
-            var targetPath = TestRoot.CurrentDir.Add(@"CreateFromDirectory_DontOverWrite_ExceptionWhenTargetAlreadyExists").ToFile("myArchive.zip");
+            var targetPath = TestRoot.Dir.ToFile("CreateFromDirectory_DontOverWrite_ExceptionWhenTargetAlreadyExists", "myArchive.zip");
             targetPath.DeleteIfExists();
-            "dummyContent".WriteAllText(targetPath);
+            targetPath.WriteAllText("dummyContent");
             targetPath.Exists().Should().BeTrue();
 
             //act
-            Action action = () => _sevenZip.CreateFromDirectory("mySource", targetPath.FullName, false);
+            Action action = () => _sevenZip.CreateFromDirectory("mySource", targetPath.FullPath(), false);
 
             action.ShouldThrow<System.IO.IOException>();
         }
@@ -37,22 +38,22 @@ namespace DotNet.Basics.Tests.Compression
         public void CreateFromDirectory_Zip_ContentIsZipped()
         {
             //arrange
-            var sourceDir = TestRoot.CurrentDir.Add(@"CreateFromDirectory_Zip_ContentIsZipped").ToDir("source");
-            var dummyfile = sourceDir.Add("myfile.txt").ToFile();
+            var sourceDir = TestRoot.Dir.Add("CreateFromDirectory_Zip_ContentIsZipped", "source");
+            var dummyfile = sourceDir.ToFile("myfile.txt");
             var dummycontent = "dummyContent";
 
-            dummycontent.WriteAllText(dummyfile);
+            dummyfile.WriteAllText(dummycontent);
 
-            var targetZip = TestRoot.CurrentDir.Add(@"CreateFromDirectory_Zip_ContentIsZipped").ToFile("myArchive.zip");
+            var targetZip = TestRoot.Dir.ToFile("CreateFromDirectory_Zip_ContentIsZipped", "myArchive.zip");
             targetZip.DeleteIfExists();
 
             targetZip.Exists().Should().BeFalse();
 
             //act
-            _sevenZip.CreateFromDirectory(sourceDir.FullName, targetZip.FullName);
+            _sevenZip.CreateFromDirectory(sourceDir.FullPath(), targetZip.FullPath());
 
-            targetZip.Exists().Should().BeTrue($"Exists:{targetZip.FullName}");
-            using (var archive = ZipFile.OpenRead(targetZip.FullName))
+            targetZip.Exists().Should().BeTrue($"Exists:{targetZip.FullPath()}");
+            using (var archive = ZipFile.OpenRead(targetZip.FullPath()))
             {
                 archive.Entries.Count.Should().Be(1);
 
@@ -69,22 +70,22 @@ namespace DotNet.Basics.Tests.Compression
         public void ExtractToDirectory_TargetDirDoesntExist_ArchiveIsExtractedToNewDir()
         {
             //arrange
-            var targetDir = TestRoot.CurrentDir.Add(@"ExtractToDirectory_TargetDirDoesntExist_ArchiveIsExtractedToNewDir").ToDir("out");
-            var targetFile = targetDir.Add("myfile.txt").ToFile();
-            var sourceZip = TestRoot.CurrentDir.Add(@"compression").ToFile("myArchive.zip");
+            var targetDir = TestRoot.Dir.Add(@"ExtractToDirectory_TargetDirDoesntExist_ArchiveIsExtractedToNewDir", "out");
+            var targetFile = targetDir.ToFile("myfile.txt");
+            var sourceZip = TestRoot.Dir.ToFile(@"compression", "myArchive.zip");
             targetDir.DeleteIfExists();
             targetDir.Exists().Should().BeFalse();
             targetFile.Exists().Should().BeFalse();
 
             //act
-            _sevenZip.ExtractToDirectory(sourceZip.FullName, targetDir.FullName);
-            targetDir.Exists().Should().BeTrue($"Exists:{targetDir.FullName}");
+            _sevenZip.ExtractToDirectory(sourceZip.FullPath(), targetDir.FullPath());
+            targetDir.Exists().Should().BeTrue($"Exists:{targetDir.FullPath()}");
             targetDir.ToDir().EnumeratePaths().Count().Should().Be(1);
             targetFile.Exists().Should().BeTrue();
 
             var content = targetFile.ReadAllText();
 
             content.Should().Be("dummyContent");
-        }*/
+        }
     }
 }

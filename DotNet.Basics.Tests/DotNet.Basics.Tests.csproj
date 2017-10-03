@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DotNet.Basics.Compression\DotNet.Basics.Compression.csproj" />
     <ProjectReference Include="..\DotNet.Basics.IO\DotNet.Basics.IO.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Rest\DotNet.Basics.Rest.csproj" />
     <ProjectReference Include="..\DotNet.BasicsTests.EchoOut\DotNet.Basics.Tests.EchoOut.csproj" />
@@ -39,9 +40,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Compression\myArchive.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Compression\NewFolder.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="IO\Testa\TextFile1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Compression\" />
   </ItemGroup>
 
 </Project>

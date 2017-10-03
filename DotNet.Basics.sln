@@ -15,7 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.Tests.EchoOut
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.IO", "DotNet.Basics.IO\DotNet.Basics.IO.csproj", "{BFC0BA90-7AED-490C-9B24-5788F6790BAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.Rest", "DotNet.Basics.Rest\DotNet.Basics.Rest.csproj", "{EF7B2223-024E-4D46-AE77-622E43045445}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.Rest", "DotNet.Basics.Rest\DotNet.Basics.Rest.csproj", "{EF7B2223-024E-4D46-AE77-622E43045445}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.Compression", "DotNet.Basics.Compression\DotNet.Basics.Compression.csproj", "{84F88F17-2B45-4ABA-AF75-3D6B7ACFA4FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{EF7B2223-024E-4D46-AE77-622E43045445}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF7B2223-024E-4D46-AE77-622E43045445}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF7B2223-024E-4D46-AE77-622E43045445}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84F88F17-2B45-4ABA-AF75-3D6B7ACFA4FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84F88F17-2B45-4ABA-AF75-3D6B7ACFA4FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84F88F17-2B45-4ABA-AF75-3D6B7ACFA4FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84F88F17-2B45-4ABA-AF75-3D6B7ACFA4FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +59,7 @@ Global
 		{9D9807DD-B34A-421F-962D-4E3A470526D5} = {8D2438BF-0158-46EE-9734-92B712CF5479}
 		{BFC0BA90-7AED-490C-9B24-5788F6790BAC} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
 		{EF7B2223-024E-4D46-AE77-622E43045445} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
+		{84F88F17-2B45-4ABA-AF75-3D6B7ACFA4FD} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8CBE2111-AC24-4AFA-9537-5FD16E0BF1E5}
