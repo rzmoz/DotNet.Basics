@@ -7,6 +7,14 @@
 	  "prerelease" : "beta"	  
     },
 	{
+      "name": "dotnet.basics.compression",
+	  "tests": "skip",
+      "major" : "16",
+	  "minor" : "04",
+	  "prerelease" : "beta"	  
+    },
+	{
+	
       "name": "dotnet.basics.io",
 	  "tests": "skip",
       "major" : "8",

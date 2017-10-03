@@ -29,6 +29,6 @@ namespace DotNet.Basics.Tests.IO
                 var returnCode = CommandPrompt.Run($"{fullName} {val}");
                 returnCode.Should().Be(val);
             });
-        }
-    }*/
+        }*/
+    }
 }
