@@ -9,7 +9,7 @@ using Xunit;
 namespace DotNet.Basics.Tests.IO
 {
     public class ExecutableInstallerTests
-    {
+    {/*
         [Fact]
         public void InstallFromBytes_EnsureAppIsInstalled_AppIsInstalledInMultiThreadedEnvironment()
         {
@@ -30,5 +30,5 @@ namespace DotNet.Basics.Tests.IO
                 returnCode.Should().Be(val);
             });
         }
-    }
+    }*/
 }

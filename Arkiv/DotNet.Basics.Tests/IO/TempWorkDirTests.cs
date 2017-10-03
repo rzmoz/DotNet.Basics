@@ -5,7 +5,7 @@ using Xunit;
 namespace DotNet.Basics.Tests.IO
 {
     public class TempWorkDirTests
-    {
+    {/*
         [Fact]
         public void Use_Dir_DirExists()
         {
@@ -19,5 +19,5 @@ namespace DotNet.Basics.Tests.IO
 
             dir.Exists().Should().BeFalse();
         }
-    }
+    }*/
 }

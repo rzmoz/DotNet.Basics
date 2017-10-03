@@ -7,7 +7,7 @@ using Xunit;
 namespace DotNet.Basics.Tests.IO
 {
     public class TempDirTests
-    {
+    {/*
         [Fact]
         public void Ctor_RandomNess_RandomDirsAreGenerated()
         {
@@ -29,5 +29,5 @@ namespace DotNet.Basics.Tests.IO
                 }
             }
         }
-    }
+    }*/
 }
