@@ -7,6 +7,13 @@
 	  "prerelease" : "beta"	  
     },
 	{
+      "name": "dotnet.basics.autofac",
+	  "tests": "skip",
+      "major" : "4",
+	  "minor" : "6",
+	  "prerelease" : "beta"	  
+    },
+	{
       "name": "dotnet.basics.compression",
 	  "tests": "skip",
       "major" : "16",
