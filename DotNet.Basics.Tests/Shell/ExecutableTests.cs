@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using DotNet.Basics.IO;
 using DotNet.Basics.Shell;
 using DotNet.Basics.Sys;
 using FluentAssertions;

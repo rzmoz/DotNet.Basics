@@ -1,4 +1,6 @@
-﻿namespace DotNet.Basics.Sys
+﻿using DotNet.Basics.Sys;
+
+namespace DotNet.Basics.IO
 {
     public static class PathExtensions
     {

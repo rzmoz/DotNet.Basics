@@ -14,14 +14,6 @@
 	  "prerelease" : "beta"	  
     },
 	{
-	
-      "name": "dotnet.basics.io",
-	  "tests": "skip",
-      "major" : "8",
-	  "minor" : "0",
-	  "prerelease" : "beta"	  
-    },
-	{
       "name": "dotnet.basics.rest",
 	  "tests": "skip",
       "major" : "8",

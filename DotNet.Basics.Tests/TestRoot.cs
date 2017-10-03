@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Reflection;
+using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tests.Shell;
 

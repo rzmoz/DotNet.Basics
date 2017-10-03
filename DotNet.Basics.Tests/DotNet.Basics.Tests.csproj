@@ -33,7 +33,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DotNet.Basics.Compression\DotNet.Basics.Compression.csproj" />
-    <ProjectReference Include="..\DotNet.Basics.IO\DotNet.Basics.IO.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Rest\DotNet.Basics.Rest.csproj" />
     <ProjectReference Include="..\DotNet.BasicsTests.EchoOut\DotNet.Basics.Tests.EchoOut.csproj" />
     <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />
