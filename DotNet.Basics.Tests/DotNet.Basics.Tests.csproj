@@ -32,7 +32,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DotNet.Basics.Compression\DotNet.Basics.Compression.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Extensions.Autofac\DotNet.Basics.Extensions.Autofac.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Extensions.SevenZip\DotNet.Basics.Extensions.SevenZip.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Rest\DotNet.Basics.Rest.csproj" />
