@@ -21,13 +21,6 @@
 	  "prerelease" : "beta"	  
     },
 	{
-      "name": "dotnet.basics.extensions.nlog",
-	  "tests": "skip",
-      "major" : "4",
-	  "minor" : "4",
-	  "prerelease" : "beta"
-    },
-	{
       "name": "dotnet.basics.rest",
 	  "tests": "skip",
       "major" : "8",
