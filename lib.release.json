@@ -5,27 +5,27 @@
       "major" : "6",
 	  "minor" : "0",
 	  "patch" : "0",
-	  "prerelease" : "beta#gitcommit#"
+	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
     },
 	{
       "name": "dotnet.basics.extensions.autofac",
       "major" : "4",
 	  "minor" : "6",
 	  "patch" : "1",
-	  "prerelease" : "beta#gitcommit#"
+	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
     },
 	{
       "name": "dotnet.basics.extensions.sevenzip",
       "major" : "16",
 	  "minor" : "04",
 	  "patch" : "0",
-	  "prerelease" : "beta#gitcommit#"
+	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
     },
 	{
       "name": "dotnet.basics.rest",
       "major" : "6",
 	  "minor" : "0",
 	  "patch" : "0",
-	  "prerelease" : "beta#gitcommit#"
+	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
     }
 ]
