@@ -8,28 +8,24 @@
     },
 	{
       "name": "dotnet.basics.extensions.autofac",
-	  "tests": "skip",
       "major" : "4",
 	  "minor" : "6",
 	  "prerelease" : "beta"	  
     },
 	{
       "name": "dotnet.basics.extensions.sevenzip",
-	  "tests": "skip",
       "major" : "16",
 	  "minor" : "04",
 	  "prerelease" : "beta"	  
     },
 	{
       "name": "dotnet.basics.extensions.nlog",
-	  "tests": "skip",
       "major" : "4",
 	  "minor" : "4",
 	  "prerelease" : "beta"
     },
 	{
       "name": "dotnet.basics.rest",
-	  "tests": "skip",
       "major" : "8",
 	  "minor" : "0",
 	  "prerelease" : "beta"
