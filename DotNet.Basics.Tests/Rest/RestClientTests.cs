@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 using DotNet.Basics.Rest;
 using FluentAssertions;
 using NSubstitute;
-using ServiceStack;
-using ServiceStack.Text;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Rest

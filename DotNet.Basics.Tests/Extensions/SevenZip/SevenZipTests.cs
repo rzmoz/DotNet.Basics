@@ -2,6 +2,7 @@
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using DotNet.Basics.Extensions.SevenZip;
 using DotNet.Basics.IO;
 using FluentAssertions;
 using Xunit;
@@ -10,11 +11,11 @@ namespace DotNet.Basics.Tests.Extensions.SevenZip
 {
     public class SevenZipTests
     {
-        private readonly Basics.Compression.SevenZip _sevenZip;
+        private readonly SevenZipExe _sevenZip;
 
         public SevenZipTests()
         {
-            _sevenZip = new Basics.Compression.SevenZip(TestRoot.Dir);
+            _sevenZip = new SevenZipExe(TestRoot.Dir);
         }
 
         [Fact]

@@ -15,11 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.Tests.EchoOut
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.Rest", "DotNet.Basics.Rest\DotNet.Basics.Rest.csproj", "{EF7B2223-024E-4D46-AE77-622E43045445}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.Extensions.Autofac", "DotNet.Basics.Extensions.Autofac\DotNet.Basics.Extensions.Autofac.csproj", "{A85BC86B-3940-42A1-9EC9-85618DBDEB01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.Extensions.Autofac", "DotNet.Basics.Extensions.Autofac\DotNet.Basics.Extensions.Autofac.csproj", "{A85BC86B-3940-42A1-9EC9-85618DBDEB01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.Extensions.NLog", "DotNet.Basics.Extensions.NLog\DotNet.Basics.Extensions.NLog.csproj", "{B95CF2DD-C259-4987-BE86-F6C999DA06F7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.Extensions.SevenZip", "DotNet.Basics.Extensions.SevenZip\DotNet.Basics.Extensions.SevenZip.csproj", "{E1E203BA-63C1-4C8D-92B2-A651EB411CA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.Extensions.SevenZip", "DotNet.Basics.Extensions.SevenZip\DotNet.Basics.Extensions.SevenZip.csproj", "{E1E203BA-63C1-4C8D-92B2-A651EB411CA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +45,6 @@ Global
 		{A85BC86B-3940-42A1-9EC9-85618DBDEB01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A85BC86B-3940-42A1-9EC9-85618DBDEB01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A85BC86B-3940-42A1-9EC9-85618DBDEB01}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B95CF2DD-C259-4987-BE86-F6C999DA06F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B95CF2DD-C259-4987-BE86-F6C999DA06F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B95CF2DD-C259-4987-BE86-F6C999DA06F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B95CF2DD-C259-4987-BE86-F6C999DA06F7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E1E203BA-63C1-4C8D-92B2-A651EB411CA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E1E203BA-63C1-4C8D-92B2-A651EB411CA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1E203BA-63C1-4C8D-92B2-A651EB411CA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -65,7 +59,6 @@ Global
 		{9D9807DD-B34A-421F-962D-4E3A470526D5} = {8D2438BF-0158-46EE-9734-92B712CF5479}
 		{EF7B2223-024E-4D46-AE77-622E43045445} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
 		{A85BC86B-3940-42A1-9EC9-85618DBDEB01} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
-		{B95CF2DD-C259-4987-BE86-F6C999DA06F7} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
 		{E1E203BA-63C1-4C8D-92B2-A651EB411CA1} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
