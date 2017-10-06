@@ -1,66 +1,18 @@
-[
-	{	
-      "name": "DotNet.Basics",
-	  "tests": "dotnet.basics.tests",
-      "major" : "6",
-	  "minor" : "0",
-	  "patch" : "0",
-	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
+{
+  "version": {
+    "semver10": "2.0.0",
+    "prerelease": "Beta.1"
+  },
+  "override": [
+    {
+      "name": "DotNet.Basics.Extensions.Autofac",
+      "semver10": "4.6.1",
+      "prerelease": "Beta.1"
     },
-	{
-      "name": "DotNet.Basics.Autofac",
-      "major" : "4",
-	  "minor" : "6",
-	  "patch" : "1",
-	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
-    },
-	{
-      "name": "DotNet.Basics.Collections",
-      "major" : "2",
-	  "minor" : "0",
-	  "patch" : "0",
-	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
-    },
-	{	
-      "name": "DotNet.Basics.IO",
-      "major" : "2",
-	  "minor" : "0",
-	  "patch" : "0",
-	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
-    },
-	{
-      "name": "DotNet.Basics.Rest",
-      "major" : "6",
-	  "minor" : "0",
-	  "patch" : "0",
-	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
-    },
-	{
-      "name": "DotNet.Basics.SevenZip",
-      "major" : "16",
-	  "minor" : "04",
-	  "patch" : "0",
-	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
-    },
-	{	
-      "name": "DotNet.Basics.Shell",
-      "major" : "2",
-	  "minor" : "0",
-	  "patch" : "0",
-	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
-    },
-	{
-      "name": "DotNet.Basics.Sys",
-      "major" : "2",
-	  "minor" : "0",
-	  "patch" : "0",
-	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
-    },
-	{
-      "name": "DotNet.Basics.Tasks",
-      "major" : "2",
-	  "minor" : "0",
-	  "patch" : "0",
-	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
+    {
+      "name": "DotNet.Basics.Extensions.SevenZip",
+      "semver10": "16.04.0",
+      "prerelease": "Beta.1"
     }
-]
+  ]
+}

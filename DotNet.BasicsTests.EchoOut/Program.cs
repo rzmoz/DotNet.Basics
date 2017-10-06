@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DotNet.Basics.Tests.Win32EchoOut
+namespace NetCore.Basics.Tests.EchoOut
 {
     class Program
     {
