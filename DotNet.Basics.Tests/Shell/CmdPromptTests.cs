@@ -10,7 +10,7 @@ namespace DotNet.Basics.Tests.Shell
         public void Run_ExitCode_ExitCodeIsReturned()
         {
             const int expected = 16;
-            var result = CmdPrompt.Run($"robocopy");//returns 16 when no params
+            var result = CommandPrompt.Run($"robocopy");//returns 16 when no params
             result.Item1.Should().Be(expected);
         }
     }

@@ -41,7 +41,7 @@ namespace DotNet.Basics.Extensions.SevenZip
             var filename = InstallsevenZip();
             var paramsString = @params.Aggregate(string.Empty, (current, param) => current + $" {param}");
             var script = $"{filename} {command} {paramsString} -y";
-            return CmdPrompt.Run(script);
+            return CommandPrompt.Run(script);
         }
 
         private string InstallsevenZip()

@@ -1,6 +1,6 @@
 ﻿namespace DotNet.Basics.Shell
 {
-    public static class CmdPrompt
+    public static class CommandPrompt
     {
         public static (int ExitCode, string Output) Run(string commandString)
         {

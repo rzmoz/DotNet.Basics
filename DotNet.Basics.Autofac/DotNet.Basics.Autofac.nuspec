@@ -9,7 +9,7 @@
     <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
     <projectUrl>https://github.com/rzmoz/DotNet.Basics</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Syntactical sugar for basic .NET Core operations (umbrella package)</description>
+    <description>Fluent syntax for Autofac bootstrapping</description>
   </metadata>
   <files>
   </files>

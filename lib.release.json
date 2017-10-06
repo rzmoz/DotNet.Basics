@@ -1,6 +1,6 @@
 [
-	{
-      "name": "dotnet.basics",
+	{	
+      "name": "DotNet.Basics",
 	  "tests": "dotnet.basics.tests",
       "major" : "6",
 	  "minor" : "0",
@@ -8,22 +8,57 @@
 	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
     },
 	{
-      "name": "dotnet.basics.extensions.autofac",
+      "name": "DotNet.Basics.Autofac",
       "major" : "4",
 	  "minor" : "6",
 	  "patch" : "1",
 	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
     },
 	{
-      "name": "dotnet.basics.extensions.sevenzip",
+      "name": "DotNet.Basics.Collections",
+      "major" : "2",
+	  "minor" : "0",
+	  "patch" : "0",
+	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
+    },
+	{	
+      "name": "DotNet.Basics.IO",
+      "major" : "2",
+	  "minor" : "0",
+	  "patch" : "0",
+	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
+    },
+	{
+      "name": "DotNet.Basics.Rest",
+      "major" : "6",
+	  "minor" : "0",
+	  "patch" : "0",
+	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
+    },
+	{
+      "name": "DotNet.Basics.SevenZip",
       "major" : "16",
 	  "minor" : "04",
 	  "patch" : "0",
 	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
     },
+	{	
+      "name": "DotNet.Basics.Shell",
+      "major" : "2",
+	  "minor" : "0",
+	  "patch" : "0",
+	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
+    },
 	{
-      "name": "dotnet.basics.rest",
-      "major" : "6",
+      "name": "DotNet.Basics.Sys",
+      "major" : "2",
+	  "minor" : "0",
+	  "patch" : "0",
+	  "prerelease" : "beta.{{date}}.{{gitcommits}}"
+    },
+	{
+      "name": "DotNet.Basics.Tasks",
+      "major" : "2",
 	  "minor" : "0",
 	  "patch" : "0",
 	  "prerelease" : "beta.{{date}}.{{gitcommits}}"

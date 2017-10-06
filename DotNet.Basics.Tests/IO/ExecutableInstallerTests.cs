@@ -33,7 +33,7 @@ namespace DotNet.Basics.Tests.IO
 
                 var fullName = appDir.ToFile(fileName).FullPath();
 
-                var result = CmdPrompt.Run($"{fullName} {val}");
+                var result = CommandPrompt.Run($"{fullName} {val}");
                 result.ExitCode.Should().Be(val);
             });
         }

@@ -30,7 +30,7 @@ namespace DotNet.Basics.IO
                 command += $" \"{filesToCopy}\" ";
             command += options ?? string.Empty;
             command += " /np /ndl /nfl";//we don't want progress by default
-            return CmdPrompt.Run(command);
+            return CommandPrompt.Run(command);
         }
 
         /// <summary>

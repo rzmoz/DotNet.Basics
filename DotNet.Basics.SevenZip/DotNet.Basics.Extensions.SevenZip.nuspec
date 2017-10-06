@@ -9,7 +9,7 @@
     <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
     <projectUrl>https://github.com/rzmoz/DotNet.Basics</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Syntactical sugar for 7Zip compression actions</description>
+    <description>SDK for 7zip.exe (windows only!)</description>
   </metadata>
   <files>
   </files>
