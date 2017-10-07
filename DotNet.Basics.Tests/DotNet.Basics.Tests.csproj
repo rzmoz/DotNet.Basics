@@ -39,15 +39,15 @@
     <ProjectReference Include="..\DotNet.Basics.Shell\DotNet.Basics.Shell.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Sys\DotNet.Basics.Sys.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Tasks\DotNet.Basics.Tasks.csproj" />
-    <ProjectReference Include="..\DotNet.BasicsTests.EchoOut\DotNet.Basics.EchoOut.csproj" />
+    <ProjectReference Include="..\DotNet.Basics.Tests.EchoOut\DotNet.Basics.Tests.EchoOut.csproj" />
     <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.All.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Extensions\SevenZip\myArchive.zip">
+    <None Update="SevenZip\myArchive.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Extensions\SevenZip\NewFolder.zip">
+    <None Update="SevenZip\NewFolder.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="IO\Testa\TextFile1.txt">
@@ -56,7 +56,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Extensions\SevenZip\" />
+    <Folder Include="SevenZip\" />
   </ItemGroup>
 
 </Project>

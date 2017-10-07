@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.Tests.Extensions.AutoFac.TestHelpers
+﻿namespace DotNet.Basics.Tests.AutoFac.TestHelpers
 {
     public class TypeWithValue
     {

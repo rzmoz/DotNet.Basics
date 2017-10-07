@@ -15,7 +15,7 @@ namespace DotNet.Basics.Tests.Shell
         {
             const string expected = "sdsdfsdfsdf";
 
-            var fullPath = TestRoot.Dir.ToFile("NetCore.Basics.Tests.EchoOut.exe").RawPath;
+            var fullPath = TestRoot.Dir.ToFile("DotNet.Basics.Tests.EchoOut.exe").RawPath;
 
             var result = Executable.Run(fullPath, $"{expected}");
 
@@ -27,7 +27,7 @@ namespace DotNet.Basics.Tests.Shell
         {
             const int expected = 16;
 
-            var fullPath = TestRoot.Dir.ToFile("NetCore.Basics.Tests.EchoOut.exe").RawPath;
+            var fullPath = TestRoot.Dir.ToFile("DotNet.Basics.Tests.EchoOut.exe").RawPath;
 
             var result = Executable.Run(fullPath, $"{expected}");
 
