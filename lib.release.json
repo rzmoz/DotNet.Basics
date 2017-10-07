@@ -1,7 +1,7 @@
 {
   "version": {
     "semver10": "9.0.0",
-    "prerelease": "Beta.1"
+    "prerelease": "Beta.2"
   },
   "override": [
     {
