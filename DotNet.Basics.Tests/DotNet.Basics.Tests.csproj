@@ -40,7 +40,7 @@
     <ProjectReference Include="..\DotNet.Basics.Sys\DotNet.Basics.Sys.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Tasks\DotNet.Basics.Tasks.csproj" />
     <ProjectReference Include="..\DotNet.BasicsTests.EchoOut\DotNet.Basics.EchoOut.csproj" />
-    <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />
+    <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.All.csproj" />
   </ItemGroup>
 
   <ItemGroup>

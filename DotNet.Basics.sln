@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics", "DotNet.Basics\DotNet.Basics.csproj", "{79E3A43F-0D6E-4D50-89FC-506BE2E91323}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.All", "DotNet.Basics\DotNet.Basics.All.csproj", "{79E3A43F-0D6E-4D50-89FC-506BE2E91323}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.Tests", "DotNet.Basics.Tests\DotNet.Basics.Tests.csproj", "{780CDF96-0F69-4715-BA5E-AA1B401C743F}"
 EndProject
