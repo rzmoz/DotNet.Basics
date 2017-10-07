@@ -58,21 +58,21 @@ namespace DotNet.Basics.Rest
 
         public Uri Uri
         {
-            get { return HttpRequestMessage.RequestUri; }
-            set { HttpRequestMessage.RequestUri = value; }
+            get => HttpRequestMessage.RequestUri;
+            set => HttpRequestMessage.RequestUri = value;
         }
 
         public HttpMethod Method
         {
-            get { return HttpRequestMessage.Method; }
-            set { HttpRequestMessage.Method = value; }
+            get => HttpRequestMessage.Method;
+            set => HttpRequestMessage.Method = value;
         }
         public HttpRequestHeaders Headers => HttpRequestMessage.Headers;
 
         public HttpContent Content
         {
-            get { return HttpRequestMessage.Content; }
-            set { HttpRequestMessage.Content = value; }
+            get => HttpRequestMessage.Content;
+            set => HttpRequestMessage.Content = value;
         }
         public bool DisableCertificateValidation { get; set; }
         public TimeSpan TimeOut { get; set; }

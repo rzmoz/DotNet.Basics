@@ -45,7 +45,7 @@ namespace DotNet.Basics.Collections
 
         public static IEnumerable<T> ToEnumerable<T>(this T t)
         {
-            return new[] { t };
+            yield return t;
         }
         public static IEnumerable<T> ToEnumerable<T>(this T t, IEnumerable<T> concat)
         {

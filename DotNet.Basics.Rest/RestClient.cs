@@ -32,14 +32,14 @@ namespace DotNet.Basics.Rest
 
         public Uri BaseUri
         {
-            get { return _transport.BaseUri; }
-            set { _transport.BaseUri = value; }
+            get => _transport.BaseUri;
+            set => _transport.BaseUri = value;
         }
 
         public TimeSpan Timeout
         {
-            get { return _transport.Timeout; }
-            set { _transport.Timeout = value; }
+            get => _transport.Timeout;
+            set => _transport.Timeout = value;
         }
 
         public async Task<IRestResponse> ExecuteAsync<T>(IRestRequest request, ResponseFormatting responseFormatting = ResponseFormatting.Raw)
