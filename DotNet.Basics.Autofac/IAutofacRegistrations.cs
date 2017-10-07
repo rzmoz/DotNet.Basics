@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.Extensions.Autofac
+﻿namespace DotNet.Basics.Autofac
 {
     public interface IAutofacRegistrations
     {

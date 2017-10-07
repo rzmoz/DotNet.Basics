@@ -2,7 +2,7 @@
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using DotNet.Basics.Extensions.SevenZip;
+using DotNet.Basics.SevenZip;
 using DotNet.Basics.IO;
 using FluentAssertions;
 using Xunit;

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="7za.dll" />
+    <None Remove="7za.exe" />
+    <None Remove="7zxa.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="7za.dll" />
+    <EmbeddedResource Include="7za.exe" />
+    <EmbeddedResource Include="7zxa.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DotNet.Basics.IO\DotNet.Basics.IO.csproj" />
+    <ProjectReference Include="..\DotNet.Basics.Shell\DotNet.Basics.Shell.csproj" />
+  </ItemGroup>
+
+</Project>

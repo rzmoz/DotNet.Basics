@@ -1,4 +1,4 @@
-﻿using DotNet.Basics.Extensions.SevenZip;
+﻿using DotNet.Basics.SevenZip;
 using DotNet.Basics.IO;
 using FluentAssertions;
 using Xunit;
