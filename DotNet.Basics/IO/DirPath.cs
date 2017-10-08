@@ -137,7 +137,7 @@ namespace DotNet.Basics.IO
                     file.CopyTo(target, overwrite: true, ensureTargetDir: false);
                 });
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Robocopy.CopyDir(FullPath(), target.FullPath(), includeSubFolders: includeSubfolders);
             }

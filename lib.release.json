@@ -1,18 +1,18 @@
 {
   "version": {
     "semver10": "9.0.0",
-    "prerelease": "Beta.2"
+    "prerelease": "Beta.3"
   },
   "override": [
     {
       "name": "DotNet.Basics.Autofac",
       "semver10": "4.6.1",
-      "prerelease": "Beta.2"
+      "prerelease": "Beta.3"
     },
     {
       "name": "DotNet.Basics.SevenZip",
       "semver10": "16.04.0",
-      "prerelease": "Beta.2"
+      "prerelease": "Beta.3"
     }
   ]
 }

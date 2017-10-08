@@ -211,7 +211,7 @@ namespace DotNet.Basics.IO
             if (lookingAt == null)
                 return false;
 
-            return lookingAt.EndsWith(PathSeparator.Backslash) || lookingAt.EndsWith(PathSeparator.Slash);
+            return lookingAt.EndsWith(PathSeparator.Backslash.ToString()) || lookingAt.EndsWith(PathSeparator.Slash.ToString());
         }
 
         private static char DetectPathSeparator(char pathSeparator, IEnumerable<string> segments)

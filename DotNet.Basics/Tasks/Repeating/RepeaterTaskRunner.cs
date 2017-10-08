@@ -88,7 +88,7 @@ namespace DotNet.Basics.Tasks.Repeating
             {
                 options.PingOnRetry();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 //TODO: Write to debug
             }
