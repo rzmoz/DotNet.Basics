@@ -32,15 +32,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DotNet.Basics.Autofac\DotNet.Basics.Autofac.csproj" />
-    <ProjectReference Include="..\DotNet.Basics.Collections\DotNet.Basics.Collections.csproj" />
-    <ProjectReference Include="..\DotNet.Basics.IO\DotNet.Basics.IO.csproj" />
-    <ProjectReference Include="..\DotNet.Basics.Rest\DotNet.Basics.Rest.csproj" />
     <ProjectReference Include="..\DotNet.Basics.SevenZip\DotNet.Basics.SevenZip.csproj" />
-    <ProjectReference Include="..\DotNet.Basics.Shell\DotNet.Basics.Shell.csproj" />
-    <ProjectReference Include="..\DotNet.Basics.Sys\DotNet.Basics.Sys.csproj" />
-    <ProjectReference Include="..\DotNet.Basics.Tasks\DotNet.Basics.Tasks.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Tests.EchoOut\DotNet.Basics.Tests.EchoOut.csproj" />
-    <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.All.csproj" />
+    <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />
   </ItemGroup>
 
   <ItemGroup>
