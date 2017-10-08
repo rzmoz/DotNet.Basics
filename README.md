@@ -2,5 +2,8 @@
 # DotNet.Basics
 Syntactical sugar for .NET
 ## Get as nuget packages:
-> **PM> Install-Package DotNet.Basics**<br />
-> **PM> Install-Package DotNet.Basics.NLog**
+```ps
+PM> Install-Package DotNet.Basics
+PM> Install-Package DotNet.Basics.Autofac
+PM> Install-Package DotNet.Basics.SevenZip
+```
