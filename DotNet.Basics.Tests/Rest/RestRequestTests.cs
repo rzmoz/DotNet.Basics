@@ -6,7 +6,7 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Rest
 {
-    public class RestRequestTests
+    internal class RestRequestTests
     {
         [Theory]
         [InlineData("http://localhost/", "/path")]//both hostUrl and path has slash
