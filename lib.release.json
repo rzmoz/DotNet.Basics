@@ -6,8 +6,8 @@
   "override": [
     {
       "name": "DotNet.Basics.Autofac",
-      "semver10": "4.6.1",
-      "prerelease": "Beta.3"
+      "semver10": "4.6.2",
+      "prerelease": "Beta.1"
     },
     {
       "name": "DotNet.Basics.SevenZip",
