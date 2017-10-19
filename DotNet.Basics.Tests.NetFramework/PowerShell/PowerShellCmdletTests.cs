@@ -3,7 +3,7 @@ using DotNet.Basics.PowerShell;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Net.PowerShell
+namespace DotNet.Basics.Tests.NetFramework.PowerShell
 {
     public class PowerShellCmdletTests
     {

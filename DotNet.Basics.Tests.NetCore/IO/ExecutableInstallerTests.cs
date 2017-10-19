@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using DotNet.Basics.IO;
 using DotNet.Basics.Shell;
-using DotNet.Basics.Sys;
 using FluentAssertions;
 using Xunit;
 
@@ -20,7 +16,7 @@ namespace DotNet.Basics.Tests.IO
             appDir.DeleteIfExists();
             var fileName = "ReturnIntConsole.Exe";
             var consoleAppStream =
-                typeof(ExecutableInstallerTests).Assembly.GetManifestResourceStream("DotNet.Basics.Tests.IO.Testa.ReturnIntConsole.exe");
+                typeof(ExecutableInstallerTests).Assembly.GetManifestResourceStream("DotNet.Basics.Tests.NetCore.IO.Testa.ReturnIntConsole.exe");
 
             consoleAppStream.Should().NotBeNull("ReturnIntConsole.Exe");
 

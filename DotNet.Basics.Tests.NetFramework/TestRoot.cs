@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Reflection;
 
-namespace DotNet.Basics.Tests.Net
+namespace DotNet.Basics.Tests.NetFramework
 {
     public static class TestRoot
     {

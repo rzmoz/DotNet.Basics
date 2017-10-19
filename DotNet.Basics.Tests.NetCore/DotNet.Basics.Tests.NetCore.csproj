@@ -15,17 +15,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="IO\Testa\ReturnIntConsole.exe" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="IO\Testa\ReturnIntConsole.exe" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.6.2" />
     <PackageReference Include="FluentAssertions" Version="4.19.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
-    <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.0.0-beta.8" />
     <PackageReference Include="NSubstitute" Version="3.0.1" />
     <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.0" />
@@ -33,25 +29,22 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DotNet.Basics.Autofac\DotNet.Basics.Autofac.csproj" />
+    <ProjectReference Include="..\DotNet.Basics.NLog\DotNet.Basics.NLog.csproj" />
     <ProjectReference Include="..\DotNet.Basics.SevenZip\DotNet.Basics.SevenZip.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Tests.EchoOut\DotNet.Basics.Tests.EchoOut.csproj" />
     <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="IO\Testa\TextFile1.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="SevenZip\myArchive.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="SevenZip\NewFolder.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="IO\Testa\TextFile1.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="SevenZip\" />
   </ItemGroup>
 
 </Project>

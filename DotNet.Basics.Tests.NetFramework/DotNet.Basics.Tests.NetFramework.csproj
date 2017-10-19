@@ -8,8 +8,8 @@
     <ProjectGuid>{D2EBA055-3D1A-4860-9BF0-C20561BD45BD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DotNet.Basics.Tests.Net</RootNamespace>
-    <AssemblyName>DotNet.Basics.Tests.Net</AssemblyName>
+    <RootNamespace>DotNet.Basics.Tests.NetFramework</RootNamespace>
+    <AssemblyName>DotNet.Basics.Tests.NetFramework</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -182,17 +182,20 @@
     <Compile Include="TestRoot.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DotNet.Basics.PowerShell\DotNet.Basics.PowerShell.csproj">
-      <Project>{13D81BE8-E8F9-4DAA-A22C-F89518AD16EF}</Project>
-      <Name>DotNet.Basics.PowerShell</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\xunit.analyzers.0.7.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DotNet.Basics.PowerShell\DotNet.Basics.PowerShell.csproj">
+      <Project>{bcd39cd8-3777-4d56-9601-31a442653d60}</Project>
+      <Name>DotNet.Basics.PowerShell</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
