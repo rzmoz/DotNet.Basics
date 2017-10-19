@@ -9,7 +9,12 @@
       "semver10": "4.6.2",
       "prerelease": "rc.3"
     },
-	{
+    {
+      "name": "DotNet.Basics.NLog",
+      "semver10": "4.4.12",
+      "prerelease": "rc.3"
+    },
+    {
       "name": "DotNet.Basics.PowerShell",
       "semver10": "5.0.0",
       "prerelease": "rc.3"
