@@ -1,28 +1,28 @@
 {
   "version": {
     "semver10": "9.0.0",
-    "prerelease": "rc.3"
+    "prerelease": "rc.2"
   },
   "override": [
     {
       "name": "DotNet.Basics.Autofac",
       "semver10": "4.6.2",
-      "prerelease": "rc.3"
+      "prerelease": "rc.2"
     },
     {
       "name": "DotNet.Basics.NLog",
-      "semver10": "4.4.12",
-      "prerelease": "rc.3"
+      "semver10": "5.0.0",
+      "prerelease": "rc.1"
     },
     {
       "name": "DotNet.Basics.PowerShell",
       "semver10": "5.0.0",
-      "prerelease": "rc.3"
+      "prerelease": "rc1.1"
     },
     {
       "name": "DotNet.Basics.SevenZip",
       "semver10": "16.04.0",
-      "prerelease": "rc.3"
+      "prerelease": "rc.2"
     }
   ]
 }
