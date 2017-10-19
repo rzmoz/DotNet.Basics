@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net47</TargetFrameworks>
-    <Version>4.4.12-rc.3+9e9fcc9</Version>
-    <AssemblyVersion>4.4.12</AssemblyVersion>
-    <FileVersion>4.4.12</FileVersion>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="NLog" Version="5.0.0-beta11" />
   </ItemGroup>
+
 </Project>
