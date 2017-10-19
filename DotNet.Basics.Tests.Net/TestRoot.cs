@@ -1,18 +1,16 @@
 ﻿using System.IO;
 using System.Reflection;
-using DotNet.Basics.IO;
 
-namespace DotNet.Basics.Tests
+namespace DotNet.Basics.Tests.Net
 {
     public static class TestRoot
     {
         static TestRoot()
         {
             var entryPath = typeof(TestRoot).GetTypeInfo().Assembly.Location;
-            var dir = Path.GetDirectoryName(entryPath);
-            Dir = dir.ToDir();
+            Dir = Path.GetDirectoryName(entryPath);
         }
 
-        public static DirPath Dir { get; }
+        public static string Dir { get; }
     }
 }
