@@ -10,9 +10,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net47'">
-    <PackageReference Include="NETStandard.Library">
-      <Version>2.0.1</Version>
-    </PackageReference>
   </ItemGroup>
   
   <ItemGroup>

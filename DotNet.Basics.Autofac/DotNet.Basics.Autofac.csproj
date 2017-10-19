@@ -9,10 +9,7 @@
       <Version>2.0.1</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net47'">
-    <PackageReference Include="NETStandard.Library">
-      <Version>2.0.1</Version>
-    </PackageReference>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net47'">    
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.2" />
