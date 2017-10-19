@@ -9,7 +9,6 @@ using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks.Repeating;
 
 namespace DotNet.Basics.SevenZip
-
 {
     public class ZipReader : IDisposable
     {
@@ -18,17 +17,11 @@ namespace DotNet.Basics.SevenZip
 
         public ZipReader(FilePath path)
         {
-            if (path == null) throw new ArgumentNullException(nameof(path));
-            Path = path;
+            Path = path ?? throw new ArgumentNullException(nameof(path));
             _archiveLoader = new Lazy<ZipArchive>(Open);
             _entryLoader = new Lazy<Dictionary<string,ZipArchiveEntry>>(() =>
             {
-                var dic = new Dictionary<string,ZipArchiveEntry>();
-                foreach (var entry in Archive.Entries)
-                {
-                    dic.Add(entry.FullName, entry);
-                }
-                return dic;
+                return Archive.Entries.ToDictionary(entry => entry.FullName);
             });
         }
 

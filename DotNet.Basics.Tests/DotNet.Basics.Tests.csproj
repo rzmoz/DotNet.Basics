@@ -33,7 +33,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DotNet.Basics.Autofac\DotNet.Basics.Autofac.csproj" />
-    <ProjectReference Include="..\DotNet.Basics.PowerShell\DotNet.Basics.PowerShell.csproj" />
     <ProjectReference Include="..\DotNet.Basics.SevenZip\DotNet.Basics.SevenZip.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Tests.EchoOut\DotNet.Basics.Tests.EchoOut.csproj" />
     <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />
@@ -52,7 +51,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="PowerShell\" />
     <Folder Include="SevenZip\" />
   </ItemGroup>
 

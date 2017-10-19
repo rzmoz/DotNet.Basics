@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
@@ -10,6 +11,26 @@ namespace DotNet.Basics.PowerShell
     {
         private const string _bypassExecutionPolicy = "Set-ExecutionPolicy Bypass -Scope Process";
 
+        static PowerShellCli()
+        {
+            //locate if PowerShell is installed
+            var rootFolder = $@"{Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)}\PowerShell";
+            if (Directory.Exists(rootFolder) == false)
+                throw new IOException($@"PowerShell Core is not installed. Looking in {rootFolder}. Get it here: https://github.com/PowerShell/PowerShell/releases");
+
+            var allVersions = Directory.GetDirectories(rootFolder);
+
+            //find latest release version first or then try pre-release version
+            var latestVersion = allVersions.Where(v => v.Contains('-') == false).OrderByDescending(d => d).FirstOrDefault() ??
+                                allVersions.Where(v => v.Contains('-')).OrderByDescending(d => d).FirstOrDefault();
+
+            if (latestVersion == null)
+                throw new IOException($@"PowerShell Core is not installed. Looking in {rootFolder}. Get it here: https://github.com/PowerShell/PowerShell/releases");
+
+            //all good
+            PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext(latestVersion);
+        }
+        
         public static object[] RemoveItem(string path, bool force = false, bool recurse = false)
         {
             return RemoveItem(new[] { path }, force, recurse);
@@ -27,7 +48,8 @@ namespace DotNet.Basics.PowerShell
         {
             if (scripts == null) { throw new ArgumentNullException(nameof(scripts)); }
 
-            PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext(AppContext.BaseDirectory);
+            /*
+
 
             using (var ps = System.Management.Automation.PowerShell.Create())
             {
@@ -35,9 +57,7 @@ namespace DotNet.Basics.PowerShell
                 var passThru = ps.Invoke();
                 Console.WriteLine(passThru[0].ToString());
                 return passThru.Select(pt => pt.BaseObject).ToArray();
-            }
-
-            /*
+            }*/
 
             using (var runspace = RunspaceFactory.CreateRunspace())
             {
@@ -74,7 +94,7 @@ namespace DotNet.Basics.PowerShell
                     }
                 }
                 return passThru.Select(pt => pt.BaseObject).ToArray();
-        }*/
+            }
         }
     }
 }

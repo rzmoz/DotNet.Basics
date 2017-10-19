@@ -12,7 +12,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_System", "_System", "{B7D9CFD1-BE55-43AF-9A4C-CF13618A12B7}"
 	ProjectSection(SolutionItems) = preProject
 		lib.release.json = lib.release.json
-		nuget.config = nuget.config
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.Tests.EchoOut", "DotNet.Basics.Tests.EchoOut\DotNet.Basics.Tests.EchoOut.csproj", "{46594742-4E8D-4D9F-8816-60AF70B83DB8}"
@@ -22,8 +21,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.Autofac", "DotNet.Basics.Autofac\DotNet.Basics.Autofac.csproj", "{A6E42843-33F2-4A8A-A65F-F48FDB194565}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.SevenZip", "DotNet.Basics.SevenZip\DotNet.Basics.SevenZip.csproj", "{700AB747-83FF-47DD-8A34-AD59F84BB8E6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.PowerShell", "DotNet.Basics.PowerShell\DotNet.Basics.PowerShell.csproj", "{265F6BAE-88F7-4C43-9B58-5A1FDEA3B09B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,10 +48,6 @@ Global
 		{700AB747-83FF-47DD-8A34-AD59F84BB8E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{700AB747-83FF-47DD-8A34-AD59F84BB8E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{700AB747-83FF-47DD-8A34-AD59F84BB8E6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{265F6BAE-88F7-4C43-9B58-5A1FDEA3B09B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{265F6BAE-88F7-4C43-9B58-5A1FDEA3B09B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{265F6BAE-88F7-4C43-9B58-5A1FDEA3B09B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{265F6BAE-88F7-4C43-9B58-5A1FDEA3B09B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -65,7 +58,6 @@ Global
 		{965F1F68-357B-464A-89EE-662686CC761C} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
 		{A6E42843-33F2-4A8A-A65F-F48FDB194565} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
 		{700AB747-83FF-47DD-8A34-AD59F84BB8E6} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
-		{265F6BAE-88F7-4C43-9B58-5A1FDEA3B09B} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8CBE2111-AC24-4AFA-9537-5FD16E0BF1E5}
