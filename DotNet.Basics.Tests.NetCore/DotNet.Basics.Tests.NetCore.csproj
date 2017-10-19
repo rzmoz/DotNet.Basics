@@ -30,6 +30,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DotNet.Basics.Autofac\DotNet.Basics.Autofac.csproj" />
     <ProjectReference Include="..\DotNet.Basics.NLog\DotNet.Basics.NLog.csproj" />
+    <ProjectReference Include="..\DotNet.Basics.Pipelines\DotNet.Basics.Pipelines.csproj" />
     <ProjectReference Include="..\DotNet.Basics.SevenZip\DotNet.Basics.SevenZip.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Tests.EchoOut\DotNet.Basics.Tests.EchoOut.csproj" />
     <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />
