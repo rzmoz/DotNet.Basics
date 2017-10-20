@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.Shell
+﻿namespace DotNet.Basics.Cli
 {
     public static class CommandPrompt
     {

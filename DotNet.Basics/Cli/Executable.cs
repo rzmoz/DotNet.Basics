@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace DotNet.Basics.Shell
+namespace DotNet.Basics.Cli
 {
     public class Executable
     {

@@ -2,8 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using DotNet.Basics.Cli;
 using DotNet.Basics.IO;
-using DotNet.Basics.Shell;
 
 namespace DotNet.Basics.SevenZip
 {

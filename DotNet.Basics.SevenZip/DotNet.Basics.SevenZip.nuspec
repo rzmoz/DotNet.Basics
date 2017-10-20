@@ -11,7 +11,4 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Syntactical sugar for calling 7 zip for more robust archiving</description>
     </metadata>
-    <dependencies>
-        <dependency id="DotNet.Basics" version="9.0.0-rc.3" />
-    </dependencies>
 </package>

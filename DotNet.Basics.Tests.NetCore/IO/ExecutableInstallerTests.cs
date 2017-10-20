@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using DotNet.Basics.Cli;
 using DotNet.Basics.IO;
-using DotNet.Basics.Shell;
 using FluentAssertions;
 using Xunit;
 

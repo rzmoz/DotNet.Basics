@@ -1,8 +1,8 @@
-﻿using DotNet.Basics.Shell;
+﻿using DotNet.Basics.Cli;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Shell
+namespace DotNet.Basics.Tests.Cli
 {
     public class CmdPromptTests
     {

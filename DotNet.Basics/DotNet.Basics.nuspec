@@ -9,6 +9,6 @@
     <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
     <projectUrl>https://github.com/rzmoz/DotNet.Basics</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Syntactical sugar for .NET Standard</description>
+    <description>Syntactical sugar for .NET Standard in the realms of Cli, Collections, IO, Rest, Cli, System and Tasks</description>
   </metadata>
 </package>
