@@ -1,13 +1,13 @@
 {
   "version": {
     "semver10": "9.0.0",
-    "prerelease": "rc.6"
+    "prerelease": "rc.5"
   },
   "override": [
     {
       "name": "DotNet.Basics.Autofac",
       "semver10": "4.6.2",
-      "prerelease": "rc.2"
+      "prerelease": "rc.3"
     },
     {
       "name": "DotNet.Basics.NLog",
