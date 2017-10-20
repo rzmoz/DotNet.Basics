@@ -17,8 +17,11 @@ namespace DotNet.Basics.Tests.EchoOut
             {
                 return int.Parse(args[0]);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine(e.ToString());
                 return -100000;
             }
         }
