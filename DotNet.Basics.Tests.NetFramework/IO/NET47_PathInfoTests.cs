@@ -2,12 +2,13 @@
 using System.IO;
 using DotNet.Basics.IO;
 using DotNet.Basics.Tests.IO.Testa;
+using DotNet.Basics.Tests.NetFramework;
 using FluentAssertions;
 using Xunit;
 
 namespace DotNet.Basics.Tests.IO
 {
-    public class PathInfoTests
+    public class NET47_PathInfoTests
     {
         [Theory]
         [InlineData(@"c:\my\path", @"c:\my\path", PathSeparator.Backslash)]//bs to bs
@@ -145,8 +146,8 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void Parent_FullPath_ParentIsResolved()
         {
-            var currentDir = TestRoot.Dir;
-            var dir = currentDir.Add(@"Parent_NameOnlySourceDir_ParentIsResolved");
+            var currentDir = TestRoot.Dir.ToDir();
+            var dir = currentDir.Add(@"NET47_Parent_NameOnlySourceDir_ParentIsResolved");
 
             dir.Parent.FullPath().Should().Be(currentDir.FullPath());
         }
@@ -204,7 +205,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void DeleteIfExists_DirExists_DirIsDeleted()
         {
-            var dir = TestRoot.Dir.ToDir("DeleteIfExists_DirExists_DirIsDeleted");
+            var dir = TestRoot.Dir.ToDir("NET47_DeleteIfExists_DirExists_DirIsDeleted");
             dir.CreateIfNotExists();
             dir.Exists().Should().BeTrue();
 
@@ -221,7 +222,7 @@ namespace DotNet.Basics.Tests.IO
         {
             //arrange
             //we set up a folder with a really long name
-            const string testDirName = "DeleteIfExists_DeleteLongNamedDir_DirIsDeleted";
+            const string testDirName = "NET47_DeleteIfExists_DeleteLongNamedDir_DirIsDeleted";
 
             var rootTestdir = TestRoot.Dir.ToDir(testDirName);
             rootTestdir.CleanIfExists();
@@ -253,7 +254,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void Delete_DeleteFile_FileIsDeleted()
         {
-            var testdir = TestRoot.Dir.Add(@"Delete_DeleteFile_FileIsDeleted").ToDir();
+            var testdir = TestRoot.Dir.ToDir(@"NET47_Delete_DeleteFile_FileIsDeleted");
             testdir.CleanIfExists();
             var testFile = testdir.ToFile("blaaaah.txt").WriteAllText("Blaaaah!");
 
@@ -268,7 +269,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void GetFullPath_CallSystemIo_PathsAreIdentical()
         {
-            var relativePath = "GetFullPath_CallSystemIo_PathsAreIdentical";
+            var relativePath = "NET47_GetFullPath_CallSystemIo_PathsAreIdentical";
 
             var systemDotIoDotPath = System.IO.Path.GetFullPath(relativePath);
             var systemIoPath = relativePath.ToPath().FullPath();
@@ -279,7 +280,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void Exists_ThrowIfNotFound_ExceptionIsThrown()
         {
-            var path = TestRoot.Dir.ToDir("Exists_ThrowIfNotFound_ExceptionIsThrown");
+            var path = TestRoot.Dir.ToDir("NET47_Exists_ThrowIfNotFound_ExceptionIsThrown");
 
             path.DeleteIfExists();
 
@@ -291,7 +292,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void Exists_PathExists_Works()
         {
-            var path = TestRoot.Dir.ToDir("Exists_PathExists_Works");
+            var path = TestRoot.Dir.ToDir("NET47_Exists_PathExists_Works");
 
             path.DeleteIfExists();
 
@@ -305,13 +306,13 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void Exists_LongDirPath_NoExceptionIsThrown()
         {
-            var path = TestRoot.Dir.ToDir("DirWithMoreThan260Chars\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\");
+            var path = TestRoot.Dir.ToDir("NET47_DirWithMoreThan260Chars\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\");
             path.Exists().Should().BeFalse();
         }
         [Fact]
         public void Exists_LongFilePath_NoExceptionIsThrown()
         {
-            var path = TestRoot.Dir.ToFile("FileWithMoreThan260Chars\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
+            var path = TestRoot.Dir.ToFile("NET47_FileWithMoreThan260Chars\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
             path.Exists().Should().BeFalse();
         }
 
@@ -336,7 +337,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void FullPath_Resolve_FullPathIsResolved()
         {
-            var inputPath = TestRoot.Dir.ToFile("io", "testa", "TextFile1.txt");
+            var inputPath = TestRoot.Dir.ToFile("io", "NET47_testa", "TextFile1.txt");
             var expectedPath = new TestFile1().RawPath;
             inputPath.Should().NotBe(expectedPath);
 

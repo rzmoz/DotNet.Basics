@@ -16,7 +16,7 @@ namespace DotNet.Basics.Tests.IO
             appDir.DeleteIfExists();
             var fileName = "ReturnIntConsole.Exe";
             var consoleAppStream =
-                typeof(ExecutableInstallerTests).Assembly.GetManifestResourceStream("DotNet.Basics.Tests.NetCore.IO.Testa.ReturnIntConsole.exe");
+                typeof(ExecutableInstallerTests).Assembly.GetManifestResourceStream("DotNet.Basics.Tests.NetCore.Cli.ReturnIntConsole.exe");
 
             consoleAppStream.Should().NotBeNull("ReturnIntConsole.Exe");
 

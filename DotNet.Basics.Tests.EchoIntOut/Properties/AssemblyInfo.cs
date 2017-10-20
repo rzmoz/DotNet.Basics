@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DotNet.Basics.Tests.EchoOut")]
+[assembly: AssemblyTitle("DotNet.Basics.Tests.EchoIntOut")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DotNet.Basics.Tests.EchoOut")]
+[assembly: AssemblyProduct("DotNet.Basics.Tests.EchoIntOut")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

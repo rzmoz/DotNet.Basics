@@ -15,7 +15,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="IO\Testa\ReturnIntConsole.exe" />
+    <None Remove="IO\Testa\ReturnIntConsole.exe" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Cli\ReturnIntConsole.exe" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +36,7 @@
     <ProjectReference Include="..\DotNet.Basics.NLog\DotNet.Basics.NLog.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Pipelines\DotNet.Basics.Pipelines.csproj" />
     <ProjectReference Include="..\DotNet.Basics.SevenZip\DotNet.Basics.SevenZip.csproj" />
+    <ProjectReference Include="..\DotNet.Basics.Tests.NetCore.EchoOut\DotNet.Basics.Tests.NetCore.EchoOut.csproj" />
     <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />
   </ItemGroup>
 

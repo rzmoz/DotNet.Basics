@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using DotNet.Basics.Sys;
+using DotNet.Basics.IO;
 
-namespace DotNet.Basics.IO
+namespace DotNet.Basics.Cli
 {
     public class ExecutableInstaller
     {
@@ -14,8 +14,7 @@ namespace DotNet.Basics.IO
 
         public ExecutableInstaller(DirPath installDir, string executableFilename)
         {
-            if (installDir == null) throw new ArgumentNullException(nameof(installDir));
-            InstallDir = installDir;
+            InstallDir = installDir ?? throw new ArgumentNullException(nameof(installDir));
             EntryFile = installDir.ToFile(executableFilename);
             _installedHandle = installDir.ToFile(_installedHandleName);
             _installActions = new List<Action>();

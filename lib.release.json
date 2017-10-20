@@ -1,7 +1,7 @@
 {
   "version": {
     "semver10": "9.0.0",
-    "prerelease": "rc.3"
+    "prerelease": "rc.4"
   },
   "override": [
     {
@@ -13,6 +13,11 @@
       "name": "DotNet.Basics.NLog",
       "semver10": "5.0.0",
       "prerelease": "rc.1"
+    },
+    {
+      "name": "DotNet.Basics.Pipelines",
+      "semver10": "9.0.0",
+      "prerelease": "rc.3"
     },
     {
       "name": "DotNet.Basics.PowerShell",

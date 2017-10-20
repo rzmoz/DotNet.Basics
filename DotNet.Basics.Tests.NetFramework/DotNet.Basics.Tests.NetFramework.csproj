@@ -176,6 +176,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IO\NET47_PathInfoTests.cs" />
+    <Compile Include="IO\NET47_Testa\TestFile1.cs" />
     <Compile Include="PowerShell\PowerShellCmdletTests.cs" />
     <Compile Include="PowerShell\PowerShellCliTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -193,9 +195,18 @@
       <Project>{bcd39cd8-3777-4d56-9601-31a442653d60}</Project>
       <Name>DotNet.Basics.PowerShell</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj">
+      <Project>{965f1f68-357b-464a-89ee-662686cc761c}</Project>
+      <Name>DotNet.Basics</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="IO\NET47_Testa\TextFile1.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
