@@ -283,7 +283,7 @@ namespace DotNet.Basics.Tests.IO
 
             path.DeleteIfExists();
 
-            Action action = () => path.Exists(throwIoExceptionIfNotExists: true);
+            Action action = () => path.Exists(IfNotExists.ThrowIoException);
 
             action.ShouldThrow<IOException>().WithMessage($"{path.FullPath()} not found");
         }

@@ -87,7 +87,7 @@ namespace DotNet.Basics.IO
             }
         }
 
-        internal static bool Exists(string path, bool isFolder, bool throwIoExceptionIfNotExists = false)
+        internal static bool Exists(string path, bool isFolder, IfNotExists ifNotExists = IfNotExists.Mute)
         {
             bool found;
 
@@ -115,7 +115,7 @@ namespace DotNet.Basics.IO
                 }
             }
 
-            if (found == false && throwIoExceptionIfNotExists)
+            if (found == false && ifNotExists == IfNotExists.ThrowIoException)
                 throw new IOException($"{path} not found");
             return found;
         }

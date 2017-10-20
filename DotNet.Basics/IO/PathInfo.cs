@@ -69,7 +69,7 @@ namespace DotNet.Basics.IO
             Repeat.Task(() =>
             {
 #if NETSTANDARD2_0
-            NetStandardIoPath.TryDelete(FullPath());
+                NetStandardIoPath.TryDelete(FullPath());
 #endif
 #if NET47
                 NetFrameworkIoPath.TryDelete(FullPath(), IsFolder);
@@ -94,13 +94,12 @@ namespace DotNet.Basics.IO
             return NetFrameworkIoPath.GetFullPath(RawPath);
         }
 
-
-        public bool Exists(bool throwIoExceptionIfNotExists = false)
+        public bool Exists(IfNotExists ifNotExists = IfNotExists.Mute)
         {
 #if NETSTANDARD2_0
-            return NetStandardIoPath.Exists(RawPath, throwIoExceptionIfNotExists);
+            return NetStandardIoPath.Exists(RawPath, ifNotExists);
 #endif
-            return NetFrameworkIoPath.Exists(RawPath, IsFolder, throwIoExceptionIfNotExists);
+            return NetFrameworkIoPath.Exists(RawPath, IsFolder, ifNotExists);
         }
 
         public override string ToString()

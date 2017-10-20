@@ -86,16 +86,16 @@ namespace DotNet.Basics.IO
             }
         }
 
-        public static bool Exists(string path, bool throwIoExceptionIfNotExists = false)
+        public static bool Exists(string path, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
         {
-            return Exists(path, _dirExists, throwIoExceptionIfNotExists) | Exists(path, _fileExists, throwIoExceptionIfNotExists);
+            return Exists(path, _dirExists, ifNotExists) | Exists(path, _fileExists, ifNotExists);
         }
 
-        private static bool Exists(string path, MethodInfo mi, bool throwIoExceptionIfNotExists = false)
+        private static bool Exists(string path, MethodInfo mi, IfNotExists ifNotExists = IfNotExists.Mute)
         {
             var @params = new object[] { path };
             var found = bool.Parse(Win32System(mi, @params).ToString());
-            if (found == false && throwIoExceptionIfNotExists)
+            if (found == false && ifNotExists == IfNotExists.ThrowIoException)
                 throw new IOException($"{path } not found");
             return found;
         }

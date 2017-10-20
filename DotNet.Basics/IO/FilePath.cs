@@ -38,7 +38,7 @@ namespace DotNet.Basics.IO
             DeleteIfExists();
             return targetFile.Exists();
         }
-        
+
         public void CopyTo(DirPath targetDir, bool overwrite = false, bool ensureTargetDir = true)
         {
             CopyTo(targetDir.ToFile(Name), overwrite, ensureTargetDir);
@@ -75,7 +75,7 @@ namespace DotNet.Basics.IO
             File.WriteAllText(this.FullPath(), content ?? string.Empty);
             return this;
         }
-        public string ReadAllText(bool throwIfNotExists = true)
+        public string ReadAllText(IfNotExists ifNotExists = IfNotExists.ThrowIoException)
         {
             try
             {
@@ -83,12 +83,12 @@ namespace DotNet.Basics.IO
             }
             catch (DirectoryNotFoundException)
             {
-                if (throwIfNotExists)
+                if (ifNotExists == IfNotExists.ThrowIoException)
                     throw;
             }
             catch (FileNotFoundException)
             {
-                if (throwIfNotExists)
+                if (ifNotExists == IfNotExists.ThrowIoException)
                     throw;
             }
             return null;

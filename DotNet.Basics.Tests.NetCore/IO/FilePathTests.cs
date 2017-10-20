@@ -77,7 +77,7 @@ namespace DotNet.Basics.Tests.IO
         public void ReadAllTextThrowIfNotExists_SilenceWhenDirNotFound_NullIsReturned()
         {
             var file = TestRoot.Dir.Add(@"ReadAllTextThrowIfNotExists_SilenceWhenDirNotFound_NullIsReturned").ToFile("NotFOund.asd");
-            var content = file.ReadAllText(false);
+            var content = file.ReadAllText(IfNotExists.Mute);
             content.Should().BeNull();
         }
         [Fact]
@@ -85,7 +85,7 @@ namespace DotNet.Basics.Tests.IO
         {
             var file = TestRoot.Dir.Add(@"ReadAllTextThrowIfNotExists_SilenceWhenFileNotFound_NullIsReturned").ToFile("NotFOund.asd");
             file.Directory().CreateIfNotExists();
-            var content = file.ReadAllText(false);
+            var content = file.ReadAllText(IfNotExists.Mute);
             content.Should().BeNull();
         }
 
@@ -190,7 +190,7 @@ namespace DotNet.Basics.Tests.IO
             var file = _testDoubleDir.ToFile(_testFile);
             file.FullPath().Should().EndWith(_testDoubleDir + _testFile);
         }
-        
+
         [Fact]
         public void ToTargetFile_MultipleDirCombine_TargetFileHasNewDir()
         {
