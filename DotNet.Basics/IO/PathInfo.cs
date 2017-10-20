@@ -60,21 +60,13 @@ namespace DotNet.Basics.IO
         {
             return DeleteIfExists(30.Seconds());
         }
-
+        
         public bool DeleteIfExists(TimeSpan timeout)
         {
             if (Exists() == false)
                 return true;
 
-            Repeat.Task(() =>
-            {
-#if NETSTANDARD2_0
-                NetStandardIoPath.TryDelete(FullPath());
-#endif
-#if NET47
-                NetFrameworkIoPath.TryDelete(FullPath(), IsFolder);
-#endif
-            })
+            Repeat.Task(() => InternalDeleteIfExists())
                 .WithOptions(o =>
                 {
                     o.Timeout = timeout;
@@ -85,6 +77,8 @@ namespace DotNet.Basics.IO
 
             return Exists() == false;
         }
+
+        protected abstract void InternalDeleteIfExists();
 
         public string FullPath()
         {

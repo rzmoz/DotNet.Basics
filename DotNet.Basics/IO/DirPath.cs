@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DotNet.Basics.Collections;
 using DotNet.Basics.Sys;
+using DotNet.Basics.Tasks.Repeating;
 
 namespace DotNet.Basics.IO
 {
@@ -55,56 +56,7 @@ namespace DotNet.Basics.IO
             subDir.CreateIfNotExists();
             return subDir;
         }
-
-        public void ConsolidateIdenticalSubfolders(int lookDepth = int.MaxValue)
-        {
-            if (Exists() == false)
-                throw new IOException($"Directory not foud: {FullPath()}");
-
-            //depth first recursive
-            if (lookDepth > 0)//we only look to a certain depth
-                foreach (var subDir in GetDirectories())
-                {
-                    subDir.ConsolidateIdenticalSubfolders(lookDepth - 1);//decrement look depth as a stop criteria
-                }
-
-            //if folder was deleted during consolidation
-            if (Exists() == false)
-                return;
-
-            //we move this dir up as long up the hieararchy as long as the folder names are identical
-            if (ParentHasIdenticalName() == false)
-                return;
-
-            bool subDirIsIdenticalToParentDir = false;
-
-            foreach (var source in GetDirectories())
-            {
-                var target = Parent.ToDir(source.Name);
-                if (target.FullPath().Equals(FullPath(), StringComparison.InvariantCultureIgnoreCase))
-                    subDirIsIdenticalToParentDir = true;
-                Robocopy.MoveFolder(source.FullPath(), target.FullPath(), null, true);
-            }
-
-            if (subDirIsIdenticalToParentDir == false)
-            {
-                Robocopy.MoveFolder(this.FullPath(), Parent.FullPath());
-            }
-
-            //we delete the folder if it's empty if everything was moved - otherwise, we don't 
-            if (IsEmpty() && !subDirIsIdenticalToParentDir)
-                DeleteIfExists();
-        }
-
-        private bool ParentHasIdenticalName()
-        {
-            if (Exists() == false)
-                return false;
-            if (Parent == null)
-                return false;
-            return Name.Equals(Parent.Name, StringComparison.InvariantCultureIgnoreCase);
-        }
-
+        
         public void CopyTo(DirPath target, bool includeSubfolders = false)
         {
             if (Exists() == false)
@@ -142,6 +94,18 @@ namespace DotNet.Basics.IO
                 Robocopy.CopyDir(FullPath(), target.FullPath(), includeSubFolders: includeSubfolders);
             }
         }
+
+        protected override void InternalDeleteIfExists()
+        {
+#if NETSTANDARD2_0
+            NetStandardIoPath.TryDeleteDir(FullPath());
+#endif
+#if NET47
+                NetFrameworkIoPath.TryDeleteDir(FullPath(), IsFolder);
+#endif
+
+        }
+
 
         public DirPath[] GetDirectories(string searchPattern = null, bool recurse = false)
         {

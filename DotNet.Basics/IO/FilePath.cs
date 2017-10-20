@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using DotNet.Basics.Sys;
+using DotNet.Basics.Tasks.Repeating;
 
 namespace DotNet.Basics.IO
 {
@@ -57,6 +58,17 @@ namespace DotNet.Basics.IO
             //no logging here since it heavily impacts performance
             File.Copy(FullPath(), target.FullPath(), overwrite);
             File.SetAttributes(target.FullPath(), FileAttributes.Normal);
+        }
+
+        protected override void InternalDeleteIfExists()
+        {
+#if NETSTANDARD2_0
+            NetStandardIoPath.TryDeleteFile(FullPath());
+#endif
+#if NET47
+                NetFrameworkIoPath.TryDeleteFile(FullPath(), IsFolder);
+#endif
+
         }
 
         public bool IsFileType(FileType fileType)

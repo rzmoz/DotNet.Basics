@@ -37,17 +37,12 @@ namespace DotNet.Basics.IO
             _deleteFile = win32FileSystemType.GetMethod("DeleteFile", BindingFlags.Public | BindingFlags.Instance);
 #endif
         }
-        public static bool TryDelete(string fullPath)
+        public static void TryDeleteDir(string fullPath)
         {
             var dirDelete = new
             {
                 Mi = _deleteDir,
                 Params = new object[] { fullPath, true }
-            };
-            var fileDelete = new
-            {
-                Mi = _deleteFile,
-                Params = new object[] { fullPath }
             };
 
             try
@@ -56,15 +51,24 @@ namespace DotNet.Basics.IO
             }
             catch (IOException)
             { }
+        }
+
+        public static void TryDeleteFile(string fullPath)
+        {
+            var fileDelete = new
+            {
+                Mi = _deleteFile,
+                Params = new object[] { fullPath }
+            };
+
             try
             {
                 Win32System(fileDelete.Mi, fileDelete.Params);
             }
             catch (IOException)
             { }
-
-            return Exists(fullPath);
         }
+
 
         internal static string GetFullPath(string path)
         {

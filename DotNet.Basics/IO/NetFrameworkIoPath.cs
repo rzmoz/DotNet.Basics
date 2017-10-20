@@ -35,7 +35,7 @@ namespace DotNet.Basics.IO
 #endif
         }
 
-        public static bool TryDelete(string fullPath, bool isFolder)
+        public static void TryDeleteDir(string fullPath, bool isFolder)
         {
             try
             {
@@ -43,14 +43,16 @@ namespace DotNet.Basics.IO
             }
             catch (IOException)
             { }
+        }
+
+        public static void TryDeleteFile(string fullPath, bool isFolder)
+        {
             try
             {
                 File.Delete(fullPath);
             }
             catch (IOException)
             { }
-
-            return Exists(fullPath, isFolder);
         }
 
         internal static string GetFullPath(string path)

@@ -140,60 +140,7 @@ namespace DotNet.Basics.Tests.IO
             targetDir.Exists().Should().BeTrue();
             GetHierarchyDepth(targetDir).Should().Be(dirDepth + 1);
         }
-
-
-        [Fact]
-        public void ConsolidateIdenticalSubfolders_LookDepthLimit_LookDepthIsObeyed()
-        {
-            //arrange
-            //we set up a folder with an identical named subfolder with dummy content
-            const string testDirName = "ConsolidateTestDir_ForLookDepthLimit";
-
-            var rootTestdir = TestRoot.Dir.Add(testDirName);
-            rootTestdir.CleanIfExists();
-
-            var currentDir = CreateIdenticalSubdirs(rootTestdir, 2);
-            AddTestContent(currentDir, 3, 1);
-
-            GetHierarchyDepth(rootTestdir).Should().Be(3);//verify that we have a 3 level deep hierarchy
-
-            //act
-            rootTestdir.ConsolidateIdenticalSubfolders(1);
-
-            //assert
-            GetHierarchyDepth(rootTestdir).Should().Be(2);
-            rootTestdir.GetDirectories().Count().Should().Be(1);
-            rootTestdir.GetFiles().Count().Should().Be(0);
-        }
         
-        [Fact]
-        public void ConsolidateIdenticalSubfolders_IgnoreCaseWhenConsolidating_IdenticalSubfoldersAreConsolidated()
-        {
-            //arrange
-            //we set up a folder with an identical named subfolder with dummy content
-            const string testDirName = "ConsolidateTestDir_WithReallyLongName";
-
-            var rootTestdir = TestRoot.Dir.Add(testDirName);
-            rootTestdir.CleanIfExists();
-
-            var currentDir = CreateIdenticalSubdirs(rootTestdir, 3);
-
-            const int numOfTestDirs = 3;
-
-            AddTestContent(currentDir, 3, 1);
-
-            currentDir.GetDirectories().Count().Should().Be(numOfTestDirs);
-            currentDir.GetFiles().Count().Should().Be(1);
-
-            //act
-            rootTestdir.ConsolidateIdenticalSubfolders();
-
-            //assert
-            rootTestdir.GetDirectories().Count().Should().Be(numOfTestDirs);
-            rootTestdir.GetFiles().Count().Should().Be(1);
-            rootTestdir.GetDirectories(testDirName).Count().Should().Be(0);//the identical named subfolder should be gone
-        }
-
         private int GetHierarchyDepth(DirPath root)
         {
             var subDir = root.GetDirectories().SingleOrDefault(dir => dir.Name.Equals(root.Name, StringComparison.InvariantCultureIgnoreCase));

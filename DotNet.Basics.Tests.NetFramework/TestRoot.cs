@@ -7,7 +7,7 @@ namespace DotNet.Basics.Tests.NetFramework
     {
         static TestRoot()
         {
-            var entryPath = typeof(TestRoot).GetTypeInfo().Assembly.Location;
+            var entryPath = Directory.GetCurrentDirectory();
             Dir = Path.GetDirectoryName(entryPath);
         }
 
