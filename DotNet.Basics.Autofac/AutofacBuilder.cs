@@ -17,5 +17,11 @@ namespace DotNet.Basics.Autofac
         }
 
         public IContainer Container => _getContainer.Value;
+
+        public void Register(params IAutofacRegistrations[] registrations)
+        {
+            foreach (IAutofacRegistrations t in registrations)
+                t.RegisterIn(this);
+        }
     }
 }
