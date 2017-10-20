@@ -11,6 +11,4 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Syntactical sugar for NLog</description>
   </metadata>
-  <files>
-  </files>
 </package>

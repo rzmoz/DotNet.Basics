@@ -13,5 +13,6 @@
     </metadata>
     <dependencies>
         <dependency id="DotNet.Basics" version="9.0.0-rc.3" />
+        <dependency id="DotNet.Basics.Autofac" version="5.0.0-rc.2" />
     </dependencies>
 </package>
