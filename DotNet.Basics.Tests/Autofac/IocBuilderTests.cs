@@ -36,16 +36,7 @@ namespace DotNet.Basics.Tests.AutoFac
 
             action.ShouldNotThrow<ComponentNotRegisteredException>();
         }
-
-        [Fact]
-        public void Register_TypeThatDependsOnContainer_TypeIsResolved()
-        {
-            new MyIocRegistrations().RegisterIn(_builder);
-            var mytype = _builder.Container.Resolve<IMyType>();
-            var typeThatDependesOnContainer = _builder.Container.Resolve<TypeThatDependesOnContainer>();
-            typeThatDependesOnContainer.Value.Should().Be(mytype.GetValue());
-        }
-
+        
         [Fact]
         public void Build_Registrations_RegistrationsAreRegistered()
         {

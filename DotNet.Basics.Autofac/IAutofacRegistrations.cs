@@ -1,7 +1,9 @@
-﻿namespace DotNet.Basics.Extensions.Autofac
+﻿using Autofac;
+
+namespace DotNet.Basics.Extensions.Autofac
 {
     public interface IAutofacRegistrations
     {
-        void RegisterIn(AutofacBuilder builder);
+        void RegisterIn(ContainerBuilder builder);
     }
 }
