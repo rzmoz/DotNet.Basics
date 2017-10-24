@@ -1,7 +1,7 @@
 ﻿using System;
 using Autofac;
 using Autofac.Core.Registration;
-using DotNet.Basics.Autofac;
+using DotNet.Basics.Extensions.Autofac;
 using DotNet.Basics.Tests.AutoFac.TestHelpers;
 using FluentAssertions;
 using Xunit;

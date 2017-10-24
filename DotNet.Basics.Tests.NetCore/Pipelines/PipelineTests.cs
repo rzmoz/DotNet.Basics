@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
-using DotNet.Basics.Autofac;
+using DotNet.Basics.Extensions.Autofac;
 using DotNet.Basics.Rest;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;

@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Core.Registration;
-using DotNet.Basics.Autofac;
+using DotNet.Basics.Extensions.Autofac;
 using DotNet.Basics.Tasks;
 using DotNet.Basics.Pipelines;
 using DotNet.Basics.Tests.Pipelines.PipelineHelpers;

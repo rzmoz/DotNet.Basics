@@ -191,9 +191,9 @@
     <Analyzer Include="..\packages\xunit.analyzers.0.7.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DotNet.Basics.PowerShell\DotNet.Basics.PowerShell.csproj">
+    <ProjectReference Include="..\DotNet.Basics.PowerShell\DotNet.Basics.Extensions.PowerShell.csproj">
       <Project>{bcd39cd8-3777-4d56-9601-31a442653d60}</Project>
-      <Name>DotNet.Basics.PowerShell</Name>
+      <Name>DotNet.Basics.Extensions.PowerShell</Name>
     </ProjectReference>
     <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj">
       <Project>{965f1f68-357b-464a-89ee-662686cc761c}</Project>

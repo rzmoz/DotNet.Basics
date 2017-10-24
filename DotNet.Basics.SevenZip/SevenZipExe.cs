@@ -11,9 +11,9 @@ namespace DotNet.Basics.SevenZip
     {
         private readonly Assembly _sevenZipAssembly = typeof(SevenZipExe).Assembly;
 
-        private Stream _7zaDll => _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.dll");
-        private Stream _7zaExe => _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.exe");
-        private Stream _7zxaDll => _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7zxa.dll");
+        private Stream _7zaDll => _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.Extensions.SevenZip.7za.dll");
+        private Stream _7zaExe => _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.Extensions.SevenZip.7za.exe");
+        private Stream _7zxaDll => _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.Extensions.SevenZip.7zxa.dll");
 
         private readonly DirPath _appRootDir;
 

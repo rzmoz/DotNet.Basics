@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.Autofac
+﻿namespace DotNet.Basics.Extensions.Autofac
 {
     public static class AutofacExtensions
     {

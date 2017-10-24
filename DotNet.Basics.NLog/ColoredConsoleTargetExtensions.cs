@@ -2,7 +2,7 @@
 using NLog.Conditions;
 using NLog.Targets;
 
-namespace DotNet.Basics.NLog
+namespace DotNet.Basics.Extensions.NLog
 {
     public static class ColoredConsoleTargetExtensions
     {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Autofac.Core;
 using Autofac.Core.Registration;
-using DotNet.Basics.Autofac;
+using DotNet.Basics.Extensions.Autofac;
 using DotNet.Basics.Tasks;
 
 namespace DotNet.Basics.Pipelines

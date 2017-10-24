@@ -1,7 +1,7 @@
 ﻿using NLog.Targets;
 using NLog.Targets.Wrappers;
 
-namespace DotNet.Basics.NLog
+namespace DotNet.Basics.Extensions.NLog
 {
     public static class NLogTargetExtensions
     {

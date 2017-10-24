@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using DotNet.Basics.Autofac;
+using DotNet.Basics.Extensions.Autofac;
 
 namespace DotNet.Basics.Tests.AutoFac.TestHelpers
 {

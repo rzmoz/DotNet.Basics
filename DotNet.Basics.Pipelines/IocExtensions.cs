@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using Autofac;
-using DotNet.Basics.Autofac;
+using DotNet.Basics.Extensions.Autofac;
 
 namespace DotNet.Basics.Pipelines
 {
