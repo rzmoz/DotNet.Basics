@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Linq;
 using DotNet.Basics.IO;
-using DotNet.Basics.Sys;
 using FluentAssertions;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace DotNet.Basics.Tests.IO
 {
@@ -44,6 +42,27 @@ namespace DotNet.Basics.Tests.IO
             actual = @"c:\BuildLibrary\Folder\Module 2.0.1".ToDir("Website");
             expected = @"c:\BuildLibrary\Folder\Module 2.0.1\Website\";
             actual.FullPath().Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData("SomeDir\\MyDir.txt", "MyDir")]//has extension
+        [InlineData("SomeDir\\MyDir", "MyDir")]//no extension
+        [InlineData("SomeDir\\.txt", "")]//only extension
+        [InlineData(null, "")]//name is null
+        public void NameWoExtension_WithoutExtension_NameIsRight(string name, string nameWoExtensions)
+        {
+            var file = name.ToDir();
+            file.NameWoExtension.Should().Be(nameWoExtensions);
+        }
+        [Theory]
+        [InlineData("SomeDir\\MyDir.txt", ".txt")]//has extension
+        [InlineData("SomeDir\\MyDir", "")]//no extension
+        [InlineData("SomeDir\\.txt", ".txt")]//only extension
+        [InlineData(null, "")]//name is null
+        public void Extension_Extension_ExtensionsIsRight(string name, string extension)
+        {
+            var file = name.ToDir();
+            file.Extension.Should().Be(extension);
         }
 
         [Fact]
@@ -140,7 +159,7 @@ namespace DotNet.Basics.Tests.IO
             targetDir.Exists().Should().BeTrue();
             GetHierarchyDepth(targetDir).Should().Be(dirDepth + 1);
         }
-        
+
         private int GetHierarchyDepth(DirPath root)
         {
             var subDir = root.GetDirectories().SingleOrDefault(dir => dir.Name.Equals(root.Name, StringComparison.InvariantCultureIgnoreCase));
@@ -180,6 +199,6 @@ namespace DotNet.Basics.Tests.IO
             }
             return root;
         }
-        
+
     }
 }

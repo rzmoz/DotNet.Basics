@@ -17,12 +17,7 @@ namespace DotNet.Basics.IO
         public FilePath(string path, char pathSeparator, params string[] segments)
             : base(path, IO.IsFolder.False, pathSeparator, segments)
         {
-            NameWoExtension = Path.GetFileNameWithoutExtension(Name);
-            Extension = Path.GetExtension(Name);
         }
-        public string NameWoExtension { get; }
-        public string Extension { get; }
-
         public bool MoveTo(DirPath targetDir, bool overwrite = false, bool ensureTargetDir = true)
         {
             return MoveTo(targetDir.ToFile(Name), overwrite, ensureTargetDir);

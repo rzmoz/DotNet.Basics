@@ -41,10 +41,14 @@ namespace DotNet.Basics.IO
 
             //set name
             Name = Path.GetFileName(RawPath.RemoveSuffix(Separator));
+            NameWoExtension = Path.GetFileNameWithoutExtension(Name);
+            Extension = Path.GetExtension(Name);
         }
 
         public string RawPath { get; }
         public string Name { get; }
+        public string NameWoExtension { get; }
+        public string Extension { get; }
         public bool IsFolder { get; }
 
         public DirPath Parent => Segments.Count <= 1 ? null : new DirPath(null, Segments.Take(Segments.Count - 1).ToArray());
@@ -60,7 +64,7 @@ namespace DotNet.Basics.IO
         {
             return DeleteIfExists(30.Seconds());
         }
-        
+
         public bool DeleteIfExists(TimeSpan timeout)
         {
             if (Exists() == false)

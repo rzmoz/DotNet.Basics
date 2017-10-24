@@ -68,8 +68,8 @@ namespace DotNet.Basics.Extensions.PowerShell
                 var value = param.Value?.ToString();
                 if (value != null)
                     value = $"\"{value}\"";
-                if (param.Value is string[])
-                    value = ToPowerShellParameterString(param.Value as string[]);
+                if (param.Value is string[] strings)
+                    value = ToPowerShellParameterString(strings);
 
                 if (string.IsNullOrEmpty(value) == false)
                     script += $" {value}";
