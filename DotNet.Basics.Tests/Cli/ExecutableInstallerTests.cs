@@ -5,7 +5,7 @@ using DotNet.Basics.IO;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.IO
+namespace DotNet.Basics.Tests.Cli
 {
     public class ExecutableInstallerTests
     {
@@ -16,7 +16,7 @@ namespace DotNet.Basics.Tests.IO
             appDir.DeleteIfExists();
             var fileName = "ReturnIntConsole.Exe";
             var consoleAppStream =
-                typeof(ExecutableInstallerTests).Assembly.GetManifestResourceStream("DotNet.Basics.Tests.NetCore.Cli.ReturnIntConsole.exe");
+                typeof(ExecutableInstallerTests).Assembly.GetManifestResourceStream("DotNet.Basics.Tests.Cli.ReturnIntConsole.exe");
 
             consoleAppStream.Should().NotBeNull("ReturnIntConsole.Exe");
 
