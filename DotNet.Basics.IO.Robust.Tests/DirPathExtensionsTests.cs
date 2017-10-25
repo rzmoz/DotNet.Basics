@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using DotNet.Basics.Sys;
 using DotNet.Basics.TestsRoot;
@@ -8,11 +9,49 @@ using Xunit.Abstractions;
 
 namespace DotNet.Basics.IO.Robust.Tests
 {
-    public class DirPathExtensionsTests: TestWithHelpers
+    public class DirPathExtensionsTests : TestWithHelpers
     {
         public DirPathExtensionsTests(ITestOutputHelper output) : base(output)
         {
         }
+
+
+        [Fact]
+        public void SearchOption_SubDirs_OptionsAreObeyed()
+        {
+            var testDir = TestRoot.ToDir("SearchOption_SubDirs_OptionsAreObeyed");
+            var subDir = testDir.CreateSubDir("1");
+            subDir.CreateSubDir("12");
+            subDir.CreateSubDir("23");
+            subDir.ToFile("myFile1.txt").WriteAllText("bla");
+
+            testDir.GetPaths(searchOption: SearchOption.TopDirectoryOnly).Count.Should().Be(1);
+            testDir.GetPaths(searchOption: SearchOption.AllDirectories).Count.Should().Be(4);
+
+            testDir.GetDirectories(searchOption: SearchOption.TopDirectoryOnly).Count.Should().Be(1);
+            testDir.GetDirectories(searchOption: SearchOption.AllDirectories).Count.Should().Be(3);
+
+            testDir.GetFiles(searchOption: SearchOption.TopDirectoryOnly).Count.Should().Be(0);
+            testDir.GetFiles(searchOption: SearchOption.AllDirectories).Count.Should().Be(1);
+        }
+
+        [Fact]
+        public void SearchPattern_OnlyTxtFiles_PatternIsObeyed()
+        {
+            var testDir = TestRoot.ToDir("SearchPattern_OnlyTxtFiles_PatternIsObeyed");
+            testDir.CreateSubDir("1");
+            testDir.ToFile("myFile1.txt").WriteAllText("bla");
+            testDir.ToFile("myFile2.json").WriteAllText("bla");
+
+            var jsonFromPaths = testDir.GetPaths("*.txt");
+            var jsonFromDirs = testDir.GetDirectories("*.txt");
+            var jsonFromFiles = testDir.GetFiles("*.txt");
+
+            jsonFromPaths.Count.Should().Be(1);
+            jsonFromDirs.Count.Should().Be(0);
+            jsonFromFiles.Count.Should().Be(1);
+        }
+
 
         [Fact]
         public void ToDir_CombineToDir_FullNameIsCorrect()
