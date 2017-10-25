@@ -16,6 +16,7 @@ namespace DotNet.Basics.IO.Robust
         private static MethodInfo _fileExists;
         private static MethodInfo _deleteFile;
         private static MethodInfo _moveFile;
+        private static MethodInfo _copyFile;
 
         internal static Lazy<NetCoreLongPath> Instance = new Lazy<NetCoreLongPath>(() =>
          {
@@ -37,6 +38,7 @@ namespace DotNet.Basics.IO.Robust
                  _fileExists = win32FileSystemType.GetMethod("FileExists", BindingFlags.Public | BindingFlags.Instance);
                  _deleteFile = win32FileSystemType.GetMethod("DeleteFile", BindingFlags.Public | BindingFlags.Instance);
                  _moveFile = win32FileSystemType.GetMethod("MoveFile", BindingFlags.Public | BindingFlags.Instance);
+                 _copyFile = win32FileSystemType.GetMethod("CopyFile", BindingFlags.Public | BindingFlags.Instance);
 
                  return new NetCoreLongPath();
              }
@@ -56,6 +58,10 @@ namespace DotNet.Basics.IO.Robust
             Win32System(_deleteDir, new object[] { fullPath, true });
         }
 
+        internal void CopyFile(string sourceFullPath, string destFullPath, bool overwrite)
+        {
+            Win32System(_copyFile, new object[] { sourceFullPath, destFullPath, overwrite });
+        }
         internal void DeleteFile(string fullPath)
         {
             Win32System(_deleteFile, new object[] { fullPath });

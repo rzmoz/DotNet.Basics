@@ -13,10 +13,7 @@ namespace DotNet.Basics.Extensions.SevenZip.Tests
 
         public ZipReaderTests(ITestOutputHelper output) : base(output)
         {
-            var archiveSource = TestRoot.ToFile("NewFolder.zip");
-            _testSource = TestRoot.ToFile(archiveSource.Name);
-            archiveSource.CopyTo(_testSource, overwrite: true);
-
+            _testSource = TestRoot.ToFile("NewFolder.zip");
             _testSource.Exists().Should().BeTrue(_testSource.FullName(), true);
         }
         

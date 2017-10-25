@@ -5,6 +5,10 @@ namespace DotNet.Basics.IO.Robust
 {
     public static class LongPath
     {
+        public static void CopyFile(string sourceFullPath, string destFullPath, bool overWrite)
+        {
+            NetCoreLongPath.Instance.Value.CopyFile(sourceFullPath, destFullPath, overWrite);
+        }
         public static void CreateDir(string path)
         {
             NetCoreLongPath.Instance.Value.CreateDir(path);
