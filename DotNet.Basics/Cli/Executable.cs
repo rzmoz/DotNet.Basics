@@ -6,7 +6,7 @@ namespace DotNet.Basics.Cli
 {
     public class Executable
     {
-        public static (int ExitCode, string Output) Run(string path, object args = null)
+        public static (string Input, int ExitCode, string Output) Run(string path, object args = null)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
             var si = new ProcessStartInfo(path, args?.ToString() ?? string.Empty)
@@ -25,7 +25,7 @@ namespace DotNet.Basics.Cli
                     process.Start();
                     var result = process.StandardOutput.ReadToEnd();
                     process.WaitForExit();
-                    return (process.ExitCode, result.TrimEnd(' ', '\r', '\n'));
+                    return ($"{path} {args}", process.ExitCode, result.TrimEnd(' ', '\r', '\n'));
                 }
             }
             catch (Win32Exception e)

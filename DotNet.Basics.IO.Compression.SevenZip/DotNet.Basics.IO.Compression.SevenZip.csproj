@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+ 
+  <ItemGroup>
+    <None Remove="7za.dll" />
+    <None Remove="7za.exe" />
+    <None Remove="7zxa.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="7za.dll" />
+    <EmbeddedResource Include="7za.exe" />
+    <EmbeddedResource Include="7zxa.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO.Compression" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DotNet.Basics.IO.Robust\DotNet.Basics.IO.Robust.csproj" />
+    <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />
+  </ItemGroup>   
+  
+</Project>

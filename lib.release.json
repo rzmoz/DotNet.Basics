@@ -1,15 +1,27 @@
 {
   "releases": [
+    //domain
     {
       "name": "DotNet.Basics",
-      "version": "9.0.0",
-      "prerelease": "rc.7"
+      "version": "9.1.0",
+      "prerelease": "beta.1"
+    },
+    {
+      "name": "DotNet.Basics.IO.Robust",
+      "version": "9.1.0",
+      "prerelease": "beta.1"
+    },
+    {
+      "name": "DotNet.Basics.IO.Compression.SevenZip",
+      "version": "9.1.0",
+      "prerelease": "beta.1"
     },
     {
       "name": "DotNet.Basics.Pipelines",
-      "version": "9.0.0",
-      "prerelease": "rc.5"
+      "version": "9.1.0",
+      "prerelease": "beta.1"
     },
+    //extensions
     {
       "name": "DotNet.Basics.Extensions.Autofac",
       "version": "4.6.2",
@@ -24,14 +36,11 @@
       "name": "DotNet.Basics.Extensions.PowerShell",
       "version": "6.0.0",
       "prerelease": "alpha.1"
-    },
-    {
-      "name": "DotNet.Basics.Extensions.SevenZip",
-      "version": "16.04.0",
-      "prerelease": "rc.4"
     }
   ],
   "tests": [
-    "DotNet.Basics.Tests"
+    "DotNet.Basics.Tests",
+    "DotNet.Basics.IO.Robust.Tests",
+    "DotNet.Basics.IO.Compression.SevenZip.Tests"
   ]
 }
