@@ -1,14 +1,13 @@
-﻿using DotNet.Basics.Rest;
-
+﻿
 namespace DotNet.Basics.Tests.Pipelines.PipelineHelpers
 {
     public class ClassThatTakesAnAbstractClassAsCtorParam
     {
-        private readonly IRestClient _client;
+        private readonly IAbstract _abstract;
 
-        public ClassThatTakesAnAbstractClassAsCtorParam(IRestClient client)
+        public ClassThatTakesAnAbstractClassAsCtorParam(IAbstract @abstract)
         {
-            _client = client;
+            _abstract = @abstract;
         }
     }
 }

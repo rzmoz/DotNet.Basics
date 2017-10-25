@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using DotNet.Basics.Extensions.Autofac;
-using DotNet.Basics.Rest;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
 using DotNet.Basics.Pipelines;
@@ -38,7 +37,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var builder = new AutofacBuilder(resolveConcreteTypesNotAlreadyRegistered: false);
 
             //register abstract types specifically
-            builder.RegisterType<RestClient>().As<IRestClient>();
+            builder.RegisterType<ConcreteClass>().As<IAbstract>();
             builder.RegisterType<ClassThatTakesAnAbstractClassAsCtorParam>();
             //abstract dependency registrations are not overridden
             builder.RegisterPipelineSteps(typeof(PipelineTests).Assembly);
