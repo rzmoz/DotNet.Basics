@@ -23,7 +23,7 @@ namespace DotNet.Basics.IO.Robust
             if (overwrite)
                 targetFile.DeleteIfExists();
 
-            LongPath.MoveFile(fp.FullName(), targetFile.FullName());
+            NetCoreLongPath.MoveFile(fp.FullName(), targetFile.FullName());
             return targetFile.Exists();
         }
 
@@ -44,7 +44,7 @@ namespace DotNet.Basics.IO.Robust
             if (ensureTargetDir)
                 target.Directory().CreateIfNotExists();
 
-            LongPath.CopyFile(fp.FullName(), target.FullName(), overwrite);
+            NetCoreLongPath.CopyFile(fp.FullName(), target.FullName(), overwrite);
         }
 
         public static bool IsFileType(this FilePath fp, FileType fileType)

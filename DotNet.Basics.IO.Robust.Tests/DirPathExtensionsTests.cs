@@ -37,7 +37,7 @@ namespace DotNet.Basics.IO.Robust.Tests
             testDir.ToFile("myFile.txt").WriteAllText(@"bllll");
 
             testDir.Exists().Should().BeTrue();
-            testDir.GetFiles().Length.Should().Be(1);
+            testDir.GetFiles().Count.Should().Be(1);
 
             //act
             testDir.CreateIfNotExists();
@@ -45,7 +45,7 @@ namespace DotNet.Basics.IO.Robust.Tests
 
             //assert
             testDir.Exists().Should().BeTrue();
-            testDir.GetFiles().Length.Should().Be(0);
+            testDir.GetFiles().Count.Should().Be(0);
         }
 
         [Fact]
@@ -57,14 +57,14 @@ namespace DotNet.Basics.IO.Robust.Tests
             testDir.ToFile("myFile.txt").WriteAllText(@"bllll");
 
             testDir.Exists().Should().BeTrue();
-            testDir.GetFiles().Length.Should().Be(1);
+            testDir.GetFiles().Count.Should().Be(1);
 
             //act
             testDir.CreateIfNotExists();
 
             //assert
             testDir.Exists().Should().BeTrue();
-            testDir.GetFiles().Length.Should().Be(1);
+            testDir.GetFiles().Count.Should().Be(1);
         }
         [Fact]
         public void CleanIfExists_DirDoesntExists_NoActionAndNoExceptions()
@@ -89,12 +89,12 @@ namespace DotNet.Basics.IO.Robust.Tests
 
             AddTestContent(testDir, 0, numOfTestFiles);
 
-            testDir.GetFiles().Length.Should().Be(numOfTestFiles);
+            testDir.GetFiles().Count.Should().Be(numOfTestFiles);
 
             //act
             testDir.CleanIfExists();
 
-            testDir.GetFiles().Length.Should().Be(0);
+            testDir.GetFiles().Count.Should().Be(0);
         }
 
         [Fact]

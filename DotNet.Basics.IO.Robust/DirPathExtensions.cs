@@ -30,7 +30,7 @@ namespace DotNet.Basics.IO.Robust
                 path.DeleteIfExists();
             });
 
-            return dp.GetPaths().Length == 0;
+            return dp.GetPaths().Count == 0;
         }
 
         public static void CreateIfNotExists(this DirPath dp)
@@ -38,7 +38,7 @@ namespace DotNet.Basics.IO.Robust
             if (dp.Exists())
                 return;
 
-            LongPath.CreateDir(dp.FullName());
+            NetCoreLongPath.CreateDir(dp.FullName());
         }
 
         public static DirPath CreateSubDir(this DirPath dp, string subDirName)
@@ -81,29 +81,29 @@ namespace DotNet.Basics.IO.Robust
             }
         }
 
-        public static DirPath[] GetDirectories(this DirPath dp, string searchPattern = null, bool recurse = false)
+        public static IReadOnlyCollection<DirPath> GetDirectories(this DirPath dp, string searchPattern = null, bool recurse = false)
         {
-            return System.IO.Directory.GetDirectories(dp.FullName(), searchPattern ?? "*", ToSearchOption(recurse)).Select(dir => dir.ToDir()).ToArray();
+            return dp.EnumerateDirectories(searchPattern ?? "*", recurse).ToArray();
         }
-        public static FilePath[] GetFiles(this DirPath dp, string searchPattern = null, bool recurse = false)
+        public static IReadOnlyCollection<FilePath> GetFiles(this DirPath dp, string searchPattern = null, bool recurse = false)
         {
-            return System.IO.Directory.GetFiles(dp.FullName(), searchPattern ?? "*", ToSearchOption(recurse)).Select(dir => dir.ToFile()).ToArray();
+            return dp.EnumerateFiles(searchPattern ?? "*", recurse).ToArray();
         }
-        public static PathInfo[] GetPaths(this DirPath dp, string searchPattern = null, bool recurse = false)
+        public static IReadOnlyCollection<PathInfo> GetPaths(this DirPath dp, string searchPattern = null, bool recurse = false)
         {
-            return System.IO.Directory.GetFileSystemEntries(dp.FullName(), searchPattern ?? "*", ToSearchOption(recurse)).Select(dir => dir.ToPath()).ToArray();
+            return dp.EnumeratePaths(searchPattern ?? "*", recurse).ToArray();
         }
         public static IEnumerable<DirPath> EnumerateDirectories(this DirPath dp, string searchPattern = null, bool recurse = false)
         {
-            return System.IO.Directory.EnumerateDirectories(dp.FullName(), searchPattern ?? "*", ToSearchOption(recurse)).Select(dir => dir.ToDir());
+            return NetCoreLongPath.EnumerateDirectories(dp.FullName(), searchPattern ?? "*", ToSearchOption(recurse)).Select(dir => dir.ToDir());
         }
         public static IEnumerable<FilePath> EnumerateFiles(this DirPath dp, string searchPattern = null, bool recurse = false)
         {
-            return System.IO.Directory.EnumerateFiles(dp.FullName(), searchPattern ?? "*", ToSearchOption(recurse)).Select(file => file.ToFile());
+            return NetCoreLongPath.EnumerateFiles(dp.FullName(), searchPattern ?? "*", ToSearchOption(recurse)).Select(file => file.ToFile());
         }
         public static IEnumerable<PathInfo> EnumeratePaths(this DirPath dp, string searchPattern = null, bool recurse = false)
         {
-            return System.IO.Directory.EnumerateFileSystemEntries(dp.FullName(), searchPattern ?? "*", ToSearchOption(recurse)).Select(fse => fse.ToPath());
+            return NetCoreLongPath.EnumeratePaths(dp.FullName(), searchPattern ?? "*", ToSearchOption(recurse)).Select(fse => fse.ToPath());
         }
         private static SearchOption ToSearchOption(bool recurse)
         {

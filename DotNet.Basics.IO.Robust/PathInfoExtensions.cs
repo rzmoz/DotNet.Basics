@@ -9,14 +9,14 @@ namespace DotNet.Basics.IO.Robust
     {
         public static string FullName(this PathInfo pi)
         {
-            return LongPath.GetFullName(pi.RawPath);
+            return NetCoreLongPath.NormalizePath(pi.RawPath);
         }
         public static bool Exists(this PathInfo pi, params string[] segments)
         {
             var combinedPath = pi;
             if (segments?.Length > 0)
                 combinedPath = combinedPath.RawPath.ToPath(segments);
-            return LongPath.Exists(combinedPath.FullName());
+            return NetCoreLongPath.Exists(combinedPath.FullName());
         }
         public static bool DeleteIfExists(this PathInfo pi)
         {
@@ -28,7 +28,25 @@ namespace DotNet.Basics.IO.Robust
             if (pi.Exists() == false)
                 return true;
             var fullName = pi.FullName();
-            Repeat.Task(() => LongPath.TryDelete(fullName))
+            Repeat.Task(() =>
+                {
+                    try
+                    {
+                        NetCoreLongPath.DeleteDir(fullName);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                    try
+                    {
+                        NetCoreLongPath.DeleteFile(fullName);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                })
                 .WithOptions(o =>
                 {
                     o.Timeout = timeout;

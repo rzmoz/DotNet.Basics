@@ -25,7 +25,7 @@ namespace DotNet.Basics.IO.Robust.Tests
             Robocopy.CopyDir(testSource.Directory().FullName(), sourceDir.FullName(), true, null);
             emptyDir.CreateIfNotExists();
             emptyDir.CleanIfExists();
-            emptyDir.GetPaths().Length.Should().Be(0);//empty dir
+            emptyDir.GetPaths().Count.Should().Be(0);//empty dir
             sourceDir.Exists().Should().BeTrue(sourceDir.FullName());
             targetDir.DeleteIfExists();
             targetDir.Exists().Should().BeFalse(targetDir.FullName());
