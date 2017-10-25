@@ -38,7 +38,7 @@ namespace DotNet.Basics.IO.Robust
             if (dp.Exists())
                 return;
 
-            System.IO.Directory.CreateDirectory(dp.FullName());
+            LongPath.CreateDir(dp.FullName());
         }
 
         public static DirPath CreateSubDir(this DirPath dp, string subDirName)

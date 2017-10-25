@@ -37,6 +37,34 @@ namespace DotNet.Basics.IO.Robust.Tests
             }
         }
 
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void CopyTo_OverWrite_OverwriteIsObeyed(bool overwrite)
+        {
+            var testDir = TestRoot.ToDir($@"CopyTo_OverWrite_OverwriteIsObeyed_{overwrite}");
+            var targetFile = testDir.ToFile("myFile.txt");
+            targetFile.WriteAllText("blaaah!");
+            targetFile.ReadAllText().Should().Be("blaaah!");//assert target file exists
+
+            var testFile1 = new TestFile1();
+            testFile1.CopyTo(testDir, true);//ensure file exists in target
+
+            Action action = () => testFile1.CopyTo(targetFile, overwrite);
+
+            if (overwrite)
+            {
+                action.ShouldNotThrow();
+                targetFile.ReadAllText().Should().Be("Hello World!");
+            }
+            else
+            {
+                action.ShouldThrow<IOException>();
+            }
+        }
+
+
+
         [Fact]
         public void MoveTo_RenameFileInSameFolder_FileIsRenamed()
         {

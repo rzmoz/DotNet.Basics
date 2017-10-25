@@ -1,41 +1,54 @@
-﻿namespace DotNet.Basics.IO.Robust
+﻿using System;
+using System.IO;
+
+namespace DotNet.Basics.IO.Robust
 {
     public static class LongPath
     {
+        public static void CreateDir(string path)
+        {
+            NetStandardLongPath.Instance.Value.CreateDir(path);
+        }
+
         public static bool Exists(string path)
         {
-#if NETSTANDARD2_0
             return NetStandardLongPath.Instance.Value.Exists(path);
-#endif
-#if net45
-            return NetFrameworkLongPath.Instance.Value.Exists(path);
-#endif      
         }
 
         public static string GetFullName(string path)
         {
-#if NETSTANDARD2_0
-            return NetStandardLongPath.Instance.Value.GetFullPath(path);
-#endif
-#if net45
-            return NetFrameworkLongPath.Instance.Value.GetFullPath(path);
-#endif
+            return NetStandardLongPath.Instance.Value.NormalizePath(path);
         }
 
-        public static bool TryDelete(string path)
+        public static void MoveFile(string sourceFullPath, string destFullPath)
         {
-            var fullPath = GetFullName(path);
-            bool deletedDir;
-            bool deletedFile;
-#if NETSTANDARD2_0
-            deletedDir = NetStandardLongPath.Instance.Value.TryDeleteDir(fullPath);
-            deletedFile = NetStandardLongPath.Instance.Value.TryDeleteFile(fullPath);
-#endif
-#if net45
-            deletedDir = NetFrameworkLongPath.Instance.Value.TryDeleteDir(fullPath);
-            deletedFile = NetFrameworkLongPath.Instance.Value.TryDeleteFile(fullPath);
-#endif
-            return deletedDir || deletedFile;
+            NetStandardLongPath.Instance.Value.Movefile(sourceFullPath, destFullPath);
+        }
+
+        public static bool TryDelete(string fullPath)
+        {
+            Exception lastException = null;
+            try
+            {
+                NetStandardLongPath.Instance.Value.DeleteDir(fullPath);
+            }
+            catch (Exception e)
+            {
+                lastException = e;
+            }
+            try
+            {
+                NetStandardLongPath.Instance.Value.DeleteFile(fullPath);
+            }
+            catch (Exception e)
+            {
+                lastException = e;
+            }
+
+            if (NetStandardLongPath.Instance.Value.Exists(fullPath))
+                throw new IOException($"Failed to delete: {fullPath}", lastException);
+
+            return true;
         }
 
     }

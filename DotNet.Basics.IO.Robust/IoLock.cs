@@ -40,10 +40,7 @@ namespace DotNet.Basics.IO.Robust
                     o.RetryDelay = 1.Seconds();
                     o.DontRethrowOnTaskFailedType = typeof(IOException);
                 }).UntilNoExceptions();
-                /*
-                if (lockAcquired)
-                    DebugOut.WriteLine($"lock acquired for {Name} in {_lockDir.FullPath()}");*/
-
+                
                 return lockAcquired;
             }
             catch (Exception)

@@ -4,14 +4,14 @@ using System.Linq;
 using System.Reflection;
 
 namespace DotNet.Basics.IO.Robust
-{
+{/*
     internal class NetFrameworkLongPath
     {
         private static MethodInfo _normalizePath;
         private static MethodInfo _dirInternalExists;
         private static MethodInfo _fileInternalExists;
 
-        private static int _maxPathLength = 32000;
+        private static int _maxPathLength = 32767;
         private static readonly int _maxDirectoryLength = _maxPathLength - 12;
 
         //lazy to ensure it's only initialized on purpose to avoid exceptions when loaded in netstanrd env
@@ -35,6 +35,12 @@ namespace DotNet.Basics.IO.Robust
 
              return new NetFrameworkLongPath();
          });
+
+        internal bool TryCreateDir(string fullPath)
+        {
+            throw new NotImplementedException();
+        }
+
         internal bool TryDeleteDir(string fullPath)
         {
             try
@@ -139,5 +145,5 @@ namespace DotNet.Basics.IO.Robust
             type?.GetField("MaxPath", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue("MaxPath", _maxPathLength);
             type?.GetField("MaxDirectoryLength", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue("MaxDirectoryLength", _maxPathLength);
         }
-    }
+    }*/
 }
