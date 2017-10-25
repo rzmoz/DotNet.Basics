@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DotNet.Basics.Autofac\DotNet.Basics.Extensions.Autofac.csproj" />
+    <ProjectReference Include="..\DotNet.Basics.Extensions.Autofac\DotNet.Basics.Extensions.Autofac.csproj" />
     <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />
   </ItemGroup>
 

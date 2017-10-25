@@ -25,8 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DotNet.Basics.Autofac\DotNet.Basics.Extensions.Autofac.csproj" />
-    <ProjectReference Include="..\DotNet.Basics.NLog\DotNet.Basics.Extensions.NLog.csproj" />
+    <ProjectReference Include="..\DotNet.Basics.Extensions.Autofac\DotNet.Basics.Extensions.Autofac.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Pipelines\DotNet.Basics.Pipelines.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Tests.NetCore.EchoOut\DotNet.Basics.Tests.NetCore.EchoOut.csproj" />
     <ProjectReference Include="..\DotNet.Basics.TestsRoot\DotNet.Basics.TestsRoot.csproj" />

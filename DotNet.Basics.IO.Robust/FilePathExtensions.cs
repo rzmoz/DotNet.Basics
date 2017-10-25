@@ -42,12 +42,17 @@ namespace DotNet.Basics.IO.Robust
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (ensureTargetDir)
                 target.Directory().CreateIfNotExists();
-            else if(target.Directory().Exists()==false)
+            else if (target.Directory().Exists() == false)
                 throw new IOException($"Target already doesn't exist. Set ensureTargetDirToTrue to ensure succesful copy to non-existing dir: {target.Directory()}");
+
+            if (overwrite && target.Exists())
+                target.DeleteIfExists();
             if (overwrite == false && target.Exists())
                 throw new IOException($"Target already exists: {target.Directory()}");
 
-            Robocopy.CopyFile(fp.Directory().FullName(), target.FullName(), fp.Name);
+            var sourceDir = fp.Directory().FullName();
+            var targetDir = target.Directory().FullName();
+            var result = Robocopy.CopyFile(sourceDir, targetDir, fp.Name);
         }
 
         public static bool IsFileType(this FilePath fp, FileType fileType)

@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace DotNet.Basics.IO.Robust
 {
-    internal class NetStandardLongPath
+    internal class NetCoreLongPath
     {
         private static MethodInfo _normalizePath;
 
@@ -17,7 +17,7 @@ namespace DotNet.Basics.IO.Robust
         private static MethodInfo _deleteFile;
         private static MethodInfo _moveFile;
 
-        internal static Lazy<NetStandardLongPath> Instance = new Lazy<NetStandardLongPath>(() =>
+        internal static Lazy<NetCoreLongPath> Instance = new Lazy<NetCoreLongPath>(() =>
          {
              try
              {
@@ -38,7 +38,7 @@ namespace DotNet.Basics.IO.Robust
                  _deleteFile = win32FileSystemType.GetMethod("DeleteFile", BindingFlags.Public | BindingFlags.Instance);
                  _moveFile = win32FileSystemType.GetMethod("MoveFile", BindingFlags.Public | BindingFlags.Instance);
 
-                 return new NetStandardLongPath();
+                 return new NetCoreLongPath();
              }
              catch (Exception e)
              {

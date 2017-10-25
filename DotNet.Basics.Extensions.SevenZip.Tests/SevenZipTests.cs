@@ -3,14 +3,14 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using FluentAssertions;
 using DotNet.Basics.IO.Robust;
 using DotNet.Basics.Sys;
 using DotNet.Basics.TestsRoot;
+using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DotNet.Basics.IO.Compression.SevenZip.Tests
+namespace DotNet.Basics.Extensions.SevenZip.Tests
 {
     public class SevenZipTests : TestWithHelpers
     {

@@ -4,11 +4,11 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using DotNet.Basics.Sys;
 using DotNet.Basics.IO.Robust;
+using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks.Repeating;
 
-namespace DotNet.Basics.IO.Compression.SevenZip
+namespace DotNet.Basics.Extensions.SevenZip
 {
     public class ZipReader : IDisposable
     {

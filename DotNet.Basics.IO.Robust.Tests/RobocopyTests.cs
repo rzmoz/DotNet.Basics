@@ -8,7 +8,7 @@ using Xunit.Abstractions;
 
 namespace DotNet.Basics.IO.Robust.Tests
 {
-    public class RobocopyTests:TestWithHelpers
+    public class RobocopyTests : TestWithHelpers
     {
         public RobocopyTests(ITestOutputHelper output) : base(output)
         {
@@ -51,7 +51,7 @@ namespace DotNet.Basics.IO.Robust.Tests
             targetFile.Exists().Should().BeFalse("target file should not exist before copy");
 
             //act
-            var result = Robocopy.CopyFile(sourcefile.Directory().FullName(), sourcefile.Name, targetFile.Directory().FullName());
+            var result = Robocopy.CopyFile(sourcefile.Directory().FullName(), targetFile.Directory().FullName(), sourcefile.Name);
 
             result.ExitCode.Should().BeLessThan(8); //http://ss64.com/nt/robocopy-exit.html
             targetFile.Exists().Should().BeTrue("target file is copied");

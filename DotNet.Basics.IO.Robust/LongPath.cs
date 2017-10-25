@@ -7,22 +7,22 @@ namespace DotNet.Basics.IO.Robust
     {
         public static void CreateDir(string path)
         {
-            NetStandardLongPath.Instance.Value.CreateDir(path);
+            NetCoreLongPath.Instance.Value.CreateDir(path);
         }
 
         public static bool Exists(string path)
         {
-            return NetStandardLongPath.Instance.Value.Exists(path);
+            return NetCoreLongPath.Instance.Value.Exists(path);
         }
 
         public static string GetFullName(string path)
         {
-            return NetStandardLongPath.Instance.Value.NormalizePath(path);
+            return NetCoreLongPath.Instance.Value.NormalizePath(path);
         }
 
         public static void MoveFile(string sourceFullPath, string destFullPath)
         {
-            NetStandardLongPath.Instance.Value.Movefile(sourceFullPath, destFullPath);
+            NetCoreLongPath.Instance.Value.Movefile(sourceFullPath, destFullPath);
         }
 
         public static bool TryDelete(string fullPath)
@@ -30,7 +30,7 @@ namespace DotNet.Basics.IO.Robust
             Exception lastException = null;
             try
             {
-                NetStandardLongPath.Instance.Value.DeleteDir(fullPath);
+                NetCoreLongPath.Instance.Value.DeleteDir(fullPath);
             }
             catch (Exception e)
             {
@@ -38,14 +38,14 @@ namespace DotNet.Basics.IO.Robust
             }
             try
             {
-                NetStandardLongPath.Instance.Value.DeleteFile(fullPath);
+                NetCoreLongPath.Instance.Value.DeleteFile(fullPath);
             }
             catch (Exception e)
             {
                 lastException = e;
             }
 
-            if (NetStandardLongPath.Instance.Value.Exists(fullPath))
+            if (NetCoreLongPath.Instance.Value.Exists(fullPath))
                 throw new IOException($"Failed to delete: {fullPath}", lastException);
 
             return true;

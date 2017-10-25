@@ -9,6 +9,6 @@
     <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
     <projectUrl>https://github.com/rzmoz/DotNet.Basics</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>IO actions for improved robustness in terms of retry logic and avoiding PathTooLongException when working iwth long paths</description>
+    <description>IO actions for improved robustness in terms of retry logic and avoiding PathTooLongException when working with long paths</description>
   </metadata>
 </package>

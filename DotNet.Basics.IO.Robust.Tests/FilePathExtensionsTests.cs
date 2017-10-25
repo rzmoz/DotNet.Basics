@@ -20,7 +20,7 @@ namespace DotNet.Basics.IO.Robust.Tests
         [InlineData(false)]
         public void CopyTo_EnsureTargetdir_TargetDirIsEnsured(bool ensureTargetDir)
         {
-            var testdir = TestRoot.ToDir(@"CopyTo_EnsureTargetdir_TargetDirIsEnsured");
+            var testdir = TestRoot.ToDir($@"CopyTo_EnsureTargetdir_TargetDirIsEnsured_{ensureTargetDir}");
             testdir.DeleteIfExists();
             var testFile1 = new TestFile1();
             Action action = () => testFile1.CopyTo(testdir, false, ensureTargetDir);
@@ -48,7 +48,7 @@ namespace DotNet.Basics.IO.Robust.Tests
             targetFile.ReadAllText().Should().Be("blaaah!");//assert target file exists
 
             var testFile1 = new TestFile1();
-            testFile1.CopyTo(testDir, true);//ensure file exists in target
+            testFile1.CopyTo(testDir, targetFile.Name, true);//ensure file exists in target
 
             Action action = () => testFile1.CopyTo(targetFile, overwrite);
 

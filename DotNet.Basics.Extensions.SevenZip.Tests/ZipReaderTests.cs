@@ -5,7 +5,7 @@ using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DotNet.Basics.IO.Compression.SevenZip.Tests
+namespace DotNet.Basics.Extensions.SevenZip.Tests
 {
     public class ZipReaderTests:TestWithHelpers
     {
@@ -14,7 +14,7 @@ namespace DotNet.Basics.IO.Compression.SevenZip.Tests
         public ZipReaderTests(ITestOutputHelper output) : base(output)
         {
             var archiveSource = TestRoot.ToFile("NewFolder.zip");
-            _testSource = TestRoot.ToFile("ZipReaderTests", archiveSource.Name);
+            _testSource = TestRoot.ToFile(archiveSource.Name);
             archiveSource.CopyTo(_testSource, overwrite: true);
 
             _testSource.Exists().Should().BeTrue(_testSource.FullName(), true);

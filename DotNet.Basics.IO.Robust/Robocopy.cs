@@ -38,7 +38,7 @@ namespace DotNet.Basics.IO.Robust
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static (string Input, int ExitCode, string Output) CopyFile(string sourceDir, string sourceFileName, string targetDir, string extraOptions = null)
+        public static (string Input, int ExitCode, string Output) CopyFile(string sourceDir, string targetDir, string sourceFileName, string extraOptions = null)
         {
             if (sourceFileName == null) throw new ArgumentNullException(nameof(sourceFileName));
             if (targetDir == null) throw new ArgumentNullException(nameof(targetDir));

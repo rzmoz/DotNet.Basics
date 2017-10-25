@@ -6,7 +6,7 @@ using DotNet.Basics.Extensions.Autofac;
 
 namespace DotNet.Basics.Pipelines
 {
-    public static class IocExtensions
+    public static class PipelineExtensions
     {
         public static void RegisterPipelineSteps<T>(this AutofacBuilder builder, params Assembly[] assemblies)
         {

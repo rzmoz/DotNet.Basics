@@ -20,7 +20,7 @@ namespace DotNet.Basics.IO.Robust
         }
         public static bool DeleteIfExists(this PathInfo pi)
         {
-            return pi.DeleteIfExists(5.Seconds());
+            return pi.DeleteIfExists(10.Seconds());
         }
 
         public static bool DeleteIfExists(this PathInfo pi, TimeSpan timeout)
