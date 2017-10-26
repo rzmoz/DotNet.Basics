@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using DotNet.Basics.Sys;
 
-namespace DotNet.Basics.IO.Robust
+namespace DotNet.Basics.IO
 {
     public class ExecutableInstaller
     {
@@ -57,17 +57,13 @@ namespace DotNet.Basics.IO.Robust
                 //someone else already installed the app in another thread so we're aborting
                 if (lockAcquired && IsInstalled())
                     return;
-
-                //DebugOut.WriteLine($"Installing {EntryFile.Name} in {InstallDir.FullName}");
-
+                
                 //install and don't rely on rollback (try/catch) since it might conflict with other task
                 foreach (var installAction in _installActions)
                     installAction();
 
                 //app installed succesfully
-                File.Create(_installedHandle.FullName());
-
-                //DebugOut.WriteLine($"{EntryFile.Name} successfully installed");
+                File.Create(_installedHandle.FullName())?.Close();
             }
         }
 

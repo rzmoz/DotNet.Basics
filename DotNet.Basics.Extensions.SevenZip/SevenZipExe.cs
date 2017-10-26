@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using DotNet.Basics.Cli;
-using DotNet.Basics.IO.Robust;
+using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Extensions.SevenZip
@@ -31,9 +31,9 @@ namespace DotNet.Basics.Extensions.SevenZip
 
         public (string Input, int ExitCode, string Output) ExtractToDirectory(string archivePath, string targetDirPath)
         {
-            if (NetCoreLongPath.Exists(archivePath) == false)
+            if (Paths.FileSystem.ExistsFile(archivePath) == false)
                 throw new IOException($"Archive not found: {archivePath}");
-            if (NetCoreLongPath.Exists(targetDirPath))
+            if (Paths.FileSystem.ExistsDir(targetDirPath))
                 throw new IOException($"Target dir already exists at: {targetDirPath}");
             return ExecuteSevenZip("x", $"\"{archivePath}\"", $"\"-o{targetDirPath.ToDir().FullName()}\"", "*", "-r", "aoa");
         }

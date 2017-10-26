@@ -9,13 +9,12 @@ namespace DotNet.Basics.TestsRoot
         static TestWithHelpers()
         {
             var entryPath = typeof(TestWithHelpers).GetTypeInfo().Assembly.Location;
-            TestRootDir = Path.GetDirectoryName(entryPath);
+            TestRootDir = Path.Combine(Path.GetDirectoryName(entryPath));
         }
 
         protected TestWithHelpers(ITestOutputHelper output)
         {
             Output = output;
-
         }
 
         public ITestOutputHelper Output { get; }

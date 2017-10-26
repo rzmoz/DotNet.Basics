@@ -3,7 +3,7 @@ using System.IO;
 using DotNet.Basics.Cli;
 using DotNet.Basics.Sys;
 
-namespace DotNet.Basics.IO.Robust
+namespace DotNet.Basics.IO
 {
     /// <summary>
     /// http://ss64.com/nt/robocopy.html
@@ -78,7 +78,7 @@ namespace DotNet.Basics.IO.Robust
         public static (string Input, int ExitCode, string Output) MoveContent(string sourceDir, string targetDir, string filter = null, bool recurse = false, string extraOptions = null)
         {
             var result = MoveFolder(sourceDir, targetDir, filter, recurse, extraOptions);
-            Directory.CreateDirectory(sourceDir);
+            Paths.FileSystem.CreateDir(sourceDir);
             return result;
         }
     }

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using DotNet.Basics.TestsRoot;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DotNet.Basics.IO.Robust.Tests
+namespace DotNet.Basics.Tests.IO
 {
     public class DirPathExtensionsTests : TestWithHelpers
     {
@@ -140,7 +141,7 @@ namespace DotNet.Basics.IO.Robust.Tests
         public void CopyTo_IncludeSubDirectories_DirIsCopied()
         {
             const int dirDepth = 3;
-            var root = TestRoot.ToDir("CopyTo_InclSubDirs_DirIsCop");
+            var root = TestRoot.ToDir("CopyTo_IncludeSubDirectories_DirIsCopied");
             root.DeleteIfExists();
             var currentDir = CreateIdenticalSubdirs(root, dirDepth);
             currentDir.ToFile("myFile.txt").WriteAllText("blaaaa");

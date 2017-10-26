@@ -3,7 +3,7 @@ using System.IO;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks.Repeating;
 
-namespace DotNet.Basics.IO.Robust
+namespace DotNet.Basics.IO
 {
     public class IoLock : IDisposable
     {

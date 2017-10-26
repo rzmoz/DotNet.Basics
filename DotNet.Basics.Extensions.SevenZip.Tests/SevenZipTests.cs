@@ -3,7 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using DotNet.Basics.IO.Robust;
+using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using DotNet.Basics.TestsRoot;
 using FluentAssertions;
@@ -101,8 +101,8 @@ namespace DotNet.Basics.Extensions.SevenZip.Tests
             var targetFile = targetDir.ToFile("myfile.txt");
             var sourceZip = TestRoot.ToFile("myArchive.zip");
             targetDir.DeleteIfExists();
-            targetDir.Exists().Should().BeFalse();
-            targetFile.Exists().Should().BeFalse();
+            targetDir.Exists().Should().BeFalse("arrange");
+            targetFile.Exists().Should().BeFalse("arrange");
 
             //act
 
@@ -111,7 +111,7 @@ namespace DotNet.Basics.Extensions.SevenZip.Tests
             Output.WriteLine($"ExtractToDirectory result: {result.Output}");
             targetDir.Exists().Should().BeTrue($"Exists:{targetDir.FullName()}");
             targetDir.ToDir().EnumeratePaths().Count().Should().Be(1);
-            targetFile.Exists().Should().BeTrue();
+            targetFile.Exists().Should().BeTrue($"Exists:{targetDir.FullName()}");
 
             var content = targetFile.ReadAllText();
 

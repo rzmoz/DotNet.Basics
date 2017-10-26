@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using DotNet.Basics.Collections;
 using DotNet.Basics.Sys;
 
-namespace DotNet.Basics.IO.Robust
+namespace DotNet.Basics.IO
 {
     public static class DirPathExtensions
     {
@@ -38,7 +38,7 @@ namespace DotNet.Basics.IO.Robust
             if (dp.Exists())
                 return;
 
-            NetCoreLongPath.CreateDir(dp.FullName());
+            Paths.FileSystem.CreateDir(dp.FullName());
         }
 
         public static DirPath CreateSubDir(this DirPath dp, string subDirName)
@@ -51,15 +51,12 @@ namespace DotNet.Basics.IO.Robust
         public static void CopyTo(this DirPath dp, DirPath target, bool includeSubfolders = false)
         {
             if (dp.Exists() == false)
-            {
                 return;
-            }
 
             try
             {
                 target.CreateIfNotExists();
-
-                //depth first to find out quickly if we have long path exceptions - we want to fail early then
+                
                 if (includeSubfolders)
                 {
                     Parallel.ForEach(dp.GetDirectories(), dir =>
@@ -77,6 +74,7 @@ namespace DotNet.Basics.IO.Robust
             }
             catch (Exception)
             {
+                //switching to more robust copying if something fails
                 Robocopy.CopyDir(dp.FullName(), target.FullName(), includeSubFolders: includeSubfolders);
             }
         }
@@ -95,15 +93,15 @@ namespace DotNet.Basics.IO.Robust
         }
         public static IEnumerable<DirPath> EnumerateDirectories(this DirPath dp, string searchPattern = null, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
-            return NetCoreLongPath.EnumerateDirectories(dp.FullName(), searchPattern ?? "*", searchOption).Select(dir => dir.ToDir());
+            return Paths.FileSystem.EnumerateDirectories(dp.FullName(), searchPattern ?? "*", searchOption).Select(dir => dir.ToDir());
         }
         public static IEnumerable<FilePath> EnumerateFiles(this DirPath dp, string searchPattern = null, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
-            return NetCoreLongPath.EnumerateFiles(dp.FullName(), searchPattern ?? "*", searchOption).Select(file => file.ToFile());
+            return Paths.FileSystem.EnumerateFiles(dp.FullName(), searchPattern ?? "*", searchOption).Select(file => file.ToFile());
         }
         public static IEnumerable<PathInfo> EnumeratePaths(this DirPath dp, string searchPattern = null, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
-            return NetCoreLongPath.EnumeratePaths(dp.FullName(), searchPattern ?? "*", searchOption).Select(fse => fse.ToPath());
+            return Paths.FileSystem.EnumeratePaths(dp.FullName(), searchPattern ?? "*", searchOption).Select(fse => fse.ToPath());
         }
     }
 }

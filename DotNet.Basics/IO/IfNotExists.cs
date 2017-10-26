@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.IO.Robust
+﻿namespace DotNet.Basics.IO
 {
     public enum IfNotExists
     {

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.IO;
-using DotNet.Basics.IO.Robust.Tests.Testa;
+using DotNet.Basics.IO;
+using DotNet.Basics.Tests.IO.Testa;
 using DotNet.Basics.Sys;
 using DotNet.Basics.TestsRoot;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DotNet.Basics.IO.Robust.Tests
+namespace DotNet.Basics.Tests.IO
 {
     public class PathInfoExtensionsTests:TestWithHelpers
     {
@@ -155,8 +156,6 @@ namespace DotNet.Basics.IO.Robust.Tests
 
             inputPath.FullName().ToLowerInvariant().Should().Be(expectedPath.ToLowerInvariant());
         }
-
-        
     }
 }
 

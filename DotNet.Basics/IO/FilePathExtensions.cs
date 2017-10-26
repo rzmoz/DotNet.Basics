@@ -2,7 +2,7 @@
 using System.IO;
 using DotNet.Basics.Sys;
 
-namespace DotNet.Basics.IO.Robust
+namespace DotNet.Basics.IO
 {
     public static class FilePathExtensions
     {
@@ -23,7 +23,7 @@ namespace DotNet.Basics.IO.Robust
             if (overwrite)
                 targetFile.DeleteIfExists();
 
-            NetCoreLongPath.MoveFile(fp.FullName(), targetFile.FullName());
+            Paths.FileSystem.MoveFile(fp.FullName(), targetFile.FullName());
             return targetFile.Exists();
         }
 
@@ -39,12 +39,15 @@ namespace DotNet.Basics.IO.Robust
 
         public static void CopyTo(this FilePath fp, FilePath target, bool overwrite = false, bool ensureTargetDir = true)
         {
+            if (fp == null) throw new ArgumentNullException(nameof(fp));
             if (target == null) throw new ArgumentNullException(nameof(target));
 
+            if (fp.Exists() == false)
+                throw new FileNotFoundException(fp.FullName());
             if (ensureTargetDir)
                 target.Directory().CreateIfNotExists();
 
-            NetCoreLongPath.CopyFile(fp.FullName(), target.FullName(), overwrite);
+            Paths.FileSystem.CopyFile(fp.FullName(), target.FullName(), overwrite);
         }
 
         public static bool IsFileType(this FilePath fp, FileType fileType)
