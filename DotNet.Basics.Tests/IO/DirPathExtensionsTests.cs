@@ -155,6 +155,7 @@ namespace DotNet.Basics.Tests.IO
 
             targetDir.Exists().Should().BeTrue();
             GetHierarchyDepth(targetDir).Should().Be(dirDepth + 1);
+            root.DeleteIfExists();
         }
 
         private int GetHierarchyDepth(DirPath root)
