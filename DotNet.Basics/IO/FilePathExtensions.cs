@@ -49,12 +49,7 @@ namespace DotNet.Basics.IO
 
             Paths.FileSystem.CopyFile(fp.FullName(), target.FullName(), overwrite);
         }
-
-        public static bool IsFileType(this FilePath fp, FileType fileType)
-        {
-            return fileType != null && fp.Name.EndsWith(fileType.Extension, true, null);
-        }
-
+        
         public static FilePath WriteAllText(this FilePath fp, string content, bool overwrite = true)
         {
             if (overwrite == false && fp.Exists())

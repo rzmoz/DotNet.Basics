@@ -186,16 +186,5 @@ namespace DotNet.Basics.Tests.IO
 
             targetfile.FullName().Should().Be(@"c:\MyPath\myFile.temp");
         }
-
-        [Fact]
-        public void IsType_TwoPartExtensionIsSupport_FileNameIsDetected()
-        {
-            const string twoPartExtension = ".config.disabled";
-            const string fileName = "myFile" + twoPartExtension;
-
-            var fileType = new FileType("TwoPartExtensionFilyType", twoPartExtension);
-
-            fileName.ToFile().IsFileType(fileType).Should().BeTrue();
-        }
     }
 }

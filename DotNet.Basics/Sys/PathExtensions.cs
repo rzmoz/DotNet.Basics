@@ -4,22 +4,22 @@
     {
         public static PathInfo ToPath(this string path, params string[] segments)
         {
-            return path.ToPath(IsFolder.Unknown, segments);
+            return path.ToPath(PathType.Unknown, segments);
         }
-        public static PathInfo ToPath(this string path, IsFolder isFolder, params string[] segments)
+        public static PathInfo ToPath(this string path, PathType pathType, params string[] segments)
         {
-            return path.ToPath(isFolder, PathSeparator.Unknown, segments);
+            return path.ToPath(pathType, PathSeparator.Unknown, segments);
         }
         public static PathInfo ToPath(this string path, char pathSeparator, params string[] segments)
         {
-            return path.ToPath(IsFolder.Unknown, pathSeparator, segments);
+            return path.ToPath(PathType.Unknown, pathSeparator, segments);
         }
-        public static PathInfo ToPath(this string path, IsFolder isFolder, char pathSeparator, params string[] segments)
+        public static PathInfo ToPath(this string path, PathType pathType, char pathSeparator, params string[] segments)
         {
-            if (isFolder == IsFolder.Unknown)
-                isFolder = PathInfo.DetectIsFolder(path, segments) ? IsFolder.True : IsFolder.False;
+            if (pathType == PathType.Unknown)
+                pathType = PathInfo.DetectIsFolder(path, segments) ? PathType.Folder : PathType.File;
 
-            return isFolder == IsFolder.True ? path.ToDir(pathSeparator, segments) as PathInfo : path.ToFile(pathSeparator, segments) as PathInfo;
+            return pathType == PathType.Folder ? path.ToDir(pathSeparator, segments) : path.ToFile(pathSeparator, segments) as PathInfo;
         }
         public static DirPath ToDir(this PathInfo pi, params string[] segments)
         {
@@ -57,7 +57,7 @@
 
         public static T Add<T>(this T pi, params string[] segments) where T : PathInfo
         {
-            return pi.RawPath.ToPath(pi.IsFolder ? IsFolder.True : IsFolder.False, segments) as T;
+            return pi.RawPath.ToPath(pi.IsFolder ? PathType.Folder : PathType.File, segments) as T;
         }
     }
 }

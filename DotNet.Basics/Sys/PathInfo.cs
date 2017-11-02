@@ -12,21 +12,21 @@ namespace DotNet.Basics.Sys
         private static readonly char[] _separatorDetectors = { PathSeparator.Backslash, PathSeparator.Slash };
 
         protected PathInfo(string path, params string[] segments)
-            : this(path, Sys.IsFolder.Unknown, segments)
+            : this(path, PathType.Unknown, segments)
         { }
 
-        protected PathInfo(string path, IsFolder isFolder, params string[] segments)
-            : this(path, isFolder, PathSeparator.Unknown, segments)
+        protected PathInfo(string path, PathType pathType, params string[] segments)
+            : this(path, pathType, PathSeparator.Unknown, segments)
         { }
 
-        protected PathInfo(string path, IsFolder isFolder, char pathSeparator, params string[] segments)
+        protected PathInfo(string path, PathType pathType, char pathSeparator, params string[] segments)
         {
             if (path == null)
                 path = string.Empty;
 
             var combinedSegments = path.ToArray(segments).Where(itm => itm != null).ToArray();
 
-            IsFolder = isFolder == Sys.IsFolder.Unknown ? DetectIsFolder(path, segments) : isFolder == Sys.IsFolder.True;
+            IsFolder = pathType == PathType.Unknown ? DetectIsFolder(path, segments) : pathType == PathType.Folder;
 
             Separator = DetectPathSeparator(pathSeparator, combinedSegments);
 

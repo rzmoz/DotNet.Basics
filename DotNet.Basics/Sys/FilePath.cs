@@ -8,7 +8,7 @@
         }
 
         public FilePath(string path, char pathSeparator, params string[] segments)
-            : base(path, Sys.IsFolder.False, pathSeparator, segments)
+            : base(path, PathType.File, pathSeparator, segments)
         {
         }
     }

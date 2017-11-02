@@ -1,9 +1,9 @@
 ﻿namespace DotNet.Basics.Sys
 {
-    public enum IsFolder
+    public enum PathType
     {
-        True,
-        False,
+        Folder,
+        File,
         Unknown
     }
 }
