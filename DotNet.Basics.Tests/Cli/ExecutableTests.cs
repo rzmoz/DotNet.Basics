@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using DotNet.Basics.Cli;
-using DotNet.Basics.Sys;
 using DotNet.Basics.TestsRoot;
 using FluentAssertions;
 using Xunit;
@@ -18,11 +17,12 @@ namespace DotNet.Basics.Tests.Cli
         [Fact]
         public void Run_ExeNotFound_ExceptionIsThrown()
         {
-            var fullPath = TestRoot.ToDir("Run_ExeNotFound_ExceptionIsThrown");
+            ArrangeActAssertPaths(testDir =>
+             {
+                 Action action = () => Executable.Run(testDir.RawPath);
 
-            Action action = () => Executable.Run(fullPath.RawPath);
-
-            action.ShouldThrow<Win32Exception>();
+                 action.ShouldThrow<Win32Exception>();
+             });
         }
     }
 }

@@ -13,37 +13,31 @@ namespace DotNet.Basics.Tests.IO
     public abstract class FileSystemTests : TestWithHelpers
     {
         private readonly IFileSystem _fileSystem;
-        private readonly string _testPathPrefix;
-        private readonly ITestOutputHelper _output;
-        private readonly string _className;
 
-        protected FileSystemTests(IFileSystem fileSystem, string testPathPrefix, ITestOutputHelper output) : base(output)
+        protected FileSystemTests(IFileSystem fileSystem, ITestOutputHelper output, string testPathPrefix = null) : base(output, testPathPrefix)
         {
             _fileSystem = fileSystem;
-            _testPathPrefix = testPathPrefix;
-            _output = output;
-            _className = this.GetType().Name;
         }
 
         //paths
         [Fact]
         public void GetFullPath_Paths_FullPathIsResolved()
         {
-            ArrangeActAssertVeryLongPaths("GetFullName_VeryLongPaths_FullNameIsResolved", testDir =>
+            WithTestRoot(testRoot =>
             {
-                var path = _testPathPrefix + "MyPath";
+                var path = TestPathPrefix + "MyPath";
 
                 //act
                 var result = _fileSystem.GetFullPath(path);
                 //assert
-                result.Should().Be($@"{TestRoot}\{path}");
+                result.Should().Be(new DirectoryInfo(path).FullName);
             });
         }
 
         [Fact]
         public void Enumerates_Paths_PatshAreFound()
         {
-            ArrangeActAssertVeryLongPaths("Enumerates_VeryLongPaths_PatshAreFound", testDir =>
+            ArrangeActAssertPaths(testDir =>
             {
                 testDir.CreateSubDir("1");
                 testDir.CreateSubDir("2");
@@ -70,7 +64,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void CreateDirectory_Dirs_DirIsCreated()
         {
-            ArrangeActAssertVeryLongPaths("CreateDirectory_VeryLongPaths_DirIsCreated", testDir =>
+            ArrangeActAssertPaths(testDir =>
             {
                 testDir.DeleteIfExists();
                 testDir.Exists().Should().BeFalse();
@@ -84,7 +78,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void MoveDir_Dirs_DirIsMoved()
         {
-            ArrangeActAssertVeryLongPaths("MoveDir_VeryLongPaths_DirIsMoved", testDir =>
+            ArrangeActAssertPaths(testDir =>
             {
                 var sourceDir = testDir.ToDir("Source");
                 sourceDir.CleanIfExists();
@@ -107,7 +101,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void Exists_Dirs_NoExceptionIsThrown()
         {
-            var path = _testPathPrefix + "path";
+            var path = TestPathPrefix + "path";
             //act
             var result = _fileSystem.ExistsFile(path) || _fileSystem.ExistsDir(path);
             //assert
@@ -117,7 +111,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void DeleteDir_Dirs_DirIsDeleted()
         {
-            ArrangeActAssertVeryLongPaths("DeleteDir_VeryLongPaths_DirIsDeleted", testDir =>
+            ArrangeActAssertPaths(testDir =>
             {
                 testDir.CreateIfNotExists();
                 testDir.Exists().Should().BeTrue();
@@ -132,7 +126,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void CopyFile_Dirs_FileIsCopied()
         {
-            ArrangeActAssertVeryLongPaths("CopyFile_LongPaths_FileIsCopied", testDir =>
+            ArrangeActAssertPaths(testDir =>
             {
                 var sourceFile = testDir.ToFile("Source", "MySource.txt");
                 var targetFile = testDir.ToFile("Target", "MyTarget.txt");
@@ -152,7 +146,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void MoveFile_Dirs_FileIsMoved()
         {
-            ArrangeActAssertVeryLongPaths("MoveFile_LongPaths_FileIsMoved", testDir =>
+            ArrangeActAssertPaths(testDir =>
             {
                 var sourceFile = testDir.ToFile("Source", "MySource.txt");
                 var targetFile = testDir.ToFile("Target", "MyTarget.txt");
@@ -170,7 +164,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void ExistsFile_Dirs_FileExists()
         {
-            ArrangeActAssertVeryLongPaths("ExistsFile_LongPaths_FileExists", testDir =>
+            ArrangeActAssertPaths(testDir =>
             {
                 var file = testDir.ToFile("myfile.dat");
                 file.DeleteIfExists();
@@ -185,7 +179,7 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void DeleteFile_Dirs_FileExists()
         {
-            ArrangeActAssertVeryLongPaths("DeleteFile_LongPaths_FileExists", testDir =>
+            ArrangeActAssertPaths(testDir =>
             {
                 var file = testDir.ToFile("myfile.dat");
                 file.WriteAllText("aassd");
@@ -195,25 +189,6 @@ namespace DotNet.Basics.Tests.IO
 
                 file.Exists().Should().BeFalse();
             });
-        }
-
-        protected void ArrangeActAssertVeryLongPaths(string testName, Action<DirPath> arrangeActAssert)
-        {
-            var rootDir = TestRoot.ToDir(_className.Replace(" ", ""), testName);
-            var emptyDir = TestRoot.ToDir("Empty");
-            emptyDir.CreateIfNotExists();
-            emptyDir.CleanIfExists();
-            Robocopy.Run(emptyDir.FullName(), rootDir.FullName(), "/MIR");//robust clean dir for testing
-            try
-            {
-                var testRootdir = rootDir.Add(_testPathPrefix);
-                _output.WriteLine($"TestRootDir: {testRootdir}");
-                arrangeActAssert?.Invoke(testRootdir);
-            }
-            finally
-            {
-                Robocopy.Run(emptyDir.FullName(), rootDir.FullName(), "/MIR");//robust clean dir for testing
-            }
         }
     }
 }

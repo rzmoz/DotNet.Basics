@@ -8,7 +8,7 @@ namespace DotNet.Basics.Tests.IO
         private const string _veryLongPath = @"loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\";
 
         public NetCoreWin32FileSystemLongPathTests(ITestOutputHelper output)
-            : base(new NetCoreWin32FileSystemLongPath(), _veryLongPath, output)
+            : base(new NetCoreWin32FileSystemLongPath(), output, _veryLongPath)
         {
         }
     }

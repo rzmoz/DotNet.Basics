@@ -13,25 +13,7 @@ namespace DotNet.Basics.IO
         }
         public static bool Exists(this PathInfo pi)
         {
-            try
-            {
-                if (Paths.FileSystem.ExistsDir(pi.FullName()))
-                    return true;
-            }
-            catch (IOException)
-            {
-                //ignored
-            }
-            try
-            {
-                if (Paths.FileSystem.ExistsFile(pi.FullName()))
-                    return true;
-            }
-            catch (IOException)
-            {
-                //ignored
-            }
-            return false;
+            return pi.IsFolder ? Paths.FileSystem.ExistsDir(pi.FullName()) : Paths.FileSystem.ExistsFile(pi.FullName());
         }
 
         public static bool DeleteIfExists(this PathInfo pi)
@@ -43,30 +25,17 @@ namespace DotNet.Basics.IO
         {
             if (pi.Exists() == false)
                 return true;
-            var fullName = pi.FullName();
             Repeat.Task(() =>
                 {
-                    try
-                    {
-                        Paths.FileSystem.DeleteDir(fullName);
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-                    try
-                    {
-                        Paths.FileSystem.DeleteFile(fullName);
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
+                    if (pi.IsFolder)
+                        Paths.FileSystem.DeleteDir(pi.FullName());
+                    else
+                        Paths.FileSystem.DeleteFile(pi.FullName());
                 })
                 .WithOptions(o =>
                 {
                     o.Timeout = timeout;
-                    o.RetryDelay = 2.Seconds();
+                    o.RetryDelay = 1.Seconds();
                     o.DontRethrowOnTaskFailedType = typeof(IOException);
                 })
                 .Until(() => pi.Exists() == false);

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using DotNet.Basics.TestsRoot;
@@ -9,32 +10,35 @@ using Xunit.Abstractions;
 
 namespace DotNet.Basics.Tests.IO
 {
-    public class TempDirTests:TestWithHelpers
+    public class TempDirTests : TestWithHelpers
     {
         public TempDirTests(ITestOutputHelper output) : base(output)
         {
         }
-
+        
         [Fact]
         public void Ctor_RandomNess_RandomDirsAreGenerated()
         {
-            const int numOfDirsToGenerate = 23;//prime
-            var rootDir = TestRoot.ToDir("Ctor_RandomNess_RandomDirsAreGenerated");
-            var dirs = new Dictionary<string, TempDir>();//dic to ensure names are unique
-            foreach (var i in Enumerable.Range(1, numOfDirsToGenerate))
+            ArrangeActAssertPaths(testDir =>
             {
-                var td = new TempDir(rootDir);
-                dirs.Add(td.Root.Name, td);
-            }
-
-            dirs.Count.Should().Be(numOfDirsToGenerate);
-            foreach (var td in dirs)
-            {
-                using (var tempDir = td.Value)
+                const int numOfDirsToGenerate = 23;//prime
+                var rootDir = testDir.ToDir("MAH");
+                var dirs = new Dictionary<string, TempDir>();//dic to ensure names are unique
+                foreach (var i in Enumerable.Range(1, numOfDirsToGenerate))
                 {
-                    tempDir.Root.Exists().Should().BeTrue(tempDir.Root.FullName());
+                    var td = new TempDir(rootDir);
+                    dirs.Add(td.Root.Name, td);
                 }
-            }
+
+                dirs.Count.Should().Be(numOfDirsToGenerate);
+                foreach (var td in dirs)
+                {
+                    using (var tempDir = td.Value)
+                    {
+                        tempDir.Root.Exists().Should().BeTrue(tempDir.Root.FullName());
+                    }
+                }
+            });
         }
         [Fact]
         public void Use_Dir_DirExists()

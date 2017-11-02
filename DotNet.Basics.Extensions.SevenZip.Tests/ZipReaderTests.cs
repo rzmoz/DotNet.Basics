@@ -7,16 +7,16 @@ using Xunit.Abstractions;
 
 namespace DotNet.Basics.Extensions.SevenZip.Tests
 {
-    public class ZipReaderTests:TestWithHelpers
+    public class ZipReaderTests : TestWithHelpers
     {
-        private readonly FilePath _testSource;
+        private FilePath _testSource;
 
         public ZipReaderTests(ITestOutputHelper output) : base(output)
         {
-            _testSource = TestRoot.ToFile("NewFolder.zip");
+            WithTestRoot(testRoot => _testSource = testRoot.ToFile("NewFolder.zip"));
             _testSource.Exists().Should().BeTrue(_testSource.FullName(), true);
         }
-        
+
         [Theory]
         [InlineData("myfile.txt", false)]//file in root not found
         [InlineData("mydir/", false)]//explicit dir in root not found

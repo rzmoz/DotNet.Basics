@@ -3,54 +3,56 @@ using System.IO;
 using System.Linq;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
-using DotNet.Basics.TestsRoot;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace DotNet.Basics.Tests.IO
 {
-    public class DirPathExtensionsTests : TestWithHelpers
+    public class DirPathExtensionsTests : FileSystemTests
     {
-        public DirPathExtensionsTests(ITestOutputHelper output) : base(output)
+        public DirPathExtensionsTests(ITestOutputHelper output) : base(new NetCoreWin32FileSystemLongPath(), output)
         {
         }
-
 
         [Fact]
         public void SearchOption_SubDirs_OptionsAreObeyed()
         {
-            var testDir = TestRoot.ToDir("SearchOption_SubDirs_OptionsAreObeyed");
-            var subDir = testDir.CreateSubDir("1");
-            subDir.CreateSubDir("12");
-            subDir.CreateSubDir("23");
-            subDir.ToFile("myFile1.txt").WriteAllText("bla");
+            ArrangeActAssertPaths(testDir =>
+            {
+                var subDir = testDir.CreateSubDir("1");
+                subDir.CreateSubDir("12");
+                subDir.CreateSubDir("23");
+                subDir.ToFile("myFile1.txt").WriteAllText("bla");
 
-            testDir.GetPaths(searchOption: SearchOption.TopDirectoryOnly).Count.Should().Be(1);
-            testDir.GetPaths(searchOption: SearchOption.AllDirectories).Count.Should().Be(4);
+                testDir.GetPaths(searchOption: SearchOption.TopDirectoryOnly).Count.Should().Be(1);
+                testDir.GetPaths(searchOption: SearchOption.AllDirectories).Count.Should().Be(4);
 
-            testDir.GetDirectories(searchOption: SearchOption.TopDirectoryOnly).Count.Should().Be(1);
-            testDir.GetDirectories(searchOption: SearchOption.AllDirectories).Count.Should().Be(3);
+                testDir.GetDirectories(searchOption: SearchOption.TopDirectoryOnly).Count.Should().Be(1);
+                testDir.GetDirectories(searchOption: SearchOption.AllDirectories).Count.Should().Be(3);
 
-            testDir.GetFiles(searchOption: SearchOption.TopDirectoryOnly).Count.Should().Be(0);
-            testDir.GetFiles(searchOption: SearchOption.AllDirectories).Count.Should().Be(1);
+                testDir.GetFiles(searchOption: SearchOption.TopDirectoryOnly).Count.Should().Be(0);
+                testDir.GetFiles(searchOption: SearchOption.AllDirectories).Count.Should().Be(1);
+            });
         }
 
         [Fact]
         public void SearchPattern_OnlyTxtFiles_PatternIsObeyed()
         {
-            var testDir = TestRoot.ToDir("SearchPattern_OnlyTxtFiles_PatternIsObeyed");
-            testDir.CreateSubDir("1");
-            testDir.ToFile("myFile1.txt").WriteAllText("bla");
-            testDir.ToFile("myFile2.json").WriteAllText("bla");
+            ArrangeActAssertPaths(testDir =>
+            {
+                testDir.CreateSubDir("1");
+                testDir.ToFile("myFile1.txt").WriteAllText("bla");
+                testDir.ToFile("myFile2.json").WriteAllText("bla");
 
-            var jsonFromPaths = testDir.GetPaths("*.txt");
-            var jsonFromDirs = testDir.GetDirectories("*.txt");
-            var jsonFromFiles = testDir.GetFiles("*.txt");
+                var jsonFromPaths = testDir.GetPaths("*.txt");
+                var jsonFromDirs = testDir.GetDirectories("*.txt");
+                var jsonFromFiles = testDir.GetFiles("*.txt");
 
-            jsonFromPaths.Count.Should().Be(1);
-            jsonFromDirs.Count.Should().Be(0);
-            jsonFromFiles.Count.Should().Be(1);
+                jsonFromPaths.Count.Should().Be(1);
+                jsonFromDirs.Count.Should().Be(0);
+                jsonFromFiles.Count.Should().Be(1);
+            });
         }
 
 
@@ -72,99 +74,99 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void CreateIfExists_CreateOptions_ExistingDirIsCleaned()
         {
-            //arrange
-            var testDir = TestRoot.ToDir("CreateIfExists_CreateOptions_ExistingDirIsCleaned");
-            testDir.ToFile("myFile.txt").WriteAllText(@"bllll");
+            ArrangeActAssertPaths(testDir =>
+            {
+                //arrange
+                testDir.ToFile("myFile.txt").WriteAllText(@"bllll");
 
-            testDir.Exists().Should().BeTrue();
-            testDir.GetFiles().Count.Should().Be(1);
+                testDir.Exists().Should().BeTrue();
+                testDir.GetFiles().Count.Should().Be(1);
 
-            //act
-            testDir.CreateIfNotExists();
-            testDir.CleanIfExists();
+                //act
+                testDir.CreateIfNotExists();
+                testDir.CleanIfExists();
 
-            //assert
-            testDir.Exists().Should().BeTrue();
-            testDir.GetFiles().Count.Should().Be(0);
+                //assert
+                testDir.Exists().Should().BeTrue();
+                testDir.GetFiles().Count.Should().Be(0);
+            });
         }
 
         [Fact]
         public void CreateIfExists_CreateOptions_ExistingDirIsNotCleaned()
         {
-            //arrange
-            var testDir = TestRoot.ToDir("CreateIfExists_CreateOptions_ExistingDirIsNotCleaned");
-            testDir.DeleteIfExists();
-            testDir.ToFile("myFile.txt").WriteAllText(@"bllll");
+            ArrangeActAssertPaths(testDir =>
+            {
+                //arrange
+                testDir.DeleteIfExists();
+                testDir.ToFile("myFile.txt").WriteAllText(@"bllll");
 
-            testDir.Exists().Should().BeTrue();
-            testDir.GetFiles().Count.Should().Be(1);
+                testDir.Exists().Should().BeTrue();
+                testDir.GetFiles().Count.Should().Be(1);
 
-            //act
-            testDir.CreateIfNotExists();
+                //act
+                testDir.CreateIfNotExists();
 
-            //assert
-            testDir.Exists().Should().BeTrue();
-            testDir.GetFiles().Count.Should().Be(1);
+                //assert
+                testDir.Exists().Should().BeTrue();
+                testDir.GetFiles().Count.Should().Be(1);
+            });
         }
         [Fact]
         public void CleanIfExists_DirDoesntExists_NoActionAndNoExceptions()
         {
-            //arrange
-            var testDir = TestRoot.ToDir("SOMETHINGTHAT DOESNT EXIST_BLAAAAAA");
+            ArrangeActAssertPaths(testDir =>
+            {
+                //arrange
+                var dirThatDoesntExists = testDir.ToDir("SOMETHINGTHAT DOESNT EXIST_BLAAAAAA");
 
-            //act
-            testDir.CleanIfExists();
+                //act
+                dirThatDoesntExists.CleanIfExists();
 
-            //assert
-            testDir.Exists().Should().BeFalse();
+                //assert
+                dirThatDoesntExists.Exists().Should().BeFalse();
+            });
+
         }
         [Fact]
         public void CleanIfExists_RemoveAllContentFromADir_DirIsCleaned()
         {
-            //arrange
-            var testDir = TestRoot.ToDir("CleanIfExists_RemoveAllContentFromADir_DirIsCleaned");
-            testDir.CreateIfNotExists();
+            ArrangeActAssertPaths(testDir =>
+            {
+                //arrange
+                testDir.CreateIfNotExists();
 
-            const int numOfTestFiles = 3;
+                const int numOfTestFiles = 3;
 
-            AddTestContent(testDir, 0, numOfTestFiles);
+                AddTestContent(testDir, 0, numOfTestFiles);
 
-            testDir.GetFiles().Count.Should().Be(numOfTestFiles);
+                testDir.GetFiles().Count.Should().Be(numOfTestFiles);
 
-            //act
-            testDir.CleanIfExists();
+                //act
+                testDir.CleanIfExists();
 
-            testDir.GetFiles().Count.Should().Be(0);
+                testDir.GetFiles().Count.Should().Be(0);
+            });
         }
 
         [Fact]
         public void CopyTo_IncludeSubDirectories_DirIsCopied()
         {
-            const int dirDepth = 3;
-            var root = TestRoot.ToDir("CopyTo_IncludeSubDirectories_DirIsCopied");
-            root.DeleteIfExists();
-            var currentDir = CreateIdenticalSubdirs(root, dirDepth);
-            currentDir.ToFile("myFile.txt").WriteAllText("blaaaa");
+            ArrangeActAssertPaths(dir =>
+            {
+                var sourceDir = dir.CreateSubDir("MAH1_SOURCE");
+                var targetDir = dir.CreateSubDir("MAH_TARGET");
 
-            var targetRoot = TestRoot.ToDir(root.Name + "Target");
-            var targetDir = targetRoot.CreateSubDir(root.Name);
-            targetDir.DeleteIfExists();
-            targetDir.Exists().Should().BeFalse();
+                AddTestContent(sourceDir, 3, 3);
 
-            root.CopyTo(targetDir, includeSubfolders: true);
+                targetDir.DeleteIfExists();
+                targetDir.Exists().Should().BeFalse();
 
-            targetDir.Exists().Should().BeTrue();
-            GetHierarchyDepth(targetDir).Should().Be(dirDepth + 1);
-            root.DeleteIfExists();
-        }
+                dir.CopyTo(targetDir, includeSubfolders: true);
 
-        private int GetHierarchyDepth(DirPath root)
-        {
-            var subDir = root.GetDirectories().SingleOrDefault(dir => dir.Name.Equals(root.Name, StringComparison.InvariantCultureIgnoreCase));
-            if (subDir == null)
-                return 1;
-            var subIoDir = subDir.ToDir();
-            return GetHierarchyDepth(subIoDir) + 1;
+                targetDir.Exists().Should().BeTrue();
+                targetDir.EnumeratePaths().Count().Should().Be(6);
+            });
         }
 
         private void AddTestContent(DirPath dir, int numOfTestDirs, int numOfTestFiles)
@@ -177,25 +179,6 @@ namespace DotNet.Basics.Tests.IO
             }
             for (var i = 0; i < numOfTestFiles; i++)
                 dir.ToFile($"myFile{i}.txt").WriteAllText("blaaaaa");
-        }
-        private DirPath CreateIdenticalSubdirs(DirPath root, int maxDepth)
-        {
-            try
-            {
-                //we keep adding sub folders until we reach our limit or max levels - whichever comes first
-                for (var level = 0; level < maxDepth; level++)
-                {
-                    var dirName = level % 2 == 0 ? root.Name.ToLower() : root.Name.ToUpper();
-                    root = root.CreateSubDir(dirName);
-                }
-            }
-            catch (System.IO.PathTooLongException)
-            {
-                //we set it to one level up so were sure we can have test content
-                root = root.Parent;
-                root.CleanIfExists();
-            }
-            return root;
         }
     }
 }
