@@ -62,22 +62,7 @@ namespace DotNet.Basics.Sys
         {
             return RawPath;
         }
-
-        private IEnumerable<string> CleanSegments(IEnumerable<string> combinedSegments, char separatorChar)
-        {
-            //to single string
-            var joined = string.Join(separatorChar.ToString(), combinedSegments);
-            //conform path separators
-            joined = joined.Replace(PathSeparator.Backslash, separatorChar);
-            joined = joined.Replace(PathSeparator.Slash, separatorChar);
-
-            //remove duplicate path separators
-            joined = Regex.Replace(joined, $@"[\{separatorChar}]{{2,}}", separatorChar.ToString(), RegexOptions.None);
-
-            //to segments
-            return joined.Split(new[] { separatorChar }, StringSplitOptions.RemoveEmptyEntries).Where(seg => String.IsNullOrWhiteSpace(seg) == false);
-        }
-
+        
         public static bool DetectIsFolder(string path, string[] segments)
         {
             var lookingAt = path;
@@ -108,6 +93,21 @@ namespace DotNet.Basics.Sys
                 }
 
             return PathSeparator.Backslash;//default
+        }
+
+        private IEnumerable<string> CleanSegments(IEnumerable<string> combinedSegments, char separatorChar)
+        {
+            //to single string
+            var joined = string.Join(separatorChar.ToString(), combinedSegments);
+            //conform path separators
+            joined = joined.Replace(PathSeparator.Backslash, separatorChar);
+            joined = joined.Replace(PathSeparator.Slash, separatorChar);
+
+            //remove duplicate path separators
+            joined = Regex.Replace(joined, $@"[\{separatorChar}]{{2,}}", separatorChar.ToString(), RegexOptions.None);
+
+            //to segments
+            return joined.Split(new[] { separatorChar }, StringSplitOptions.RemoveEmptyEntries).Where(seg => String.IsNullOrWhiteSpace(seg) == false);
         }
     }
 }

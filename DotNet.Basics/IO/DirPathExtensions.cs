@@ -38,7 +38,7 @@ namespace DotNet.Basics.IO
         {
             if (dp.Exists())
                 return;
-            
+
             Paths.FileSystem.CreateDir(dp.FullName());
         }
 
@@ -54,10 +54,20 @@ namespace DotNet.Basics.IO
             if (dp.Exists() == false)
                 return;
 
+            var targetPath = target.FullName().ToLowerInvariant();
+            var sourcePath = dp.FullName().ToLowerInvariant();
+
+            //if copy to self
+            if (targetPath == sourcePath)
+                return;
+
+            if (targetPath.StartsWith(sourcePath))
+                throw new IOException($"Target path is a sub path of Source path. Target: {targetPath} | Source: {sourcePath}");
+
             try
             {
                 target.CreateIfNotExists();
-                
+
                 if (includeSubfolders)
                 {
                     Parallel.ForEach(dp.GetDirectories(), dir =>

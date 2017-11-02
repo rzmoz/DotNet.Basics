@@ -162,7 +162,7 @@ namespace DotNet.Basics.Tests.IO
                 targetDir.DeleteIfExists();
                 targetDir.Exists().Should().BeFalse();
 
-                dir.CopyTo(targetDir, includeSubfolders: true);
+                sourceDir.CopyTo(targetDir, includeSubfolders: true);
 
                 targetDir.Exists().Should().BeTrue();
                 targetDir.EnumeratePaths().Count().Should().Be(6);
