@@ -48,8 +48,7 @@ namespace DotNet.Basics.Rest
 
         public RestRequest(HttpRequestMessage httpRequestMessage)
         {
-            if (httpRequestMessage == null) throw new ArgumentNullException(nameof(httpRequestMessage));
-            HttpRequestMessage = httpRequestMessage;
+            HttpRequestMessage = httpRequestMessage ?? throw new ArgumentNullException(nameof(httpRequestMessage));
             DisableCertificateValidation = false;
             TimeOut = TimeSpan.FromHours(1);//we default to 1 hour timeout            
         }

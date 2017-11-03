@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using DotNet.Basics.Tasks.Pipelines;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
-using DotNet.Basics.Tests.Pipelines.PipelineHelpers;
+using DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Pipelines
+namespace DotNet.Basics.Tests.Tasks.Pipelines
 {
     public class PipelineTests
     {
