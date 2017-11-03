@@ -1,4 +1,5 @@
-﻿using DotNet.Basics.Sys;
+﻿using DotNet.Basics.IO;
+using DotNet.Basics.Sys;
 using FluentAssertions;
 using Xunit;
 
@@ -89,25 +90,25 @@ namespace DotNet.Basics.Tests.Sys
         }
 
         [Theory]
-        [InlineData("myFolder/DetectDelimiter/", true)]//delimiter detected
-        [InlineData("myFolder\\DetectDelimiter\\", true)]//delimiter detected
-        [InlineData("myFolder/DetectDelimiter", false)]//delimiter fallback
-        public void IsFolder_Detection_IsFolderIsDetected(string pathInput, bool isFolder)
+        [InlineData("myFolder/DetectDelimiter/", PathType.Folder)]//delimiter detected
+        [InlineData("myFolder\\DetectDelimiter\\", PathType.Folder)]//delimiter detected
+        [InlineData("myFolder/DetectDelimiter", PathType.File)]//delimiter fallback
+        public void IsFolder_Detection_IsFolderIsDetected(string pathInput, PathType pathType)
         {
             var path = pathInput.ToPath();
-            path.IsFolder.Should().Be(isFolder);
+            path.PathType.Should().Be(pathType);
         }
 
         [Theory]
-        [InlineData("myFolder/DetectDelimiter/", true)]//folder with delimiter in the end
-        [InlineData("myFolder/DetectDelimiter", false)]//folder withouth delimiter in the end
-        [InlineData("myFolder/myFile.txt", false)]//delimiter fallback
-        public void IsFolder_Formatting_FolderExtensionIsOutput(string pathInput, bool isFolder)
+        [InlineData("myFolder/DetectDelimiter/", PathType.Folder)]//folder with delimiter in the end
+        [InlineData("myFolder/DetectDelimiter", PathType.File)]//folder withouth delimiter in the end
+        [InlineData("myFolder/myFile.txt", PathType.File)]//delimiter fallback
+        public void IsFolder_Formatting_FolderExtensionIsOutput(string pathInput, PathType pathType)
         {
             var path = pathInput.ToPath();
-            path.IsFolder.Should().Be(isFolder);
+            path.PathType.Should().Be(pathType);
             var formatted = path.ToString();
-            if (isFolder)
+            if (pathType==PathType.Folder)
                 formatted.Should().EndWith(path.Separator.ToString());
             else
                 formatted.Should().NotEndWith(path.Separator.ToString());
@@ -127,7 +128,7 @@ namespace DotNet.Basics.Tests.Sys
             pathWithBackSlash.Should().Be(pathInput.Replace('/', '\\'), PathSeparator.Backslash.ToString());
         }
 
-        
+
         [Theory]
         [InlineData(null, null)]
         [InlineData(@"c:\", null)]
@@ -147,22 +148,22 @@ namespace DotNet.Basics.Tests.Sys
 
 
         [Theory]
-        [InlineData("myFolder\\", "dir\\", true)]//backslash all dirs
-        [InlineData("myFolder\\", "file.txt", true)]//backslash dir remains when file added
-        [InlineData("myfile", "dir//", false)]//slash file remains when dir added - should throw exception?
-        [InlineData("myfile.txt", "file.txt", false)]//slash file remains when dir added - should throw exception?
-        public void Add_KeepIsFolder_IsFolderIsUnchagedRegardlesOfSegmentsAdded(string root, string newSegment, bool expectedIsFolder)
+        [InlineData("myFolder\\", "dir\\", PathType.Folder)]//backslash all dirs
+        [InlineData("myFolder\\", "file.txt", PathType.Folder)]//backslash dir remains when file added
+        [InlineData("myfile", "dir//", PathType.File)]//slash file remains when dir added - should throw exception?
+        [InlineData("myfile.txt", "file.txt", PathType.File)]//slash file remains when dir added - should throw exception?
+        public void Add_KeepIsFolder_IsFolderIsUnchagedRegardlesOfSegmentsAdded(string root, string newSegment, PathType pathType)
         {
             var path = root.ToPath();
 
             //assert before add
-            path.IsFolder.Should().Be(expectedIsFolder);
+            path.PathType.Should().Be(pathType);
 
             //act
             path = path.Add(newSegment);
 
             //assert
-            path.IsFolder.Should().Be(expectedIsFolder);
+            path.PathType.Should().Be(pathType);
         }
 
         [Theory]
@@ -175,6 +176,15 @@ namespace DotNet.Basics.Tests.Sys
 
             //assert
             path.RawPath.Should().Be(root);
+        }
+
+        [Theory]
+        [InlineData(@"c:\hello", new[] { @"my\folder", "myFile.txt" }, 5)]
+        [InlineData(null, new[] { @"c:", "my", "folder" }, 3)]
+        public void Tokenize_CleanSegments_SegmentsAreCombinedAndCleaned(string path, string[] segments, int expectedNumOfSegments)
+        {
+            var splitSegments = PathInfo.Tokenize(path, segments);
+            splitSegments.Count.Should().Be(expectedNumOfSegments);
         }
     }
 }

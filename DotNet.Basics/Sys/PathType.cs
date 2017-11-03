@@ -2,8 +2,8 @@
 {
     public enum PathType
     {
-        Folder,
-        File,
-        Unknown
+        Unknown = 0,
+        Folder = 1,
+        File = 2
     }
 }

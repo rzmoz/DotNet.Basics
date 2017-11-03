@@ -11,9 +11,24 @@ namespace DotNet.Basics.IO
         {
             return Paths.FileSystem.GetFullPath(pi.RawPath);
         }
+
+        public static DirPath Directory(this PathInfo pi)
+        {
+            if (pi == null)
+                return null;
+
+            switch (pi.PathType)
+            {
+                case PathType.File:
+                    return pi.Parent ?? pi.FullName().ToPath().Parent;
+                default:
+                    return pi.ToDir();
+            }
+        }
+
         public static bool Exists(this PathInfo pi)
         {
-            return pi.IsFolder ? Paths.FileSystem.ExistsDir(pi.FullName()) : Paths.FileSystem.ExistsFile(pi.FullName());
+            return pi.PathType == PathType.Folder ? Paths.FileSystem.ExistsDir(pi.FullName()) : Paths.FileSystem.ExistsFile(pi.FullName());
         }
 
         public static bool DeleteIfExists(this PathInfo pi)
@@ -27,7 +42,7 @@ namespace DotNet.Basics.IO
                 return true;
             Repeat.Task(() =>
                 {
-                    if (pi.IsFolder)
+                    if (pi.PathType == PathType.Folder)
                         Paths.FileSystem.DeleteDir(pi.FullName());
                     else
                         Paths.FileSystem.DeleteFile(pi.FullName());

@@ -24,18 +24,16 @@ namespace DotNet.Basics.Sys
             if (path == null)
                 path = string.Empty;
 
-            var combinedSegments = path.ToArray(segments).Where(itm => itm != null).ToArray();
-
-            IsFolder = pathType == PathType.Unknown ? DetectIsFolder(path, segments) : pathType == PathType.Folder;
-
-            Separator = DetectPathSeparator(pathSeparator, combinedSegments);
+            Separator = pathSeparator != PathSeparator.Unknown ? pathSeparator : DetectPathSeparator(path, segments);
 
             //Clean segments
-            Segments = CleanSegments(combinedSegments, Separator).ToArray();
+            Segments = Tokenize(path, segments);
+
+            PathType = pathType == PathType.Unknown ? DetectPathType(path, segments) : pathType;
 
             //Set rawpath
-            RawPath = string.Join(Separator.ToString(), Segments);
-            RawPath = IsFolder ? RawPath.EnsureSuffix(Separator) : RawPath.RemoveSuffix(Separator);
+            RawPath = Flatten(null, PathType, Segments.ToArray());
+            RawPath = OverridePathSeparator(RawPath, Separator);
 
             //set name
             Name = Path.GetFileName(RawPath.RemoveSuffix(Separator));
@@ -47,67 +45,85 @@ namespace DotNet.Basics.Sys
         public string Name { get; }
         public string NameWoExtension { get; }
         public string Extension { get; }
-        public bool IsFolder { get; }
+        public PathType PathType { get; }
 
         public DirPath Parent => Segments.Count <= 1 ? null : new DirPath(null, Segments.Take(Segments.Count - 1).ToArray());
         public char Separator { get; }
         public IReadOnlyCollection<string> Segments;
 
-        public DirPath Directory()
+        public static IReadOnlyCollection<string> Tokenize(string path, params string[] segments)
         {
-            return IsFolder ? this.ToDir() : this.Parent;
+            var tokens = new List<string>();
+            tokens.AddRange(Tokenize(path));
+            foreach (var segment in segments)
+                tokens.AddRange(Tokenize(segment));
+            return tokens;
         }
-        
-        public override string ToString()
+
+        private static IEnumerable<string> Tokenize(string path)
         {
-            return RawPath;
+            if (string.IsNullOrWhiteSpace(path))
+                return Enumerable.Empty<string>();
+
+            path = OverridePathSeparator(path, PathSeparator.Backslash);
+
+            return path.Split(new[] { PathSeparator.Backslash }, StringSplitOptions.RemoveEmptyEntries)
+                .Where(seg => String.IsNullOrWhiteSpace(seg) == false);
         }
-        
-        public static bool DetectIsFolder(string path, string[] segments)
+
+        private static string OverridePathSeparator(string path, char separator)
+        {
+            //conform separators
+            path = path.Replace(PathSeparator.Slash, separator);
+            path = path.Replace(PathSeparator.Backslash, separator);
+            path = path.Replace(PathSeparator.Unknown, separator);
+
+            return path;
+        }
+
+        public static string Flatten(string path, PathType pathType, params string[] segments)
+        {
+            var tokenized = Tokenize(path, segments);
+            var separator = DetectPathSeparator(path, segments);
+            var flattened = string.Join(separator.ToString(), tokenized);
+            if (pathType == PathType.Folder)
+                flattened = flattened.EnsureSuffix(separator);
+            return flattened;
+        }
+
+        public static PathType DetectPathType(string path, string[] segments)
         {
             var lookingAt = path;
             if (segments.Length > 0)
                 lookingAt = segments.Last();
 
             if (lookingAt == null)
-                return false;
+                return PathType.Unknown;
 
-            return lookingAt.EndsWith(PathSeparator.Backslash.ToString()) || lookingAt.EndsWith(PathSeparator.Slash.ToString());
+            if (lookingAt.EndsWith(PathSeparator.Backslash.ToString()) || lookingAt.EndsWith(PathSeparator.Slash.ToString()))
+                return PathType.Folder;
+            return PathType.File;
         }
 
-        private static char DetectPathSeparator(char pathSeparator, IEnumerable<string> segments)
+        private static char DetectPathSeparator(string path, IEnumerable<string> segments)
         {
-            if (_separatorDetectors.Contains(pathSeparator))
-                return pathSeparator;
-
-            if (pathSeparator == PathSeparator.Unknown)
-                //auto detect supported separators
-                foreach (var segment in segments)
-                {
-                    if (segment == null)
-                        continue;
-                    //first separator wins!
-                    var separatorIndex = segment.IndexOfAny(_separatorDetectors);
-                    if (separatorIndex >= 0)
-                        return segment[separatorIndex];
-                }
+            //auto detect supported separators
+            foreach (var segment in path.ToEnumerable(segments))
+            {
+                if (segment == null)
+                    continue;
+                //first separator wins!
+                var separatorIndex = segment.IndexOfAny(_separatorDetectors);
+                if (separatorIndex >= 0)
+                    return segment[separatorIndex];
+            }
 
             return PathSeparator.Backslash;//default
         }
 
-        private IEnumerable<string> CleanSegments(IEnumerable<string> combinedSegments, char separatorChar)
+        public override string ToString()
         {
-            //to single string
-            var joined = string.Join(separatorChar.ToString(), combinedSegments);
-            //conform path separators
-            joined = joined.Replace(PathSeparator.Backslash, separatorChar);
-            joined = joined.Replace(PathSeparator.Slash, separatorChar);
-
-            //remove duplicate path separators
-            joined = Regex.Replace(joined, $@"[\{separatorChar}]{{2,}}", separatorChar.ToString(), RegexOptions.None);
-
-            //to segments
-            return joined.Split(new[] { separatorChar }, StringSplitOptions.RemoveEmptyEntries).Where(seg => String.IsNullOrWhiteSpace(seg) == false);
+            return RawPath;
         }
     }
 }
