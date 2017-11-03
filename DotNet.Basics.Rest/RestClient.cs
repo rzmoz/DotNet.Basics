@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -7,64 +7,47 @@ namespace DotNet.Basics.Rest
 {
     public class RestClient : IRestClient
     {
-        private readonly IHttpTransport _transport;
-        private readonly Action<string> _debugOut = (msg) => { };//defaults to void
+        private readonly HttpClient _client;
 
-        public RestClient()
-            : this(new HttpClientTransport())
+        public RestClient(string baseUri = null, HttpClient httpClient = null)
         {
+            _client = httpClient ?? new HttpClient();
+            if (baseUri != null)
+                _client.BaseAddress = new Uri(baseUri);
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/json"));
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
+            _client.DefaultRequestHeaders.AcceptCharset.Add(new StringWithQualityHeaderValue("utf-8"));
         }
 
-        public RestClient(string baseUri)
-            : this(new HttpClientTransport
-            {
-                BaseUri = new Uri(baseUri)
-            })
+        public HttpRequestHeaders DefaultRequestHeaders => _client.DefaultRequestHeaders;
+        public Uri BaseAddress
         {
+            get => _client.BaseAddress;
+            set => _client.BaseAddress = value;
         }
 
-        public RestClient(IHttpTransport transport)
+        public long MaxResponseContentBufferSize
         {
-            _transport = transport;
-        }
+            get => _client.MaxResponseContentBufferSize;
+            set => _client.MaxResponseContentBufferSize = value;
 
-        public HttpRequestHeaders DefaultRequestHeaders => _transport.DefaultRequestHeaders;
-
-        public Uri BaseUri
-        {
-            get => _transport.BaseUri;
-            set => _transport.BaseUri = value;
         }
 
         public TimeSpan Timeout
         {
-            get => _transport.Timeout;
-            set => _transport.Timeout = value;
+            get => _client.Timeout;
+            set => _client.Timeout = value;
         }
 
-        public async Task<IRestResponse> ExecuteAsync<T>(IRestRequest request, ResponseFormatting responseFormatting = ResponseFormatting.Raw)
+        public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
-
-            HttpResponseMessage response = null;
-
-            try
-            {
-                _debugOut($"Executing Rest request: {request}");
-                response = await _transport.SendRequestAsync(request).ConfigureAwait(false);
-                _debugOut($"Rest response received: {response}");
-            }
-            catch (Exception e)
-            {
-                _debugOut($"Rest request {request.Uri} failed: {e}");
-                throw new RestRequestException(request.Uri.ToString() + " failed", e, request, response);
-            }
-            return new RestResponse(request.Uri, response, responseFormatting);
+            return _client.SendAsync(request);
         }
 
-        public async Task<IRestResponse> ExecuteAsync(IRestRequest request, ResponseFormatting responseFormatting = ResponseFormatting.Raw)
+        public void Dispose()
         {
-            return await ExecuteAsync<string>(request, responseFormatting);
+            _client?.Dispose();
         }
     }
 }

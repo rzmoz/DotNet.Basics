@@ -1,9 +1,8 @@
 ﻿using System;
-using DotNet.Basics.Rest;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Rest
+namespace DotNet.Basics.Rest.Tests
 {
     public class UriTtests
     {
@@ -36,7 +35,7 @@ namespace DotNet.Basics.Tests.Rest
         [InlineData("http:/localhost/")]//invalid scheme separator
         public void Ctor_NotUri_ExceptionIsThrown(string nonUri)
         {
-            Action action = () => new Uri(nonUri);
+            Action action = () => new RestRequest(nonUri);
             action.ShouldThrow<UriFormatException>();
         }
     }

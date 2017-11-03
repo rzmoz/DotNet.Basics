@@ -1,99 +1,72 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace DotNet.Basics.Rest
 {
     public class RestRequest : IRestRequest
     {
         public RestRequest(string uri)
-            : this(uri, HttpMethod.Get)
+            : this(HttpMethod.Get, uri)
         {
         }
-        public RestRequest(string baseUrl, string pathAndQuery)
-            : this(CombineBaseUrlAndPathAndQuery(baseUrl, pathAndQuery))
+        public RestRequest(HttpMethod method, string uri, HttpContent content = null)
         {
+            Method = method;
+            Uri = uri;
+            Content = content;
+            AddHeaders = new List<Action<HttpRequestHeaders>>();
         }
-        public RestRequest(string baseUrl, string pathAndQuery, HttpMethod method)
-            : this(CombineBaseUrlAndPathAndQuery(baseUrl, pathAndQuery), method)
+        public HttpMethod Method { get; private set; }
+        public string Uri { get; }
+        public HttpContent Content { get; private set; }
+        public IList<Action<HttpRequestHeaders>> AddHeaders { get; }
+        public Version Version { get; private set; }
+
+
+        public IRestRequest WithContent(HttpContent content)
         {
+            Content = content;
+            return this;
         }
 
-        public RestRequest(string scheme, string authority, string pathAndQuery, HttpMethod method)
-            : this(new Uri($"{scheme}://{authority}/{pathAndQuery}"), method)
+        public IRestRequest WithJsonContent(string content)
         {
+            return WithContent(new JsonContent(content));
         }
 
-        public RestRequest(Uri uri)
-            : this(uri, HttpMethod.Get)
+        public IRestRequest WithHeaders(Action<HttpRequestHeaders> addHeaders)
         {
-        }
-        public RestRequest(Uri baseUri, string relativeUri)
-            : this(new Uri(baseUri, relativeUri), HttpMethod.Get)
-        {
-        }
-        public RestRequest(Uri baseUri, string relativeUri, HttpMethod method)
-            : this(new Uri(baseUri, relativeUri), method)
-        {
+            AddHeaders.Add(addHeaders);
+            return this;
         }
 
-        public RestRequest(string hostUrl, HttpMethod method)
-            : this(new HttpRequestMessage(method, hostUrl))
+        public IRestRequest WithVersion(Version version)
         {
-        }
-        public RestRequest(Uri hostUrl, HttpMethod method)
-            : this(new HttpRequestMessage(method, hostUrl))
-        {
+            Version = version;
+            return this;
         }
 
-        public RestRequest(HttpRequestMessage httpRequestMessage)
+        public Task<HttpResponseMessage> SendAsync(IRestClient client)
         {
-            HttpRequestMessage = httpRequestMessage ?? throw new ArgumentNullException(nameof(httpRequestMessage));
-            DisableCertificateValidation = false;
-            TimeOut = TimeSpan.FromHours(1);//we default to 1 hour timeout            
-        }
+            var fullUri = client.BaseAddress == null ? new Uri(Uri) : new Uri(client.BaseAddress, Uri);
 
-        public HttpRequestMessage HttpRequestMessage { get; }
+            var requestMessage = new HttpRequestMessage(Method, fullUri);
+            if (Content != null)
+                Content = Content;
+            if (Version != null)
+                Version = Version;
+            foreach (var addHeader in AddHeaders)
+                addHeader?.Invoke(requestMessage.Headers);
 
-        public Uri Uri
-        {
-            get => HttpRequestMessage.RequestUri;
-            set => HttpRequestMessage.RequestUri = value;
+            return client.SendAsync(requestMessage);
         }
-
-        public HttpMethod Method
-        {
-            get => HttpRequestMessage.Method;
-            set => HttpRequestMessage.Method = value;
-        }
-        public HttpRequestHeaders Headers => HttpRequestMessage.Headers;
-
-        public HttpContent Content
-        {
-            get => HttpRequestMessage.Content;
-            set => HttpRequestMessage.Content = value;
-        }
-        public bool DisableCertificateValidation { get; set; }
-        public TimeSpan TimeOut { get; set; }
 
         public override string ToString()
         {
-            try
-            {
-                return $"{HttpRequestMessage}\r\n{HttpRequestMessage.Content?.ReadAsStringAsync().Result}";
-            }
-            catch (Exception)
-            {
-
-                return HttpRequestMessage.ToString();
-            }
-        }
-
-        private static string CombineBaseUrlAndPathAndQuery(string baseUrl, string pathAndQuery)
-        {
-            if (baseUrl == null) throw new ArgumentNullException(nameof(baseUrl));
-            if (pathAndQuery == null) throw new ArgumentNullException(nameof(pathAndQuery));
-            return baseUrl.TrimEnd('/') + "/" + pathAndQuery.TrimStart('/');
+            return $"{Method} {Uri}";
         }
     }
 }

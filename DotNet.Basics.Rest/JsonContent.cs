@@ -11,11 +11,7 @@ namespace DotNet.Basics.Rest
         {
         }
 
-        public JsonContent(string json, Encoding encoding) : this(json, encoding, _defaultContentType)
-        {
-        }
-
-        public JsonContent(string json, Encoding encoding, string mediaType) : base(json, encoding, mediaType)
+        public JsonContent(string json, Encoding encoding) : base(json, encoding, _defaultContentType)
         {
         }
     }

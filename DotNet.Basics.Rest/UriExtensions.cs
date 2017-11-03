@@ -6,9 +6,7 @@ namespace DotNet.Basics.Rest
     {
         public static Uri BaseUri(this Uri uri)
         {
-            if (uri == null)
-                return null;
-            return new Uri($"{uri.Scheme}://{uri.Authority}/");
+            return uri == null ? null : new Uri($"{uri.Scheme}://{uri.Authority}/");
         }
     }
 }

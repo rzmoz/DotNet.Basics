@@ -7,8 +7,8 @@
     },
     {
       "name": "DotNet.Basics.Rest",
-      "version": "9.1.0",
-      "prerelease": "beta.2"
+      "version": "9.2.0",
+      "prerelease": "beta.1"
     },
     {
       "name": "DotNet.Basics.Extensions.PowerShell",

@@ -1,15 +1,16 @@
 ﻿using System;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace DotNet.Basics.Rest
 {
-    public interface IRestClient
+    public interface IRestClient : IDisposable
     {
         HttpRequestHeaders DefaultRequestHeaders { get; }
-        Uri BaseUri { get; set; }
+        Uri BaseAddress { get; set; }
+        long MaxResponseContentBufferSize { get; set; }
         TimeSpan Timeout { get; set; }
-        Task<IRestResponse> ExecuteAsync<T>(IRestRequest request, ResponseFormatting responseFormatting = ResponseFormatting.Raw);
-        Task<IRestResponse> ExecuteAsync(IRestRequest request, ResponseFormatting responseFormatting = ResponseFormatting.Raw);
+        Task<HttpResponseMessage> SendAsync(HttpRequestMessage request);
     }
 }
