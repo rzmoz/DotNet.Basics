@@ -38,8 +38,7 @@ namespace DotNet.Basics.Tasks
 
         public ManagedTask(string name, Func<T, TaskIssueList, CancellationToken, Task> task)
         {
-            if (task == null) throw new ArgumentNullException(nameof(task));
-            _task = task;
+            _task = task ?? throw new ArgumentNullException(nameof(task));
             Name = name;
         }
 
@@ -48,8 +47,8 @@ namespace DotNet.Basics.Tasks
 
         public string Name
         {
-            get { return _name; }
-            set { _name = value ?? GetType().Name; }
+            get => _name;
+            set => _name = value ?? GetType().Name;
         }
 
         public Task<TaskResult> RunAsync()

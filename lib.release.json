@@ -2,8 +2,8 @@
   "releases": [
     {
       "name": "DotNet.Basics",
-      "version": "9.1.0",
-      "prerelease": "beta.5"
+      "version": "9.2.0",
+      "prerelease": "beta.1"
     },
     {
       "name": "DotNet.Basics.Pipelines",
@@ -14,12 +14,6 @@
       "name": "DotNet.Basics.Rest",
       "version": "9.1.0",
       "prerelease": "beta.2"
-    },
-    
-    {
-      "name": "DotNet.Basics.Extensions.Autofac",
-      "version": "4.6.2",
-      "prerelease": "beta.3"
     },
     {
       "name": "DotNet.Basics.Extensions.PowerShell",
