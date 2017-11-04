@@ -39,6 +39,7 @@ namespace DotNet.Basics.Rest.Tests
             var response = await Get.Uri("jquery-1.12.4.min.js").SendAsync(client).ConfigureAwait(false);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.RequestMessage.RequestUri.ToString().Should().Be("https://code.jquery.com/jquery-1.12.4.min.js");
         }
 
         [Fact]
@@ -61,7 +62,7 @@ namespace DotNet.Basics.Rest.Tests
                 await Get.Uri(uri).SendAsync(new RestClient()).ConfigureAwait(false);
             };
 
-            act.ShouldNotThrow();
+            act.ShouldThrow<HttpRequestException>().WithInnerMessage("The server name or address could not be resolved");
         }
     }
 }

@@ -23,6 +23,9 @@ namespace DotNet.Basics.Rest
             if (content?.Length == 1)
                 content = content.Trim(_stringQuote);
 
+            if (content?.Length == 0)
+                return content;
+
             //if quoted
             if (content?.First() == _stringQuote && content?.Last() == _stringQuote)
             {

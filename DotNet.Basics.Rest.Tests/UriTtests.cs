@@ -28,15 +28,5 @@ namespace DotNet.Basics.Rest.Tests
             var uri = new Uri(absoluteUri);
             uri.BaseUri().Should().Be("https://my.domain.dk:1010/");
         }
-
-
-        [Theory]
-        [InlineData("/localhost/")]//no scheme
-        [InlineData("http:/localhost/")]//invalid scheme separator
-        public void Ctor_NotUri_ExceptionIsThrown(string nonUri)
-        {
-            Action action = () => new RestRequest(nonUri);
-            action.ShouldThrow<UriFormatException>();
-        }
     }
 }

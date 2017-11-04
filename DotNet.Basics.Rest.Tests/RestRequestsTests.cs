@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using FluentAssertions;
 using Xunit;
 
@@ -44,6 +45,14 @@ namespace DotNet.Basics.Rest.Tests
             const string method = "Baflstwets";
             var req = new RestRequest(new HttpMethod(method), _uri);
             req.ToString().Should().Be($"{method } {_uri}");
+        }
+        [Theory]
+        [InlineData("/localhost/")]//no scheme
+        [InlineData("http:/localhost/")]//invalid scheme separator
+        public void Ctor_NotUri_ExceptionIsThrown(string nonUri)
+        {
+            Action action = () => new RestRequest(nonUri);
+            action.ShouldNotThrow();
         }
     }
 }
