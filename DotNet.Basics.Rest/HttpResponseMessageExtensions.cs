@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace DotNet.Basics.Rest
@@ -17,6 +19,19 @@ namespace DotNet.Basics.Rest
             var content = response.Content();
             return JsonConvert.DeserializeObject<T>(content);
         }
+
+        public static async Task<string> ContentAsync(this HttpResponseMessage response)
+        {
+            if (response == null) throw new ArgumentNullException(nameof(response));
+            var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            return TrimQuotes(content);
+        }
+        public static async Task<T> ContentAsync<T>(this HttpResponseMessage response)
+        {
+            var content = response.ContentAsync().ConfigureAwait(false);
+            return JsonConvert.DeserializeObject<T>(await content);
+        }
+
         public static string TrimQuotes(string content)
         {
             content = content?.Trim();
