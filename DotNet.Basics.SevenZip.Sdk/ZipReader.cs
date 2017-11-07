@@ -8,7 +8,7 @@ using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks.Repeating;
 
-namespace DotNet.Basics.Extensions.SevenZip
+namespace DotNet.Basics.SevenZip.Sdk
 {
     public class ZipReader : IDisposable
     {

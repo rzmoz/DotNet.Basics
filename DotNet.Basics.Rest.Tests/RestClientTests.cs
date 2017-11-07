@@ -62,7 +62,7 @@ namespace DotNet.Basics.Rest.Tests
                 await Get.Uri(uri).SendAsync(new RestClient()).ConfigureAwait(false);
             };
 
-            act.ShouldThrow<HttpRequestException>().WithInnerMessage("The server name or address could not be resolved");
+            act.ShouldNotThrow();
         }
     }
 }

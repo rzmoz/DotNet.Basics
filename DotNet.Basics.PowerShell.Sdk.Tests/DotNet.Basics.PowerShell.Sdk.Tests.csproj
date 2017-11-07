@@ -9,21 +9,12 @@
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="4.19.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DotNet.Basics.Extensions.SevenZip\DotNet.Basics.Extensions.SevenZip.csproj" />
+    <ProjectReference Include="..\DotNet.Basics.PowerShell.Sdk\DotNet.Basics.PowerShell.Sdk.csproj" />
     <ProjectReference Include="..\DotNet.Basics.TestsRoot\DotNet.Basics.TestsRoot.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="myArchive.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="NewFolder.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

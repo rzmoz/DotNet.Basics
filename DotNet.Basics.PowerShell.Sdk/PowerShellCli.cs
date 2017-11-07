@@ -4,7 +4,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 
-namespace DotNet.Basics.Extensions.PowerShell
+namespace DotNet.Basics.PowerShell.Sdk
 {
     public static class PowerShellCli
     {

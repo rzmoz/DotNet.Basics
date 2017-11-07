@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DotNet.Basics.Extensions.PowerShell;
+using DotNet.Basics.PowerShell.Sdk;
 using DotNet.Basics.IO;
 using DotNet.Basics.TestsRoot;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DotNet.Basics.Extensions.PowerShell.Tests
+namespace DotNet.Basics.PowerShell.Sdk.Tests
 {
     public class PowerShellCliTests : TestWithHelpers
     {

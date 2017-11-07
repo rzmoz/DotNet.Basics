@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 
-namespace DotNet.Basics.Extensions.PowerShell
+namespace DotNet.Basics.PowerShell.Sdk
 {
     public class PowerShellCmdlet
     {

@@ -5,7 +5,7 @@ using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DotNet.Basics.Extensions.SevenZip.Tests
+namespace DotNet.Basics.SevenZip.Sdk.Tests
 {
     public class ZipReaderTests : TestWithHelpers
     {

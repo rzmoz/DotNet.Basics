@@ -9,6 +9,6 @@
         <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
         <projectUrl>https://github.com/rzmoz/DotNet.Basics</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Syntactical sugar for calling 7zip for more robust archiving. Supports simplified read of archives as well</description>
+        <description>Sdk for 7zip for robust archiving. Supports simplified read of archives as well</description>
     </metadata>
 </package>
