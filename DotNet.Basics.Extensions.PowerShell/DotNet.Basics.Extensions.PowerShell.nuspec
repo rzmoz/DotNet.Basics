@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <package >
-  <metadata>
-    <id>$id$</id>
-    <version>$version$</version>
-    <title>$title$</title>
-    <authors>rzmoz</authors>
-    <owners>rzmoz</owners>
-    <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
-    <projectUrl>https://github.com/rzmoz/DotNet.Basics</projectUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Syntactical sugar for Windows PowerShell (NB! .NET Framework only!) Roadmap: Move to PowerShell Core</description>
-  </metadata>
+    <metadata>
+        <id>$id$</id>
+        <version>$version$</version>
+        <title>$title$</title>
+        <authors>rzmoz</authors>
+        <owners>rzmoz</owners>
+        <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
+        <projectUrl>https://github.com/rzmoz/DotNet.Basics</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>SDK for invoking Powershell commands from .NET</description>
+    </metadata>
 </package>

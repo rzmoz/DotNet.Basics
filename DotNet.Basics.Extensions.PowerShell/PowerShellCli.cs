@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
 
 namespace DotNet.Basics.Extensions.PowerShell
 {
     public static class PowerShellCli
     {
         private const string _bypassExecutionPolicy = "Set-ExecutionPolicy Bypass -Scope Process";
-        /*
+        
         public static object[] RemoveItem(string path, bool force = false, bool recurse = false)
         {
             return RemoveItem(new[] { path }, force, recurse);
@@ -61,6 +63,6 @@ namespace DotNet.Basics.Extensions.PowerShell
                 }
                 return passThru.Select(pt => pt.BaseObject).ToArray();
             }
-        }*/
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management.Automation;
 
 namespace DotNet.Basics.Extensions.PowerShell
 {
@@ -31,11 +32,11 @@ namespace DotNet.Basics.Extensions.PowerShell
             _parameters.Add(new KeyValuePair<string, object>(name, value));
             return this;
         }
-        /*
+        
         public PowerShellCmdlet WithErrorAction(ActionPreference actionPreference)
         {
             return AddParameter("ErrorAction", actionPreference);
-        }*/
+        }
 
         public PowerShellCmdlet WithForce(bool force = true)
         {
