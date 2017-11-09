@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Collections
 {
+    //Provides fluent syntax for common collection operations
     public static class CollectionExtensions
     {
         public static bool None<TSource>(this IEnumerable<TSource> source)
@@ -40,7 +41,7 @@ namespace DotNet.Basics.Collections
         public static void ForEach<T>(this IEnumerable<T> col, Action<T> forEachAction)
         {
             foreach (var item in col)
-                forEachAction(item);
+                forEachAction?.Invoke(item);
         }
 
         public static IEnumerable<T> ToEnumerable<T>(this T t)
@@ -50,14 +51,6 @@ namespace DotNet.Basics.Collections
         public static IEnumerable<T> ToEnumerable<T>(this T t, IEnumerable<T> concat)
         {
             return t.ToEnumerable().Concat(concat);
-        }
-        public static List<T> ToList<T>(this T t, IEnumerable<T> concat)
-        {
-            return t.ToEnumerable(concat).ToList();
-        }
-        public static T[] ToArray<T>(this T t, IEnumerable<T> concat)
-        {
-            return t.ToEnumerable(concat).ToArray();
         }
     }
 }
