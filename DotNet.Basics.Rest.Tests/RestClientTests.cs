@@ -62,7 +62,7 @@ namespace DotNet.Basics.Rest.Tests
                 await Get.Uri(uri).SendAsync(new RestClient()).ConfigureAwait(false);
             };
 
-            act.ShouldNotThrow();
+            act.ShouldThrow<HttpRequestException>();
         }
     }
 }

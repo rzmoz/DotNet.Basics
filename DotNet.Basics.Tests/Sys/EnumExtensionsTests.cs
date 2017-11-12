@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using DotNet.Basics.Sys;
 using FluentAssertions;
 using Xunit;
@@ -16,7 +15,7 @@ namespace DotNet.Basics.Tests.Sys
 
             result.Should().Be("This");
         }
-        
+
         [Fact]
         public void ToEnum_Parse_EnumIsParsed()
         {
@@ -61,15 +60,36 @@ namespace DotNet.Basics.Tests.Sys
             var result = "SomethingNotValidxxxxxxxx".IsEnum<TestEnum>();
             result.Should().BeFalse();
         }
-        
+
+        [Fact]
+        public void GetValues_Enumerate_ValuesAreGotten()
+        {
+            var values = typeof(TestEnum).GetValues().ToList();
+            values.Count.Should().Be(2);
+            Action act1 = () => values.Single(v => v == (int)TestEnum.This);
+            Action act2 = () => values.Single(v => v == (int)TestEnum.That);
+
+            act1.ShouldNotThrow();
+            act2.ShouldNotThrow();
+        }
+
+        [Fact]
+        public void GetNames_Enumerate_NamesAreGotten()
+        {
+            var values = typeof(TestEnum).GetNames().ToList();
+            values.Count.Should().Be(2);
+            Action act1 = () => values.Single(v => v == TestEnum.This.ToName());
+            Action act2 = () => values.Single(v => v == TestEnum.That.ToName());
+
+            act1.ShouldNotThrow();
+            act2.ShouldNotThrow();
+        }
+
 
         private enum TestEnum
         {
             This = 1,
-            That = 2,
-            More = 4,
-            EvenMore = 8,
-            EvenMoreMore = 16
+            That = 2
         }
     }
 }

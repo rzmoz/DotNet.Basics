@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace DotNet.Basics.Sys
 {
     public static class EnumExtensions
@@ -30,6 +33,16 @@ namespace DotNet.Basics.Sys
         {
             try { return (((int)(object)type & (int)(object)value) == (int)(object)value); }
             catch { return false; }
+        }
+
+        public static IEnumerable<string> GetNames(this Type @enum)
+        {
+            return Enum.GetNames(@enum);
+        }
+
+        public static IReadOnlyCollection<int> GetValues(this Type @enum)
+        {
+            return Enum.GetValues(@enum).Cast<int>().ToList();
         }
 
         public static string ToName(this Enum @enum)
