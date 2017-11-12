@@ -35,15 +35,11 @@ namespace DotNet.Basics.Sys
             catch { return false; }
         }
 
-        public static IEnumerable<string> GetNames(this Type @enum)
+        public static IEnumerable<T> GetEnums<T>(this Type @enum) where T : struct
         {
-            return Enum.GetNames(@enum);
+            return @enum.GetEnumNames().Select(e => e.ToEnum<T>());
         }
 
-        public static IReadOnlyCollection<int> GetValues(this Type @enum)
-        {
-            return Enum.GetValues(@enum).Cast<int>().ToList();
-        }
 
         public static string ToName(this Enum @enum)
         {

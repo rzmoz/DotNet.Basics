@@ -62,24 +62,12 @@ namespace DotNet.Basics.Tests.Sys
         }
 
         [Fact]
-        public void GetValues_Enumerate_ValuesAreGotten()
+        public void GetEnums_Enumerate_EnumsAreGotten()
         {
-            var values = typeof(TestEnum).GetValues().ToList();
+            var values = typeof(TestEnum).GetEnums<TestEnum>().ToList();
             values.Count.Should().Be(2);
-            Action act1 = () => values.Single(v => v == (int)TestEnum.This);
-            Action act2 = () => values.Single(v => v == (int)TestEnum.That);
-
-            act1.ShouldNotThrow();
-            act2.ShouldNotThrow();
-        }
-
-        [Fact]
-        public void GetNames_Enumerate_NamesAreGotten()
-        {
-            var values = typeof(TestEnum).GetNames().ToList();
-            values.Count.Should().Be(2);
-            Action act1 = () => values.Single(v => v == TestEnum.This.ToName());
-            Action act2 = () => values.Single(v => v == TestEnum.That.ToName());
+            Action act1 = () => values.Single(v => v == TestEnum.This);
+            Action act2 = () => values.Single(v => v == TestEnum.That);
 
             act1.ShouldNotThrow();
             act2.ShouldNotThrow();
