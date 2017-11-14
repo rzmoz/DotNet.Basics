@@ -11,7 +11,7 @@ namespace DotNet.Basics.Tests.Tasks
     public class TaskResultTests
     {
         [Fact]
-        public void Ctor_Empty_NoIssues()
+        public void Issues_DefaultCtor_NoIssues()
         {
             //act
             var result = new TaskResult();
@@ -21,7 +21,19 @@ namespace DotNet.Basics.Tests.Tasks
         }
 
         [Fact]
-        public void Ctor_WithIssue_IssuesFound()
+        public void Issues_99_ButaBAintOne()
+        {
+            var inputCount = 98;
+
+            //act
+            var result = new TaskResult(issues => Enumerable.Range(1, inputCount).ForEach(i => issues.Add(i.ToString())));
+
+            result.Issues.Count.Should().Be(inputCount + 1);
+            result.Issues.Last().Message.Should().Be("I got 99 issues but a b**** ain't one");
+        }
+
+        [Fact]
+        public void Issues_Add_IssuesFound()
         {
             var issueMessage = "Ctor_WithIssue_IssuesFound";
 
@@ -36,12 +48,12 @@ namespace DotNet.Basics.Tests.Tasks
         }
 
         [Fact]
-        public void Ctor_Append_NewIssuesAreAppended()
+        public void Issues_Append_NewIssuesAreAppended()
         {
             var issueMessage = "Ctor_Append_NewIssuesAreAppended_";
 
             var initialIssueMessage = issueMessage + "Initial";
-            
+
             //act
             var initialResult = new TaskResult(issues =>
             {
@@ -53,7 +65,7 @@ namespace DotNet.Basics.Tests.Tasks
             initialResult.Issues.Single().Exception.Should().BeOfType<IOException>();
 
             var appendedIssueMessage = issueMessage + "Appended";
-            
+
             var joinedResult = initialResult.Append(issues =>
             {
                 issues.Add(appendedIssueMessage, new ArgumentException());

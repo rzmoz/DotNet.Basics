@@ -57,12 +57,12 @@ namespace DotNet.Basics.Tests.Tasks
 
             TaskResult startedArgs = null;
             TaskResult endedArgs = null;
-            
+
             var ctSource = new CancellationTokenSource();
             ctSource.Cancel();
 
             var task = new ManagedTask<EventArgs<int>>((args, issues, ct) => { args.Value = argsValue; });
-            
+
             task.Started += (args) => { startedArgs = args; };
             task.Ended += (args) => { endedArgs = args; };
 
@@ -73,8 +73,8 @@ namespace DotNet.Basics.Tests.Tasks
             startedArgs.Should().NotBeNull();
             startedArgs.Name.Should().Be(task.GetType().Name, "Expected Name");
 
-            endedArgs.Exceptions.Should().BeEmpty();
-            
+            //endedArgs.Problems.SelectMany(p => p.Exception).Should().BeEmpty();
+
             endedArgs.Name.Should().Be(startedArgs.Name);
         }
 
@@ -98,8 +98,8 @@ namespace DotNet.Basics.Tests.Tasks
             }
 
             //assert
-            endedArgs.Exceptions.Single().Should().BeOfType<ArgumentException>();
-            endedArgs.Exceptions.Single().Message.Should().Be(exMessage);
+            endedArgs.Issues.Select(i => i.Exception).Single(e => e != null).Should().BeOfType<ArgumentException>();
+            endedArgs.Issues.Select(i => i.Exception).Single(e => e != null).Message.Should().Be(exMessage);
         }
 
         [Fact]
