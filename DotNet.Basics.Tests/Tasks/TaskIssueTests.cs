@@ -19,11 +19,28 @@ namespace DotNet.Basics.Tests.Tasks
         }
 
         [Fact]
+        public void HasException_Null_False()
+        {
+            //act
+            var issue = new TaskIssue("HasException_Null_False", null);
+
+            issue.HasException.Should().BeFalse();
+        }
+        [Fact]
+        public void HasException_ExceptionNotNull_True()
+        {
+            //act
+            var issue = new TaskIssue("HasException_ExceptionNotNull_True", new ApplicationException());
+
+            issue.HasException.Should().BeTrue();
+        }
+
+        [Fact]
         public void Ctor_Exception_MessageAndExceptionAreSet()
         {
             var msg = "Ctor_Exception_MessageAndExceptionAreSet";
             var ex = new ArithmeticException(msg);
-            
+
             //act
             var issue = new TaskIssue(ex);
 

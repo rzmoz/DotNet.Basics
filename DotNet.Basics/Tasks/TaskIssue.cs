@@ -16,9 +16,17 @@ namespace DotNet.Basics.Tasks
         {
             Message = message ?? string.Empty;
             Exception = exception;
+            HasException = Exception != null;
         }
 
         public string Message { get; }
         public Exception Exception { get; }
+
+        public bool HasException { get; }
+
+        public override string ToString()
+        {
+            return $"{Message}";
+        }
     }
 }

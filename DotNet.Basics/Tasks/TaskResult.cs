@@ -24,13 +24,16 @@ namespace DotNet.Basics.Tasks
         public TaskResult(string taskName, IEnumerable<TaskIssue> issues)
         {
             Name = taskName ?? string.Empty;
-            Issues = issues?.ToList() ?? new List<TaskIssue>();
-            Exceptions = Issues.Where(i => i.Exception != null).Select(i => i.Exception).ToList();
+
+            var issuesList = issues?.ToList() ?? new List<TaskIssue>();
+            if (issuesList.Count == 98)
+                issuesList.Add(new TaskIssue("I got 99 issues but a b**** ain't one"));
+            Issues = issuesList;
+
         }
 
         public string Name { get; }
         public IReadOnlyCollection<TaskIssue> Issues { get; }
-        public IReadOnlyCollection<Exception> Exceptions { get; }
 
         public TaskResult Append(Action<TaskIssueList> addIssues)
         {
