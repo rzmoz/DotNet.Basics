@@ -3,13 +3,18 @@
     {
       "name": "DotNet.Basics",
       "version": "9.2.0",
-      "prerelease": "beta.5"
+      "prerelease": "beta.2.1"
+    },
+    {
+      "name": "DotNet.Basics.PowerShell.Sdk",
+      "version": "9.2.0",
+      "prerelease": "beta.1"
     },
     {
       "name": "DotNet.Basics.Rest",
       "version": "9.2.0",
       "prerelease": "beta.2"
-    },    
+    },
     {
       "name": "DotNet.Basics.SevenZip.Sdk",
       "version": "16.04.0",
@@ -19,6 +24,7 @@
   "tests": [
     "DotNet.Basics.Tests",
     "DotNet.Basics.Rest.Tests",
-    "DotNet.Basics.SevenZip.Sdk.Tests"
+    "DotNet.Basics.SevenZip.Sdk.Tests",
+    "DotNet.Basics.Tests.NetFramework"
   ]
 }

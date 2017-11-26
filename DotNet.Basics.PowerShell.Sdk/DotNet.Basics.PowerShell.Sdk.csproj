@@ -1,11 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Management.Automation" Version="6.0.0-beta.9" />
+    <PackageReference Include="System.Management.Automation.dll" Version="10.0.10586" />
   </ItemGroup>
+  
 
 </Project>

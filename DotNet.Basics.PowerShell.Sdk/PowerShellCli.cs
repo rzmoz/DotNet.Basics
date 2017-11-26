@@ -9,7 +9,7 @@ namespace DotNet.Basics.PowerShell.Sdk
     public static class PowerShellCli
     {
         private const string _bypassExecutionPolicy = "Set-ExecutionPolicy Bypass -Scope Process";
-        
+
         public static object[] RemoveItem(string path, bool force = false, bool recurse = false)
         {
             return RemoveItem(new[] { path }, force, recurse);
@@ -20,13 +20,18 @@ namespace DotNet.Basics.PowerShell.Sdk
                 .AddParameter("Path", paths)
                 .WithForce(force)
                 .WithRecurse(recurse);
-            return RunScript(cmdlet.ToScript());
+            return RunScript(cmdlet.ToString());
+        }
+
+        public static object[] RunCmdlet(PowerShellCmdlet cmdLet)
+        {
+            return RunScript(cmdLet.ToString());
         }
 
         public static object[] RunScript(params string[] scripts)
         {
             if (scripts == null) { throw new ArgumentNullException(nameof(scripts)); }
-            
+
             using (var runspace = RunspaceFactory.CreateRunspace())
             {
                 runspace.Open();

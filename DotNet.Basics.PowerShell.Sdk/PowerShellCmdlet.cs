@@ -32,7 +32,7 @@ namespace DotNet.Basics.PowerShell.Sdk
             _parameters.Add(new KeyValuePair<string, object>(name, value));
             return this;
         }
-        
+
         public PowerShellCmdlet WithErrorAction(ActionPreference actionPreference)
         {
             return AddParameter("ErrorAction", actionPreference);
@@ -58,8 +58,8 @@ namespace DotNet.Basics.PowerShell.Sdk
                 return AddParameter("Verbose");
             return this;
         }
-
-        public string ToScript()
+        
+        public override string ToString()
         {
             var script = Name;
             foreach (var param in Parameters)
@@ -101,6 +101,5 @@ namespace DotNet.Basics.PowerShell.Sdk
             paramString += ")";
             return paramString;
         }
-
     }
 }

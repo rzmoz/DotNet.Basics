@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
+using DotNet.Basics.TestsRoot;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
@@ -11,7 +12,7 @@ namespace DotNet.Basics.Tests.IO
 {
     public class DirPathExtensionsTests : FileSystemTests
     {
-        public DirPathExtensionsTests(ITestOutputHelper output) : base(new NetCoreWin32FileSystemLongPath(), output)
+        public DirPathExtensionsTests(ITestOutputHelper output) : base(new NetCoreWin32FileSystemLongPaths(), output)
         {
         }
 

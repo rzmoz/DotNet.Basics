@@ -6,12 +6,14 @@ namespace DotNet.Basics.IO
     {
         static Paths()
         {
-#if NETSTANDARD2_0
-            UseNetCoreWin32LongPaths();
-#endif
-#if NET45
-            UseNetFrameworkWin32LongPaths();
-#endif
+            try
+            {
+                UseFileSystem(new NetCoreWin32FileSystemLongPaths());
+            }
+            catch (AggregateException)
+            {
+                UseFileSystem(new NetFrameworkWin32FileSystemLongPaths());
+            }
         }
 
         public static IFileSystem FileSystem { get; private set; }
@@ -19,14 +21,6 @@ namespace DotNet.Basics.IO
         public static void UseFileSystem(IFileSystem fileSystem)
         {
             FileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-        }
-        public static void UseNetCoreWin32LongPaths()
-        {
-            FileSystem = new NetCoreWin32FileSystemLongPath();
-        }
-        public static void UseNetFrameworkWin32LongPaths()
-        {
-            FileSystem = new NetFrameworkWin32LongPath();
         }
     }
 }
