@@ -10,7 +10,7 @@ namespace DotNet.Basics.IO
             {
                 UseFileSystem(new NetCoreWin32FileSystemLongPaths());
             }
-            catch (AggregateException)
+            catch (Exception)
             {
                 UseFileSystem(new NetFrameworkWin32FileSystemLongPaths());
             }

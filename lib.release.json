@@ -3,7 +3,7 @@
     {
       "name": "DotNet.Basics",
       "version": "9.2.0",
-      "prerelease": "beta.2.1"
+      "prerelease": "beta.6"
     },
     {
       "name": "DotNet.Basics.PowerShell.Sdk",
