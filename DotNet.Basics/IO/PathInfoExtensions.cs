@@ -43,7 +43,7 @@ namespace DotNet.Basics.IO
             Repeat.Task(() =>
                 {
                     if (pi.PathType == PathType.Folder)
-                        Paths.FileSystem.DeleteDir(pi.FullName());
+                        Paths.FileSystem.DeleteDir(pi.FullName(), true);
                     else
                         Paths.FileSystem.DeleteFile(pi.FullName());
                 })

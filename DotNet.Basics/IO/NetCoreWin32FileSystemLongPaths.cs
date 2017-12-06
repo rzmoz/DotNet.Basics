@@ -36,15 +36,12 @@ namespace DotNet.Basics.IO
                 //get assemblies
                 var privateCoreLib = Assembly.Load("System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e");
                 var pathHelper = privateCoreLib.GetType("System.IO.PathHelper");
-
-                //paths
-                _pathsNormalize = pathHelper.GetMethod("Normalize", BindingFlags.NonPublic | BindingFlags.Static);
-
                 var systemIoFilesystem = typeof(Directory).Assembly;
                 var win32FileSystemType = systemIoFilesystem.GetType("System.IO.Win32FileSystem");
                 _win32FileSystem = Activator.CreateInstance(win32FileSystemType);
 
                 //paths
+                _pathsNormalize = pathHelper.GetMethod("Normalize", BindingFlags.NonPublic | BindingFlags.Static);
                 _pathsEnumerate = win32FileSystemType.GetMethod("EnumeratePaths", BindingFlags.Public | BindingFlags.Instance);
 
                 //dirs
@@ -110,9 +107,9 @@ namespace DotNet.Basics.IO
         {
             return Exists(_dirExists, fullPath);
         }
-        public void DeleteDir(string fullPath)
+        public void DeleteDir(string fullPath, bool recursive = true)
         {
-            Win32System(_dirDelete, fullPath, true);
+            Win32System(_dirDelete, fullPath, recursive);
         }
 
         //files

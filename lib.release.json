@@ -3,7 +3,7 @@
     {
       "name": "DotNet.Basics",
       "version": "9.2.0",
-      "prerelease": "beta.6"
+      "prerelease": "beta.7"
     },
     {
       "name": "DotNet.Basics.PowerShell.Sdk",
@@ -18,7 +18,7 @@
     {
       "name": "DotNet.Basics.SevenZip.Sdk",
       "version": "16.04.0",
-      "prerelease": "beta.1"
+      "prerelease": "beta.2"
     }
   ],
   "tests": [

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using DotNet.Basics.IO;
 using FluentAssertions;
@@ -9,11 +10,11 @@ namespace DotNet.Basics.TestsRoot
 {
     public abstract class FileSystemTests : TestWithHelpers
     {
-        private readonly IFileSystem _fileSystem;
+        protected IFileSystem FileSystem { get; }
 
         protected FileSystemTests(IFileSystem fileSystem, ITestOutputHelper output, string testPathPrefix = null) : base(output, testPathPrefix)
         {
-            _fileSystem = fileSystem;
+            FileSystem = fileSystem??throw new ArgumentNullException(nameof(fileSystem));
         }
 
         //paths
@@ -25,35 +26,9 @@ namespace DotNet.Basics.TestsRoot
                 var path = TestPathPrefix + "MyPath";
 
                 //act
-                var result = _fileSystem.GetFullPath(path);
+                var result = FileSystem.GetFullPath(path);
                 //assert
-                result.Should().Be(new DirectoryInfo(path).FullName);
-            });
-        }
-
-        [Fact]
-        public void Enumerates_Paths_PatshAreFound()
-        {
-            ArrangeActAssertPaths(testDir =>
-            {
-                testDir.CreateSubDir("1");
-                testDir.CreateSubDir("2");
-                testDir.CreateSubDir("3");
-                testDir.ToFile("myFile1.txt").WriteAllText("bla");
-                testDir.ToFile("myFile2.txt").WriteAllText("bla");
-
-                var paths = _fileSystem.EnumeratePaths(testDir.FullName(), "*", SearchOption.AllDirectories).ToList();
-                var dirs = _fileSystem.EnumerateDirectories(testDir.FullName(), "*", SearchOption.AllDirectories).ToList();
-                var files = _fileSystem.EnumerateFiles(testDir.FullName(), "*", SearchOption.AllDirectories).ToList();
-
-                paths.Count.Should().Be(5);
-                paths.Count.Should().Be(testDir.GetPaths().Count);
-
-                dirs.Count.Should().Be(3);
-                dirs.Count.Should().Be(testDir.GetDirectories().Count);
-
-                files.Count.Should().Be(2);
-                files.Count.Should().Be(testDir.GetFiles().Count);
+                result.Should().Be(Path.Combine(new DirectoryInfo(".").FullName, path));
             });
         }
 
@@ -66,7 +41,7 @@ namespace DotNet.Basics.TestsRoot
                 testDir.DeleteIfExists();
                 testDir.Exists().Should().BeFalse();
                 //act
-                _fileSystem.CreateDir(testDir.FullName());
+                FileSystem.CreateDir(testDir.FullName());
                 //assert
                 testDir.Exists().Should().BeTrue();
             });
@@ -79,19 +54,22 @@ namespace DotNet.Basics.TestsRoot
             {
                 var sourceDir = testDir.ToDir("Source");
                 sourceDir.CleanIfExists();
-                sourceDir.CreateSubDir("hello");
-                sourceDir.ToFile("MyFile.txt").WriteAllText("ewewer");
-                sourceDir.EnumeratePaths().Count().Should().Be(2);
+                var helloDir = sourceDir.CreateSubDir("hello");
+                var myFile = sourceDir.ToFile("MyFile.txt").WriteAllText("ewewer");
+
                 sourceDir.Exists().Should().BeTrue();
+                helloDir.Exists().Should().BeTrue();
+                myFile.Exists().Should().BeTrue();
 
                 var targetDir = testDir.ToDir("Target");
                 targetDir.DeleteIfExists();
 
                 //act
-                _fileSystem.MoveDir(sourceDir.FullName(), targetDir.FullName());
+                FileSystem.MoveDir(sourceDir.FullName(), targetDir.FullName());
                 //assert
                 sourceDir.Exists().Should().BeFalse();
-                targetDir.EnumeratePaths().Count().Should().Be(2);
+                targetDir.Add(helloDir.Name).Exists().Should().BeTrue();
+                targetDir.ToFile(myFile.Name).Exists().Should().BeTrue();
             });
         }
 
@@ -100,7 +78,7 @@ namespace DotNet.Basics.TestsRoot
         {
             var path = TestPathPrefix + "path";
             //act
-            var result = _fileSystem.ExistsFile(path) || _fileSystem.ExistsDir(path);
+            var result = FileSystem.ExistsFile(path) || FileSystem.ExistsDir(path);
             //assert
             result.Should().BeFalse();
         }
@@ -113,7 +91,7 @@ namespace DotNet.Basics.TestsRoot
                 testDir.CreateIfNotExists();
                 testDir.Exists().Should().BeTrue();
                 //act
-                _fileSystem.DeleteDir(testDir.FullName());
+                FileSystem.DeleteDir(testDir.FullName());
                 //assert
                 testDir.Exists().Should().BeFalse();
             });
@@ -133,7 +111,7 @@ namespace DotNet.Basics.TestsRoot
                 sourceFile.WriteAllText("blaaa");
                 targetFile.Exists().Should().BeFalse();
 
-                _fileSystem.CopyFile(sourceFile.FullName(), targetFile.FullName(), true);
+                FileSystem.CopyFile(sourceFile.FullName(), targetFile.FullName(), true);
 
                 sourceFile.Exists().Should().BeTrue();
                 targetFile.Exists().Should().BeTrue();
@@ -151,7 +129,7 @@ namespace DotNet.Basics.TestsRoot
                 targetFile.DeleteIfExists();
                 targetFile.Exists().Should().BeFalse();
                 targetFile.Directory().CreateIfNotExists();
-                _fileSystem.MoveFile(sourceFile.FullName(), targetFile.FullName());
+                FileSystem.MoveFile(sourceFile.FullName(), targetFile.FullName());
 
                 sourceFile.Exists().Should().BeFalse();
                 targetFile.Exists().Should().BeTrue();
@@ -163,28 +141,33 @@ namespace DotNet.Basics.TestsRoot
         {
             ArrangeActAssertPaths(testDir =>
             {
-                var file = testDir.ToFile("myfile.dat");
-                file.DeleteIfExists();
+                var testFile = testDir.ToFile("tempfile.dat");
+                testFile.WriteAllText("blaaa");
+                testFile.Exists().Should().BeTrue();
 
-                _fileSystem.ExistsFile(file.FullName()).Should().BeFalse();
+                testFile.Exists().Should().BeTrue();
+                //act
+                FileSystem.DeleteFile(testFile.FullName());
 
-                file.WriteAllText("aassd");
-                _fileSystem.ExistsFile(file.FullName()).Should().BeTrue();
+                //assert
+                testFile.Exists().Should().BeFalse();
             });
         }
 
         [Fact]
-        public void DeleteFile_Dirs_FileExists()
+        public void DeleteFile_File_FileExists()
         {
             ArrangeActAssertPaths(testDir =>
             {
-                var file = testDir.ToFile("myfile.dat");
-                file.WriteAllText("aassd");
-                file.Exists().Should().BeTrue();
+                var testFile = testDir.ToFile("tempfile.dat");
+                testFile.WriteAllText("blaaa");
+                testFile.Exists().Should().BeTrue();
 
-                _fileSystem.DeleteFile(file.FullName());
+                //act
+                FileSystem.DeleteFile(testFile.FullName());
 
-                file.Exists().Should().BeFalse();
+                //assert
+                testFile.Exists().Should().BeFalse();
             });
         }
     }

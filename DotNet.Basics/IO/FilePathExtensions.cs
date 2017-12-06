@@ -49,14 +49,19 @@ namespace DotNet.Basics.IO
 
             Paths.FileSystem.CopyFile(fp.FullName(), target.FullName(), overwrite);
         }
-        
+
         public static FilePath WriteAllText(this FilePath fp, string content, bool overwrite = true)
         {
             if (overwrite == false && fp.Exists())
                 throw new IOException($"Target file already exists. Set overwrite to true to ignore existing file: {fp.FullName()}");
 
             fp.Directory().CreateIfNotExists();
-            File.WriteAllText(fp.FullName(), content ?? string.Empty);
+
+            //get filePath that's definitely not too long
+            var testFile = Path.GetTempFileName();
+            File.WriteAllText(testFile, content ?? string.Empty);
+            fp.DeleteIfExists();
+            Paths.FileSystem.MoveFile(testFile, fp.FullName());
             return fp;
         }
         public static string ReadAllText(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)

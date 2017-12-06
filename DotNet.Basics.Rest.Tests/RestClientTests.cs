@@ -51,18 +51,5 @@ namespace DotNet.Basics.Rest.Tests
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
-
-        [Fact(Skip = "doesnt throw behind firewall")]
-        public void ExecuteAsync_FailedRequest_NoExceptions()
-        {
-            var uri = "http://this.domain.does.not.exist/Something";
-
-            Func<Task> act = async () =>
-            {
-                await Get.Uri(uri).SendAsync(new RestClient()).ConfigureAwait(false);
-            };
-
-            act.ShouldThrow<HttpRequestException>();
-        }
     }
 }

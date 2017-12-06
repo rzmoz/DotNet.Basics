@@ -1,33 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 
 namespace DotNet.Basics.IO
 {
-    internal class NetFrameworkWin32FileSystemLongPaths : IFileSystem
+    public class NetFrameworkWin32FileSystemLongPaths : IFileSystem
     {
-        //paths 
-        private readonly MethodInfo _normalizePath;
-
         private static readonly int _maxPathLength = 32767;
         private static readonly int _maxDirectoryLength = _maxPathLength - 12;
 
+        //paths
+        private readonly MethodInfo _pathsNormalize;
+        private readonly MethodInfo _pathsEnumerate;
+
+        //dirs
+        private readonly MethodInfo _dirCreate;
+        private readonly MethodInfo _dirMove;
+        private readonly MethodInfo _dirExists;
+        private readonly MethodInfo _dirDelete;
+
+        //files
+        private readonly MethodInfo _fileCopy;
+        private readonly MethodInfo _fileMove;
+        private readonly MethodInfo _fileExists;
+        private readonly MethodInfo _fileDelete;
 
         public NetFrameworkWin32FileSystemLongPaths()
         {
             EnsureLongPathsAreEnabled();
 
+            var mscorlib = typeof(Path).Assembly;
+
             //init normalize path
-            var type = typeof(Path);
-            string methodName = "NormalizePath";
-            _normalizePath = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
-                .Where(m => m.Name == methodName)
-                .OrderByDescending(m => m.GetParameters().Length)
-                .FirstOrDefault();
-            if (_normalizePath == null)
-                throw new InvalidOperationException($"{ methodName } not found in {type.FullName}");
+            var longPath = mscorlib.GetType("System.IO.LongPath");
+            _pathsNormalize = longPath.GetMethods(BindingFlags.NonPublic | BindingFlags.Static).Where(m => m.Name == "NormalizePath").OrderBy(m => m.GetParameters().Length).FirstOrDefault();
+
+            var longPathDirectory = mscorlib.GetType("System.IO.LongPathDirectory");
+            _dirCreate = longPathDirectory.GetMethod("CreateDirectory", BindingFlags.NonPublic | BindingFlags.Static);
+            _dirMove = longPathDirectory.GetMethod("Move", BindingFlags.NonPublic | BindingFlags.Static);
+            _dirExists = longPathDirectory.GetMethods(BindingFlags.NonPublic | BindingFlags.Static).Where(m => m.Name == "InternalExists").OrderBy(m => m.GetParameters().Length).FirstOrDefault();
+            _dirDelete = longPathDirectory.GetMethod("Delete", BindingFlags.NonPublic | BindingFlags.Static);
+
+            var longPathFile = mscorlib.GetType("System.IO.LongPathFile");
+            _fileCopy = longPathFile.GetMethod("Copy", BindingFlags.NonPublic | BindingFlags.Static);
+            _fileMove = longPathFile.GetMethod("Move", BindingFlags.NonPublic | BindingFlags.Static);
+            _fileExists = longPathFile.GetMethod("InternalExists", BindingFlags.NonPublic | BindingFlags.Static);
+            _fileDelete = longPathFile.GetMethod("Delete", BindingFlags.NonPublic | BindingFlags.Static);
         }
 
         //paths
@@ -36,25 +55,7 @@ namespace DotNet.Basics.IO
             if (string.IsNullOrWhiteSpace(path))
                 return string.Empty;
 
-            var @params = new object[]
-            {
-                path,
-                true,
-                _maxPathLength,
-                true
-            };
-
-            try
-            {
-                var result = _normalizePath.Invoke(null, @params);
-                return result?.ToString();
-            }
-            catch (TargetInvocationException e)
-            {
-                if (e.InnerException != null)
-                    throw e.InnerException;
-                throw;
-            }
+            return StaticInvoke(_pathsNormalize, new object[] { path })?.ToString();
         }
 
         public IEnumerable<string> EnumeratePaths(string fullPath, string searchPattern, SearchOption searchOption)
@@ -74,44 +75,57 @@ namespace DotNet.Basics.IO
 
         public void CreateDir(string fullPath)
         {
-            Directory.CreateDirectory(fullPath);
+            StaticInvoke(_dirCreate, new object[] { fullPath });
         }
 
         public void MoveDir(string sourceFullPath, string destFullPath)
         {
-            Directory.Move(sourceFullPath, destFullPath);
+            StaticInvoke(_dirMove, new object[] { sourceFullPath, destFullPath });
         }
 
         public bool ExistsDir(string fullPath)
         {
-            return Directory.Exists(fullPath);
+            return (bool)StaticInvoke(_dirExists, new object[] { fullPath });
         }
 
-        public void DeleteDir(string fullPath)
+        public void DeleteDir(string fullPath, bool recursive = true)
         {
-            Directory.Delete(fullPath, true);
+            StaticInvoke(_dirDelete, new object[] { fullPath, recursive });
         }
 
         public void CopyFile(string sourceFullPath, string destFullPath, bool overwrite)
         {
-            File.Copy(sourceFullPath, destFullPath, overwrite);
+            StaticInvoke(_fileCopy, new object[] { sourceFullPath, destFullPath, overwrite });
         }
 
         public void MoveFile(string sourceFullPath, string destFullPath)
         {
-            File.Move(sourceFullPath, destFullPath);
+            StaticInvoke(_fileMove, new object[] { sourceFullPath, destFullPath });
         }
 
         public bool ExistsFile(string fullPath)
         {
-            return File.Exists(fullPath);
+            return (bool)StaticInvoke(_fileExists, new object[] { fullPath });
         }
 
         public void DeleteFile(string fullPath)
         {
-            File.Delete(fullPath);
+            StaticInvoke(_fileDelete, new object[] { fullPath });
         }
 
+        private object StaticInvoke(MethodInfo mi, object[] parameters)
+        {
+            try
+            {
+                return mi.Invoke(null, parameters);
+            }
+            catch (TargetInvocationException e)
+            {
+                if (e.InnerException != null)
+                    throw e.InnerException;
+                throw;
+            }
+        }
         private static void EnsureLongPathsAreEnabled()
         {
             var type = typeof(Path);

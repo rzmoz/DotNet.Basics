@@ -15,7 +15,7 @@ namespace DotNet.Basics.IO
         void CreateDir(string fullPath);
         void MoveDir(string sourceFullPath, string destFullPath);
         bool ExistsDir(string fullPath);
-        void DeleteDir(string fullPath);
+        void DeleteDir(string fullPath, bool recursive = true);
 
         //files
         void CopyFile(string sourceFullPath, string destFullPath, bool overwrite);

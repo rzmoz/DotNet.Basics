@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
@@ -14,8 +15,7 @@ namespace DotNet.Basics.TestsRoot
 
         static TestWithHelpers()
         {
-            var entryPath = typeof(TestWithHelpers).GetTypeInfo().Assembly.Location;
-            _testRoot = Path.Combine(Path.GetDirectoryName(entryPath)).ToDir();
+            _testRoot = AppDomain.CurrentDomain.BaseDirectory.ToDir();
         }
 
         protected TestWithHelpers(ITestOutputHelper output, string testPathPrefix = null)
