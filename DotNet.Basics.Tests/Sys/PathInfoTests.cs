@@ -90,8 +90,8 @@ namespace DotNet.Basics.Tests.Sys
         }
 
         [Theory]
-        [InlineData("myFolder/DetectDelimiter/", PathType.Folder)]//delimiter detected
-        [InlineData("myFolder\\DetectDelimiter\\", PathType.Folder)]//delimiter detected
+        [InlineData("myFolder/DetectDelimiter/", PathType.Dir)]//delimiter detected
+        [InlineData("myFolder\\DetectDelimiter\\", PathType.Dir)]//delimiter detected
         [InlineData("myFolder/DetectDelimiter", PathType.File)]//delimiter fallback
         public void IsFolder_Detection_IsFolderIsDetected(string pathInput, PathType pathType)
         {
@@ -100,7 +100,7 @@ namespace DotNet.Basics.Tests.Sys
         }
 
         [Theory]
-        [InlineData("myFolder/DetectDelimiter/", PathType.Folder)]//folder with delimiter in the end
+        [InlineData("myFolder/DetectDelimiter/", PathType.Dir)]//folder with delimiter in the end
         [InlineData("myFolder/DetectDelimiter", PathType.File)]//folder withouth delimiter in the end
         [InlineData("myFolder/myFile.txt", PathType.File)]//delimiter fallback
         public void IsFolder_Formatting_FolderExtensionIsOutput(string pathInput, PathType pathType)
@@ -108,7 +108,7 @@ namespace DotNet.Basics.Tests.Sys
             var path = pathInput.ToPath();
             path.PathType.Should().Be(pathType);
             var formatted = path.ToString();
-            if (pathType==PathType.Folder)
+            if (pathType==PathType.Dir)
                 formatted.Should().EndWith(path.Separator.ToString());
             else
                 formatted.Should().NotEndWith(path.Separator.ToString());
@@ -148,8 +148,8 @@ namespace DotNet.Basics.Tests.Sys
 
 
         [Theory]
-        [InlineData("myFolder\\", "dir\\", PathType.Folder)]//backslash all dirs
-        [InlineData("myFolder\\", "file.txt", PathType.Folder)]//backslash dir remains when file added
+        [InlineData("myFolder\\", "dir\\", PathType.Dir)]//backslash all dirs
+        [InlineData("myFolder\\", "file.txt", PathType.Dir)]//backslash dir remains when file added
         [InlineData("myfile", "dir//", PathType.File)]//slash file remains when dir added - should throw exception?
         [InlineData("myfile.txt", "file.txt", PathType.File)]//slash file remains when dir added - should throw exception?
         public void Add_KeepIsFolder_IsFolderIsUnchagedRegardlesOfSegmentsAdded(string root, string newSegment, PathType pathType)

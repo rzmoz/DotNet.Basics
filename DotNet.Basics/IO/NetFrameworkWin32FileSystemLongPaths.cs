@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {
@@ -12,7 +13,6 @@ namespace DotNet.Basics.IO
 
         //paths
         private readonly MethodInfo _pathsNormalize;
-        private readonly MethodInfo _pathsEnumerate;
 
         //dirs
         private readonly MethodInfo _dirCreate;

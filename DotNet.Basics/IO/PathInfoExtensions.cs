@@ -28,7 +28,7 @@ namespace DotNet.Basics.IO
 
         public static bool Exists(this PathInfo pi)
         {
-            return pi.PathType == PathType.Folder ? Paths.FileSystem.ExistsDir(pi.FullName()) : Paths.FileSystem.ExistsFile(pi.FullName());
+            return pi.PathType == PathType.Dir ? Paths.FileSystem.ExistsDir(pi.FullName()) : Paths.FileSystem.ExistsFile(pi.FullName());
         }
 
         public static bool DeleteIfExists(this PathInfo pi)
@@ -42,7 +42,7 @@ namespace DotNet.Basics.IO
                 return true;
             Repeat.Task(() =>
                 {
-                    if (pi.PathType == PathType.Folder)
+                    if (pi.PathType == PathType.Dir)
                         Paths.FileSystem.DeleteDir(pi.FullName(), true);
                     else
                         Paths.FileSystem.DeleteFile(pi.FullName());

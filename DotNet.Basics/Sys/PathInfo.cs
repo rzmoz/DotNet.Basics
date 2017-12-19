@@ -86,7 +86,7 @@ namespace DotNet.Basics.Sys
             var tokenized = Tokenize(path, segments);
             var separator = DetectPathSeparator(path, segments);
             var flattened = string.Join(separator.ToString(), tokenized);
-            if (pathType == PathType.Folder)
+            if (pathType == PathType.Dir)
                 flattened = flattened.EnsureSuffix(separator);
             return flattened;
         }
@@ -101,7 +101,7 @@ namespace DotNet.Basics.Sys
                 return PathType.Unknown;
 
             if (lookingAt.EndsWith(PathSeparator.Backslash.ToString()) || lookingAt.EndsWith(PathSeparator.Slash.ToString()))
-                return PathType.Folder;
+                return PathType.Dir;
             return PathType.File;
         }
 

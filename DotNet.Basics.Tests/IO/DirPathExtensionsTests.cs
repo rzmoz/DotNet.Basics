@@ -67,8 +67,8 @@ namespace DotNet.Basics.Tests.IO
             var expected = _testDirRoot + _testDoubleDir + actual.Separator;
             actual.FullName().Should().Be(expected);
 
-            actual = @"c:\BuildLibrary\Folder\Module 2.0.1".ToDir("Website");
-            expected = @"c:\BuildLibrary\Folder\Module 2.0.1\Website\";
+            actual = @"c:\BuildLibrary\Dir\Module 2.0.1".ToDir("Website");
+            expected = @"c:\BuildLibrary\Dir\Module 2.0.1\Website\";
             actual.FullName().Should().Be(expected);
         }
 

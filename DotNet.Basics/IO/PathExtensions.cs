@@ -30,7 +30,7 @@ namespace DotNet.Basics.IO
                 if (string.IsNullOrWhiteSpace(fullName) == false)
                 {
                     if (Paths.FileSystem.ExistsDir(fullName))
-                        pathType = PathType.Folder;
+                        pathType = PathType.Dir;
                     else if (Paths.FileSystem.ExistsFile(fullName))
                         pathType = PathType.File;
                     else
@@ -38,9 +38,14 @@ namespace DotNet.Basics.IO
                 }
             }
 
-            return pathType == PathType.Folder
+            return pathType == PathType.Dir
                 ? path.ToDir(pathSeparator, segments)
                 : path.ToFile(pathSeparator, segments) as PathInfo;
+        }
+
+        public static PathInfo ToPath(this PathInfo pi, PathType pathType, params string[] segments)
+        {
+            return pi.RawPath.ToPath(pathType, segments);
         }
 
         //ToDir

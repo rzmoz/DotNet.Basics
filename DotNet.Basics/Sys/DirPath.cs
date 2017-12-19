@@ -7,7 +7,7 @@
         }
 
         public DirPath(string path, char pathSeparator, params string[] segments)
-            : base(path, PathType.Folder, pathSeparator, segments)
+            : base(path, PathType.Dir, pathSeparator, segments)
         {
         }        
     }
