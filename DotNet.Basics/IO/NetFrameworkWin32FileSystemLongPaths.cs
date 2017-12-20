@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -8,9 +9,6 @@ namespace DotNet.Basics.IO
 {
     public class NetFrameworkWin32FileSystemLongPaths : IFileSystem
     {
-        private static readonly int _maxPathLength = 32767;
-        private static readonly int _maxDirectoryLength = _maxPathLength - 12;
-
         //paths
         private readonly MethodInfo _pathsNormalize;
 
@@ -28,11 +26,14 @@ namespace DotNet.Basics.IO
 
         public NetFrameworkWin32FileSystemLongPaths()
         {
-            EnsureLongPathsAreEnabled();
-
             var mscorlib = typeof(Path).Assembly;
 
-            //init normalize path
+            //enable long paths
+            AppContext.SetSwitch("Switch.System.IO.BlockLongPaths", false);
+            var appContextSwitches = mscorlib.GetType("System.AppContextSwitches");
+            appContextSwitches.GetField("_blockLongPaths", BindingFlags.Static | BindingFlags.NonPublic).SetValue("_blockLongPaths", -1);
+            appContextSwitches.GetField("_useLegacyPathHandling", BindingFlags.Static | BindingFlags.NonPublic).SetValue("_useLegacyPathHandling", -1);
+            
             var longPath = mscorlib.GetType("System.IO.LongPath");
             _pathsNormalize = longPath.GetMethods(BindingFlags.NonPublic | BindingFlags.Static).Where(m => m.Name == "NormalizePath").OrderBy(m => m.GetParameters().Length).FirstOrDefault();
 
@@ -55,65 +56,65 @@ namespace DotNet.Basics.IO
             if (string.IsNullOrWhiteSpace(path))
                 return string.Empty;
 
-            return StaticInvoke(_pathsNormalize, new object[] { path })?.ToString();
+            return StaticInvoke(_pathsNormalize, path)?.ToString();
         }
 
         public IEnumerable<string> EnumeratePaths(string fullPath, string searchPattern, SearchOption searchOption)
         {
-            return Directory.EnumerateFileSystemEntries(fullPath, searchPattern, searchOption);
+            return Directory.EnumerateFileSystemEntries(fullPath.EnsurePrefix(@"\\?\"), searchPattern, searchOption);
         }
 
         public IEnumerable<string> EnumerateDirectories(string fullPath, string searchPattern, SearchOption searchOption)
         {
-            return Directory.EnumerateDirectories(fullPath, searchPattern, searchOption);
+            return Directory.EnumerateDirectories(fullPath.EnsurePrefix(@"\\?\"), searchPattern, searchOption);
         }
 
         public IEnumerable<string> EnumerateFiles(string fullPath, string searchPattern, SearchOption searchOption)
         {
-            return Directory.EnumerateFiles(fullPath, searchPattern, searchOption);
+            return Directory.EnumerateFiles(fullPath.EnsurePrefix(@"\\?\"), searchPattern, searchOption);
         }
 
         public void CreateDir(string fullPath)
         {
-            StaticInvoke(_dirCreate, new object[] { fullPath });
+            StaticInvoke(_dirCreate, fullPath);
         }
 
         public void MoveDir(string sourceFullPath, string destFullPath)
         {
-            StaticInvoke(_dirMove, new object[] { sourceFullPath, destFullPath });
+            StaticInvoke(_dirMove, sourceFullPath, destFullPath);
         }
 
         public bool ExistsDir(string fullPath)
         {
-            return (bool)StaticInvoke(_dirExists, new object[] { fullPath });
+            return (bool)StaticInvoke(_dirExists, fullPath);
         }
 
         public void DeleteDir(string fullPath, bool recursive = true)
         {
-            StaticInvoke(_dirDelete, new object[] { fullPath, recursive });
+            StaticInvoke(_dirDelete, fullPath, recursive);
         }
 
         public void CopyFile(string sourceFullPath, string destFullPath, bool overwrite)
         {
-            StaticInvoke(_fileCopy, new object[] { sourceFullPath, destFullPath, overwrite });
+            StaticInvoke(_fileCopy, sourceFullPath, destFullPath, overwrite);
         }
 
         public void MoveFile(string sourceFullPath, string destFullPath)
         {
-            StaticInvoke(_fileMove, new object[] { sourceFullPath, destFullPath });
+            StaticInvoke(_fileMove, sourceFullPath, destFullPath);
         }
 
         public bool ExistsFile(string fullPath)
         {
-            return (bool)StaticInvoke(_fileExists, new object[] { fullPath });
+            return (bool)StaticInvoke(_fileExists, fullPath);
         }
 
         public void DeleteFile(string fullPath)
         {
-            StaticInvoke(_fileDelete, new object[] { fullPath });
+            StaticInvoke(_fileDelete, fullPath);
         }
 
-        private object StaticInvoke(MethodInfo mi, object[] parameters)
+        private object StaticInvoke(MethodInfo mi, params object[] parameters)
         {
             try
             {
@@ -125,12 +126,6 @@ namespace DotNet.Basics.IO
                     throw e.InnerException;
                 throw;
             }
-        }
-        private static void EnsureLongPathsAreEnabled()
-        {
-            var type = typeof(Path);
-            type?.GetField("MaxPath", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue("MaxPath", _maxPathLength);
-            type?.GetField("MaxDirectoryLength", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue("MaxDirectoryLength", _maxDirectoryLength);
         }
     }
 }
