@@ -9,6 +9,8 @@ namespace DotNet.Basics.IO
 {
     public class NetFrameworkWin32FileSystemLongPaths : IFileSystem
     {
+        private const uint _maxLongPathLength = 32767;
+
         //paths
         private readonly MethodInfo _pathsNormalize;
 
@@ -26,16 +28,17 @@ namespace DotNet.Basics.IO
 
         public NetFrameworkWin32FileSystemLongPaths()
         {
-            var mscorlib = typeof(Path).Assembly;
+            var path = typeof(Path);
+            var mscorlib = path.Assembly;
 
             //enable long paths
             AppContext.SetSwitch("Switch.System.IO.BlockLongPaths", false);
             var appContextSwitches = mscorlib.GetType("System.AppContextSwitches");
             appContextSwitches.GetField("_blockLongPaths", BindingFlags.Static | BindingFlags.NonPublic).SetValue("_blockLongPaths", -1);
             appContextSwitches.GetField("_useLegacyPathHandling", BindingFlags.Static | BindingFlags.NonPublic).SetValue("_useLegacyPathHandling", -1);
-            
-            var longPath = mscorlib.GetType("System.IO.LongPath");
-            _pathsNormalize = longPath.GetMethods(BindingFlags.NonPublic | BindingFlags.Static).Where(m => m.Name == "NormalizePath").OrderBy(m => m.GetParameters().Length).FirstOrDefault();
+
+            var longPathHelper = mscorlib.GetType("System.IO.LongPathHelper");
+            _pathsNormalize = longPathHelper.GetMethod("Normalize", BindingFlags.NonPublic | BindingFlags.Static);
 
             var longPathDirectory = mscorlib.GetType("System.IO.LongPathDirectory");
             _dirCreate = longPathDirectory.GetMethod("CreateDirectory", BindingFlags.NonPublic | BindingFlags.Static);
@@ -56,22 +59,22 @@ namespace DotNet.Basics.IO
             if (string.IsNullOrWhiteSpace(path))
                 return string.Empty;
 
-            return StaticInvoke(_pathsNormalize, path)?.ToString();
+            return StaticInvoke(_pathsNormalize, path, _maxLongPathLength, false, true)?.ToString();
         }
 
         public IEnumerable<string> EnumeratePaths(string fullPath, string searchPattern, SearchOption searchOption)
         {
-            return Directory.EnumerateFileSystemEntries(fullPath.EnsurePrefix(@"\\?\"), searchPattern, searchOption);
+            return Directory.EnumerateFileSystemEntries(fullPath.EnsurePrefix(Paths.ExtendedPathPrefix), searchPattern, searchOption);
         }
 
         public IEnumerable<string> EnumerateDirectories(string fullPath, string searchPattern, SearchOption searchOption)
         {
-            return Directory.EnumerateDirectories(fullPath.EnsurePrefix(@"\\?\"), searchPattern, searchOption);
+            return Directory.EnumerateDirectories(fullPath.EnsurePrefix(Paths.ExtendedPathPrefix), searchPattern, searchOption);
         }
 
         public IEnumerable<string> EnumerateFiles(string fullPath, string searchPattern, SearchOption searchOption)
         {
-            return Directory.EnumerateFiles(fullPath.EnsurePrefix(@"\\?\"), searchPattern, searchOption);
+            return Directory.EnumerateFiles(fullPath.EnsurePrefix(Paths.ExtendedPathPrefix), searchPattern, searchOption);
         }
 
         public void CreateDir(string fullPath)

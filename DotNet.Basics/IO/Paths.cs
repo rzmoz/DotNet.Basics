@@ -4,6 +4,8 @@ namespace DotNet.Basics.IO
 {
     public static class Paths
     {
+        public const string ExtendedPathPrefix = @"\\?\";
+
         static Paths()
         {
             try
