@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Tasks
 {
@@ -18,19 +19,19 @@ namespace DotNet.Basics.Tasks
                 Add(issue);
         }
 
-        public void Add(string message)
+        public void Add(LogLevel logLevel, string message)
         {
-            Enqueue(new TaskIssue(message));
+            Enqueue(new TaskIssue(logLevel, message));
         }
 
-        public void Add(Exception e)
+        public void Add(LogLevel logLevel, Exception e)
         {
-            Enqueue(new TaskIssue(null, e));
+            Enqueue(new TaskIssue(logLevel, e.Message, e));
         }
 
-        public void Add(string message, Exception e)
+        public void Add(LogLevel logLevel, string message, Exception e)
         {
-            Enqueue(new TaskIssue(message, e));
+            Enqueue(new TaskIssue(logLevel, message, e));
         }
 
         public void Add(TaskIssue issue)

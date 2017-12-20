@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Tasks
 {
@@ -27,7 +28,7 @@ namespace DotNet.Basics.Tasks
 
             var issuesList = issues?.ToList() ?? new List<TaskIssue>();
             if (issuesList.Count == 98)
-                issuesList.Add(new TaskIssue("I got 99 issues but a b**** ain't one"));
+                issuesList.Add(new TaskIssue(LogLevel.Debug, "I got 99 issues but a b**** ain't one"));
             Issues = issuesList;
 
         }

@@ -4,6 +4,7 @@ using System.Linq;
 using DotNet.Basics.Tasks;
 using DotNet.Basics.Collections;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks
@@ -26,7 +27,7 @@ namespace DotNet.Basics.Tests.Tasks
             var inputCount = 98;
 
             //act
-            var result = new TaskResult(issues => Enumerable.Range(1, inputCount).ForEach(i => issues.Add(i.ToString())));
+            var result = new TaskResult(issues => Enumerable.Range(1, inputCount).ForEach(i => issues.Add(LogLevel.Error, i.ToString())));
 
             result.Issues.Count.Should().Be(inputCount + 1);
             result.Issues.Last().Message.Should().Be("I got 99 issues but a b**** ain't one");
@@ -40,7 +41,7 @@ namespace DotNet.Basics.Tests.Tasks
             //act
             var result = new TaskResult(issues =>
             {
-                issues.Add(issueMessage);
+                issues.Add(LogLevel.Error, issueMessage);
             });
 
             result.Issues.None().Should().BeFalse();
@@ -57,7 +58,7 @@ namespace DotNet.Basics.Tests.Tasks
             //act
             var initialResult = new TaskResult(issues =>
             {
-                issues.Add(initialIssueMessage, new IOException());
+                issues.Add(LogLevel.Error, initialIssueMessage, new IOException());
             });
 
             initialResult.Issues.None().Should().BeFalse();
@@ -68,14 +69,16 @@ namespace DotNet.Basics.Tests.Tasks
 
             var joinedResult = initialResult.Append(issues =>
             {
-                issues.Add(appendedIssueMessage, new ArgumentException());
+                issues.Add(LogLevel.Critical, appendedIssueMessage, new ArgumentException());
             });
 
             joinedResult.Issues.None().Should().BeFalse();
             joinedResult.Issues.Count.Should().Be(2);
+            joinedResult.Issues.First().LogLevel.Should().Be(LogLevel.Error);
             joinedResult.Issues.First().Message.Should().Be(initialIssueMessage);
             joinedResult.Issues.First().Exception.Should().BeOfType<IOException>();
 
+            joinedResult.Issues.Last().LogLevel.Should().Be(LogLevel.Critical);
             joinedResult.Issues.Last().Message.Should().Be(appendedIssueMessage);
             joinedResult.Issues.Last().Exception.Should().BeOfType<ArgumentException>();
         }

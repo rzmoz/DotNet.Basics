@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Tasks
 {
@@ -74,7 +75,7 @@ namespace DotNet.Basics.Tasks
             }
             catch (Exception e)
             {
-                issues.Add(e);
+                issues.Add(LogLevel.Error, e);
                 throw;
             }
             finally

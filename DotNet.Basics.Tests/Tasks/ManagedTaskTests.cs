@@ -6,6 +6,7 @@ using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
 using DotNet.Basics.Collections;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks
@@ -30,7 +31,7 @@ namespace DotNet.Basics.Tests.Tasks
 
             var task = new ManagedTask<EventArgs<int>>((args, issues, ct) =>
             {
-                issues.Add(issueMessage);
+                issues.Add(LogLevel.Error, issueMessage);
                 args.Value++;
             });
             var result = await task.RunAsync(inputArgs, CancellationToken.None).ConfigureAwait(false);

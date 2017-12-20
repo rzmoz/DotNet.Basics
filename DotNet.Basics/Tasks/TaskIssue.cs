@@ -1,24 +1,19 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Tasks
 {
     public class TaskIssue
     {
-        public TaskIssue(string message)
-            : this(message, null)
-        { }
-
-        public TaskIssue(Exception exception)
-            : this(exception?.Message, exception)
-        { }
-
-        public TaskIssue(string message, Exception exception)
+        public TaskIssue(LogLevel logLevel, string message, Exception exception = null)
         {
+            LogLevel = logLevel;
             Message = message ?? string.Empty;
             Exception = exception;
             HasException = Exception != null;
         }
 
+        public LogLevel LogLevel { get; }
         public string Message { get; }
         public Exception Exception { get; }
 

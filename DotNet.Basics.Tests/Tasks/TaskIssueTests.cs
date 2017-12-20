@@ -1,6 +1,7 @@
 ﻿using System;
 using DotNet.Basics.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks
@@ -12,8 +13,9 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var msg = "Ctor_Message_MessageIsSet";
             //act
-            var issue = new TaskIssue(msg);
+            var issue = new TaskIssue(LogLevel.Error, msg);
 
+            issue.LogLevel.Should().Be(LogLevel.Error);
             issue.Message.Should().Be(msg);
             issue.Exception.Should().BeNull();
         }
@@ -22,16 +24,18 @@ namespace DotNet.Basics.Tests.Tasks
         public void HasException_Null_False()
         {
             //act
-            var issue = new TaskIssue("HasException_Null_False", null);
+            var issue = new TaskIssue(LogLevel.Error, "HasException_Null_False", null);
 
+            issue.LogLevel.Should().Be(LogLevel.Error);
             issue.HasException.Should().BeFalse();
         }
         [Fact]
         public void HasException_ExceptionNotNull_True()
         {
             //act
-            var issue = new TaskIssue("HasException_ExceptionNotNull_True", new ApplicationException());
+            var issue = new TaskIssue(LogLevel.Error, "HasException_ExceptionNotNull_True", new ApplicationException());
 
+            issue.LogLevel.Should().Be(LogLevel.Error);
             issue.HasException.Should().BeTrue();
         }
 
@@ -42,8 +46,9 @@ namespace DotNet.Basics.Tests.Tasks
             var ex = new ArithmeticException(msg);
 
             //act
-            var issue = new TaskIssue(ex);
+            var issue = new TaskIssue(LogLevel.Error, ex.Message, ex);
 
+            issue.LogLevel.Should().Be(LogLevel.Error);
             issue.Message.Should().Be(msg);
             issue.Exception.Should().BeOfType<ArithmeticException>();
         }
@@ -56,8 +61,9 @@ namespace DotNet.Basics.Tests.Tasks
             var ex = new ArithmeticException(exMsg);
 
             //act
-            var issue = new TaskIssue(msg, ex);
+            var issue = new TaskIssue(LogLevel.Error, msg, ex);
 
+            issue.LogLevel.Should().Be(LogLevel.Error);
             issue.Message.Should().Be(msg);
             issue.Exception.Should().BeOfType<ArithmeticException>();
             issue.Exception.Message.Should().Be(exMsg);

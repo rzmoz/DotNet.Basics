@@ -9,6 +9,7 @@ using DotNet.Basics.Tasks;
 using DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks.Pipelines
@@ -251,7 +252,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             for (var i = 0; i < stepCount; i++)
                 block.AddStep(async (args, issues, ct) =>
                 {
-                    issues.Add(i.ToString());
+                    issues.Add(LogLevel.Error, i.ToString());
 
                     if (Interlocked.CompareExchange(ref lockFlag, 1, 0) == 0)
                     {

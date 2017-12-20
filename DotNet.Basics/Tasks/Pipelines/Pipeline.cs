@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {
@@ -14,7 +15,7 @@ namespace DotNet.Basics.Tasks.Pipelines
 
         public Pipeline(string name) : base(name)
         { }
-        
+
         public Pipeline(Invoke invoke) : base(invoke)
         { }
 
@@ -53,7 +54,7 @@ namespace DotNet.Basics.Tasks.Pipelines
                     throw new ArgumentException($"{nameof(Invoke)} not supported: {Invoke }");
             }
         }
-        
+
         public IReadOnlyCollection<ManagedTask<T>> Tasks => _tasks.ToList();
         public Invoke Invoke { get; }
 
@@ -76,16 +77,16 @@ namespace DotNet.Basics.Tasks.Pipelines
                     }
                     catch (InvalidOperationException e)
                     {
-                        issues.Add($"Failed to load: {lazyLoadStep.GetTaskType().Name} - {e.Message}", e);
+                        issues.Add(LogLevel.Error, $"Failed to load: {lazyLoadStep.GetTaskType().Name} - {e.Message}", e);
                     }
                 }
             });
         }
 
-        public Pipeline<T> AddStep<TTask>(IServiceProvider serviceProvider,string name = null) where TTask : ManagedTask<T>
+        public Pipeline<T> AddStep<TTask>(IServiceProvider serviceProvider, string name = null) where TTask : ManagedTask<T>
         {
             if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
-            var lazyTask = new LazyLoadStep<T, TTask>(name, ()=> serviceProvider.GetService(typeof(TTask)) as TTask);
+            var lazyTask = new LazyLoadStep<T, TTask>(name, () => serviceProvider.GetService(typeof(TTask)) as TTask);
             InitEvents(lazyTask);
             _tasks.Enqueue(lazyTask);
             return this;
