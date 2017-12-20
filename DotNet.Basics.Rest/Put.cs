@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
+﻿using System.Net.Http;
 
 namespace DotNet.Basics.Rest
 {
-public static    class Put
+    public static class Put
     {
         public static IRestRequest Uri(string uri)
         {

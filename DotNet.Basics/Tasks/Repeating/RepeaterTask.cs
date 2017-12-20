@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks.Repeating
 {
-    public class RepeaterTask : ManagedTask<EventArgs>, ITask
+    public class RepeaterTask : ManagedTask<EventArgs>
     {
         public RepeaterTask(Func<Task> task) : base(task)
         {

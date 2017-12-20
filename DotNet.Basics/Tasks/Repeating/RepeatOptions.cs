@@ -13,14 +13,14 @@ namespace DotNet.Basics.Tasks.Repeating
 
         public uint? MaxTries
         {
-            get { return RepeatMaxTriesPredicate?.MaxTries; }
-            set { RepeatMaxTriesPredicate = value == null ? null : new RepeatMaxTriesPredicate(value.Value); }
+            get => RepeatMaxTriesPredicate?.MaxTries;
+            set => RepeatMaxTriesPredicate = value == null ? null : new RepeatMaxTriesPredicate(value.Value);
         }
 
         public TimeSpan? Timeout
         {
-            get { return RepeatTimeoutPredicate?.Timeout; }
-            set { RepeatTimeoutPredicate = value == null ? null : new RepeatTimeoutPredicate(value.Value); }
+            get => RepeatTimeoutPredicate?.Timeout;
+            set => RepeatTimeoutPredicate = value == null ? null : new RepeatTimeoutPredicate(value.Value);
         }
 
         /// <summary>

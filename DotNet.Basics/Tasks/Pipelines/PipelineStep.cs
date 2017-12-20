@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using DotNet.Basics.Tasks;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {

@@ -33,7 +33,7 @@ namespace DotNet.Basics.Tasks.Repeating
                 }
                 finally
                 {
-                    _asyncTask = () => Task.FromResult("");
+                    _asyncTask = () => Task.FromResult(string.Empty);
                 }
             };
         }

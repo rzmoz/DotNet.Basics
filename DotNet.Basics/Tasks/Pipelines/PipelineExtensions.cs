@@ -27,14 +27,14 @@ namespace DotNet.Basics.Tasks.Pipelines
                                         t.BaseType.GetGenericTypeDefinition() == typeof(PipelineStep<>))).ToList();
 
             foreach (var pipelineStep in pipelineSteps)
-                pipelineStep.RegisterType(services, pipelineStep);
+                pipelineStep.RegisterType(services);
         }
 
-        private static void RegisterType(this Type type, IServiceCollection services, Type pipelineStepType)
+        private static void RegisterType(this Type pipelineStep, IServiceCollection services)
         {
-            if (type.IsAbstract)
+            if (pipelineStep.IsAbstract)
                 return;
-            services.AddTransient(type);
+            services.AddTransient(pipelineStep);
         }
     }
 }
