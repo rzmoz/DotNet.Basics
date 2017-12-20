@@ -6,8 +6,8 @@
       "prerelease": "rc.1"
     },
     {
-      "name": "DotNet.Basics.PowerShell.Sdk",
-      "version": "9.2.1",
+      "name": "DotNet.Basics.PowerShell",
+      "version": "6.0.0",
       "prerelease": "alpha.1"
     },
     {
@@ -16,15 +16,15 @@
       "prerelease": "rc.1"
     },
     {
-      "name": "DotNet.Basics.SevenZip.Sdk",
+      "name": "DotNet.Basics.SevenZip",
       "version": "16.04.0",
-      "prerelease": "rc.1"
+      "prerelease": "rc.4"
     }
   ],
   "tests": [
     "DotNet.Basics.Tests",
     "DotNet.Basics.Rest.Tests",
-    "DotNet.Basics.SevenZip.Sdk.Tests",
+    "DotNet.Basics.SevenZip.Tests",
     "DotNet.Basics.Tests.NetFramework"
   ]
 }

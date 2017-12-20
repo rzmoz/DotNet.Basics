@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+/*
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 
-namespace DotNet.Basics.PowerShell.Sdk
+namespace DotNet.Basics.PowerShell
 {
     public static class PowerShellCli
     {
@@ -71,3 +72,4 @@ namespace DotNet.Basics.PowerShell.Sdk
         }
     }
 }
+*/

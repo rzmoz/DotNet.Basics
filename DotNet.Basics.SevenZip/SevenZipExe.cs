@@ -6,16 +6,16 @@ using DotNet.Basics.Cli;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 
-namespace DotNet.Basics.SevenZip.Sdk
+namespace DotNet.Basics.SevenZip
 {
     public class SevenZipExe
     {
         private static readonly Assembly _sevenZipAssembly = typeof(SevenZipExe).Assembly;
 
         private string _defaultInstallDir => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        private static Stream _7zaDll => _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.Sdk.7za.dll");
-        private static Stream _7zaExe => _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.Sdk.7za.exe");
-        private static Stream _7zxaDll => _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.Sdk.7zxa.dll");
+        private static Stream _7zaDll => _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.dll");
+        private static Stream _7zaExe => _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.exe");
+        private static Stream _7zxaDll => _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7zxa.dll");
 
         private readonly DirPath _appRootDir;
 

@@ -1,19 +1,18 @@
 ﻿using System.Linq;
 using DotNet.Basics.IO;
-using DotNet.Basics.PowerShell.Sdk;
 using DotNet.Basics.TestsRoot;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DotNet.Basics.Tests.NetFramework.PowerShell
+namespace DotNet.Basics.Tests.PowerShell
 {
     public class PowerShellCliTests : TestWithHelpers
     {
         public PowerShellCliTests(ITestOutputHelper output) : base(output)
         {
         }
-
+        /*
         [Fact]
         public void RunScript_ExecuteScript_HelloWorldIsOutputted()
         {
@@ -54,5 +53,6 @@ namespace DotNet.Basics.Tests.NetFramework.PowerShell
             });
 
         }
+        */
     }
 }

@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DotNet.Basics.SevenZip.Sdk\DotNet.Basics.SevenZip.Sdk.csproj" />
+    <ProjectReference Include="..\DotNet.Basics.SevenZip\DotNet.Basics.SevenZip.csproj" />
     <ProjectReference Include="..\DotNet.Basics.TestsRoot\DotNet.Basics.TestsRoot.csproj" />
   </ItemGroup>
 

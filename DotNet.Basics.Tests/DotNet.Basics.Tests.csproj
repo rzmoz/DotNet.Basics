@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DotNet.Basics.PowerShell\DotNet.Basics.PowerShell.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Tests.NetCore.EchoOut\DotNet.Basics.Tests.NetCore.EchoOut.csproj" />
     <ProjectReference Include="..\DotNet.Basics.TestsRoot\DotNet.Basics.TestsRoot.csproj" />
     <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />

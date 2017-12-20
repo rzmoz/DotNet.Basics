@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using System.Management.Automation;
 
-namespace DotNet.Basics.PowerShell.Sdk
+namespace DotNet.Basics.PowerShell
 {
     public class PowerShellCmdlet
     {

@@ -1,9 +1,9 @@
 using System.Linq;
-using DotNet.Basics.PowerShell.Sdk;
+using DotNet.Basics.PowerShell;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.NetFramework.PowerShell
+namespace DotNet.Basics.Tests.PowerShell
 {
     public class PowerShellCmdletTests
     {
