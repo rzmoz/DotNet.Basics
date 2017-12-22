@@ -19,7 +19,6 @@
   "tests": [
     "DotNet.Basics.Tests",
     "DotNet.Basics.Rest.Tests",
-    "DotNet.Basics.SevenZip.Tests",
-    "DotNet.Basics.Tests.NetFramework"
+    "DotNet.Basics.SevenZip.Tests"
   ]
 }

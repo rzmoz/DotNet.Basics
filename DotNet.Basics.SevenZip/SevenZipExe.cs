@@ -31,9 +31,9 @@ namespace DotNet.Basics.SevenZip
 
         public (string Input, int ExitCode, string Output) ExtractToDirectory(string archivePath, string targetDirPath)
         {
-            if (Paths.FileSystem.ExistsFile(archivePath) == false)
+            if (FileSystem.Current.ExistsFile(archivePath) == false)
                 throw new IOException($"Archive not found: {archivePath}");
-            if (Paths.FileSystem.ExistsDir(targetDirPath))
+            if (FileSystem.Current.ExistsDir(targetDirPath))
                 throw new IOException($"Target dir already exists at: {targetDirPath}");
             return ExecuteSevenZip("x", $"\"{archivePath}\"", $"\"-o{targetDirPath.ToDir().FullName()}\"", "*", "-r", "aoa");
         }

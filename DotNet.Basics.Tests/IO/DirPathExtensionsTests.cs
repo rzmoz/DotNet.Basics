@@ -10,9 +10,9 @@ using Xunit.Abstractions;
 
 namespace DotNet.Basics.Tests.IO
 {
-    public class DirPathExtensionsTests : FileSystemTests
+    public class DirPathExtensionsTests : TestWithHelpers
     {
-        public DirPathExtensionsTests(ITestOutputHelper output) : base(new NetCoreWin32FileSystemLongPaths(), output)
+        public DirPathExtensionsTests(ITestOutputHelper output) : base(output)
         {
         }
 

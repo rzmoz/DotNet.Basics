@@ -23,7 +23,7 @@ namespace DotNet.Basics.IO
             if (overwrite)
                 targetFile.DeleteIfExists();
 
-            Paths.FileSystem.MoveFile(fp.FullName(), targetFile.FullName());
+            FileSystem.Current.MoveFile(fp.FullName(), targetFile.FullName());
             return targetFile.Exists();
         }
 
@@ -47,7 +47,7 @@ namespace DotNet.Basics.IO
             if (ensureTargetDir)
                 target.Directory().CreateIfNotExists();
 
-            Paths.FileSystem.CopyFile(fp.FullName(), target.FullName(), overwrite);
+            FileSystem.Current.CopyFile(fp.FullName(), target.FullName(), overwrite);
         }
 
         public static FilePath WriteAllText(this FilePath fp, string content, bool overwrite = true)
@@ -61,7 +61,7 @@ namespace DotNet.Basics.IO
             var testFile = Path.GetTempFileName();
             File.WriteAllText(testFile, content ?? string.Empty);
             fp.DeleteIfExists();
-            Paths.FileSystem.MoveFile(testFile, fp.FullName());
+            FileSystem.Current.MoveFile(testFile, fp.FullName());
             return fp;
         }
         public static string ReadAllText(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)

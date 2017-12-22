@@ -25,13 +25,13 @@ namespace DotNet.Basics.IO
             if (pathType == PathType.Unknown)
             {
                 var cleanedSegments = PathInfo.Flatten(path, pathType, segments);
-                var fullName = Paths.FileSystem.GetFullPath(cleanedSegments);
+                var fullName = FileSystem.Current.GetFullPath(cleanedSegments);
 
                 if (string.IsNullOrWhiteSpace(fullName) == false)
                 {
-                    if (Paths.FileSystem.ExistsDir(fullName))
+                    if (FileSystem.Current.ExistsDir(fullName))
                         pathType = PathType.Dir;
-                    else if (Paths.FileSystem.ExistsFile(fullName))
+                    else if (FileSystem.Current.ExistsFile(fullName))
                         pathType = PathType.File;
                     else
                         pathType = PathInfo.DetectPathType(path, segments);
