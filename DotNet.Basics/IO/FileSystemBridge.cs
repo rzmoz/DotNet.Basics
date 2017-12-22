@@ -8,6 +8,9 @@ namespace DotNet.Basics.IO
         //paths
         public virtual string GetFullPath(string path)
         {
+            if (string.IsNullOrWhiteSpace(path))
+                return null;
+
             return Path.GetFullPath(path);
         }
 
