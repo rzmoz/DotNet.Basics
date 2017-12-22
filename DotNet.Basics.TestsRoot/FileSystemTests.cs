@@ -128,7 +128,7 @@ namespace DotNet.Basics.TestsRoot
 
         //files
         [Fact]
-        public void CopyFile_Dirs_FileIsCopied()
+        public void CopyFile_Files_FileIsCopied()
         {
             ArrangeActAssertPaths(testDir =>
             {
@@ -148,7 +148,7 @@ namespace DotNet.Basics.TestsRoot
         }
 
         [Fact]
-        public void MoveFile_Dirs_FileIsMoved()
+        public void MoveFile_Files_FileIsMoved()
         {
             ArrangeActAssertPaths(testDir =>
             {
@@ -166,7 +166,7 @@ namespace DotNet.Basics.TestsRoot
         }
 
         [Fact]
-        public void ExistsFile_Dirs_FileExists()
+        public void ExistsFile_Files_FileExists()
         {
             ArrangeActAssertPaths(testDir =>
             {
@@ -184,7 +184,7 @@ namespace DotNet.Basics.TestsRoot
         }
 
         [Fact]
-        public void DeleteFile_File_FileExists()
+        public void DeleteFile_Files_FileExists()
         {
             ArrangeActAssertPaths(testDir =>
             {

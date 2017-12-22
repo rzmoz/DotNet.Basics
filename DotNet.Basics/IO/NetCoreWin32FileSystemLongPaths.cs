@@ -10,7 +10,6 @@ namespace DotNet.Basics.IO
         private readonly object _win32FileSystem;
 
         //paths
-        private readonly MethodInfo _pathsNormalize;
         private readonly MethodInfo _pathsEnumerate;
 
         //dirs
@@ -34,14 +33,11 @@ namespace DotNet.Basics.IO
             try
             {
                 //get assemblies
-                var privateCoreLib = Assembly.Load("System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e");
-                var pathHelper = privateCoreLib.GetType("System.IO.PathHelper");
                 var systemIoFilesystem = typeof(Directory).Assembly;
                 var win32FileSystemType = systemIoFilesystem.GetType("System.IO.Win32FileSystem");
                 _win32FileSystem = Activator.CreateInstance(win32FileSystemType);
 
                 //paths
-                _pathsNormalize = pathHelper.GetMethod("Normalize", BindingFlags.NonPublic | BindingFlags.Static);
                 _pathsEnumerate = win32FileSystemType.GetMethod("EnumeratePaths", BindingFlags.Public | BindingFlags.Instance);
 
                 //dirs
@@ -65,20 +61,7 @@ namespace DotNet.Basics.IO
         //paths
         public string GetFullPath(string path)
         {
-            if (string.IsNullOrWhiteSpace(path))
-                return null;
-
-            try
-            {
-                var result = _pathsNormalize.Invoke(null, new object[] { path, true, true });
-                return result?.ToString();
-            }
-            catch (TargetInvocationException e)
-            {
-                if (e.InnerException == null)
-                    throw;
-                throw e.InnerException;
-            }
+            return Path.GetFullPath(path);
         }
 
         public IEnumerable<string> EnumeratePaths(string fullPath, string searchPattern, SearchOption searchOption)
@@ -97,37 +80,37 @@ namespace DotNet.Basics.IO
         //dirs
         public void CreateDir(string fullPath)
         {
-            Win32System(_dirCreate, fullPath);
+            Directory.CreateDirectory(fullPath);
         }
         public void MoveDir(string sourceFullPath, string destFullPath)
         {
-            Win32System(_dirMove, sourceFullPath, destFullPath);
+            Directory.Move(sourceFullPath, destFullPath);
         }
         public bool ExistsDir(string fullPath)
         {
-            return Exists(_dirExists, fullPath);
+            return Directory.Exists(fullPath);
         }
         public void DeleteDir(string fullPath, bool recursive = true)
         {
-            Win32System(_dirDelete, fullPath, recursive);
+            Directory.Delete(fullPath, recursive);
         }
 
         //files
         public void CopyFile(string sourceFullPath, string destFullPath, bool overwrite)
         {
-            Win32System(_fileCopy, sourceFullPath, destFullPath, overwrite);
+            File.Copy(sourceFullPath, destFullPath, overwrite);
         }
         public void MoveFile(string sourceFullPath, string destFullPath)
         {
-            Win32System(_fileMove, sourceFullPath, destFullPath);
+            File.Move(sourceFullPath, destFullPath);
         }
         public bool ExistsFile(string fullPath)
         {
-            return Exists(_fileExists, fullPath);
+            return File.Exists(fullPath);
         }
         public void DeleteFile(string fullPath)
         {
-            Win32System(_fileDelete, fullPath);
+            File.Delete(fullPath);
         }
 
         //private
