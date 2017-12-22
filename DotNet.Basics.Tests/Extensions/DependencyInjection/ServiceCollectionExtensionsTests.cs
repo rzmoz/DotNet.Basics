@@ -1,10 +1,10 @@
 ﻿using DotNet.Basics.DependencyInjection;
-using DotNet.Basics.Tests.DependencyInjection.TestHelpers;
+using DotNet.Basics.Tests.Extensions.DependencyInjection.TestHelpers;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace DotNet.Basics.Tests.DependencyInjection
+namespace DotNet.Basics.Tests.Extensions.DependencyInjection
 {
     public class ServiceCollectionExtensionsTests
     {

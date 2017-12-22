@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNet.Basics.Collections;
 using DotNet.Basics.Tasks.Pipelines;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
@@ -40,7 +41,10 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
                 services.AddTransient<IAbstract, ConcreteClass>();
                 services.AddTransient<ClassThatTakesAnAbstractClassAsCtorParam>();
                 //abstract dependency registrations are not overridden
-                services.AddPipelines(typeof(PipelineTests).Assembly);
+                var pipelines = typeof(PipelineTests).Assembly.GetPipelineTypes();
+                pipelines.ForEach(services.AddTransient);
+                var pipelineSteps = typeof(PipelineTests).Assembly.GetPipelineStepTypes();
+                pipelineSteps.ForEach(services.AddTransient);
             });
 
             var pipeline = new Pipeline();

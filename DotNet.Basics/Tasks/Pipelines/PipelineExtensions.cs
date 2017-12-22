@@ -1,40 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using DotNet.Basics.Collections;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {
     public static class PipelineExtensions
     {
-        public static void AddPipelines<T>(this IServiceCollection services, params Assembly[] assemblies)
+        public static IEnumerable<Type> GetPipelineTypes(this Assembly assembly)
         {
-            services.AddPipelines(typeof(T).Assembly.ToEnumerable(assemblies).ToArray());
+            return assembly.GetTypesOf(typeof(Pipeline<>));
         }
 
-        public static void AddPipelines(this IServiceCollection services, params Assembly[] assemblies)
+        public static IEnumerable<Type> GetPipelineStepTypes(this Assembly assembly)
         {
-            if (services == null) throw new ArgumentNullException(nameof(services));
-            if (assemblies.Length == 0)
-                assemblies = new[] { Assembly.GetCallingAssembly() };
-
-            services.AddTransient(typeof(Pipeline<>));
-            //get all steps
-            var pipelineSteps = assemblies.SelectMany(a =>
-                a.GetTypes().Where(t => t.BaseType != null &&
-                                        t.BaseType.IsGenericType &&
-                                        t.BaseType.GetGenericTypeDefinition() == typeof(PipelineStep<>))).ToList();
-
-            foreach (var pipelineStep in pipelineSteps)
-                pipelineStep.RegisterType(services);
+            return assembly.GetTypesOf(typeof(PipelineStep<>));
         }
-
-        private static void RegisterType(this Type pipelineStep, IServiceCollection services)
+        public static IEnumerable<Type> GetTypesOf(this Assembly assembly, Type typeOf)
         {
-            if (pipelineStep.IsAbstract)
-                return;
-            services.AddTransient(pipelineStep);
+            return assembly.GetTypes().Where(t => t.BaseType != null &&
+                                                  t.IsAbstract == false &&
+                                                  t.BaseType.IsGenericType &&
+                                                  t.BaseType.GetGenericTypeDefinition() == typeOf);
         }
     }
 }
