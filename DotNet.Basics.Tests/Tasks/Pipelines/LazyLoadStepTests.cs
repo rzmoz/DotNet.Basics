@@ -97,7 +97,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 
             Func<Task> act = async () => await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
-            act.ShouldThrow<LazyLoadTaskResolvedToNullException>();
+            act.ShouldThrow<LazyLoadTaskFailedToLoadException>();
         }
     }
 }
