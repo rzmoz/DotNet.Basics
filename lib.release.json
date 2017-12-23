@@ -3,7 +3,7 @@
     {
       "name": "DotNet.Basics",
       "version": "9.2.1",
-      "prerelease": "rc.2"
+      "prerelease": "rc.3"
     },
     {
       "name": "DotNet.Basics.Rest",
@@ -19,6 +19,7 @@
   "tests": [
     "DotNet.Basics.Tests",
     "DotNet.Basics.Rest.Tests",
-    "DotNet.Basics.SevenZip.Tests"
+    "DotNet.Basics.SevenZip.Tests",
+    "DotNet.Basics.Tests.NetFramework"
   ]
 }

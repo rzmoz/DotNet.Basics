@@ -4,12 +4,10 @@ using Xunit.Abstractions;
 
 namespace DotNet.Basics.Tests.NetFramework.IO
 {
-    public class NetFrameworkFileSystemBridgeLongPathsTests : FileSystemTests
+    public class NetFrameworkFileSystemBridgeLongPathsTests : LongPathsFileSystemTests
     {
-        private const string _veryLongPath = @"loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum";
-
         public NetFrameworkFileSystemBridgeLongPathsTests(ITestOutputHelper output)
-            : base(output, _veryLongPath)
+            : base(new NetFrameworkWin32FileSystemLongPaths(), output)
         {
         }
     }
