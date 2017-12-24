@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Cli\ReturnIntConsole.exe" />
+    <EmbeddedResource Include="Sys\ReturnIntConsole.exe" />
   </ItemGroup>
 
   <ItemGroup>

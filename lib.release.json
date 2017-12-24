@@ -2,18 +2,18 @@
   "releases": [
     {
       "name": "DotNet.Basics",
-      "version": "9.2.1",
-      "prerelease": "rc.3"
+      "version": "9.5.0",
+      "prerelease": "beta.1"
     },
     {
       "name": "DotNet.Basics.Rest",
-      "version": "9.2.0",
-      "prerelease": "rc.1"
+      "version": "9.5.0",
+      "prerelease": "beta.1"
     },
     {
       "name": "DotNet.Basics.SevenZip",
       "version": "16.04.0",
-      "prerelease": "rc.4"
+      "prerelease": "rc.5"
     }
   ],
   "tests": [

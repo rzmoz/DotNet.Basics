@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_lib.release.params", "_lib.release.params", "{B7D9CFD1-BE55-43AF-9A4C-CF13618A12B7}"
 	ProjectSection(SolutionItems) = preProject
 		lib.release.json = lib.release.json
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics", "DotNet.Basics\DotNet.Basics.csproj", "{965F1F68-357B-464A-89EE-662686CC761C}"
