@@ -18,7 +18,7 @@ namespace DotNet.Basics.Tests.Sys
         public void Run_ExitCode_ExitCodeIsReturned()
         {
             const int expected = 16;
-            var result = CommandPrompt.Run($"robocopy");//returns 16 when no params
+            var result = CmdPrompt.Run($"robocopy");//returns 16 when no params
             _output.WriteLine($"result.Output");
             result.ExitCode.Should().Be(expected);
         }
