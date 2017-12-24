@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DotNet.Basics.Tests.EchoOut
+namespace DotNet.Basics.Tests.EchoIntOut
 {
     class Program
     {

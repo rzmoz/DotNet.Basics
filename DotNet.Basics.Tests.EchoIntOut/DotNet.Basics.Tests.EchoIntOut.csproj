@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{46594742-4E8D-4D9F-8816-60AF70B83DB8}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>DotNet.Basics.Tests.EchoOut</RootNamespace>
-    <AssemblyName>DotNet.Basics.Tests.EchoOut</AssemblyName>
+    <RootNamespace>DotNet.Basics.Tests.EchoIntOut</RootNamespace>
+    <AssemblyName>DotNet.Basics.Tests.EchoIntOut</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
