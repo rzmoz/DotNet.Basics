@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.Tests.Extensions.DependencyInjection.TestHelpers
+﻿namespace DotNet.Basics.Tests.Autofac.TestHelpers
 {
     public class TypeWithValue
     {

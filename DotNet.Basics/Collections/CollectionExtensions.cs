@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Collections
 {
-    //Provides fluent syntax for common collection operations
     public static class CollectionExtensions
     {
         public static bool None<TSource>(this IEnumerable<TSource> source)

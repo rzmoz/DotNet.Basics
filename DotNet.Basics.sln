@@ -37,6 +37,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.SevenZip", "D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.SevenZip.Tests", "DotNet.Basics.SevenZip.Tests\DotNet.Basics.SevenZip.Tests.csproj", "{9A74073F-9032-4885-B46D-1CA288436225}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.Autofac", "DotNet.Basics.Autofac\DotNet.Basics.Autofac.csproj", "{33979776-E79D-428E-B209-E5603413FE1B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{9A74073F-9032-4885-B46D-1CA288436225}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A74073F-9032-4885-B46D-1CA288436225}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A74073F-9032-4885-B46D-1CA288436225}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33979776-E79D-428E-B209-E5603413FE1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33979776-E79D-428E-B209-E5603413FE1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33979776-E79D-428E-B209-E5603413FE1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33979776-E79D-428E-B209-E5603413FE1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -103,6 +109,7 @@ Global
 		{83D28A67-C2AB-40F7-8C39-045DF6C1B4A5} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
 		{072BB7D6-2BE8-47F5-9EAF-56370F13928A} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
 		{9A74073F-9032-4885-B46D-1CA288436225} = {8D2438BF-0158-46EE-9734-92B712CF5479}
+		{33979776-E79D-428E-B209-E5603413FE1B} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8CBE2111-AC24-4AFA-9537-5FD16E0BF1E5}
