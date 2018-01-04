@@ -11,7 +11,7 @@ namespace DotNet.Basics.Autofac
         private readonly ContainerBuilder _containerBuilder;
         private readonly Lazy<IContainer> _getContainer;
 
-        public AutofacBuilder(bool resolveConcreteTypesNotAlreadyRegistered = true)
+        public AutofacBuilder(bool resolveConcreteTypesNotAlreadyRegistered = false)
         {
             _containerBuilder = new ContainerBuilder();
             if (resolveConcreteTypesNotAlreadyRegistered)
