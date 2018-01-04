@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <PackageProjectUrl></PackageProjectUrl>
+    <Description>Syntactical sugar and fluent syntax for a few selected .NET operations</Description>
+    <Authors>rzmoz</Authors>
+    <Product />
+    <Company />
+    <RepositoryUrl>https://github.com/rzmoz/DotNet.Basics</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>

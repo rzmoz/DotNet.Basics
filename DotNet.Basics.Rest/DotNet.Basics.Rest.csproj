@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>rzmoz</Authors>
+    <Company />
+    <Product />
+    <Description>Syntactical sugar and fluent syntax for REST client functinoality. Fully interfaced for easier testing</Description>
+    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/rzmoz/DotNet.Basics</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>

@@ -3,22 +3,22 @@
     {
       "name": "DotNet.Basics",
       "version": "9.5.0",
-      "prerelease": "beta.1"
+      "prerelease": "beta.2"
     },
     {
       "name": "DotNet.Basics.Autofac",
       "version": "4.6.2.1",
-      "prerelease": "rc.1"
+      "prerelease": "rc.2"
     },
     {
       "name": "DotNet.Basics.Rest",
       "version": "9.5.0",
-      "prerelease": "beta.1"
+      "prerelease": "beta.2"
     },
     {
       "name": "DotNet.Basics.SevenZip",
       "version": "16.04.0",
-      "prerelease": "rc.5"
+      "prerelease": "rc.6"
     }
   ],
   "tests": [

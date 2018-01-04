@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Convenient helpers for working with Autofac</Description>
+    <PackageProjectUrl></PackageProjectUrl>
+    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <Authors>rzmoz</Authors>
+    <Company />
+    <Product />
+    <RepositoryUrl>https://github.com/rzmoz/DotNet.Basics</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
