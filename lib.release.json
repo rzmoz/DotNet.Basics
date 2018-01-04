@@ -1,30 +1,30 @@
 {
   "releases": [
     {
-      "name": "DotNet.Basics",
-      "version": "9.5.0",
-      "prerelease": "beta.2"
+      "name": "DotNet.Standard",
+      "version": "2.0.0",
+      "prerelease": "beta.1"
     },
     {
-      "name": "DotNet.Basics.Autofac",
-      "version": "4.6.2.1",
-      "prerelease": "rc.4"
+      "name": "DotNet.Standard.Extensions.DependencyInjection",
+      "version": "2.0.0",
+      "prerelease": "beta.1"
     },
     {
-      "name": "DotNet.Basics.Rest",
-      "version": "9.5.0",
-      "prerelease": "beta.2"
+      "name": "DotNet.Standard.Rest",
+      "version": "2.0.0",
+      "prerelease": "rc.1"
     },
     {
-      "name": "DotNet.Basics.SevenZip",
+      "name": "DotNet.Standard.SevenZip",
       "version": "16.04.0",
-      "prerelease": "rc.7"
+      "prerelease": "rc.1"
     }
   ],
   "tests": [
-    "DotNet.Basics.Tests",
-    "DotNet.Basics.Rest.Tests",
-    "DotNet.Basics.SevenZip.Tests",
-    "DotNet.Basics.Tests.NetFramework"
+    "DotNet.Standard.Tests",
+    "DotNet.Standard.Rest.Tests",
+    "DotNet.Standard.SevenZip.Tests",
+    "DotNet.Standard.Tests.NetFramework"
   ]
 }
