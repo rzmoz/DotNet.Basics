@@ -22,6 +22,7 @@ namespace DotNet.Basics.Tests.Sys
             dir.Should().BeOfType<DirPath>();
             dir.RawPath.Should().Be(_path + $"/{_segment }/");
         }
+
         [Fact]
         public void ToDir_Create_DirIsCreated()
         {
@@ -41,6 +42,7 @@ namespace DotNet.Basics.Tests.Sys
             var file = name.ToDir();
             file.NameWoExtension.Should().Be(nameWoExtensions);
         }
+
         [Theory]
         [InlineData("SomeDir\\MyDir.txt", ".txt")]//has extension
         [InlineData("SomeDir\\MyDir", "")]//no extension

@@ -14,6 +14,7 @@ namespace DotNet.Basics.Rest
         {
             return TrimQuotes(response?.Content.ReadAsStringAsync().Result);
         }
+
         public static T Content<T>(this HttpResponseMessage response)
         {
             var content = response.Content();
@@ -26,6 +27,7 @@ namespace DotNet.Basics.Rest
             var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             return TrimQuotes(content);
         }
+
         public static async Task<T> ContentAsync<T>(this HttpResponseMessage response)
         {
             var content = response.ContentAsync().ConfigureAwait(false);

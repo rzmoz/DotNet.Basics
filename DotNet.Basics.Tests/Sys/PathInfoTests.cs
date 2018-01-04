@@ -65,7 +65,6 @@ namespace DotNet.Basics.Tests.Sys
             file.Name.Should().Be(expected, nameof(file.Name));
         }
 
-
         [Theory]
         [InlineData("myFolder\\myFolder\\", "myFolder")]//folder with trailing delimiter
         [InlineData("myFolder\\myFolder", "myFolder")]//folder without trailing delimiter
@@ -128,7 +127,6 @@ namespace DotNet.Basics.Tests.Sys
             pathWithBackSlash.Should().Be(pathInput.Replace('/', '\\'), PathSeparator.Backslash.ToString());
         }
 
-
         [Theory]
         [InlineData(null, null)]
         [InlineData(@"c:\", null)]
@@ -144,8 +142,6 @@ namespace DotNet.Basics.Tests.Sys
             var found = path.Parent?.RawPath;
             found.Should().Be(expectedParent, folder);
         }
-
-
 
         [Theory]
         [InlineData("myFolder\\", "dir\\", PathType.Dir)]//backslash all dirs

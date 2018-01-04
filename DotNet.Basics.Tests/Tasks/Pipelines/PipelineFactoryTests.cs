@@ -14,6 +14,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var steps = typeof(PipelineFactoryTests).Assembly.GetPipelineTypes();
             steps.Count().Should().Be(2);
         }
+
         [Fact]
         public void GetPipelineStepTypes_ScanForPipelineSteps_PipelineStepsAreFound()
         {
@@ -22,11 +23,9 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         }
 
         public class PipelineFromGeneric : Pipeline<EventArgs<int>>
-        {
-        }
+        { }
 
         public class PipelineFromNonGeneric : Pipeline
-        {
-        }
+        { }
     }
 }

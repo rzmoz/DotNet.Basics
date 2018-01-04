@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Runtime.Serialization;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
-using NSubstitute;
-using NSubstitute.Exceptions;
 using Xunit;
 
 namespace DotNet.Basics.Rest.Tests

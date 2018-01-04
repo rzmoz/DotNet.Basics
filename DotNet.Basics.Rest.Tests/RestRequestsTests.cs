@@ -15,30 +15,35 @@ namespace DotNet.Basics.Rest.Tests
             var req = Delete.Uri(_uri);
             req.ToString().Should().Be($"DELETE {_uri}");
         }
+
         [Fact]
         public void Get_CreateRequest_RequestIsCreated()
         {
             var req = Get.Uri(_uri);
             req.ToString().Should().Be($"GET {_uri}");
         }
+
         [Fact]
         public void Head_CreateRequest_RequestIsCreated()
         {
             var req = Head.Uri(_uri);
             req.ToString().Should().Be($"HEAD {_uri}");
         }
+
         [Fact]
         public void Post_CreateRequest_RequestIsCreated()
         {
             var req = Post.Uri(_uri);
             req.ToString().Should().Be($"POST {_uri}");
         }
+
         [Fact]
         public void Put_CreateRequest_RequestIsCreated()
         {
             var req = Put.Uri(_uri);
             req.ToString().Should().Be($"PUT {_uri}");
         }
+
         [Fact]
         public void Custom_CreateRequest_RequestIsCreated()
         {
@@ -46,6 +51,7 @@ namespace DotNet.Basics.Rest.Tests
             var req = new RestRequest(new HttpMethod(method), _uri);
             req.ToString().Should().Be($"{method } {_uri}");
         }
+
         [Theory]
         [InlineData("/localhost/")]//no scheme
         [InlineData("http:/localhost/")]//invalid scheme separator

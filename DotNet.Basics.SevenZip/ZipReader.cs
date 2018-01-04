@@ -26,9 +26,7 @@ namespace DotNet.Basics.SevenZip
         }
 
         public FilePath Path { get; }
-
         public ZipArchive Archive => _archiveLoader.Value;
-
         public IReadOnlyCollection<string> EntryNames => _entryLoader.Value.Keys;
 
         public bool HasEntry(string path)

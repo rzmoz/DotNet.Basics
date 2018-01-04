@@ -11,7 +11,6 @@ namespace DotNet.Basics.IO
 
         //paths
         private readonly MethodInfo _pathsNormalize;
-
         private readonly MethodInfo _pathsEnumerate;
 
         //dirs
@@ -37,9 +36,7 @@ namespace DotNet.Basics.IO
             try
             {
                 //get assemblies
-                var privateCoreLib =
-                    Assembly.Load(
-                        "System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e");
+                var privateCoreLib = Assembly.Load("System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e");
                 var pathHelper = privateCoreLib.GetType("System.IO.PathHelper");
 
                 //paths
@@ -50,17 +47,13 @@ namespace DotNet.Basics.IO
                 _win32FileSystem = Activator.CreateInstance(win32FileSystemType);
 
                 //paths
-                _pathsEnumerate =
-                    win32FileSystemType.GetMethod("EnumeratePaths", BindingFlags.Public | BindingFlags.Instance);
+                _pathsEnumerate = win32FileSystemType.GetMethod("EnumeratePaths", BindingFlags.Public | BindingFlags.Instance);
 
                 //dirs
-                _dirCreate =
-                    win32FileSystemType.GetMethod("CreateDirectory", BindingFlags.Public | BindingFlags.Instance);
+                _dirCreate = win32FileSystemType.GetMethod("CreateDirectory", BindingFlags.Public | BindingFlags.Instance);
                 _dirMove = win32FileSystemType.GetMethod("MoveDirectory", BindingFlags.Public | BindingFlags.Instance);
-                _dirExists =
-                    win32FileSystemType.GetMethod("DirectoryExists", BindingFlags.Public | BindingFlags.Instance);
-                _dirDelete =
-                    win32FileSystemType.GetMethod("RemoveDirectory", BindingFlags.Public | BindingFlags.Instance);
+                _dirExists = win32FileSystemType.GetMethod("DirectoryExists", BindingFlags.Public | BindingFlags.Instance);
+                _dirDelete = win32FileSystemType.GetMethod("RemoveDirectory", BindingFlags.Public | BindingFlags.Instance);
 
                 //files
                 _fileCopy = win32FileSystemType.GetMethod("CopyFile", BindingFlags.Public | BindingFlags.Instance);

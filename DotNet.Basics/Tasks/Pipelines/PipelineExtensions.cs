@@ -16,6 +16,7 @@ namespace DotNet.Basics.Tasks.Pipelines
         {
             return assembly.GetTypesOf(typeof(PipelineStep<>));
         }
+
         public static IEnumerable<Type> GetTypesOf(this Assembly assembly, Type typeOf)
         {
             return assembly.GetTypes().Where(t => t.BaseType != null &&

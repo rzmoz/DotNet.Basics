@@ -27,12 +27,14 @@ namespace DotNet.Basics.Autofac
         {
             registerServices?.Invoke(_containerBuilder);
         }
+
         public void AddRegistrations(Action<IServiceCollection> registerServices)
         {
             var serviceCollection = new ServiceCollection();
             registerServices?.Invoke(serviceCollection);
             _containerBuilder.Populate(serviceCollection);
         }
+
         public void AddRegistrations(params IServiceCollection[] serviceCollections)
         {
             foreach (var serviceCollection in serviceCollections)

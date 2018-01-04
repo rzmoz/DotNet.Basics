@@ -23,8 +23,7 @@ namespace DotNet.Basics.Sys
         /// <returns></returns>
         public static TimeSpan ToTimeSpan(this string input)
         {
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
+            if (input == null) throw new ArgumentNullException(nameof(input));
 
             input = input.Trim();
 

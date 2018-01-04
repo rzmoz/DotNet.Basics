@@ -131,8 +131,8 @@ namespace DotNet.Basics.IO
         private static void EnsureLongPathsAreEnabled()
         {
             var type = typeof(Path);
-            type?.GetField("MaxPath", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue("MaxPath", _maxPathLength);
-            type?.GetField("MaxDirectoryLength", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue("MaxDirectoryLength", _maxDirectoryLength);
+            type.GetField("MaxPath", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue("MaxPath", _maxPathLength);
+            type.GetField("MaxDirectoryLength", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue("MaxDirectoryLength", _maxDirectoryLength);
         }
     }
 }

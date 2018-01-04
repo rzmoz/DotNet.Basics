@@ -161,6 +161,7 @@ namespace DotNet.Basics.Tasks.Pipelines
             }).ToList();
             await Task.WhenAll(tasks).ConfigureAwait(false);
         }
+
         protected async Task InnerSequentialRunAsync(T args, TaskIssueList issues, CancellationToken ct)
         {
             foreach (var task in Tasks)

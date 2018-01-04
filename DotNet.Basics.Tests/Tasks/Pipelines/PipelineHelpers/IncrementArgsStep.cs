@@ -13,6 +13,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers
             args.Value = IncrementByOne(args.Value);
             return Task.FromResult("");
         }
+
         public int IncrementByOne(int input)
         {
             return ++input;

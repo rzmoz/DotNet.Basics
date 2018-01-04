@@ -20,6 +20,7 @@ namespace DotNet.Basics.Rest
         }
 
         public HttpRequestHeaders DefaultRequestHeaders => _client.DefaultRequestHeaders;
+
         public Uri BaseAddress
         {
             get => _client.BaseAddress;

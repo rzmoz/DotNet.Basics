@@ -22,11 +22,13 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         {
             AssertRegisterPipelineSteps((p, sp) => { p.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(sp); });
         }
+
         [Fact]
         public void RegisterPipelineSteps_RegisterBlock_BlocksAreRegistered()
         {
             AssertRegisterPipelineSteps((p, sp) => { p.AddBlock("MyBlock"); });
         }
+
         [Fact]
         public void LazyLoad_RegisterStepsInBlock_StepsAndCtorParamsAreRegisteredRecursive()
         {
@@ -85,6 +87,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 
             pipeline.Tasks.Single().Name.Should().Be(nameof(AddIssueStep));
         }
+
         [Fact]
         public async Task Ctor_ArgsInheritanceHierarchy_StepsWithAcenstorArgsCanBeUsedInPipeline()
         {

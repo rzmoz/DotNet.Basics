@@ -63,8 +63,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             });
             counter.Should().Be(1);
         }
-
-
+        
         private async Task Run5TimesAsync(Func<Task> task)
         {
             var ooTask = task.ToOnceOnly();

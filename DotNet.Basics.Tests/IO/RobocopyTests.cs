@@ -11,8 +11,7 @@ namespace DotNet.Basics.Tests.IO
     public class RobocopyTests : TestWithHelpers
     {
         public RobocopyTests(ITestOutputHelper output) : base(output)
-        {
-        }
+        { }
 
         [Fact]
         public void MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved()

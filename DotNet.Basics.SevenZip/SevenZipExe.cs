@@ -20,8 +20,7 @@ namespace DotNet.Basics.SevenZip
 
         public SevenZipExe(string appRootDir = null)
             : this(appRootDir?.ToDir())
-        {
-        }
+        { }
 
         public SevenZipExe(DirPath appRootDir = null)
         {

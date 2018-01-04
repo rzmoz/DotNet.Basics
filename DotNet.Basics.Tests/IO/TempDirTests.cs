@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using DotNet.Basics.TestsRoot;
@@ -13,8 +12,7 @@ namespace DotNet.Basics.Tests.IO
     public class TempDirTests : TestWithHelpers
     {
         public TempDirTests(ITestOutputHelper output) : base(output)
-        {
-        }
+        { }
         
         [Fact]
         public void Ctor_RandomNess_RandomDirsAreGenerated()
@@ -40,6 +38,7 @@ namespace DotNet.Basics.Tests.IO
                 }
             });
         }
+
         [Fact]
         public void Use_Dir_DirExists()
         {

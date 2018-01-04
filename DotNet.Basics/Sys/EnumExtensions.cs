@@ -39,8 +39,7 @@ namespace DotNet.Basics.Sys
         {
             return @enum.GetEnumNames().Select(e => e.ToEnum<T>());
         }
-
-
+        
         public static string ToName(this Enum @enum)
         {
             return Enum.GetName(@enum.GetType(), @enum);

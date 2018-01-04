@@ -113,6 +113,7 @@ namespace DotNet.Basics.Sys
         {
             return EnsurePrefix(str, prefix.ToString(), comparison);
         }
+
         public static string EnsurePrefix(this string str, string prefix, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
         {
             if (str == null) throw new ArgumentNullException(nameof(str));
@@ -126,6 +127,7 @@ namespace DotNet.Basics.Sys
         {
             return EnsureSuffix(str, suffix.ToString(), comparison);
         }
+
         public static string EnsureSuffix(this string str, string suffix, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
         {
             if (str == null) throw new ArgumentNullException(nameof(str));
@@ -139,6 +141,7 @@ namespace DotNet.Basics.Sys
         {
             return RemovePrefix(str, prefix.ToString(), comparison);
         }
+
         public static string RemovePrefix(this string str, string prefix, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
         {
             if (str == null) throw new ArgumentNullException(nameof(str));
@@ -150,6 +153,7 @@ namespace DotNet.Basics.Sys
         {
             return RemoveSuffix(str, suffix.ToString(), comparison);
         }
+
         public static string RemoveSuffix(this string str, string suffix, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
         {
             if (str == null) throw new ArgumentNullException(nameof(str));
@@ -161,6 +165,7 @@ namespace DotNet.Basics.Sys
         {
             return str.ToBase64(Encoding.UTF8);
         }
+
         public static string ToBase64(this string str, Encoding encoding)
         {
             if (encoding == null) throw new ArgumentNullException(nameof(encoding));
@@ -172,6 +177,7 @@ namespace DotNet.Basics.Sys
         {
             return str.FromBase64(Encoding.UTF8);
         }
+
         public static string FromBase64(this string str, Encoding encoding)
         {
             if (encoding == null) throw new ArgumentNullException(nameof(encoding));

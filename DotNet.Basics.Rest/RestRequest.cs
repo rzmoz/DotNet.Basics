@@ -10,8 +10,8 @@ namespace DotNet.Basics.Rest
     {
         public RestRequest(string uri)
             : this(HttpMethod.Get, uri)
-        {
-        }
+        { }
+
         public RestRequest(HttpMethod method, string uri, HttpContent content = null)
         {
             Method = method;
@@ -19,13 +19,13 @@ namespace DotNet.Basics.Rest
             Content = content;
             AddHeaders = new List<Action<HttpRequestHeaders>>();
         }
+
         public HttpMethod Method { get; private set; }
         public string Uri { get; }
         public HttpContent Content { get; private set; }
         public IList<Action<HttpRequestHeaders>> AddHeaders { get; }
         public Version Version { get; private set; }
-
-
+        
         public IRestRequest WithContent(HttpContent content)
         {
             Content = content;

@@ -73,7 +73,6 @@ namespace DotNet.Basics.Tests.Sys
             act2.ShouldNotThrow();
         }
 
-
         private enum TestEnum
         {
             This = 1,

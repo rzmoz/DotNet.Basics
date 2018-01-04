@@ -11,8 +11,7 @@ namespace DotNet.Basics.Tests.Sys
     public class ExecutableTests : TestWithHelpers
     {
         public ExecutableTests(ITestOutputHelper output) : base(output)
-        {
-        }
+        { }
 
         [Fact]
         public void Run_ExeNotFound_ExceptionIsThrown()

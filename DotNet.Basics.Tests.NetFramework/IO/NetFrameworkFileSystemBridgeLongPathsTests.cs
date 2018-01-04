@@ -8,7 +8,6 @@ namespace DotNet.Basics.Tests.NetFramework.IO
     {
         public NetFrameworkFileSystemBridgeLongPathsTests(ITestOutputHelper output)
             : base(new NetFrameworkWin32FileSystemLongPaths(), output)
-        {
-        }
+        { }
     }
 }

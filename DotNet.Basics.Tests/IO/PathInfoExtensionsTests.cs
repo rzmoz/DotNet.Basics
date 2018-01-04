@@ -12,8 +12,7 @@ namespace DotNet.Basics.Tests.IO
     public class PathInfoExtensionsTests : TestWithHelpers
     {
         public PathInfoExtensionsTests(ITestOutputHelper output) : base(output)
-        {
-        }
+        { }
 
         [Fact]
         public void DeleteIfExists_DirExists_DirIsDeleted()
@@ -31,7 +30,6 @@ namespace DotNet.Basics.Tests.IO
                 //assert
                 dir.Exists().Should().BeFalse();
             });
-
         }
 
         [Fact]
@@ -66,7 +64,6 @@ namespace DotNet.Basics.Tests.IO
                 deleted.Should().BeTrue();
                 testDir.Exists().Should().BeFalse();
             });
-
         }
 
         [Fact]
@@ -84,9 +81,7 @@ namespace DotNet.Basics.Tests.IO
 
                 testFile.Exists().Should().BeFalse("File should have been deleted");
             });
-
         }
-
 
         [Fact]
         public void GetFullPath_AssertWithSystemIo_PathsAreIdentical()
@@ -140,6 +135,7 @@ namespace DotNet.Basics.Tests.IO
                 path.Exists().Should().BeFalse();
             });
         }
+
         [Fact]
         public void Exists_LongFilePath_NoExceptionIsThrown()
         {

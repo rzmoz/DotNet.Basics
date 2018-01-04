@@ -55,6 +55,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 
             task.Should().BeOfType(typeof(ManagedTask<>));
         }
+
         [Fact]
         public void GetTask_Fails_ExceptionIsBubbled()
         {

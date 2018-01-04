@@ -7,6 +7,7 @@ namespace DotNet.Basics.Tasks.Pipelines
     {
         protected PipelineStep() : this(null)
         { }
+
         protected PipelineStep(string name) : base(name)
         { }
 

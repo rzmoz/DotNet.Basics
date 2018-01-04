@@ -12,8 +12,8 @@ namespace DotNet.Basics.Tests.IO
     {
         public NetCoreWin32FileSystemLongPathsTests(ITestOutputHelper output)
             : base(new NetCoreWin32FileSystemLongPaths(), output)
-        {
-        }
+        { }
+
         //paths
         [Fact]
         public void Enumerates_Paths_PatshAreFound()
@@ -43,6 +43,5 @@ namespace DotNet.Basics.Tests.IO
                 files.Count.Should().Be(testDir.GetFiles().Count);
             });
         }
-
     }
 }

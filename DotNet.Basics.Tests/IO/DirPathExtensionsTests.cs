@@ -13,8 +13,7 @@ namespace DotNet.Basics.Tests.IO
     public class DirPathExtensionsTests : TestWithHelpers
     {
         public DirPathExtensionsTests(ITestOutputHelper output) : base(output)
-        {
-        }
+        { }
 
         [Fact]
         public void SearchOption_SubDirs_OptionsAreObeyed()

@@ -90,7 +90,7 @@ namespace DotNet.Basics.IO
             return new FilePath(path, pathSeparator, segments);
         }
 
-        //other
+        //Common
         public static T Add<T>(this T pi, params string[] segments) where T : PathInfo
         {
             return pi.RawPath.ToPath(pi.PathType, segments) as T;

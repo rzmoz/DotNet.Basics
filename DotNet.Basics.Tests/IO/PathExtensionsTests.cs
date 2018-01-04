@@ -10,8 +10,7 @@ namespace DotNet.Basics.Tests.IO
     public class PathExtensionsTests : TestWithHelpers
     {
         public PathExtensionsTests(ITestOutputHelper output) : base(output)
-        {
-        }
+        { }
 
         [Fact]
         public void ToPath_DirToDir_PathTypeIsSet()
@@ -33,6 +32,7 @@ namespace DotNet.Basics.Tests.IO
                 isDir.RawPath.Should().Be(pi.RawPath);
             });
         }
+
         [Fact]
         public void ToPath_DirToFile_PathTypeIsSet()
         {
@@ -74,6 +74,7 @@ namespace DotNet.Basics.Tests.IO
                 pi.RawPath.Should().StartWith(isFile.RawPath);
             });
         }
+
         [Fact]
         public void ToPath_FileToFile_PathTypeIsSet()
         {
@@ -93,7 +94,9 @@ namespace DotNet.Basics.Tests.IO
 
                 pi.RawPath.Should().Be(isFile.RawPath);
             });
-        }[Fact]
+        }
+
+        [Fact]
         public void ToPath_DetectDirWhenExists_TypeIsResolved()
         {
             ArrangeActAssertPaths(dir =>

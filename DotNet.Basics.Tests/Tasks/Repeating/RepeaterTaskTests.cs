@@ -77,8 +77,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             actionExceptionCaught.Should().BeTrue();
             @finally.Should().BeTrue("Finally should run");
         }
-
-
+        
         [Fact]
         public async Task DontRethrowOnTaskFailedType_NamedExceptionsWillBeThrownOnTaskEnd_TaskFails()
         {
@@ -98,8 +97,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             result.Should().BeFalse();
             doCounter.Should().Be(until);
         }
-
-
+        
         [Fact]
         public void Task_ExceptionIgnoredDuringRepeatUntilPredicateSetButNeverSucceeded_ActionIsInvokedFiveTimesAndExceptionIsThrownAtTheEnd()
         {

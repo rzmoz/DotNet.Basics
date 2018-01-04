@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DotNet.Basics.Tests
+﻿namespace DotNet.Basics.Tests
 {
     public class MyType2 : IMyType
     {

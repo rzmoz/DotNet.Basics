@@ -13,8 +13,7 @@ namespace DotNet.Basics.Tests.IO
     public class FilePathExtensionsTests : TestWithHelpers
     {
         public FilePathExtensionsTests(ITestOutputHelper output) : base(output)
-        {
-        }
+        { }
 
         [Theory]
         [InlineData(true)]
