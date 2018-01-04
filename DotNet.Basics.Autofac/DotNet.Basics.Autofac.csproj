@@ -1,19 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>Convenient helpers for working with Autofac</Description>
-    <PackageProjectUrl></PackageProjectUrl>
+    <PackageProjectUrl>
+    </PackageProjectUrl>
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
     <Authors>rzmoz</Authors>
     <Company />
     <Product />
     <RepositoryUrl>https://github.com/rzmoz/DotNet.Basics</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <Version>4.6.2.1-rc.3+78e6cb8</Version>
+    <AssemblyVersion>4.6.2.1</AssemblyVersion>
+    <FileVersion>4.6.2.1</FileVersion>
   </PropertyGroup>
-
+  <ItemGroup>
+    <None Remove="vy3gi4zz.wfj~" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.2" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.DependencyInjection">
+      <HintPath>..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.dependencyinjection\2.0.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

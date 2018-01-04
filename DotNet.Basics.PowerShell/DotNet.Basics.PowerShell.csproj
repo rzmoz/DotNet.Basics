@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Management.Automation" Version="6.0.0-rc.2" />
+    <PackageReference Include="System.Management.Automation" Version="6.1.7601.17515" />
   </ItemGroup>
   
 

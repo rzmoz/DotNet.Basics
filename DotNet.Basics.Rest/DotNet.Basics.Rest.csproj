@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>rzmoz</Authors>
@@ -9,11 +8,12 @@
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/rzmoz/DotNet.Basics</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <Version>9.5.0-beta.2+78e6cb8</Version>
+    <AssemblyVersion>9.5.0</AssemblyVersion>
+    <FileVersion>9.5.0</FileVersion>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="System.Net.Http" Version="4.3.3" />
   </ItemGroup>
-
 </Project>
