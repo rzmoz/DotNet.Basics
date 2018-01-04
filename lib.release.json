@@ -18,7 +18,7 @@
     {
       "name": "DotNet.Basics.SevenZip",
       "version": "16.04.0",
-      "prerelease": "rc.6"
+      "prerelease": "rc.7"
     }
   ],
   "tests": [

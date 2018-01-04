@@ -46,7 +46,7 @@ namespace DotNet.Basics.SevenZip
             return ExecuteSevenZip("a", $"\"{archivePath}\"", $"\"{sourceDirPath.ToDir().FullName()}\\*\"", "-tzip", "-mx3", "-mmt");
         }
 
-        private (string Input, int ExitCode, string Output) ExecuteSevenZip(string command, params string[] @params)
+        public (string Input, int ExitCode, string Output) ExecuteSevenZip(string command, params string[] @params)
         {
             var filename = InstallsevenZip();
             var paramsString = @params.Aggregate(string.Empty, (current, param) => current + $" {param}");
