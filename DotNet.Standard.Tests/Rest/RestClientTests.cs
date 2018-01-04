@@ -1,10 +1,11 @@
 ﻿using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using DotNet.Standard.Rest;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Standard.Rest.Tests
+namespace DotNet.Standard.Tests.Rest
 {
     public class RestClientTests
     {

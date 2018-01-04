@@ -21,8 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DotNet.Basics.Extensions.Logging\DotNet.Basics.Extensions.Logging.csproj" />
     <ProjectReference Include="..\DotNet.Standard.Extensions.DependencyInjection\DotNet.Standard.Extensions.DependencyInjection.csproj" />
     <ProjectReference Include="..\DotNet.Standard.PowerShell\DotNet.Standard.PowerShell.csproj" />
+    <ProjectReference Include="..\DotNet.Standard.Rest\DotNet.Standard.Rest.csproj" />
+    <ProjectReference Include="..\DotNet.Standard.SevenZip\DotNet.Standard.SevenZip.csproj" />
     <ProjectReference Include="..\DotNet.Standard.Tests.NetCore.EchoOut\DotNet.Standard.Tests.NetCore.EchoOut.csproj" />
     <ProjectReference Include="..\DotNet.Standard.TestsRoot\DotNet.Standard.TestsRoot.csproj" />
     <ProjectReference Include="..\DotNet.Standard\DotNet.Standard.csproj" />
@@ -32,13 +35,15 @@
     <None Update="IO\Testa\TextFile1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="SevenZip\myArchive.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SevenZip\NewFolder.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Sys\EchoIntOut.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="SevenZip\" />
   </ItemGroup>
 
 </Project>

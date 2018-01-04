@@ -3,10 +3,15 @@
     {
       "name": "DotNet.Standard",
       "version": "2.0.0",
-      "prerelease": "beta.1"
+      "prerelease": "rc.1"
     },
     {
       "name": "DotNet.Standard.Extensions.DependencyInjection",
+      "version": "2.0.0",
+      "prerelease": "beta.1"
+    },
+    {
+      "name": "DotNet.Standard.Extensions.Logging",
       "version": "2.0.0",
       "prerelease": "beta.1"
     },
@@ -22,8 +27,6 @@
     }
   ],
   "tests": [
-    "DotNet.Standard.Tests",
-    "DotNet.Standard.Rest.Tests",
-    "DotNet.Standard.SevenZip.Tests"
+    "DotNet.Standard.Tests"
   ]
 }

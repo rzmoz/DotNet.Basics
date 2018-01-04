@@ -4,13 +4,14 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using DotNet.Standard.IO;
+using DotNet.Standard.SevenZip;
 using DotNet.Standard.Sys;
 using DotNet.Standard.TestsRoot;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DotNet.Standard.SevenZip.Tests
+namespace DotNet.Standard.Tests.SevenZip
 {
     public class SevenZipTests : TestWithHelpers
     {
@@ -22,7 +23,7 @@ namespace DotNet.Standard.SevenZip.Tests
             WithTestRoot(testRoot =>
             {
                 _sevenZip = new SevenZipExe(testRoot);
-                _sourceArchive = testRoot.ToFile("myArchive.zip");
+                _sourceArchive = testRoot.ToFile("SevenZip", "myArchive.zip");
             });
         }
 
@@ -31,7 +32,7 @@ namespace DotNet.Standard.SevenZip.Tests
         {
             ArrangeActAssertPaths(testDir =>
             {
-                var targetPath = testDir.ToFile("myArchive.zip");
+                var targetPath = testDir.ToFile("SevenZip", "myArchive.zip");
                 targetPath.DeleteIfExists();
                 targetPath.WriteAllText("dummyContent");
                 targetPath.Exists().Should().BeTrue();

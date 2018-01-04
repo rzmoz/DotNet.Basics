@@ -1,11 +1,12 @@
 ﻿using DotNet.Standard.IO;
+using DotNet.Standard.SevenZip;
 using DotNet.Standard.Sys;
 using DotNet.Standard.TestsRoot;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DotNet.Standard.SevenZip.Tests
+namespace DotNet.Standard.Tests.SevenZip
 {
     public class ZipReaderTests : TestWithHelpers
     {
@@ -13,7 +14,7 @@ namespace DotNet.Standard.SevenZip.Tests
 
         public ZipReaderTests(ITestOutputHelper output) : base(output)
         {
-            WithTestRoot(testRoot => _testSource = testRoot.ToFile("NewFolder.zip"));
+            WithTestRoot(testRoot => _testSource = testRoot.ToFile("SevenZip", "NewFolder.zip"));
             _testSource.Exists().Should().BeTrue(_testSource.FullName(), true);
         }
 
