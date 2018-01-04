@@ -24,7 +24,6 @@
   "tests": [
     "DotNet.Standard.Tests",
     "DotNet.Standard.Rest.Tests",
-    "DotNet.Standard.SevenZip.Tests",
-    "DotNet.Standard.Tests.NetFramework"
+    "DotNet.Standard.SevenZip.Tests"
   ]
 }
