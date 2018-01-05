@@ -5,12 +5,11 @@
     <Company>rzmoz</Company>
     <Product>DotNet.Basics.SevenZip</Product>
     <Description>7zip SDK for robust archive operations</Description>
-    <RepositoryUrl>https://github.com/rzmoz/DotNet.Basics</RepositoryUrl>
-    <PackageLicenseUrl>http://www.7-zip.org/license.txt</PackageLicenseUrl>
-    <RepositoryType>git</RepositoryType>
-    <Version>16.04.0-rc.7+78e6cb8</Version>
-    <AssemblyVersion>16.04.0</AssemblyVersion>
-    <FileVersion>16.04.0</FileVersion>
+    <RepositoryUrl>https://github.com/rzmoz/DotNet.Standard</RepositoryUrl>
+    <PackageLicenseUrl>http://www.7-zip.org/license.txt</PackageLicenseUrl>    
+    <Version>0.0.0</Version>
+    <AssemblyVersion>0.0.0</AssemblyVersion>
+    <FileVersion>0.0.0</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="7za.dll" />

@@ -8,15 +8,11 @@
     <Authors>rzmoz</Authors>
     <Company />
     <Product />
-    <RepositoryUrl>https://github.com/rzmoz/DotNet.Basics</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <Version>4.6.2.1-rc.3+78e6cb8</Version>
-    <AssemblyVersion>4.6.2.1</AssemblyVersion>
-    <FileVersion>4.6.2.1</FileVersion>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Remove="vy3gi4zz.wfj~" />
-  </ItemGroup>
+    <RepositoryUrl>https://github.com/rzmoz/DotNet.Standard</RepositoryUrl>    
+    <Version>0.0.0</Version>
+    <AssemblyVersion>0.0.0</AssemblyVersion>
+    <FileVersion>0.0.0</FileVersion>
+  </PropertyGroup>  
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.2" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.0" />
