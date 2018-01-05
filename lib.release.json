@@ -3,7 +3,7 @@
     {
       "name": "DotNet.Standard",
       "version": "2.0.0",
-      "prerelease": "rc.1"
+      "prerelease": "beta.1"
     },
     {
       "name": "DotNet.Standard.Extensions.DependencyInjection",
@@ -18,12 +18,12 @@
     {
       "name": "DotNet.Standard.Rest",
       "version": "2.0.0",
-      "prerelease": "rc.1"
+      "prerelease": "beta.1"
     },
     {
       "name": "DotNet.Standard.SevenZip",
       "version": "16.04.0",
-      "prerelease": "rc.1"
+      "prerelease": "beta.1"
     }
   ],
   "tests": [

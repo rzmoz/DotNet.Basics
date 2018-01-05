@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DotNet.Basics.Extensions.Logging\DotNet.Basics.Extensions.Logging.csproj" />
     <ProjectReference Include="..\DotNet.Standard.Extensions.DependencyInjection\DotNet.Standard.Extensions.DependencyInjection.csproj" />
     <ProjectReference Include="..\DotNet.Standard.PowerShell\DotNet.Standard.PowerShell.csproj" />
     <ProjectReference Include="..\DotNet.Standard.Rest\DotNet.Standard.Rest.csproj" />
