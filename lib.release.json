@@ -13,7 +13,7 @@
     {
       "name": "DotNet.Standard.Extensions.Logging",
       "version": "2.0.0",
-      "prerelease": "beta.1"
+      "prerelease": "beta.2"
     },
     {
       "name": "DotNet.Standard.Rest",
