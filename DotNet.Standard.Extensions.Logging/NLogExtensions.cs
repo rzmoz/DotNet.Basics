@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using NLog.Config;
 using NLog.Extensions.Logging;
@@ -19,7 +20,7 @@ namespace DotNet.Standard.Extensions.Logging
                     addTargets(conf);
             }
 
-            services.AddSingleton<ILoggerFactory, LoggerFactory>();
+            services.TryAddSingleton<ILogger, Logger<NLog.ILogger>>();
             services.AddLogging(builder => builder.AddNLog().SetMinimumLevel(minimumLogLevel));
         }
     }
