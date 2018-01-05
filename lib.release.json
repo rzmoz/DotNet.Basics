@@ -8,7 +8,7 @@
     {
       "name": "DotNet.Standard.Extensions.DependencyInjection",
       "version": "2.0.0",
-      "prerelease": "beta.1"
+      "prerelease": "beta.2"
     },
     {
       "name": "DotNet.Standard.Extensions.Logging",

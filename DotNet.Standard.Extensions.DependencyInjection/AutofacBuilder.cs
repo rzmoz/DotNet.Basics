@@ -23,19 +23,19 @@ namespace DotNet.Standard.Extensions.DependencyInjection
         public IContainer Container => _getContainer.Value;
         public IServiceProvider ServiceProvider => new AutofacServiceProvider(Container);
 
-        public void AddRegistrations(Action<ContainerBuilder> registerServices)
+        public void AddByContainerBuilder(Action<ContainerBuilder> registerServices)
         {
             registerServices?.Invoke(_containerBuilder);
         }
 
-        public void AddRegistrations(Action<IServiceCollection> registerServices)
+        public void AddByServiceCollection(Action<IServiceCollection> registerServices)
         {
             var serviceCollection = new ServiceCollection();
             registerServices?.Invoke(serviceCollection);
             _containerBuilder.Populate(serviceCollection);
         }
 
-        public void AddRegistrations(params IServiceCollection[] serviceCollections)
+        public void AddServiceCollections(params IServiceCollection[] serviceCollections)
         {
             foreach (var serviceCollection in serviceCollections)
                 _containerBuilder.Populate(serviceCollection);
