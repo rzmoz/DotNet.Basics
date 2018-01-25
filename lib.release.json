@@ -1,32 +1,32 @@
 {
   "releases": [
     {
-      "name": "DotNet.Standard",
+      "name": "DotNet.Basics",
       "version": "2.0.0",
       "prerelease": "beta.1"
     },
     {
-      "name": "DotNet.Standard.Extensions.DependencyInjection",
+      "name": "DotNet.Basics.Extensions.DependencyInjection",
       "version": "2.0.0",
       "prerelease": "beta.2"
     },
     {
-      "name": "DotNet.Standard.Extensions.Logging",
+      "name": "DotNet.Basics.Extensions.Logging",
       "version": "2.0.0",
       "prerelease": "beta.3"
     },
     {
-      "name": "DotNet.Standard.Rest",
+      "name": "DotNet.Basics.Rest",
       "version": "2.0.0",
       "prerelease": "beta.1"
     },
     {
-      "name": "DotNet.Standard.SevenZip",
+      "name": "DotNet.Basics.SevenZip",
       "version": "16.04.0",
       "prerelease": "beta.1"
     }
   ],
   "tests": [
-    "DotNet.Standard.Tests"
+    "DotNet.Basics.Tests"
   ]
 }
