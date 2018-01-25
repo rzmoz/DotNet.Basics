@@ -6,9 +6,9 @@
       "prerelease": "beta.1"
     },
     {
-      "name": "DotNet.Basics.Extensions.DependencyInjection",
-      "version": "2.0.0",
-      "prerelease": "beta.2"
+      "name": "DotNet.Basics.Autofac",
+      "version": "4.6.2",
+      "prerelease": "rc.5"
     },
     {
       "name": "DotNet.Basics.Extensions.Logging",

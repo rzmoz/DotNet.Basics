@@ -4,7 +4,7 @@ using Autofac.Extensions.DependencyInjection;
 using Autofac.Features.ResolveAnything;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DotNet.Basics.Extensions.DependencyInjection
+namespace DotNet.Basics.Autofac
 {
     public class AutofacBuilder
     {

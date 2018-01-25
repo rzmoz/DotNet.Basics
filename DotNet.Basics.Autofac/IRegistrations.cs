@@ -1,6 +1,6 @@
 ﻿using Autofac;
 
-namespace DotNet.Basics.Extensions.DependencyInjection
+namespace DotNet.Basics.Autofac
 {
     public interface IRegistrations
     {

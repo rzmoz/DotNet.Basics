@@ -1,7 +1,7 @@
 ﻿using Autofac;
-using DotNet.Basics.Extensions.DependencyInjection;
+using DotNet.Basics.Autofac;
 
-namespace DotNet.Basics.Tests.Extensions.DepencyInjections.TestHelpers
+namespace DotNet.Basics.Tests.Autofac.TestHelpers
 {
     public class MyIocRegistrations : IRegistrations
     {

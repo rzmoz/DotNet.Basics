@@ -1,10 +1,10 @@
 ﻿using Autofac;
-using DotNet.Basics.Extensions.DependencyInjection;
-using DotNet.Basics.Tests.Extensions.DepencyInjections.TestHelpers;
+using DotNet.Basics.Autofac;
+using DotNet.Basics.Tests.Autofac.TestHelpers;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Extensions.DepencyInjections
+namespace DotNet.Basics.Tests.Autofac
 {
     public class AutofacBuilderTests
     {
