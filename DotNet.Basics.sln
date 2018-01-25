@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.PowerShell", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.SevenZip", "DotNet.Basics.SevenZip\DotNet.Basics.SevenZip.csproj", "{072BB7D6-2BE8-47F5-9EAF-56370F13928A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.Extensions.Logging", "DotNet.Basics.Extensions.Logging\DotNet.Basics.Extensions.Logging.csproj", "{7FCF7D70-B454-412E-A9FA-ADD6020F55C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.NLog", "DotNet.Basics.NLog\DotNet.Basics.NLog.csproj", "{7FCF7D70-B454-412E-A9FA-ADD6020F55C5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.Autofac", "DotNet.Basics.Autofac\DotNet.Basics.Autofac.csproj", "{E3175C23-D07B-4B0D-AB85-A5E880F68B3C}"
 EndProject

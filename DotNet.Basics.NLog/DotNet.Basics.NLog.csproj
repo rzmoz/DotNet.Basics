@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>Convenient helpers for working with NLog</Description>
+    <Description>Convenient helpers for working with NLog and Microsoft.Extensions.Logging + Microsoft.Extensions.DependencyInjection</Description>
     <PackageProjectUrl>
     </PackageProjectUrl>
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>

@@ -6,7 +6,7 @@ using NLog.Config;
 using NLog.Extensions.Logging;
 using NLog.Targets;
 
-namespace DotNet.Basics.Extensions.Logging
+namespace DotNet.Basics.NLog
 {
     public static class NLogExtensions
     {
@@ -20,7 +20,7 @@ namespace DotNet.Basics.Extensions.Logging
                     addTargets(conf);
             }
 
-            services.TryAddSingleton<ILogger, Logger<NLog.ILogger>>();
+            services.TryAddSingleton<ILogger, Logger<ILogger>>();
             services.AddLogging(builder => builder.AddNLog().SetMinimumLevel(minimumLogLevel));
         }
     }

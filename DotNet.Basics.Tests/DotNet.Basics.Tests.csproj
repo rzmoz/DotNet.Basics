@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DotNet.Basics.Autofac\DotNet.Basics.Autofac.csproj" />
-    <ProjectReference Include="..\DotNet.Basics.Extensions.Logging\DotNet.Basics.Extensions.Logging.csproj" />
+    <ProjectReference Include="..\DotNet.Basics.Extensions.Logging\DotNet.Basics.NLog.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Rest\DotNet.Basics.Rest.csproj" />
     <ProjectReference Include="..\DotNet.Basics.SevenZip\DotNet.Basics.SevenZip.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Tests.NetCore.EchoOut\DotNet.Basics.Tests.NetCore.EchoOut.csproj" />

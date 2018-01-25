@@ -4,7 +4,7 @@ using NLog.Config;
 using NLog.Targets;
 using NLog.Time;
 
-namespace DotNet.Basics.Extensions.Logging
+namespace DotNet.Basics.NLog
 {
     /// <summary>
     /// https://en.wikipedia.org/wiki/Builder_pattern
