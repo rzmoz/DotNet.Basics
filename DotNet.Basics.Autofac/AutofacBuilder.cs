@@ -40,8 +40,8 @@ namespace DotNet.Basics.Autofac
             foreach (var serviceCollection in serviceCollections)
                 _containerBuilder.Populate(serviceCollection);
         }
-
-        public void AddRegistrations(params IRegistrations[] registrations)
+        
+        public void AddRegistrations(params IAutofacRegistrations[] registrations)
         {
             foreach (var r in registrations)
                 r.RegisterIn(_containerBuilder);

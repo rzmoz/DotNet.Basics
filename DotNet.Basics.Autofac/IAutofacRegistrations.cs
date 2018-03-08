@@ -2,7 +2,7 @@
 
 namespace DotNet.Basics.Autofac
 {
-    public interface IRegistrations
+    public interface IAutofacRegistrations
     {
         void RegisterIn(ContainerBuilder builder);
     }

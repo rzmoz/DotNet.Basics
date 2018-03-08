@@ -3,7 +3,7 @@ using DotNet.Basics.Autofac;
 
 namespace DotNet.Basics.Tests.Autofac.TestHelpers
 {
-    public class MyIocRegistrations : IRegistrations
+    public class MyAutofacRegistrations : IAutofacRegistrations
     {
         public void RegisterIn(ContainerBuilder builder)
         {

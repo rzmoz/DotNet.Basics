@@ -3,12 +3,12 @@
     {
       "name": "DotNet.Basics",
       "version": "9.5.0",
-      "prerelease": "rc.2"
+      "prerelease": "rc.3"
     },
     {
       "name": "DotNet.Basics.Autofac",
       "version": "4.6.2.1",
-      "prerelease": "rc.6"
+      "prerelease": "rc.7"
     },
     {
       "name": "DotNet.Basics.NLog",
