@@ -20,7 +20,7 @@ namespace DotNet.Basics.Tests.Sys
              {
                  Action act = () => Executable.Run(testDir.RawPath);
 
-                 act.ShouldThrow<Win32Exception>();
+                 act.Should().Throw<Win32Exception>();
              });
         }
     }

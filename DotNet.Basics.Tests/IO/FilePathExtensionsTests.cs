@@ -32,12 +32,12 @@ namespace DotNet.Basics.Tests.IO
 
                 if (ensureTargetDir)
                 {
-                    action.ShouldNotThrow();
+                    action.Should().NotThrow();
                     testDir.ToFile(testFile1.Name).Exists().Should().BeTrue();
                 }
                 else
                 {
-                    action.ShouldThrow<IOException>();
+                    action.Should().Throw<IOException>();
                     testDir.ToFile(testFile1.Name).Exists().Should().BeFalse();
                 }
             });
@@ -64,12 +64,12 @@ namespace DotNet.Basics.Tests.IO
 
                 if (overwrite)
                 {
-                    action.ShouldNotThrow();
+                    action.Should().NotThrow();
                     targetFile.ReadAllText().Should().Be("Hello World!");
                 }
                 else
                 {
-                    action.ShouldThrow<IOException>();
+                    action.Should().Throw<IOException>();
                 }
             });
         }
@@ -124,7 +124,7 @@ namespace DotNet.Basics.Tests.IO
             {
                 var file = testDir.ToFile("NOtFoundDir", "NotFOund.asd");
                 Action action = () => file.ReadAllText();
-                action.ShouldThrow<DirectoryNotFoundException>();
+                action.Should().Throw<DirectoryNotFoundException>();
             });
 
         }
@@ -136,7 +136,7 @@ namespace DotNet.Basics.Tests.IO
                 var file = testDir.ToFile("NotFOundxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.asd");
                 file.Directory().CreateIfNotExists();
                 Action action = () => file.ReadAllText();
-                action.ShouldThrow<FileNotFoundException>();
+                action.Should().Throw<FileNotFoundException>();
             });
         }
 
@@ -172,7 +172,7 @@ namespace DotNet.Basics.Tests.IO
                 //act
                 Action action = () => targetFile.WriteAllText(@"random", overwrite: false);
 
-                action.ShouldThrow<IOException>().WithMessage($"Target file already exists. Set overwrite to true to ignore existing file: {targetFile.FullName()}");
+                action.Should().Throw<IOException>().WithMessage($"Target file already exists. Set overwrite to true to ignore existing file: {targetFile.FullName()}");
             });
         }
 

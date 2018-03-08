@@ -63,7 +63,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 
             Action action = () => lazyStep.GetTask();
 
-            action.ShouldThrowExactly<ArgumentException>();
+            action.Should().ThrowExactly<ArgumentException>();
         }
 
         [Fact]
@@ -98,7 +98,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 
             Func<Task> act = async () => await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
-            act.ShouldThrow<LazyLoadTaskFailedToLoadException>();
+            act.Should().Throw<LazyLoadTaskFailedToLoadException>();
         }
     }
 }

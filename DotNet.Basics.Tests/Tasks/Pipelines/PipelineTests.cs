@@ -52,9 +52,9 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var pipeline = new Pipeline();
             addAction(pipeline, provider);
 
-            Action action = async () => await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            Func<Task> action = async () => await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
         }
 
         [Theory]

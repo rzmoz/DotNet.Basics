@@ -59,7 +59,7 @@ namespace DotNet.Basics.Tests.Rest
         public void Ctor_NotUri_ExceptionIsThrown(string nonUri)
         {
             Action action = () => new RestRequest(nonUri);
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
         }
     }
 }

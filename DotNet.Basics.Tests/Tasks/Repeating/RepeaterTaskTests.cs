@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using DotNet.Basics.Tasks.Repeating;
 using FluentAssertions;
+using FluentAssertions.Extensions;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks.Repeating
@@ -35,7 +36,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
                 })
                 .UntilNoExceptions();
 
-            action.ShouldThrow<System.IO.IOException>();
+            action.Should().Throw<System.IO.IOException>();
         }
 
         [Fact]
@@ -49,7 +50,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
            })
            .UntilNoExceptions();
 
-            action.ShouldThrow<AggregateException>().WithInnerException<ArithmeticException>();
+            action.Should().Throw<AggregateException>().WithInnerException<ArithmeticException>();
         }
 
         [Fact]
@@ -116,7 +117,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             .Until(() => false);
 
 
-            runTask.ShouldThrow<System.IO.IOException>();
+            runTask.Should().Throw<System.IO.IOException>();
             doCounter.Should().Be(until);
             //we can assert result as it never returned properly
         }

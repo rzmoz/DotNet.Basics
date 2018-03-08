@@ -52,7 +52,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             Action act = () => ((string)null).ToTimeSpan();
 
-            act.ShouldThrow<ArgumentNullException>();
+            act.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             Action act = () => string.Empty.ToTimeSpan();
 
-            act.ShouldThrow<ArgumentException>().WithMessage("input is empty");
+            act.Should().Throw<ArgumentException>().WithMessage("input is empty");
         }
 
         [Theory]
@@ -72,7 +72,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             Action act = () => input.ToTimeSpan();
 
-            act.ShouldThrow<FormatException>().WithMessage("Input must be in format {time}{unit} where time is an integer and unit is ms|s|m|h|d|t. Was: " + input);
+            act.Should().Throw<FormatException>().WithMessage("Input must be in format {time}{unit} where time is an integer and unit is ms|s|m|h|d|t. Was: " + input);
         }
     }
 }

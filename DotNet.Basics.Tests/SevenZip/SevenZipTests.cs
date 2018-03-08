@@ -40,7 +40,7 @@ namespace DotNet.Basics.Tests.SevenZip
                 //act
                 Action action = () => _sevenZip.CreateFromDirectory("mySource", targetPath.FullName(), false);
 
-                action.ShouldThrow<System.IO.IOException>();
+                action.Should().Throw<System.IO.IOException>();
             });
 
         }
@@ -90,7 +90,7 @@ namespace DotNet.Basics.Tests.SevenZip
                 var mockTargetDir = testDir.ToDir("ExtractToDirectory_ArchiveNotFound_ExceptionIsThrown", "Mock");
                 //act
                 Action action = () => _sevenZip.ExtractToDirectory(archive.FullName(), mockTargetDir.FullName());
-                action.ShouldThrow<IOException>().And.Message.Should().StartWith("Archive not found:");
+                action.Should().Throw<IOException>().And.Message.Should().StartWith("Archive not found:");
             });
         }
 
@@ -105,7 +105,7 @@ namespace DotNet.Basics.Tests.SevenZip
 
                 //act
                 Action action = () => _sevenZip.ExtractToDirectory(_sourceArchive.FullName(), targetDir.FullName());
-                action.ShouldThrow<IOException>().And.Message.Should().StartWith("Target dir already exists at:");
+                action.Should().Throw<IOException>().And.Message.Should().StartWith("Target dir already exists at:");
 
             });
         }

@@ -105,7 +105,7 @@ namespace DotNet.Basics.Tests.IO
 
                 Action action = () => path.Exists();
 
-                action.ShouldNotThrow();
+                action.Should().NotThrow();
             });
         }
 
@@ -161,7 +161,7 @@ namespace DotNet.Basics.Tests.IO
 
             var temp = p.ToPath().FullName();//no exceptions are thrown
 
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
         }
 
         [Fact]

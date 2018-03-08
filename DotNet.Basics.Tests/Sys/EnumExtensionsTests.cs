@@ -28,7 +28,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             Action act = () => "SomethingNotValidxxxxxxxx".ToEnum<TestEnum>();
 
-            act.ShouldThrow<ArgumentException>();
+            act.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -69,8 +69,8 @@ namespace DotNet.Basics.Tests.Sys
             Action act1 = () => values.Single(v => v == TestEnum.This);
             Action act2 = () => values.Single(v => v == TestEnum.That);
 
-            act1.ShouldNotThrow();
-            act2.ShouldNotThrow();
+            act1.Should().NotThrow();
+            act2.Should().NotThrow();
         }
 
         private enum TestEnum
