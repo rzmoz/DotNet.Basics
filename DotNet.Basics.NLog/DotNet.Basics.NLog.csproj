@@ -17,8 +17,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
-    <PackageReference Include="NLog" Version="4.5.0-rc07" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0-rtm-rc5" />
+    <PackageReference Include="NLog" Version="4.5.3" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.0.1" />
   </ItemGroup>
 
 </Project>
