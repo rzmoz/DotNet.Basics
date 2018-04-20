@@ -82,7 +82,7 @@ namespace DotNet.Basics.Tests.Rest
         }
 
         [Fact]
-        public async Task ExecuteAsync_ValidRquest_RequestIsReceived()
+        public async Task SendAsync_ValidRequest_ResponseIsReceived()
         {
             var client = new RestClient("https://code.jquery.com/");
 
@@ -90,9 +90,20 @@ namespace DotNet.Basics.Tests.Rest
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
+
+        [Fact]
+        public async Task SendAsync_IRequest_ResponseIsReceived()
+        {
+            var client = new RestClient("https://code.jquery.com/");
+            IRestRequest request = new RestRequest(HttpMethod.Get, "jquery-1.12.4.min.js");
+
+            var response = await client.SendAsync(request).ConfigureAwait(false);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
         private class TestRestClient : RestClient
         {
-            public HttpRequestMessage Request { get; set; }
+            public HttpRequestMessage Request { get; private set; }
 
             public override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
             {
@@ -101,6 +112,4 @@ namespace DotNet.Basics.Tests.Rest
             }
         }
     }
-
-
 }

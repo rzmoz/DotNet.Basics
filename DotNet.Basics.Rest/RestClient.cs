@@ -66,6 +66,22 @@ namespace DotNet.Basics.Rest
             return SendAsync(requestMessage);
         }
 
+        public virtual Task<HttpResponseMessage> SendAsync(IRestRequest request)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+
+            var fullUri = BaseAddress == null ? new Uri(request.Uri) : new Uri(BaseAddress, request.Uri);
+            var requestMessage = new HttpRequestMessage(request.Method, fullUri);
+            if (request.Content != null)
+                requestMessage.Content = request.Content;
+            if (request.Version != null)
+                requestMessage.Version = request.Version;
+            foreach (var requestAddHeader in request.AddHeaders)
+                requestAddHeader(requestMessage.Headers);
+
+            return SendAsync(requestMessage);
+        }
+
         public virtual Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
