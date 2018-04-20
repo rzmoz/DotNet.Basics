@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
 
 namespace DotNet.Basics.Rest
 {
@@ -20,7 +19,7 @@ namespace DotNet.Basics.Rest
             AddHeaders = new List<Action<HttpRequestHeaders>>();
         }
 
-        public HttpMethod Method { get; private set; }
+        public HttpMethod Method { get; }
         public string Uri { get; }
         public HttpContent Content { get; private set; }
         public IList<Action<HttpRequestHeaders>> AddHeaders { get; }
@@ -48,22 +47,7 @@ namespace DotNet.Basics.Rest
             Version = version;
             return this;
         }
-
-        public Task<HttpResponseMessage> SendAsync(IRestClient client)
-        {
-            var fullUri = client.BaseAddress == null ? new Uri(Uri) : new Uri(client.BaseAddress, Uri);
-
-            var requestMessage = new HttpRequestMessage(Method, fullUri);
-            if (Content != null)
-                Content = Content;
-            if (Version != null)
-                Version = Version;
-            foreach (var addHeader in AddHeaders)
-                addHeader?.Invoke(requestMessage.Headers);
-
-            return client.SendAsync(requestMessage);
-        }
-
+        
         public override string ToString()
         {
             return $"{Method} {Uri}";

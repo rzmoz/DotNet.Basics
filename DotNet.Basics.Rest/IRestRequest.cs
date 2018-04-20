@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
 
 namespace DotNet.Basics.Rest
 {
@@ -11,6 +10,5 @@ namespace DotNet.Basics.Rest
         IRestRequest WithJsonContent(string jsonContent);
         IRestRequest WithHeaders(Action<HttpRequestHeaders> headers);
         IRestRequest WithVersion(Version version);
-        Task<HttpResponseMessage> SendAsync(IRestClient client);
     }
 }
