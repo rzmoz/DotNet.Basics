@@ -60,7 +60,7 @@ namespace DotNet.Basics.Tests.Rest
             var headerKey = "X-DotNet.Basics";
             var headerValue = "yEs";
 
-            var client = new RestClient("https://code.jquery.com/");
+            IRestClient client = new RestClient("https://code.jquery.com/");
             client.DefaultRequestHeaders.Add(headerKey, headerValue);
 
             var response = await client.GetAsync("jquery-1.12.4.min.js").ConfigureAwait(false);
@@ -73,7 +73,7 @@ namespace DotNet.Basics.Tests.Rest
         [Fact]
         public async Task BaseUri_BaseUriIsSet_UriIsProper()
         {
-            var client = new RestClient("https://code.jquery.com/");
+            IRestClient client = new RestClient("https://code.jquery.com/");
 
             var response = await client.GetAsync("jquery-1.12.4.min.js").ConfigureAwait(false);
 
@@ -84,7 +84,7 @@ namespace DotNet.Basics.Tests.Rest
         [Fact]
         public async Task SendAsync_ValidRequest_ResponseIsReceived()
         {
-            var client = new RestClient("https://code.jquery.com/");
+            IRestClient client = new RestClient("https://code.jquery.com/");
 
             var response = await client.GetAsync("jquery-1.12.4.min.js").ConfigureAwait(false);
 
@@ -94,7 +94,7 @@ namespace DotNet.Basics.Tests.Rest
         [Fact]
         public async Task SendAsync_IRequest_ResponseIsReceived()
         {
-            var client = new RestClient("https://code.jquery.com/");
+            IRestClient client = new RestClient("https://code.jquery.com/");
             IRestRequest request = new RestRequest(HttpMethod.Get, "jquery-1.12.4.min.js");
 
             var response = await client.SendAsync(request).ConfigureAwait(false);
