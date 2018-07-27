@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 
@@ -11,23 +10,21 @@ namespace DotNet.Basics.Rest
             : this(HttpMethod.Get, uri)
         { }
 
-        public RestRequest(HttpMethod method, string uri, HttpContent content = null)
+        public RestRequest(HttpMethod method, string uri)
         {
-            Method = method;
-            Uri = uri;
-            Content = content;
-            AddHeaders = new List<Action<HttpRequestHeaders>>();
+            HttpRequestMessage = new HttpRequestMessage(method, uri);
         }
 
-        public HttpMethod Method { get; }
-        public string Uri { get; }
-        public HttpContent Content { get; private set; }
-        public IList<Action<HttpRequestHeaders>> AddHeaders { get; }
-        public Version Version { get; private set; }
+        public HttpMethod Method => HttpRequestMessage.Method;
+        public string Uri => HttpRequestMessage.RequestUri.AbsoluteUri;
+        public HttpContent Content => HttpRequestMessage.Content;
+        public HttpRequestHeaders Headers => HttpRequestMessage.Headers;
+        public Version Version => HttpRequestMessage.Version;
 
         public IRestRequest WithContent(HttpContent content)
         {
-            Content = content;
+            if (content != null)
+                HttpRequestMessage.Content = content;
             return this;
         }
 
@@ -38,28 +35,18 @@ namespace DotNet.Basics.Rest
 
         public IRestRequest WithHeaders(Action<HttpRequestHeaders> addHeaders)
         {
-            AddHeaders.Add(addHeaders);
+            addHeaders?.Invoke(Headers);
             return this;
         }
 
         public IRestRequest WithVersion(Version version)
         {
-            Version = version;
+            if (Version != null)
+                HttpRequestMessage.Version = version;
             return this;
         }
 
-        public HttpRequestMessage GetHttpRequestMessage()
-        {
-            var requestMessage = new HttpRequestMessage(Method, Uri);
-            if (Content != null)
-                requestMessage.Content = Content;
-            if (Version != null)
-                requestMessage.Version = Version;
-            foreach (var requestAddHeader in AddHeaders)
-                requestAddHeader(requestMessage.Headers);
-
-            return requestMessage;
-        }
+        public HttpRequestMessage HttpRequestMessage { get; }
 
         public override string ToString()
         {

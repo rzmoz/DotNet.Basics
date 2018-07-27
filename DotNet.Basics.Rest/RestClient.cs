@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DotNet.Basics.Rest
@@ -18,6 +19,12 @@ namespace DotNet.Basics.Rest
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
             _client.DefaultRequestHeaders.AcceptCharset.Add(new StringWithQualityHeaderValue("utf-8"));
         }
+
+        public delegate void RequestHandler(HttpRequestMessage request);
+        public delegate void ResponseHandler(HttpResponseMessage response);
+
+        public event RequestHandler RequestSending;
+        public event ResponseHandler ResponseReceived;
 
         public HttpRequestHeaders DefaultRequestHeaders => _client.DefaultRequestHeaders;
 
@@ -42,55 +49,51 @@ namespace DotNet.Basics.Rest
 
         public Task<HttpResponseMessage> DeleteAsync(string uri, HttpContent content = null)
         {
-            var requestMessage = GetQuickRequest(HttpMethod.Delete, uri, content);
-            return SendAsync(requestMessage);
+            return SendAsync(HttpMethod.Delete, uri, content);
         }
         public Task<HttpResponseMessage> GetAsync(string uri, HttpContent content = null)
         {
-            var requestMessage = GetQuickRequest(HttpMethod.Get, uri, content);
-            return SendAsync(requestMessage);
+            return SendAsync(HttpMethod.Get, uri, content);
         }
         public Task<HttpResponseMessage> HeadAsync(string uri, HttpContent content = null)
         {
-            var requestMessage = GetQuickRequest(HttpMethod.Head, uri, content);
-            return SendAsync(requestMessage);
+            return SendAsync(HttpMethod.Head, uri, content);
         }
         public Task<HttpResponseMessage> PostAsync(string uri, HttpContent content = null)
         {
-            var requestMessage = GetQuickRequest(HttpMethod.Post, uri, content);
-            return SendAsync(requestMessage);
+            return SendAsync(HttpMethod.Post, uri, content);
         }
         public Task<HttpResponseMessage> PutAsync(string uri, HttpContent content = null)
         {
-            var requestMessage = GetQuickRequest(HttpMethod.Put, uri, content);
+            return SendAsync(HttpMethod.Put, uri, content);
+        }
+
+        private Task<HttpResponseMessage> SendAsync(HttpMethod method, string uri, HttpContent content = null)
+        {
+            var requestMessage = new HttpRequestMessage(method, uri);
+            if (content != null)
+                requestMessage.Content = content;
             return SendAsync(requestMessage);
         }
 
-        public virtual Task<HttpResponseMessage> SendAsync(IRestRequest request)
+        public Task<HttpResponseMessage> SendAsync(IRestRequest request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
-            var requestMessage = request.GetHttpRequestMessage();
-            return SendAsync(requestMessage);
+            return SendAsync(request.HttpRequestMessage);
         }
 
-        public virtual Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
+        public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
-            return _client.SendAsync(request);
+            RequestSending?.Invoke(request);
+            var response = await _client.SendAsync(request, CancellationToken.None).ConfigureAwait(false);
+            ResponseReceived?.Invoke(response);
+            return response;
         }
 
         public void Dispose()
         {
             _client?.Dispose();
-        }
-
-        private HttpRequestMessage GetQuickRequest(HttpMethod method, string uri, HttpContent content = null)
-        {
-            var fullUri = BaseAddress == null ? new Uri(uri) : new Uri(BaseAddress, uri);
-            var requestMessage = new HttpRequestMessage(method, fullUri);
-            if (content != null)
-                requestMessage.Content = content;
-            return requestMessage;
         }
     }
 }

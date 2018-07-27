@@ -12,6 +12,9 @@ namespace DotNet.Basics.Rest
         long MaxResponseContentBufferSize { get; set; }
         TimeSpan Timeout { get; set; }
 
+        event RestClient.RequestHandler RequestSending;
+        event RestClient.ResponseHandler ResponseReceived;
+
         Task<HttpResponseMessage> SendAsync(IRestRequest request);
         Task<HttpResponseMessage> SendAsync(HttpRequestMessage request);
 

@@ -1,56 +1,57 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Rest;
 using FluentAssertions;
+using NSubstitute;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Rest
 {
     public class RestClientTests
     {
-        private const string _uri = "http://localhost:8080/my/site?hello=world";
+        private readonly IRestClient _echoRestClient;
 
-        [Fact]
-        public async Task Delete_CreateRequest_RequestIsCreated()
+        public RestClientTests()
         {
-            var client = new TestRestClient();
-            await client.DeleteAsync(_uri).ConfigureAwait(false);
-            client.Request.Method.Should().Be(HttpMethod.Delete);
+            var echoHttpClient = Substitute.For<HttpClient>();
+            echoHttpClient.SendAsync(Arg.Any<HttpRequestMessage>(), CancellationToken.None)
+                .ReturnsForAnyArgs(info => new HttpResponseMessage { RequestMessage = info.Arg<HttpRequestMessage>() });
+
+            _echoRestClient = new RestClient("http://localhost/", echoHttpClient);
         }
 
         [Fact]
-        public async Task Get_CreateRequest_RequestIsCreated()
+        public async Task DeleteAsync_Invoke_MethodIsSet()
         {
-            var client = new TestRestClient();
-            await client.GetAsync(_uri).ConfigureAwait(false);
-            client.Request.Method.Should().Be(HttpMethod.Get);
+            var response = await _echoRestClient.DeleteAsync("").ConfigureAwait(false);
+            response.RequestMessage.Method.Should().Be(HttpMethod.Delete);
         }
-
         [Fact]
-        public async Task Head_CreateRequest_RequestIsCreated()
+        public async Task GetAsync_Invoke_MethodIsSet()
         {
-            var client = new TestRestClient();
-            await client.HeadAsync(_uri).ConfigureAwait(false);
-            client.Request.Method.Should().Be(HttpMethod.Head);
+            var response = await _echoRestClient.GetAsync("").ConfigureAwait(false);
+            response.RequestMessage.Method.Should().Be(HttpMethod.Get);
         }
-
         [Fact]
-        public async Task Post_CreateRequest_RequestIsCreated()
+        public async Task HeadAsync_Invoke_MethodIsSet()
         {
-            var client = new TestRestClient();
-            await client.PostAsync(_uri).ConfigureAwait(false);
-            client.Request.Method.Should().Be(HttpMethod.Post);
+            var response = await _echoRestClient.HeadAsync("").ConfigureAwait(false);
+            response.RequestMessage.Method.Should().Be(HttpMethod.Head);
         }
-
         [Fact]
-        public async Task Put_CreateRequest_RequestIsCreated()
+        public async Task PostAsync_Invoke_MethodIsSet()
         {
-            var client = new TestRestClient();
-            await client.PutAsync(_uri).ConfigureAwait(false);
-            client.Request.Method.Should().Be(HttpMethod.Put);
+            var response = await _echoRestClient.PostAsync("").ConfigureAwait(false);
+            response.RequestMessage.Method.Should().Be(HttpMethod.Post);
+        }
+        [Fact]
+        public async Task PutAsync_Invoke_MethodIsSet()
+        {
+            var response = await _echoRestClient.PutAsync("").ConfigureAwait(false);
+            response.RequestMessage.Method.Should().Be(HttpMethod.Put);
         }
 
 
@@ -101,15 +102,26 @@ namespace DotNet.Basics.Tests.Rest
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
-        private class TestRestClient : RestClient
+        [Fact]
+        public async Task RequestSending_Events_EventIsRaised()
         {
-            public HttpRequestMessage Request { get; private set; }
+            //arrange
+            IRestClient client = new RestClient("https://cdnjs.cloudflare.com/ajax/libs/mogl/0.3.0/");
 
-            public override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
-            {
-                Request = request;
-                return Task.FromResult(new HttpResponseMessage());
-            }
+            HttpRequestMessage receivedRequest = null;
+            HttpResponseMessage receivedResponse = null;
+
+            client.RequestSending += req => receivedRequest = req;
+            client.ResponseReceived += res => receivedResponse = res;
+
+            //act
+            var response = await client.GetAsync("mogl.min.js").ConfigureAwait(false);
+
+            //assert
+            receivedRequest.Should().NotBeNull();
+            receivedResponse.Should().NotBeNull();
+            receivedRequest.RequestUri.ToString().Should().Be("https://cdnjs.cloudflare.com/ajax/libs/mogl/0.3.0/mogl.min.js");
+            receivedResponse.RequestMessage.RequestUri.ToString().Should().Be("https://cdnjs.cloudflare.com/ajax/libs/mogl/0.3.0/mogl.min.js");
         }
     }
 }

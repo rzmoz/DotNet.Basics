@@ -17,7 +17,7 @@ namespace DotNet.Basics.Rest
 
         public static T Content<T>(this HttpResponseMessage response)
         {
-            var content = response.Content();
+            var content = response.Content();;
             return JsonConvert.DeserializeObject<T>(content);
         }
 
@@ -30,8 +30,8 @@ namespace DotNet.Basics.Rest
 
         public static async Task<T> ContentAsync<T>(this HttpResponseMessage response)
         {
-            var content = response.ContentAsync().ConfigureAwait(false);
-            return JsonConvert.DeserializeObject<T>(await content);
+            var content = await response.ContentAsync().ConfigureAwait(false);
+            return JsonConvert.DeserializeObject<T>(content);
         }
 
         public static string TrimQuotes(string content)

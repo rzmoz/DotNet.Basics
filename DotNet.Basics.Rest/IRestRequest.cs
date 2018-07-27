@@ -10,7 +10,7 @@ namespace DotNet.Basics.Rest
         HttpMethod Method { get; }
         string Uri { get; }
         HttpContent Content { get; }
-        IList<Action<HttpRequestHeaders>> AddHeaders { get; }
+        HttpRequestHeaders Headers { get; }
         Version Version { get; }
 
         IRestRequest WithContent(HttpContent content);
@@ -18,6 +18,6 @@ namespace DotNet.Basics.Rest
         IRestRequest WithHeaders(Action<HttpRequestHeaders> headers);
         IRestRequest WithVersion(Version version);
 
-        HttpRequestMessage GetHttpRequestMessage();
+        HttpRequestMessage HttpRequestMessage { get; }
     }
 }

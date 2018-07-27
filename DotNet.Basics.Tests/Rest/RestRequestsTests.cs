@@ -12,6 +12,42 @@ namespace DotNet.Basics.Tests.Rest
         private const string _uri = "http://localhost:8080/my/site?hello=world";
 
         [Fact]
+        public void Delete_CreateRequest_RequestIsCreated()
+        {
+            var req = new RestRequest(HttpMethod.Delete, _uri);
+            req.Method.Should().Be(HttpMethod.Delete);
+        }
+
+        [Fact]
+        public void Get_CreateRequest_RequestIsCreated()
+        {
+            var req = new RestRequest(HttpMethod.Get, _uri);
+            req.Method.Should().Be(HttpMethod.Get);
+        }
+
+        [Fact]
+        public void Head_CreateRequest_RequestIsCreated()
+        {
+            var req = new RestRequest(HttpMethod.Head, _uri);
+            req.Method.Should().Be(HttpMethod.Head);
+        }
+
+        [Fact]
+        public void Post_CreateRequest_RequestIsCreated()
+        {
+            var req = new RestRequest(HttpMethod.Post, _uri);
+            req.Method.Should().Be(HttpMethod.Post);
+        }
+
+        [Fact]
+        public void Put_CreateRequest_RequestIsCreated()
+        {
+            var req = new RestRequest(HttpMethod.Put, _uri);
+            req.Method.Should().Be(HttpMethod.Put);
+        }
+
+
+        [Fact]
         public void Custom_CreateRequest_RequestIsCreated()
         {
             const string method = "Baflstwets";
@@ -40,9 +76,8 @@ namespace DotNet.Basics.Tests.Rest
             var headerValue = "sdfgsdrgsdgse4 gw34taw4gfe w4gfaw3rwtr";
 
             //act
-            request.AddHeaders.Add(headers => headers.Add(headerKey, new[] { headerValue }));
-            var httpRequest = request.GetHttpRequestMessage();
-
+            request.Headers.Add(headerKey, new[] { headerValue });
+            var httpRequest = request.HttpRequestMessage;
 
             //assert
             httpRequest.RequestUri.ToString().Should().Be(_uri);
