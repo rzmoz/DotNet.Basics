@@ -24,7 +24,7 @@ namespace DotNet.Basics.Rest
         public HttpContent Content { get; private set; }
         public IList<Action<HttpRequestHeaders>> AddHeaders { get; }
         public Version Version { get; private set; }
-        
+
         public IRestRequest WithContent(HttpContent content)
         {
             Content = content;
@@ -47,7 +47,20 @@ namespace DotNet.Basics.Rest
             Version = version;
             return this;
         }
-        
+
+        public HttpRequestMessage GetHttpRequestMessage()
+        {
+            var requestMessage = new HttpRequestMessage(Method, Uri);
+            if (Content != null)
+                requestMessage.Content = Content;
+            if (Version != null)
+                requestMessage.Version = Version;
+            foreach (var requestAddHeader in AddHeaders)
+                requestAddHeader(requestMessage.Headers);
+
+            return requestMessage;
+        }
+
         public override string ToString()
         {
             return $"{Method} {Uri}";

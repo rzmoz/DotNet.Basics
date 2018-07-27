@@ -17,5 +17,7 @@ namespace DotNet.Basics.Rest
         IRestRequest WithJsonContent(string jsonContent);
         IRestRequest WithHeaders(Action<HttpRequestHeaders> headers);
         IRestRequest WithVersion(Version version);
+
+        HttpRequestMessage GetHttpRequestMessage();
     }
 }

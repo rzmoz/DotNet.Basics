@@ -3,27 +3,27 @@
     {
       "name": "DotNet.Basics",
       "version": "9.5.0",
-      "prerelease": "rc.3"
+      "prerelease": "rc.4"
     },
     {
       "name": "DotNet.Basics.Autofac",
       "version": "4.8.0",
-      "prerelease": "rc.1"
+      "prerelease": "rc.2"
     },
     {
       "name": "DotNet.Basics.NLog",
       "version": "4.5.3",
-      "prerelease": "rc.1"
-    },
-    {
-      "name": "DotNet.Basics.Rest",
-      "version": "9.5.0",
       "prerelease": "rc.2"
     },
     {
+      "name": "DotNet.Basics.Rest",
+      "version": "9.5.1",
+      "prerelease": "rc.1"
+    },
+    {
       "name": "DotNet.Basics.SevenZip",
-      "version": "16.04.0",
-      "prerelease": "rc.8"
+      "version": "18.05.0",
+      "prerelease": "rc.1"
     }
   ],
   "tests": [
