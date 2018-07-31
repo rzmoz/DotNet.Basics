@@ -17,8 +17,8 @@
     },
     {
       "name": "DotNet.Basics.Rest",
-      "version": "9.5.1",
-      "prerelease": "rc.2"
+      "version": "9.5.2",
+      "prerelease": "rc.1"
     },
     {
       "name": "DotNet.Basics.SevenZip",
