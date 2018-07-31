@@ -1,8 +1,7 @@
 ﻿using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using ServiceStack.Text;
-
+using Newtonsoft.Json;
 
 namespace DotNet.Basics.Rest
 {
@@ -12,8 +11,8 @@ namespace DotNet.Basics.Rest
 
         public static async Task<T> ReadAsTypeAsync<T>(this HttpContent content)
         {
-            var stream = await content.ReadAsStreamAsync().ConfigureAwait(false);
-            return JsonSerializer.DeserializeFromStream<T>(stream);
+            var json = await content.ReadAsStringAsync().ConfigureAwait(false);
+            return JsonConvert.DeserializeObject<T>(json);
         }
 
         public static string TrimQuotes(string content)

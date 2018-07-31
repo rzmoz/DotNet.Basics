@@ -49,7 +49,7 @@ namespace DotNet.Basics.Tests.Rest
 
             var testObject = await content.ReadAsTypeAsync<TestObject>().ConfigureAwait(false);
 
-            testObject.Immutable.Should().BeNull();//Immutable properties aren't deserialized
+            testObject.Immutable.Should().Be(_immutableString);
             testObject.Mutable.Should().Be(_mutableString);
         }
     }
