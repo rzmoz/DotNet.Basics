@@ -9,10 +9,10 @@ namespace DotNet.Basics.Rest
     {
         private const char _stringQuote = '\"';
 
-        public static async Task<T> ReadAsTypeAsync<T>(this HttpContent content)
+        public static async Task<T> ReadAsTypeAsync<T>(this HttpContent content, JsonSerializerSettings jsonSerializerSettings = null)
         {
             var json = await content.ReadAsStringAsync().ConfigureAwait(false);
-            return JsonConvert.DeserializeObject<T>(json);
+            return JsonConvert.DeserializeObject<T>(json, jsonSerializerSettings);
         }
 
         public static string TrimQuotes(string content)

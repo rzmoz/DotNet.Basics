@@ -2,13 +2,14 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace DotNet.Basics.Rest
 {
     public static class HttpResponseMessageExtensions
     {
         private const char _stringQuote = '\"';
-        
+
         public static async Task<string> ContentAsync(this HttpResponseMessage response)
         {
             if (response == null) throw new ArgumentNullException(nameof(response));
@@ -16,9 +17,9 @@ namespace DotNet.Basics.Rest
             return TrimQuotes(content);
         }
 
-        public static Task<T> ContentAsync<T>(this HttpResponseMessage response)
+        public static Task<T> ContentAsync<T>(this HttpResponseMessage response, JsonSerializerSettings jsonSerializerSettings = null)
         {
-            return response.Content.ReadAsTypeAsync<T>();
+            return response.Content.ReadAsTypeAsync<T>(jsonSerializerSettings);
         }
 
         public static string TrimQuotes(string content)

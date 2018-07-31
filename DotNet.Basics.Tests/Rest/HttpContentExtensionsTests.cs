@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using DotNet.Basics.Rest;
 using FluentAssertions;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Rest
@@ -29,6 +31,22 @@ namespace DotNet.Basics.Tests.Rest
 
             result.Should().Be(expected);
         }
+
+        [Fact]
+        public void Ctor_JsonSerializerSettings_SettingsAreUsed()
+        {
+            //json with superfluous member
+            var content = new JsonContent(@"{""Mutable"":""mutable"",""Immutable"":""immutable"",""MissingMember"":""value""}");
+
+            //act
+            Func<Task> act = () => content.ReadAsTypeAsync<TestObject>(new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Error
+            });
+
+            act.Should().Throw<JsonSerializationException>();
+        }
+
 
         [Fact]
         public async Task Ctor_Serialization_ContentIsSerilaizedToProperJson()
