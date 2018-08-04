@@ -4,7 +4,7 @@
     <Authors>rzmoz</Authors>
     <Company />
     <Product />
-    <Description>Syntactical sugar for REST client functionality. Fully interfaced and debug events for easy debugging.</Description>
+    <Description>Syntactical sugar for REST client functionality. Fully interfaced and events for easier debugging in release environments.</Description>
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/rzmoz/DotNet.Basics</RepositoryUrl>    
     <Version>0.0.0</Version>

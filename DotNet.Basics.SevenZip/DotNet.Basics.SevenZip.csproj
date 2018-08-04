@@ -4,12 +4,13 @@
     <Authors>rzmoz</Authors>
     <Company>rzmoz</Company>
     <Product>DotNet.Basics.SevenZip</Product>
-    <Description>7zip SDK for robust archive operations. Wrapped as assembly instead of</Description>
+    <Description>7-zip wrapper for robust archive operations in .NET without COM. Deserializes 7-zip executables to temp dir and invoke calls via cmdline (out-of-proc).</Description>
     <RepositoryUrl>https://github.com/rzmoz/DotNet.Basics</RepositoryUrl>
     <PackageLicenseUrl>http://www.7-zip.org/license.txt</PackageLicenseUrl>    
     <Version>0.0.0</Version>
     <AssemblyVersion>0.0.0</AssemblyVersion>
     <FileVersion>0.0.0</FileVersion>
+    <PackageProjectUrl>https://www.7-zip.org/</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="7za.dll" />
