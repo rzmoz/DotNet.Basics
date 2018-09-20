@@ -11,12 +11,12 @@ namespace DotNet.Basics.Tests.IO
     public class NetCoreWin32FileSystemLongPathsTests : LongPathsFileSystemTests
     {
         public NetCoreWin32FileSystemLongPathsTests(ITestOutputHelper output)
-            : base(new NetCoreWin32FileSystemLongPaths(), output)
+            : base(output)
         { }
 
         //paths
         [Fact]
-        public void Enumerates_Paths_PatshAreFound()
+        public void Enumerates_Paths_PathsAreFound()
         {
             ArrangeActAssertPaths(testDir =>
             {
@@ -29,9 +29,9 @@ namespace DotNet.Basics.Tests.IO
                 testDir.ToFile("myFile1.txt").WriteAllText("bla");
                 testDir.ToFile("myFile2.txt").WriteAllText("bla");
 
-                var paths = FileSystem.EnumeratePaths(testDir.FullName(), "*", SearchOption.AllDirectories).ToList();
-                var dirs = FileSystem.EnumerateDirectories(testDir.FullName(), "*", SearchOption.AllDirectories).ToList();
-                var files = FileSystem.EnumerateFiles(testDir.FullName(), "*", SearchOption.AllDirectories).ToList();
+                var paths = Directory.EnumerateFileSystemEntries(testDir.FullName(), "*", SearchOption.AllDirectories).ToList();
+                var dirs = Directory.EnumerateDirectories(testDir.FullName(), "*", SearchOption.AllDirectories).ToList();
+                var files = Directory.EnumerateFiles(testDir.FullName(), "*", SearchOption.AllDirectories).ToList();
 
                 paths.Count.Should().Be(5);
                 paths.Count.Should().Be(testDir.GetPaths().Count);

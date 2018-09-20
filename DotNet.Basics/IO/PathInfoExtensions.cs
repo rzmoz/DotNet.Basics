@@ -9,7 +9,7 @@ namespace DotNet.Basics.IO
     {
         public static string FullName(this PathInfo pi)
         {
-            return FileSystem.Current.GetFullPath(pi.RawPath);
+            return Path.GetFullPath(pi.RawPath);
         }
 
         public static DirPath Directory(this PathInfo pi)
@@ -28,7 +28,7 @@ namespace DotNet.Basics.IO
 
         public static bool Exists(this PathInfo pi)
         {
-            return pi.PathType == PathType.Dir ? FileSystem.Current.ExistsDir(pi.FullName()) : FileSystem.Current.ExistsFile(pi.FullName());
+            return pi.PathType == PathType.Dir ? System.IO.Directory.Exists(pi.FullName()) : System.IO.File.Exists(pi.FullName());
         }
 
         public static bool DeleteIfExists(this PathInfo pi)
@@ -43,9 +43,9 @@ namespace DotNet.Basics.IO
             Repeat.Task(() =>
                 {
                     if (pi.PathType == PathType.Dir)
-                        FileSystem.Current.DeleteDir(pi.FullName(), true);
+                        System.IO.Directory.Delete(pi.FullName(), true);
                     else
-                        FileSystem.Current.DeleteFile(pi.FullName());
+                        System.IO.File.Delete(pi.FullName());
                 })
                 .WithOptions(o =>
                 {

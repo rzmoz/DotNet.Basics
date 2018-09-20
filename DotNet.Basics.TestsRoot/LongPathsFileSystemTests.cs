@@ -9,11 +9,9 @@ namespace DotNet.Basics.TestsRoot
     public abstract class LongPathsFileSystemTests : TestWithHelpers
     {
         private const string _veryLongPath = @"loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\";
-        protected readonly IFileSystem FileSystem;
 
-        protected LongPathsFileSystemTests(IFileSystem fileSystem, ITestOutputHelper output) : base(output, _veryLongPath)
+        protected LongPathsFileSystemTests(ITestOutputHelper output) : base(output, _veryLongPath)
         {
-            FileSystem = fileSystem;
         }
         
         [Fact]
@@ -24,7 +22,7 @@ namespace DotNet.Basics.TestsRoot
                 var path = TestPathPrefix + "MyPath";
 
                 //act
-                var result = FileSystem.GetFullPath(path);
+                var result = Path.GetFullPath(path);
                 //assert
                 result.Should().Be(Path.Combine(new DirectoryInfo(".").FullName, path));
             });
@@ -39,7 +37,7 @@ namespace DotNet.Basics.TestsRoot
                 testDir.DeleteIfExists();
                 testDir.Exists().Should().BeFalse();
                 //act
-                FileSystem.CreateDir(testDir.FullName());
+                Directory.CreateDirectory(testDir.FullName());
                 //assert
                 testDir.Exists().Should().BeTrue();
             });
@@ -63,7 +61,7 @@ namespace DotNet.Basics.TestsRoot
                 targetDir.DeleteIfExists();
 
                 //act
-                FileSystem.MoveDir(sourceDir.FullName(), targetDir.FullName());
+                Directory.Move(sourceDir.FullName(), targetDir.FullName());
                 //assert
                 sourceDir.Exists().Should().BeFalse();
                 targetDir.Add(helloDir.Name).Exists().Should().BeTrue();
@@ -76,7 +74,7 @@ namespace DotNet.Basics.TestsRoot
         {
             var path = TestPathPrefix + "path";
             //act
-            var result = FileSystem.ExistsFile(path) || FileSystem.ExistsDir(path);
+            var result = File.Exists(path) || Directory.Exists(path);
             //assert
             result.Should().BeFalse();
         }
@@ -89,7 +87,7 @@ namespace DotNet.Basics.TestsRoot
                 testDir.CreateIfNotExists();
                 testDir.Exists().Should().BeTrue();
                 //act
-                FileSystem.DeleteDir(testDir.FullName());
+                Directory.Delete(testDir.FullName());
                 //assert
                 testDir.Exists().Should().BeFalse();
             });
@@ -109,7 +107,7 @@ namespace DotNet.Basics.TestsRoot
                 sourceFile.WriteAllText("blaaa");
                 targetFile.Exists().Should().BeFalse();
 
-                FileSystem.CopyFile(sourceFile.FullName(), targetFile.FullName(), true);
+                File.Copy(sourceFile.FullName(), targetFile.FullName(), true);
 
                 sourceFile.Exists().Should().BeTrue();
                 targetFile.Exists().Should().BeTrue();
@@ -127,7 +125,7 @@ namespace DotNet.Basics.TestsRoot
                 targetFile.DeleteIfExists();
                 targetFile.Exists().Should().BeFalse();
                 targetFile.Directory().CreateIfNotExists();
-                FileSystem.MoveFile(sourceFile.FullName(), targetFile.FullName());
+                File.Move(sourceFile.FullName(), targetFile.FullName());
 
                 sourceFile.Exists().Should().BeFalse();
                 targetFile.Exists().Should().BeTrue();
@@ -145,7 +143,7 @@ namespace DotNet.Basics.TestsRoot
 
                 testFile.Exists().Should().BeTrue();
                 //act
-                FileSystem.DeleteFile(testFile.FullName());
+                File.Delete(testFile.FullName());
 
                 //assert
                 testFile.Exists().Should().BeFalse();
@@ -162,7 +160,7 @@ namespace DotNet.Basics.TestsRoot
                 testFile.Exists().Should().BeTrue();
 
                 //act
-                FileSystem.DeleteFile(testFile.FullName());
+                File.Delete(testFile.FullName());
 
                 //assert
                 testFile.Exists().Should().BeFalse();

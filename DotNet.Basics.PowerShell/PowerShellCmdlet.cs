@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-/*
 using System.Management.Automation;
 
 namespace DotNet.Basics.PowerShell
@@ -104,4 +103,3 @@ namespace DotNet.Basics.PowerShell
         }
     }
 }
-*/

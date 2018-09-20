@@ -29,9 +29,9 @@ namespace DotNet.Basics.SevenZip
 
         public (string Input, int ExitCode, string Output) ExtractToDirectory(string archivePath, string targetDirPath)
         {
-            if (FileSystem.Current.ExistsFile(archivePath) == false)
+            if (File.Exists(archivePath) == false)
                 throw new IOException($"Archive not found: {archivePath}");
-            if (FileSystem.Current.ExistsDir(targetDirPath))
+            if (Directory.Exists(targetDirPath))
                 throw new IOException($"Target dir already exists at: {targetDirPath}");
             return ExecuteSevenZip("x", $"\"{archivePath}\"", $"\"-o{targetDirPath.ToDir().FullName()}\"", "*", "-r", "aoa");
         }
@@ -47,13 +47,13 @@ namespace DotNet.Basics.SevenZip
 
         public (string Input, int ExitCode, string Output) ExecuteSevenZip(string command, params string[] @params)
         {
-            var filename = InstallsevenZip();
+            var filename = InstallSevenZip();
             var paramsString = @params.Aggregate(string.Empty, (current, param) => current + $" {param}");
             var script = $"{filename} {command} {paramsString} -y";
             return CmdPrompt.Run(script);
         }
 
-        private string InstallsevenZip()
+        private string InstallSevenZip()
         {
             var appInstaller = new ExecutableInstaller(_appRootDir.ToDir("SevenZip"), "7za.exe");
             appInstaller.AddFromStream(appInstaller.EntryFile.Name, _7zaExe);

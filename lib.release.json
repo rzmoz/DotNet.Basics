@@ -2,8 +2,8 @@
   "releases": [
     {
       "name": "DotNet.Basics",
-      "version": "9.5.0",
-      "prerelease": "rc.4"
+      "version": "9.5.1",
+      "prerelease": "rc.1"
     },
     {
       "name": "DotNet.Basics.Autofac",
@@ -14,6 +14,11 @@
       "name": "DotNet.Basics.NLog",
       "version": "4.5.3",
       "prerelease": "rc.2"
+    },
+    {
+      "name": "DotNet.Basics.PowerShell",
+      "version": "6.1.0",
+      "prerelease": "rc.1"
     },
     {
       "name": "DotNet.Basics.Rest",

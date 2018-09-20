@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using DotNet.Basics.PowerShell;
 using DotNet.Basics.TestsRoot;
 using DotNet.Basics.IO;
 using FluentAssertions;
@@ -12,7 +13,7 @@ namespace DotNet.Basics.Tests.PowerShell
         public PowerShellCliTests(ITestOutputHelper output) : base(output)
         {
         }
-        /*
+        
         [Fact]
         public void RunScript_ExecuteScript_HelloWorldIsOutputted()
         {
@@ -53,6 +54,5 @@ namespace DotNet.Basics.Tests.PowerShell
             });
 
         }
-        */
     }
 }

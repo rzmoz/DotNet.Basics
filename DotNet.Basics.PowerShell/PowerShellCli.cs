@@ -1,5 +1,4 @@
-﻿/*
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
@@ -15,6 +14,7 @@ namespace DotNet.Basics.PowerShell
         {
             return RemoveItem(new[] { path }, force, recurse);
         }
+
         public static object[] RemoveItem(string[] paths, bool force = false, bool recurse = false)
         {
             var cmdlet = new PowerShellCmdlet("Remove-Item")
@@ -71,4 +71,4 @@ namespace DotNet.Basics.PowerShell
             }
         }
     }
-}*/
+}

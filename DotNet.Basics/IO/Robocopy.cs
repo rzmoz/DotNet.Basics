@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
@@ -76,7 +77,7 @@ namespace DotNet.Basics.IO
         public static (string Input, int ExitCode, string Output) MoveContent(string sourceDir, string targetDir, string filter = null, bool recurse = false, string extraOptions = null)
         {
             var result = MoveFolder(sourceDir, targetDir, filter, recurse, extraOptions);
-            FileSystem.Current.CreateDir(sourceDir);
+            Directory.CreateDirectory(sourceDir);
             return result;
         }
     }

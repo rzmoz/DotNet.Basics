@@ -1,6 +1,4 @@
-/*
 using System.Linq;
-
 using DotNet.Basics.PowerShell;
 using FluentAssertions;
 using Xunit;
@@ -48,4 +46,3 @@ namespace DotNet.Basics.Tests.PowerShell
         }
     }
 }
-*/

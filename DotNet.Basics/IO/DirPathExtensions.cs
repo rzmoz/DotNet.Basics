@@ -38,7 +38,7 @@ namespace DotNet.Basics.IO
             if (dp.Exists())
                 return;
 
-            FileSystem.Current.CreateDir(dp.FullName());
+            Directory.CreateDirectory(dp.FullName());
         }
 
         public static DirPath CreateSubDir(this DirPath dp, string subDirName)
@@ -103,15 +103,15 @@ namespace DotNet.Basics.IO
         }
         public static IEnumerable<DirPath> EnumerateDirectories(this DirPath dp, string searchPattern = null, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
-            return FileSystem.Current.EnumerateDirectories(dp.FullName(), searchPattern ?? "*", searchOption).Select(dir => dir.ToDir());
+            return Directory.EnumerateDirectories(dp.FullName(), searchPattern ?? "*", searchOption).Select(dir => dir.ToDir());
         }
         public static IEnumerable<FilePath> EnumerateFiles(this DirPath dp, string searchPattern = null, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
-            return FileSystem.Current.EnumerateFiles(dp.FullName(), searchPattern ?? "*", searchOption).Select(file => file.ToFile());
+            return Directory.EnumerateFiles(dp.FullName(), searchPattern ?? "*", searchOption).Select(file => file.ToFile());
         }
         public static IEnumerable<PathInfo> EnumeratePaths(this DirPath dp, string searchPattern = null, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
-            return FileSystem.Current.EnumeratePaths(dp.FullName(), searchPattern ?? "*", searchOption).Select(fse => fse.ToPath());
+            return Directory.EnumerateFileSystemEntries(dp.FullName(), searchPattern ?? "*", searchOption).Select(fse => fse.ToPath());
         }
     }
 }
