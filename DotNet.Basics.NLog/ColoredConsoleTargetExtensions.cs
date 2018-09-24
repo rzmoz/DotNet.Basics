@@ -10,8 +10,10 @@ namespace DotNet.Basics.NLog
             ConsoleOutputColor debugColor = ConsoleOutputColor.DarkGray,
             ConsoleOutputColor traceColor = ConsoleOutputColor.Cyan,
             ConsoleOutputColor infoColor = ConsoleOutputColor.White,
-            ConsoleOutputColor warnColor = ConsoleOutputColor.Yellow,
-            ConsoleOutputColor errorColor = ConsoleOutputColor.Red,
+            ConsoleOutputColor warnForeColor = ConsoleOutputColor.Yellow,
+            ConsoleOutputColor warnBackColor = ConsoleOutputColor.Black,
+            ConsoleOutputColor errorForeColor = ConsoleOutputColor.Red,
+            ConsoleOutputColor errorBackColor = ConsoleOutputColor.Black,
             ConsoleOutputColor fatalForeColor = ConsoleOutputColor.White,
             ConsoleOutputColor fatalBackColor = ConsoleOutputColor.DarkRed)
         {
@@ -19,8 +21,8 @@ namespace DotNet.Basics.NLog
             target.AddLogColor(LogLevel.Debug, debugColor)
                 .AddLogColor(LogLevel.Trace, traceColor)
                 .AddLogColor(LogLevel.Info, infoColor)
-                .AddLogColor(LogLevel.Warn, warnColor)
-                .AddLogColor(LogLevel.Error, errorColor)
+                .AddLogColor(LogLevel.Warn, warnForeColor,warnBackColor)
+                .AddLogColor(LogLevel.Error, errorForeColor, errorBackColor)
                 .AddLogColor(LogLevel.Fatal, fatalForeColor, fatalBackColor);
             return target;
         }
