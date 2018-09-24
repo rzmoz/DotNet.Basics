@@ -33,32 +33,26 @@ namespace DotNet.Basics.PowerShell
             return this;
         }
 
-        public PowerShellCmdlet WithErrorAction(ActionPreference actionPreference)
+        public PowerShellCmdlet WithErrorAction(ActionPreference errorAction)
         {
-            return AddParameter("ErrorAction", actionPreference);
+            return AddParameter(nameof(errorAction), errorAction);
         }
 
         public PowerShellCmdlet WithForce(bool force = true)
         {
-            if (force)
-                return AddParameter("Force");
-            return this;
+            return force ? AddParameter(nameof(force)) : this;
         }
 
         public PowerShellCmdlet WithRecurse(bool recurse = true)
         {
-            if (recurse)
-                return AddParameter("Recurse");
-            return this;
+            return recurse ? AddParameter(nameof(recurse)) : this;
         }
 
         public PowerShellCmdlet WithVerbose(bool verbose = true)
         {
-            if (verbose)
-                return AddParameter("Verbose");
-            return this;
+            return verbose ? AddParameter(nameof(verbose)) : this;
         }
-        
+
         public override string ToString()
         {
             var script = Name;
@@ -78,7 +72,6 @@ namespace DotNet.Basics.PowerShell
 
             return script.TrimEnd();
         }
-
 
         private string ToPowerShellParameterString(string[] array)
         {

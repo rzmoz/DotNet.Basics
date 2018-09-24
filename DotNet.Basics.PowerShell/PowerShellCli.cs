@@ -50,7 +50,7 @@ namespace DotNet.Basics.PowerShell
                 if (pipeline.HadErrors)
                 {
                     if (!(pipeline.Error.Read() is PSObject errorsObject))
-                        throw new ArgumentException("Unknown error in powershell script");
+                        throw new ArgumentException("Unknown error in PowerShell script");
 
                     if (errorsObject.BaseObject is ErrorRecord error)
                     {
