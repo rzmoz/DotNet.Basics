@@ -1,13 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Sys
 {
     public class ExternalProcess
     {
-        public static (string Input, int ExitCode, string Output) Run(string path, object args = null, bool useShellExecute = false, ILogger logger = null)
+        public static (string Input, int ExitCode, string Output) Run(string path, object args = null, bool useShellExecute = false, Action<string> logger = null)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
             var si = new ProcessStartInfo(path, args?.ToString() ?? string.Empty)
@@ -24,10 +23,10 @@ namespace DotNet.Basics.Sys
                 using (var process = new Process { StartInfo = si })
                 {
                     process.Start();
-                    logger?.LogTrace($"Nee process started: [{process.Id}] {path} {args}");
+                    logger?.Invoke($"Nee process started: [{process.Id}] {path} {args}");
                     var result = process.StandardOutput.ReadToEnd();
                     process.WaitForExit();
-                    logger?.LogTrace($"Process [{process.Id}] exited with code: {process.ExitCode}");
+                    logger?.Invoke($"Process [{process.Id}] exited with code: {process.ExitCode}");
                     return ($"{path} {args}", process.ExitCode, result.TrimEnd(' ', '\r', '\n'));
                 }
             }

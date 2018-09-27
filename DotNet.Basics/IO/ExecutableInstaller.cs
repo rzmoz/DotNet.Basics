@@ -30,17 +30,18 @@ namespace DotNet.Basics.IO
         public DirPath InstallDir { get; }
         public FilePath EntryFile { get; }
 
-        public void AddFromStream(string filename, Stream content, bool dispoaseStreamWhenDone = true)
+        public void AddFromStream(string filename, Stream content, bool disposeStreamWhenDone = true)
         {
+            if (content == null) throw new ArgumentNullException(nameof(content));
             var target = InstallDir.ToFile(filename);
             _installActions.Add(() =>
             {
-                target.DeleteIfExists();//we ensure file integrity if we got this far. No guarantess that corrupt files haven't been left behind by a faulty installation
+                target.DeleteIfExists();//we ensure file integrity if we got this far. No guarantees that corrupt files haven't been left behind by a faulty installation
                 using (var fsDst = new FileStream(target.FullName(), FileMode.Create, FileAccess.Write))
                     content.CopyTo(fsDst);
 
-                if (dispoaseStreamWhenDone)
-                    content?.Dispose();
+                if (disposeStreamWhenDone)
+                    content.Dispose();
             });
         }
 
@@ -50,9 +51,9 @@ namespace DotNet.Basics.IO
             if (_installedHandle.Exists())
                 return;
 
-            using (var iolock = new IoLock(InstallDir, _installingHandleName))
+            using (var ioLock = new IoLock(InstallDir, _installingHandleName))
             {
-                var lockAcquired = iolock.TryAcquire();
+                var lockAcquired = ioLock.TryAcquire();
 
                 //someone else already installed the app in another thread so we're aborting
                 if (lockAcquired && IsInstalled())
@@ -62,7 +63,7 @@ namespace DotNet.Basics.IO
                 foreach (var installAction in _installActions)
                     installAction();
 
-                //app installed succesfully
+                //app installed successfully
                 File.Create(_installedHandle.FullName())?.Close();
             }
         }
