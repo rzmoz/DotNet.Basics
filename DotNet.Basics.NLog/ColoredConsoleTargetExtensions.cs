@@ -10,8 +10,8 @@ namespace DotNet.Basics.NLog
         {
             target.RowHighlightingRules.Clear();
             target.AddLogColor(LogLevel.Debug, ConsoleOutputColor.DarkGray)
-                  .AddLogColor(LogLevel.Trace, ConsoleOutputColor.Cyan)
-                  .AddLogColor(LogLevel.Info, ConsoleOutputColor.White)
+                  .AddLogColor(LogLevel.Trace, ConsoleOutputColor.Gray)
+                  .AddLogColor(LogLevel.Info, ConsoleOutputColor.Cyan)
                   .AddLogColor(LogLevel.Warn, ConsoleOutputColor.Yellow, ConsoleOutputColor.Black)
                   .AddLogColor(LogLevel.Error, ConsoleOutputColor.Red, ConsoleOutputColor.Black)
                   .AddLogColor(LogLevel.Fatal, ConsoleOutputColor.White, ConsoleOutputColor.DarkRed);
