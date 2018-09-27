@@ -16,7 +16,7 @@ namespace DotNet.Basics.Tests.PowerShell
             var cmdlet = new PowerShellCmdlet(string.Empty);
 
             //act
-            cmdlet.AddParameter(paramKey, arrayValues);
+            cmdlet.WithParam(paramKey, arrayValues);
 
             //assert
             for (var i = 0; i < cmdlet.Parameters.Length; i++)
@@ -34,9 +34,9 @@ namespace DotNet.Basics.Tests.PowerShell
             var paramKey = "myKey";
             var paramValue = "myValue";
             var cmdlet = new PowerShellCmdlet(cmdletName);
-            cmdlet.AddParameter(paramKey, paramValue); //full value
-            cmdlet.AddParameter(paramKey, new[] { "1", "2" }); //string array
-            cmdlet.AddParameter("Force"); //full value
+            cmdlet.WithParam(paramKey, paramValue); //full value
+            cmdlet.WithParam(paramKey, new[] { "1", "2" }); //string array
+            cmdlet.WithParam("Force"); //full value
 
             //act
             var script = cmdlet.ToString();

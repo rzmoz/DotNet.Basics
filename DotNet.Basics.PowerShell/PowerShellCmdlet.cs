@@ -19,38 +19,37 @@ namespace DotNet.Basics.PowerShell
         public string Name { get; }
         public KeyValuePair<string, object>[] Parameters => _parameters.ToArray();
 
-        public PowerShellCmdlet AddParameter(IEnumerable<KeyValuePair<string, object>> parameters)
+        public PowerShellCmdlet WithParam(string name, object value = null)
+        {
+            return WithParam(new KeyValuePair<string, object>(name, value));
+        }
+
+        public PowerShellCmdlet WithErrorAction(ActionPreference errorAction)
+        {
+            return WithParam(nameof(errorAction), errorAction);
+        }
+
+        public PowerShellCmdlet WithForce(bool force = true)
+        {
+            return force ? WithParam(nameof(force)) : this;
+        }
+
+        public PowerShellCmdlet WithRecurse(bool recurse = true)
+        {
+            return recurse ? WithParam(nameof(recurse)) : this;
+        }
+
+        public PowerShellCmdlet WithVerbose(bool verbose = true)
+        {
+            return verbose ? WithParam(nameof(verbose)) : this;
+        }
+
+        public PowerShellCmdlet WithParam(params KeyValuePair<string, object>[] parameters)
         {
             if (parameters == null) throw new ArgumentNullException(nameof(parameters));
             foreach (var parameter in parameters)
                 _parameters.Add(parameter);
             return this;
-        }
-
-        public PowerShellCmdlet AddParameter(string name, object value = null)
-        {
-            _parameters.Add(new KeyValuePair<string, object>(name, value));
-            return this;
-        }
-
-        public PowerShellCmdlet WithErrorAction(ActionPreference errorAction)
-        {
-            return AddParameter(nameof(errorAction), errorAction);
-        }
-
-        public PowerShellCmdlet WithForce(bool force = true)
-        {
-            return force ? AddParameter(nameof(force)) : this;
-        }
-
-        public PowerShellCmdlet WithRecurse(bool recurse = true)
-        {
-            return recurse ? AddParameter(nameof(recurse)) : this;
-        }
-
-        public PowerShellCmdlet WithVerbose(bool verbose = true)
-        {
-            return verbose ? AddParameter(nameof(verbose)) : this;
         }
 
         public override string ToString()

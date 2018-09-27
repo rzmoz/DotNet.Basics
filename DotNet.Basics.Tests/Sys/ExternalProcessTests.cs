@@ -8,9 +8,9 @@ using Xunit.Abstractions;
 
 namespace DotNet.Basics.Tests.Sys
 {
-    public class ExecutableTests : TestWithHelpers
+    public class ExternalProcessTests : TestWithHelpers
     {
-        public ExecutableTests(ITestOutputHelper output) : base(output)
+        public ExternalProcessTests(ITestOutputHelper output) : base(output)
         { }
 
         [Fact]
@@ -18,7 +18,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             ArrangeActAssertPaths(testDir =>
              {
-                 Action act = () => Executable.Run(testDir.RawPath);
+                 Action act = () => ExternalProcess.Run(testDir.RawPath);
 
                  act.Should().Throw<Win32Exception>();
              });

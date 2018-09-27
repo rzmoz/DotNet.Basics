@@ -19,7 +19,7 @@ namespace DotNet.Basics.IO
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static (string Input, int ExitCode, string Output) Run(string source, string target, string filesToCopy = null, string options = null)
+        public static (string Input, int ExitCode, string Output) Run(string source, string target, string filesToCopy = null, string options = " /np /ndl /nfl")
         {
             if (source == null) { throw new ArgumentNullException(nameof(source)); }
             if (target == null) { throw new ArgumentNullException(nameof(target)); }
@@ -28,7 +28,6 @@ namespace DotNet.Basics.IO
             if (string.IsNullOrWhiteSpace(filesToCopy) == false)
                 command += $" \"{filesToCopy}\" ";
             command += options ?? string.Empty;
-            command += " /np /ndl /nfl";//we don't want progress by default
             return CmdPrompt.Run(command);
         }
 

@@ -67,7 +67,7 @@ namespace DotNet.Basics.Sys
             path = OverridePathSeparator(path, PathSeparator.Backslash);
 
             return path.Split(new[] { PathSeparator.Backslash }, StringSplitOptions.RemoveEmptyEntries)
-                .Where(seg => String.IsNullOrWhiteSpace(seg) == false);
+                .Where(seg => string.IsNullOrWhiteSpace(seg) == false);
         }
 
         private static string OverridePathSeparator(string path, char separator)

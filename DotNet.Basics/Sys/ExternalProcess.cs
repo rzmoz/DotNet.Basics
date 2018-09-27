@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Sys
 {
-    public class Executable
+    public class ExternalProcess
     {
         public static (string Input, int ExitCode, string Output) Run(string path, object args = null, bool useShellExecute = false, ILogger logger = null)
         {

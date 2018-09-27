@@ -18,7 +18,7 @@ namespace DotNet.Basics.PowerShell
         public static object[] RemoveItem(string[] paths, bool force = false, bool recurse = false)
         {
             var cmdlet = new PowerShellCmdlet("Remove-Item")
-                .AddParameter("Path", paths)
+                .WithParam("Path", paths)
                 .WithForce(force)
                 .WithRecurse(recurse);
             return RunScript(cmdlet.ToString());
