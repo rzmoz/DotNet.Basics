@@ -2,7 +2,7 @@
   "releases": [
     {
       "name": "DotNet.Basics",
-      "version": "9.5.1",
+      "version": "9.5.2",
       "prerelease": "rc.1"
     },
     {

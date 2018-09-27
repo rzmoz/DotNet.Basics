@@ -6,24 +6,15 @@ namespace DotNet.Basics.NLog
 {
     public static class ColoredConsoleTargetExtensions
     {
-        public static ColoredConsoleTarget WithOutputColors(this ColoredConsoleTarget target,
-            ConsoleOutputColor debugColor = ConsoleOutputColor.DarkGray,
-            ConsoleOutputColor traceColor = ConsoleOutputColor.Cyan,
-            ConsoleOutputColor infoColor = ConsoleOutputColor.White,
-            ConsoleOutputColor warnForeColor = ConsoleOutputColor.Yellow,
-            ConsoleOutputColor warnBackColor = ConsoleOutputColor.Black,
-            ConsoleOutputColor errorForeColor = ConsoleOutputColor.Red,
-            ConsoleOutputColor errorBackColor = ConsoleOutputColor.Black,
-            ConsoleOutputColor fatalForeColor = ConsoleOutputColor.White,
-            ConsoleOutputColor fatalBackColor = ConsoleOutputColor.DarkRed)
+        public static ColoredConsoleTarget WithDefaultColors(this ColoredConsoleTarget target)
         {
             target.RowHighlightingRules.Clear();
-            target.AddLogColor(LogLevel.Debug, debugColor)
-                .AddLogColor(LogLevel.Trace, traceColor)
-                .AddLogColor(LogLevel.Info, infoColor)
-                .AddLogColor(LogLevel.Warn, warnForeColor,warnBackColor)
-                .AddLogColor(LogLevel.Error, errorForeColor, errorBackColor)
-                .AddLogColor(LogLevel.Fatal, fatalForeColor, fatalBackColor);
+            target.AddLogColor(LogLevel.Debug, ConsoleOutputColor.DarkGray)
+                  .AddLogColor(LogLevel.Trace, ConsoleOutputColor.Cyan)
+                  .AddLogColor(LogLevel.Info, ConsoleOutputColor.White)
+                  .AddLogColor(LogLevel.Warn, ConsoleOutputColor.Yellow, ConsoleOutputColor.Black)
+                  .AddLogColor(LogLevel.Error, ConsoleOutputColor.Red, ConsoleOutputColor.Black)
+                  .AddLogColor(LogLevel.Fatal, ConsoleOutputColor.White, ConsoleOutputColor.DarkRed);
             return target;
         }
 

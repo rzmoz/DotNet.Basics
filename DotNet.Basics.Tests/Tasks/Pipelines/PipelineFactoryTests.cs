@@ -11,21 +11,18 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public void GetPipelineTypes_ScanForPipelines_PipelinesAreFound()
         {
-            var steps = typeof(PipelineFactoryTests).Assembly.GetPipelineTypes();
-            steps.Count().Should().Be(2);
+            var pipelines = typeof(PipelineFactoryTests).Assembly.GetPipelineTypes();
+            pipelines.Count().Should().Be(3);
         }
 
         [Fact]
         public void GetPipelineStepTypes_ScanForPipelineSteps_PipelineStepsAreFound()
         {
-            var pipelines = typeof(PipelineFactoryTests).Assembly.GetPipelineStepTypes();
-            pipelines.Count().Should().Be(6);
+            var steps = typeof(PipelineFactoryTests).Assembly.GetPipelineStepTypes();
+            steps.Count().Should().Be(6);
         }
 
         public class PipelineFromGeneric : Pipeline<EventArgs<int>>
-        { }
-
-        public class PipelineFromNonGeneric : Pipeline
         { }
     }
 }

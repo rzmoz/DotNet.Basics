@@ -9,20 +9,6 @@ using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {
-    public class Pipeline : Pipeline<EventArgs>
-    {
-        public Pipeline()
-        { }
-
-        public Pipeline(string name) : base(name)
-        { }
-
-        public Pipeline(Invoke invoke) : base(invoke)
-        { }
-
-        public Pipeline(string name, Invoke invoke) : base(name, invoke)
-        { }
-    }
     public class Pipeline<T> : ManagedTask<T> where T : class, new()
     {
         private readonly ConcurrentQueue<ManagedTask<T>> _tasks;
@@ -68,7 +54,7 @@ namespace DotNet.Basics.Tasks.Pipelines
         {
             return new TaskResult(log =>
             {
-                foreach (var pipeline in tasks.OfType<Pipeline>())
+                foreach (var pipeline in tasks.OfType<Pipeline<T>>())
                     log.AddRange(AssertLazyLoadSteps(pipeline.Tasks).Log);
                 foreach (var lazyLoadStep in tasks.OfType<ILazyLoadStep>())
                 {

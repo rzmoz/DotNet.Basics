@@ -15,7 +15,7 @@ namespace DotNet.Basics.NLog
             using (var conf = new NLogConfigurator(config))
             {
                 if (addTargets == null)
-                    conf.AddTarget(new ColoredConsoleTarget().WithOutputColors());
+                    conf.AddTarget(new ColoredConsoleTarget().WithDefaultColors());
                 else
                     addTargets(conf);
             }

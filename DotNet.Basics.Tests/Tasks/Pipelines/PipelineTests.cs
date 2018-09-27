@@ -20,22 +20,22 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public void RegisterPipelineSteps_RegisterSteps_StepsAndCtorParamsAreRegisteredRecursive()
         {
-            AssertRegisterPipelineSteps((p, sp) => { p.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(sp); });
+            AssertRegisterPipelineSteps<EventArgs>((p, sp) => { p.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(sp); });
         }
 
         [Fact]
         public void RegisterPipelineSteps_RegisterBlock_BlocksAreRegistered()
         {
-            AssertRegisterPipelineSteps((p, sp) => { p.AddBlock("MyBlock"); });
+            AssertRegisterPipelineSteps<EventArgs>((p, sp) => { p.AddBlock("MyBlock"); });
         }
 
         [Fact]
         public void LazyLoad_RegisterStepsInBlock_StepsAndCtorParamsAreRegisteredRecursive()
         {
-            AssertRegisterPipelineSteps((p, sp) => { p.AddBlock("MyBlock").AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(sp); });
+            AssertRegisterPipelineSteps<EventArgs>((p, sp) => { p.AddBlock("MyBlock").AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(sp); });
         }
 
-        private void AssertRegisterPipelineSteps(Action<Pipeline, IServiceProvider> addAction)
+        private void AssertRegisterPipelineSteps<T>(Action<Pipeline<T>, IServiceProvider> addAction) where T : class, new()
         {
             var provider = GetServiceProvider(services =>
             {
@@ -49,7 +49,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
                 pipelineSteps.ForEach(services.AddTransient);
             });
 
-            var pipeline = new Pipeline();
+            var pipeline = new Pipeline<T>();
             addAction(pipeline, provider);
 
             Func<Task> action = async () => await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
@@ -67,7 +67,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
                 services.AddSingleton<AddLogEntryStep>();
             });
 
-            var pipeline = new Pipeline(invoke);
+            var pipeline = new Pipeline<EventArgs>(invoke);
             var count = 15;
             foreach (var i in Enumerable.Range(0, count))
                 pipeline.AddStep<AddLogEntryStep>(provider);
@@ -82,14 +82,14 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public void Ctor_LazyLoadStepName_NameIsSetOnAdd()
         {
-            var pipeline = new Pipeline();
+            var pipeline = new Pipeline<EventArgs>();
             pipeline.AddStep<AddLogEntryStep>(new ServiceCollection().BuildServiceProvider());
 
             pipeline.Tasks.Single().Name.Should().Be(nameof(AddLogEntryStep));
         }
 
         [Fact]
-        public async Task Ctor_ArgsInheritanceHierarchy_StepsWithAcenstorArgsCanBeUsedInPipeline()
+        public async Task Ctor_ArgsInheritanceHierarchy_StepsWithAncestorArgsCanBeUsedInPipeline()
         {
             var provider = GetServiceProvider(services =>
             {
@@ -116,7 +116,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [InlineData(Invoke.Sequential)]
         public async Task RunAsync_TaskCancellation_PipelineIsCancelled(Invoke invoke)
         {
-            var pipeline = new Pipeline(invoke);
+            var pipeline = new Pipeline<EventArgs>(invoke);
 
             var ts = new CancellationTokenSource();
             ts.Cancel();
@@ -159,7 +159,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public async Task RunAsync_AllInParallel_AllStepsAreRunInParallel()
         {
-            var pipeline = new Pipeline();
+            var pipeline = new Pipeline<EventArgs>();
             var block = pipeline.AddBlock("ParallelBlock", Invoke.Parallel);
 
             var runCount = 101;
@@ -179,7 +179,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public async Task RunAsync_BlockWait_StepsAreRunInBlockOrder()
         {
-            var pipeline = new Pipeline();
+            var pipeline = new Pipeline<EventArgs>();
             var task1Called = false;
             var task2Called = false;
 
@@ -226,7 +226,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public void Add_AddGenericSteps_StepsAreAdded()
         {
-            var block = new Pipeline();
+            var block = new Pipeline<EventArgs>();
             var taskCount = 7;
 
             foreach (var i in Enumerable.Range(0, taskCount))

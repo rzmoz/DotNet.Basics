@@ -19,7 +19,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var services = new ServiceCollection();
             services.AddTransient<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
 
-            var pipeline = new Pipeline();
+            var pipeline = new Pipeline<EventArgs>();
 
             pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(services.BuildServiceProvider());
 
@@ -36,7 +36,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var services = new ServiceCollection();
             services.AddTransient(typeof(GenericThatTakesAnotherConcreteClassAsArgStep<>));
 
-            var pipeline = new Pipeline();
+            var pipeline = new Pipeline<EventArgs>();
 
             pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(services.BuildServiceProvider());
 
@@ -70,7 +70,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         public async Task AddStep_StepIsRegisteredInContainer_StepIsResolved()
         {
             var services = new ServiceCollection();
-            var pipeline = new Pipeline();
+            var pipeline = new Pipeline<EventArgs>();
             services.AddTransient<AddLogEntryStep>();
 
             pipeline.AddStep<AddLogEntryStep>(services.BuildServiceProvider());
@@ -92,7 +92,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         public void AddStep_StepIsNotRegisteredProperlyInContainer_ExceptionIsThrownOnRun()
         {
             var services = new ServiceCollection();
-            var pipeline = new Pipeline();
+            var pipeline = new Pipeline<EventArgs>();
 
             pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(services.BuildServiceProvider());
 
