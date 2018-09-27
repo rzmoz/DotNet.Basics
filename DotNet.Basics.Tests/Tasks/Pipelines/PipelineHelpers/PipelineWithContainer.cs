@@ -7,7 +7,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers
     {
         public PipelineWithContainer(IServiceProvider serviceProvider) : base()
         {
-            AddStep<AddIssueStep>(serviceProvider);
+            AddStep<AddLogEntryStep>(serviceProvider);
         }
     }
 }

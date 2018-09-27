@@ -60,32 +60,32 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Theory]
         [InlineData(Invoke.Parallel)]
         [InlineData(Invoke.Sequential)]
-        public async Task RunAsync_AddIssuesFromDerivedStepClass_IssuesAreCollectedAndAggregatedInFinalResult(Invoke invoke)
+        public async Task RunAsync_AddEntriesFromDerivedStepClass_EntriesAreCollectedAndAggregatedInFinalResult(Invoke invoke)
         {
             var provider = GetServiceProvider(services =>
             {
-                services.AddSingleton<AddIssueStep>();
+                services.AddSingleton<AddLogEntryStep>();
             });
 
             var pipeline = new Pipeline(invoke);
             var count = 15;
             foreach (var i in Enumerable.Range(0, count))
-                pipeline.AddStep<AddIssueStep>(provider);
+                pipeline.AddStep<AddLogEntryStep>(provider);
 
             var result = await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
-            result.Issues.Count.Should().Be(count);
-            result.Issues.All(i => i.Message == nameof(AddIssueStep)).Should().BeTrue();
-            result.Issues.All(i => i.Exception == null).Should().BeTrue();
+            result.Log.Count.Should().Be(count);
+            result.Log.All(i => i.Message == nameof(AddLogEntryStep)).Should().BeTrue();
+            result.Log.All(i => i.Exception == null).Should().BeTrue();
         }
 
         [Fact]
         public void Ctor_LazyLoadStepName_NameIsSetOnAdd()
         {
             var pipeline = new Pipeline();
-            pipeline.AddStep<AddIssueStep>(new ServiceCollection().BuildServiceProvider());
+            pipeline.AddStep<AddLogEntryStep>(new ServiceCollection().BuildServiceProvider());
 
-            pipeline.Tasks.Single().Name.Should().Be(nameof(AddIssueStep));
+            pipeline.Tasks.Single().Name.Should().Be(nameof(AddLogEntryStep));
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var pipeline = new Pipeline<DescendantArgs>();
 
             //act
-            pipeline.AddStep((args, issues, ct) => new AncestorStep().RunAsync(args, ct));
+            pipeline.AddStep((args, log, ct) => new AncestorStep().RunAsync(args, ct));
             pipeline.AddStep<DescendantStep>(provider);
 
             //assert
@@ -125,7 +125,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var stepCount = 101;
 
             for (var i = 0; i < stepCount; i++)
-                pipeline.AddStep((args, issues, ct) => Task.FromResult(++counter));
+                pipeline.AddStep((args, log, ct) => Task.FromResult(++counter));
 
             await pipeline.RunAsync(ts.Token).ConfigureAwait(false);
 
@@ -165,7 +165,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var runCount = 101;
 
             for (var i = 0; i < runCount; i++)
-                block.AddStep(async (args, issues, ct) => await Task.Delay(TimeSpan.FromSeconds(1), ct));
+                block.AddStep(async (args, log, ct) => await Task.Delay(TimeSpan.FromSeconds(1), ct));
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -183,8 +183,8 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var task1Called = false;
             var task2Called = false;
 
-            pipeline.AddBlock("1", async (args, issues, ct) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200), ct); });
-            pipeline.AddBlock("2", (args, issues, ct) =>
+            pipeline.AddBlock("1", async (args, log, ct) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200), ct); });
+            pipeline.AddBlock("2", (args, log, ct) =>
             {
                 if (task1Called == false)
                     throw new ArgumentException("Task 1 not called");
@@ -242,7 +242,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var taskCount = 7;
 
             foreach (var i in Enumerable.Range(0, taskCount))
-                block.AddStep((args, issues, ct) => { });
+                block.AddStep((args, log, ct) => { });
 
             block.Tasks.Count().Should().Be(taskCount);
         }
@@ -257,9 +257,9 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 
             var raceConditionEncountered = 0;
             for (var i = 0; i < stepCount; i++)
-                block.AddStep(async (args, issues, ct) =>
+                block.AddStep(async (args, log, ct) =>
                 {
-                    issues.Add(LogLevel.Error, i.ToString());
+                    log.Add(LogLevel.Error, i.ToString());
 
                     if (Interlocked.CompareExchange(ref lockFlag, 1, 0) == 0)
                     {
@@ -277,7 +277,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 
             var result = await block.RunAsync(argsParam, CancellationToken.None).ConfigureAwait(false);
 
-            result.Issues.Count.Should().Be(stepCount);
+            result.Log.Count.Should().Be(stepCount);
 
             if (invoke == Invoke.Parallel)
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DotNet.Basics.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Tasks
@@ -8,48 +9,43 @@ namespace DotNet.Basics.Tasks
     public class TaskResult
     {
         public TaskResult()
-            : this(null, new List<TaskIssue>())
+            : this(null, new List<LogEntry>())
         { }
         public TaskResult(string taskName)
-            : this(taskName, new List<TaskIssue>())
+            : this(taskName, new List<LogEntry>())
         { }
 
-        public TaskResult(Action<TaskIssueList> addIssues)
-            : this(null, ConstructList(addIssues))
+        public TaskResult(Action<ConcurrentLog> addLogEntries)
+            : this(null, ConstructList(addLogEntries))
         { }
 
-        public TaskResult(string taskName, Action<TaskIssueList> addIssues)
-            : this(taskName, ConstructList(addIssues))
+        public TaskResult(string taskName, Action<ConcurrentLog> addLogEntries)
+            : this(taskName, ConstructList(addLogEntries))
         { }
 
-        public TaskResult(string taskName, IEnumerable<TaskIssue> issues)
+        public TaskResult(string taskName, IEnumerable<LogEntry> logEntries)
         {
             Name = taskName ?? string.Empty;
-
-            var issuesList = issues?.ToList() ?? new List<TaskIssue>();
-            if (issuesList.Count == 98)
-                issuesList.Add(new TaskIssue(LogLevel.Debug, "I got 99 issues but a b**** ain't one"));
-            Issues = issuesList;
-
+            Log = logEntries?.ToList() ?? new List<LogEntry>();
         }
 
         public string Name { get; }
-        public IReadOnlyCollection<TaskIssue> Issues { get; }
+        public IReadOnlyCollection<LogEntry> Log { get; }
 
-        public TaskResult Append(Action<TaskIssueList> addIssues)
+        public TaskResult Append(Action<ConcurrentLog> addLogEntries)
         {
-            return new TaskResult(Name, issues =>
+            return new TaskResult(Name, log =>
             {
-                issues.AddRange(Issues);
-                addIssues?.Invoke(issues);
+                log.AddRange(Log);
+                addLogEntries?.Invoke(log);
             });
         }
 
-        private static TaskIssueList ConstructList(Action<TaskIssueList> addIssues)
+        private static ConcurrentLog ConstructList(Action<ConcurrentLog> addLogEntries)
         {
-            var issues = new TaskIssueList();
-            addIssues?.Invoke(issues);
-            return issues;
+            var log = new ConcurrentLog();
+            addLogEntries?.Invoke(log);
+            return log;
         }
     }
 }

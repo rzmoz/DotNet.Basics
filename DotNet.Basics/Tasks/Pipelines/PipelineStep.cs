@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using DotNet.Basics.Diagnostics;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {
@@ -11,11 +12,11 @@ namespace DotNet.Basics.Tasks.Pipelines
         protected PipelineStep(string name) : base(name)
         { }
 
-        protected override Task InnerRunAsync(T args, TaskIssueList issues, CancellationToken ct)
+        protected override Task InnerRunAsync(T args, ConcurrentLog log, CancellationToken ct)
         {
-            return RunImpAsync(args, issues, ct);
+            return RunImpAsync(args, log, ct);
         }
 
-        protected abstract Task RunImpAsync(T args, TaskIssueList issues, CancellationToken ct);
+        protected abstract Task RunImpAsync(T args, ConcurrentLog log, CancellationToken ct);
     }
 }

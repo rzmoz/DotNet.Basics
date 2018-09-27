@@ -1,43 +1,44 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNet.Basics.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Tasks
 {
     public class ManagedTask<T> : ITask where T : class, new()
     {
-        private readonly Func<T, TaskIssueList, CancellationToken, Task> _task;
+        private readonly Func<T, ConcurrentLog, CancellationToken, Task> _task;
         private string _name;
 
         public delegate void TaskEventHandler(TaskResult args);
 
-        public ManagedTask(string name) : this(name, (args, issues, ct) => { })
+        public ManagedTask(string name) : this(name, (args, log, ct) => { })
         { }
 
-        public ManagedTask(Func<Task> task) : this((args, issues, ct) => task())
+        public ManagedTask(Func<Task> task) : this((args, log, ct) => task())
         { }
 
-        public ManagedTask(Action task) : this((args, issues, ct) => task())
+        public ManagedTask(Action task) : this((args, log, ct) => task())
         { }
 
-        public ManagedTask(Action<T, TaskIssueList, CancellationToken> task)
+        public ManagedTask(Action<T, ConcurrentLog, CancellationToken> task)
             : this(null, task)
         { }
 
-        public ManagedTask(Func<T, TaskIssueList, CancellationToken, Task> task)
+        public ManagedTask(Func<T, ConcurrentLog, CancellationToken, Task> task)
             : this(null, task)
         { }
 
-        public ManagedTask(string name, Action<T, TaskIssueList, CancellationToken> task)
-            : this(name, (args, issues, ct) =>
+        public ManagedTask(string name, Action<T, ConcurrentLog, CancellationToken> task)
+            : this(name, (args, log, ct) =>
              {
-                 task?.Invoke(args, issues, ct);
-                 return Task.FromResult("");
+                 task?.Invoke(args, log, ct);
+                 return Task.FromResult(string.Empty);
              })
         { }
 
-        public ManagedTask(string name, Func<T, TaskIssueList, CancellationToken, Task> task)
+        public ManagedTask(string name, Func<T, ConcurrentLog, CancellationToken, Task> task)
         {
             _task = task ?? throw new ArgumentNullException(nameof(task));
             Name = name;
@@ -66,28 +67,28 @@ namespace DotNet.Basics.Tasks
         {
             if (args == null)
                 args = new T();
-            var issues = new TaskIssueList();
+            var log = new ConcurrentLog();
             FireStarted(new TaskResult(Name));
             try
             {
                 if (ct.IsCancellationRequested == false)
-                    await InnerRunAsync(args, issues, ct).ConfigureAwait(false);
+                    await InnerRunAsync(args, log, ct).ConfigureAwait(false);
             }
             catch (Exception e)
             {
-                issues.Add(LogLevel.Error, e);
+                log.Add(LogLevel.Error, e);
                 throw;
             }
             finally
             {
-                FireEnded(new TaskResult(Name, issues));
+                FireEnded(new TaskResult(Name, log));
             }
-            return new TaskResult(Name, issues);
+            return new TaskResult(Name, log);
         }
 
-        protected virtual async Task InnerRunAsync(T args, TaskIssueList issues, CancellationToken ct)
+        protected virtual async Task InnerRunAsync(T args, ConcurrentLog log, CancellationToken ct)
         {
-            await _task(args, issues, ct).ConfigureAwait(false);
+            await _task(args, log, ct).ConfigureAwait(false);
         }
 
         protected void FireStarted(TaskResult args)

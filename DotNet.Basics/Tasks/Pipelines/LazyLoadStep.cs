@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNet.Basics.Diagnostics;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {
@@ -25,14 +26,14 @@ namespace DotNet.Basics.Tasks.Pipelines
             _loadTask = loadTask ?? throw new ArgumentNullException(nameof(loadTask));
         }
 
-        protected override async Task InnerRunAsync(T args, TaskIssueList issues, CancellationToken ct)
+        protected override async Task InnerRunAsync(T args, ConcurrentLog log, CancellationToken ct)
         {
             var mt = _loadTask();
             if (mt == null)
                 throw new LazyLoadTaskFailedToLoadException($"{Name} was null");
 
             var result = await mt.RunAsync(args, ct).ConfigureAwait(false);
-            issues.AddRange(result.Issues);
+            log.AddRange(result.Log);
         }
     }
 }
