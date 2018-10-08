@@ -1,36 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using DotNet.Basics.Sys;
+using System.Linq;
+using DotNet.Basics.IO;
 
-namespace DotNet.Basics.IO
+namespace DotNet.Basics.Sys
 {
-    public class ExecutableInstaller
+    public class CliApplication
     {
         private const string _installingHandleName = "installing.dat";
         private const string _installedHandleName = "installed.dat";
         private readonly FilePath _installedHandle;
         private readonly IList<Action> _installActions;
 
-        public ExecutableInstaller(DirPath installDir, string executableFilename)
+        public CliApplication(string appName, string executableFilename, Stream content, bool disposeStreamWhenDone = true)
+        : this(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).ToDir(appName),
+            executableFilename, content, disposeStreamWhenDone)
+        { }
+
+        public CliApplication(DirPath installDir, string executableFilename, Stream content, bool disposeStreamWhenDone = true)
         {
             InstallDir = installDir ?? throw new ArgumentNullException(nameof(installDir));
             EntryFile = installDir.ToFile(executableFilename);
             _installedHandle = installDir.ToFile(_installedHandleName);
             _installActions = new List<Action>();
-        }
-
-        public ExecutableInstaller(DirPath applicationsRoot, string applicationName, string executableFilename)
-            : this(applicationsRoot.ToDir(applicationName), executableFilename)
-        {
-            if (applicationsRoot == null) throw new ArgumentNullException(nameof(applicationsRoot));
-            if (applicationName == null) throw new ArgumentNullException(nameof(applicationName));
+            WithFile(executableFilename, content, disposeStreamWhenDone);
         }
 
         public DirPath InstallDir { get; }
         public FilePath EntryFile { get; }
 
-        public void AddFromStream(string filename, Stream content, bool disposeStreamWhenDone = true)
+        public CliApplication WithFile(string filename, Stream content, bool disposeStreamWhenDone = true)
         {
             if (content == null) throw new ArgumentNullException(nameof(content));
             var target = InstallDir.ToFile(filename);
@@ -43,9 +43,17 @@ namespace DotNet.Basics.IO
                 if (disposeStreamWhenDone)
                     content.Dispose();
             });
+            return this;
         }
 
-        public void Install()
+        public (string Input, int ExitCode, string Output) Run(params string[] args)
+        {
+            Install();
+            var argString = args.Aggregate(string.Empty, (current, param) => current + $" {param}");
+            return CliPrompt.Run($"{EntryFile.FullName()} {argString}");
+        }
+
+        private void Install()
         {
             //if already installed
             if (_installedHandle.Exists())
@@ -58,7 +66,7 @@ namespace DotNet.Basics.IO
                 //someone else already installed the app in another thread so we're aborting
                 if (lockAcquired && IsInstalled())
                     return;
-                
+
                 //install and don't rely on rollback (try/catch) since it might conflict with other task
                 foreach (var installAction in _installActions)
                     installAction();

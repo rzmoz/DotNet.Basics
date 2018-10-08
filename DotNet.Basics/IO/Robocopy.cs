@@ -28,7 +28,7 @@ namespace DotNet.Basics.IO
             if (string.IsNullOrWhiteSpace(filesToCopy) == false)
                 command += $" \"{filesToCopy}\" ";
             command += options ?? string.Empty;
-            return CmdPrompt.Run(command);
+            return CliPrompt.Run(command);
         }
 
         /// <summary>

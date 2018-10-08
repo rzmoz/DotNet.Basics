@@ -3,7 +3,7 @@
     {
       "name": "DotNet.Basics",
       "version": "9.5.2",
-      "prerelease": "rc.1"
+      "prerelease": "rc.2"
     },
     {
       "name": "DotNet.Basics.Autofac",
@@ -28,7 +28,7 @@
     {
       "name": "DotNet.Basics.SevenZip",
       "version": "18.05.0",
-      "prerelease": "rc.1"
+      "prerelease": "rc.2"
     }
   ],
   "tests": [

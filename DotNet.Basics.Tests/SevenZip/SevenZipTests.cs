@@ -52,10 +52,10 @@ namespace DotNet.Basics.Tests.SevenZip
             {
                 //arrange
                 var sourceDir = testDir.ToDir("CreateFromDirectory_Zip_ContentIsZipped", "source");
-                var dummyfile = sourceDir.ToFile("myfile.txt");
-                var dummycontent = "dummyContent";
+                var dummyFile = sourceDir.ToFile("myFile.txt");
+                var dummyContent = "dummyContent";
 
-                dummyfile.WriteAllText(dummycontent);
+                dummyFile.WriteAllText(dummyContent);
 
                 var targetZip = testDir.ToFile("CreateFromDirectory_Zip_ContentIsZipped", "myArchive.zip");
                 targetZip.DeleteIfExists();
@@ -74,7 +74,7 @@ namespace DotNet.Basics.Tests.SevenZip
                     using (var reader = new System.IO.StreamReader(stream, Encoding.UTF8))
                     {
                         var read = reader.ReadToEnd();
-                        read.Should().Be(dummycontent);
+                        read.Should().Be(dummyContent);
                     }
                 }
             });
@@ -86,7 +86,7 @@ namespace DotNet.Basics.Tests.SevenZip
             ArrangeActAssertPaths(testDir =>
             {
                 //arrange
-                var archive = testDir.ToFile(@"ExtractToDirectory_ArchiveNotFound_ExceptionIsThrown", "notexists.zip");
+                var archive = testDir.ToFile(@"ExtractToDirectory_ArchiveNotFound_ExceptionIsThrown", "notExists.zip");
                 var mockTargetDir = testDir.ToDir("ExtractToDirectory_ArchiveNotFound_ExceptionIsThrown", "Mock");
                 //act
                 Action action = () => _sevenZip.ExtractToDirectory(archive.FullName(), mockTargetDir.FullName());
@@ -117,7 +117,7 @@ namespace DotNet.Basics.Tests.SevenZip
             {
                 //arrange
                 var targetDir = testDir.ToDir("out");
-                var targetFile = targetDir.ToFile("myfile.txt");
+                var targetFile = targetDir.ToFile("myFile.txt");
                 targetDir.DeleteIfExists();
                 targetDir.Exists().Should().BeFalse("arrange");
                 targetFile.Exists().Should().BeFalse("arrange");

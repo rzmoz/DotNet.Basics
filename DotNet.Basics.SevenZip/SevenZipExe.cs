@@ -1,6 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
@@ -11,20 +10,13 @@ namespace DotNet.Basics.SevenZip
     {
         private static readonly Assembly _sevenZipAssembly = typeof(SevenZipExe).Assembly;
 
-        private string _defaultInstallDir => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        private static Stream _7zaDll => _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.dll");
-        private static Stream _7zaExe => _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.exe");
-        private static Stream _7zxaDll => _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7zxa.dll");
+        private readonly CliApplication _sevenZipApp;
 
-        private readonly DirPath _appRootDir;
-
-        public SevenZipExe(string appRootDir = null)
-            : this(appRootDir?.ToDir())
-        { }
-
-        public SevenZipExe(DirPath appRootDir = null)
+        public SevenZipExe(DirPath installDir)
         {
-            _appRootDir = appRootDir ?? _defaultInstallDir.ToDir();
+            _sevenZipApp = new CliApplication(installDir.ToDir("7Zip"), "7za.exe", _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.exe"))
+                .WithFile("7za.dll", _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.dll"))
+                .WithFile("7zxa.dll", _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7zxa.dll"));
         }
 
         public (string Input, int ExitCode, string Output) ExtractToDirectory(string archivePath, string targetDirPath)
@@ -47,20 +39,11 @@ namespace DotNet.Basics.SevenZip
 
         public (string Input, int ExitCode, string Output) ExecuteSevenZip(string command, params string[] @params)
         {
-            var filename = InstallSevenZip();
-            var paramsString = @params.Aggregate(string.Empty, (current, param) => current + $" {param}");
-            var script = $"{filename} {command} {paramsString} -y";
-            return CmdPrompt.Run(script);
-        }
-
-        private string InstallSevenZip()
-        {
-            var appInstaller = new ExecutableInstaller(_appRootDir.ToDir("SevenZip"), "7za.exe");
-            appInstaller.AddFromStream(appInstaller.EntryFile.Name, _7zaExe);
-            appInstaller.AddFromStream("7za.dll", _7zaDll);
-            appInstaller.AddFromStream("7zxa.dll", _7zxaDll);
-            appInstaller.Install();
-            return appInstaller.EntryFile.FullName();
+            var allArgs = new List<string>();
+            allArgs.Add(command);
+            allArgs.AddRange(@params);
+            allArgs.Add("-y");
+            return _sevenZipApp.Run(allArgs.ToArray());
         }
     }
 }
