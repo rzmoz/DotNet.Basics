@@ -52,7 +52,26 @@ namespace DotNet.Basics.Tests.PowerShell
                 dir.EnumerateFiles().Count().Should().Be(0);
                 dir.EnumeratePaths().Count().Should().Be(0);
             });
+        }
 
+        [Fact]
+        public void RemoveItem_Filters_OnlyFilteredItemsAreDeleted()
+        {
+            ArrangeActAssertPaths(dir =>
+            {
+                dir.ToFile("Testa.myFile1.txt").WriteAllText("nothing1");
+                dir.ToFile("Testa.myFile2.txt").WriteAllText("nothing2");
+                dir.ToFile("Testa.myFile1.json").WriteAllText("nothing1");
+                dir.ToFile("SomethingElse.myFile1.txt").WriteAllText("nothing3");
+
+                dir.EnumerateFiles().Count().Should().Be(4);
+
+                //act
+                PowerShellCli.RemoveItem($@"{dir.FullName()}/Testa.*.txt", force: true, recurse: true);
+
+                //assert
+                dir.EnumerateFiles().Count().Should().Be(2);
+            });
         }
     }
 }
