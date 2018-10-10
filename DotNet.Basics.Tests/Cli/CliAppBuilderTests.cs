@@ -17,7 +17,10 @@ namespace DotNet.Basics.Tests.Cli
         [Fact]
         public void Ctor_CliArgsConfiguration_ArgsConfigAreConfiguredInApp()
         {
-            var app = new CliAppBuilder($"{_argKey}={_argValue}").Build();
+            var app = new CliAppBuilder($"{_argKey}={_argValue}").ConfigureAppConfiguration((argsConfig, builder) =>
+                {
+                    argsConfig[_argKey].Should().Be(_argValue);
+                }).Build();
 
             app.CliArgsConfiguration[_argKey].Should().Be(_argValue);
         }
@@ -71,9 +74,9 @@ namespace DotNet.Basics.Tests.Cli
         [Fact]
         public void ConfigureAppConfiguration_AppConfiguration_AppConfigIsSet()
         {
-            var app = new CliAppBuilder().ConfigureAppConfiguration(config =>
+            var app = new CliAppBuilder().ConfigureAppConfiguration((argsConfig, builder) =>
                 {
-                    config.AddInMemoryCollection(new[] { new KeyValuePair<string, string>(_argKey, _argValue) });
+                    builder.AddInMemoryCollection(new[] { new KeyValuePair<string, string>(_argKey, _argValue) });
                 }).Build();
 
             app.AppConfiguration[_argKey].Should().Be(_argValue);
@@ -82,7 +85,7 @@ namespace DotNet.Basics.Tests.Cli
         [Fact]
         public void Build_InvocationAndOrder_AllMethodsAreInvoked()
         {
-            var builder = new CliAppBuilder(new string[0] { });
+            var appBuilder = new CliAppBuilder(new string[0] { });
 
             //arrange
 
@@ -92,31 +95,31 @@ namespace DotNet.Basics.Tests.Cli
             var servicesConfigured = false;
             var serviceProviderConfigured = false;
 
-            builder.ConfigureLogging(services =>
+            appBuilder.ConfigureLogging(services =>
             {
                 loggingConfigured.Should().BeFalse();
                 loggingConfigured = true;
             });
-            builder.ConfigureCliSwitchMappings(() =>
+            appBuilder.ConfigureCliSwitchMappings(() =>
             {
                 loggingConfigured.Should().BeTrue();
                 switchMappingsConfigured.Should().BeFalse();
                 switchMappingsConfigured = true;
                 return null;
             });
-            builder.ConfigureAppConfiguration(config =>
+            appBuilder.ConfigureAppConfiguration((argsConfig, builder) =>
             {
                 switchMappingsConfigured.Should().BeTrue();
                 configurationConfigured.Should().BeFalse();
                 configurationConfigured = true;
             });
-            builder.ConfigureServices(services =>
+            appBuilder.ConfigureServices(services =>
             {
                 configurationConfigured.Should().BeTrue();
                 servicesConfigured.Should().BeFalse();
                 servicesConfigured = true;
             });
-            builder.ConfigureServiceProvider(services =>
+            appBuilder.ConfigureServiceProvider(services =>
             {
                 servicesConfigured.Should().BeTrue();
                 serviceProviderConfigured = true;
@@ -130,7 +133,7 @@ namespace DotNet.Basics.Tests.Cli
             serviceProviderConfigured.Should().BeFalse();
 
             //act
-            builder.Build();
+            appBuilder.Build();
 
             //assert
             loggingConfigured.Should().BeTrue();

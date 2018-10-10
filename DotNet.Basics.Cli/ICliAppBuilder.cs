@@ -9,7 +9,7 @@ namespace DotNet.Basics.Cli
     {
         ICliAppBuilder ConfigureLogging(Action<IServiceCollection> configureServices);
         ICliAppBuilder ConfigureCliSwitchMappings(Func<IDictionary<string, string>> switchMappings);
-        ICliAppBuilder ConfigureAppConfiguration(Action<IConfigurationBuilder> configureConfiguration);
+        ICliAppBuilder ConfigureAppConfiguration(Action<IConfigurationRoot, IConfigurationBuilder> configureConfiguration);
         ICliAppBuilder ConfigureServices(Action<IServiceCollection> configureServices);
         ICliAppBuilder ConfigureServiceProvider(Func<IServiceCollection, IServiceProvider> configureServiceProvider);
 

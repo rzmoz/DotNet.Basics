@@ -12,7 +12,7 @@ namespace DotNet.Basics.Cli
 
         private Action<IServiceCollection> _configureLogging;
         private Func<IDictionary<string, string>> _switchMappings;
-        private Action<IConfigurationBuilder> _configureConfiguration;
+        private Action<IConfigurationRoot, IConfigurationBuilder> _configureConfiguration;
         private Action<IServiceCollection> _configureServices;
         private Func<IServiceCollection, IServiceProvider> _configureServiceProvider;
 
@@ -33,7 +33,7 @@ namespace DotNet.Basics.Cli
             return this;
         }
 
-        public ICliAppBuilder ConfigureAppConfiguration(Action<IConfigurationBuilder> configureConfiguration)
+        public ICliAppBuilder ConfigureAppConfiguration(Action<IConfigurationRoot, IConfigurationBuilder> configureConfiguration)
         {
             _configureConfiguration = configureConfiguration;
             return this;
@@ -60,10 +60,9 @@ namespace DotNet.Basics.Cli
             var switchMappings = _switchMappings?.Invoke();
             var argsConfig = (switchMappings == null ? new ConfigurationBuilder().AddCommandLine(_args) : new ConfigurationBuilder().AddCommandLine(_args, switchMappings)).Build();
 
-
             //configure app configuration
             var appConfigBuilder = new ConfigurationBuilder();
-            _configureConfiguration?.Invoke(appConfigBuilder);
+            _configureConfiguration?.Invoke(argsConfig, appConfigBuilder);
             var appConfig = appConfigBuilder.Build();
 
             //configure services
