@@ -14,7 +14,7 @@ namespace DotNet.Basics.Tests.Autofac
         public void AddRegistrations_Add_RegistrationsAreAdded()
         {
             var builder = new AutofacBuilder();
-            builder.AddRegistrations(new MyAutofacRegistrations());
+            builder.WithRegistrations(new MyAutofacRegistrations());
 
             var container = builder.Container;
 
