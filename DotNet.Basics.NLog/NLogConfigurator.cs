@@ -9,18 +9,26 @@ namespace DotNet.Basics.NLog
     /// <summary>
     /// https://en.wikipedia.org/wiki/Builder_pattern
     /// </summary>
-    public class NLogBuilder : IDisposable
+    public class NLogConfigurator
     {
         /// <summary>
-        /// Remember to call Build() upon completion to set configuration to global NLog LogManager configuration
+        /// Remember to call SaveToGlobal() upon completion to set configuration to global NLog LogManager configuration
         /// </summary>
         /// <param name="config"></param>
-        public NLogBuilder(LoggingConfiguration config = null)
+        public NLogConfigurator(LoggingConfiguration config = null)
         {
             Config = config ?? new LoggingConfiguration();
         }
 
         public LoggingConfiguration Config { get; }
+
+        public void AddColoredConsoleTargetWithDotNetBasicsDefaultSettings()
+        {
+            AddTarget(new ColoredConsoleTarget
+            {
+                Layout = "${message}"
+            }.WithDefaultColors());
+        }
 
         public void AddTarget(Target target)
         {
@@ -52,24 +60,19 @@ namespace DotNet.Basics.NLog
         /// <summary>
         /// Be aware that will set the global NLog logManager configuration. Only set this once during app initialization
         /// </summary>
-        public void Build()
+        public void SaveToGlobal()
         {
-            Build(new FastUtcTimeSource());
+            SaveToGlobal(new FastUtcTimeSource());
         }
 
         /// <summary>
         /// Be aware that will set the global NLog logManager configuration. Only set this once during app initialization
         /// </summary>
         /// <param name="timeSource"></param>
-        public void Build(TimeSource timeSource)
+        public void SaveToGlobal(TimeSource timeSource)
         {
             TimeSource.Current = timeSource;
             LogManager.Configuration = Config;
-        }
-
-        public void Dispose()
-        {
-            Build();
         }
     }
 }
