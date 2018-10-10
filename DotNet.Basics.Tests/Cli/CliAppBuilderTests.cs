@@ -30,9 +30,7 @@ namespace DotNet.Basics.Tests.Cli
         {
             var shortSwitch = $"-{_argKey[0]}";
 
-            var app = new CliAppBuilder($"{shortSwitch}={_argValue}")
-                .ConfigureCliSwitchMappings(() => new Dictionary<string, string> { { shortSwitch, _argKey } })
-                .Build();
+            var app = new CliAppBuilder(new[] { $"{shortSwitch}={_argValue}" }, dic => dic.Add(shortSwitch, _argKey)).Build();
             app.CliArgsConfiguration[_argKey].Should().Be(_argValue);
         }
 
@@ -90,7 +88,6 @@ namespace DotNet.Basics.Tests.Cli
             //arrange
 
             var loggingConfigured = false;
-            var switchMappingsConfigured = false;
             var configurationConfigured = false;
             var servicesConfigured = false;
             var serviceProviderConfigured = false;
@@ -100,16 +97,9 @@ namespace DotNet.Basics.Tests.Cli
                 loggingConfigured.Should().BeFalse();
                 loggingConfigured = true;
             });
-            appBuilder.ConfigureCliSwitchMappings(() =>
-            {
-                loggingConfigured.Should().BeTrue();
-                switchMappingsConfigured.Should().BeFalse();
-                switchMappingsConfigured = true;
-                return null;
-            });
+
             appBuilder.ConfigureAppConfiguration((argsConfig, builder) =>
             {
-                switchMappingsConfigured.Should().BeTrue();
                 configurationConfigured.Should().BeFalse();
                 configurationConfigured = true;
             });
@@ -127,7 +117,6 @@ namespace DotNet.Basics.Tests.Cli
             });
 
             loggingConfigured.Should().BeFalse();
-            switchMappingsConfigured.Should().BeFalse();
             configurationConfigured.Should().BeFalse();
             servicesConfigured.Should().BeFalse();
             serviceProviderConfigured.Should().BeFalse();
@@ -137,7 +126,6 @@ namespace DotNet.Basics.Tests.Cli
 
             //assert
             loggingConfigured.Should().BeTrue();
-            switchMappingsConfigured.Should().BeTrue();
             configurationConfigured.Should().BeTrue();
             servicesConfigured.Should().BeTrue();
             serviceProviderConfigured.Should().BeTrue();

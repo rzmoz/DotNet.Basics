@@ -8,28 +8,29 @@ namespace DotNet.Basics.Cli
     public class CliAppBuilder : ICliAppBuilder
     {
         private readonly string[] _args;
+        private readonly IDictionary<string, string> _switchMappings;
         private readonly IServiceCollection _services = new ServiceCollection();
 
         private Action<IServiceCollection> _configureLogging;
-        private Func<IDictionary<string, string>> _switchMappings;
         private Action<IConfigurationRoot, IConfigurationBuilder> _configureConfiguration;
         private Action<IServiceCollection> _configureServices;
         private Func<IServiceCollection, IServiceProvider> _configureServiceProvider;
 
         public CliAppBuilder(params string[] args)
+        : this(args, null)
+        { }
+
+        public CliAppBuilder(string[] args, Action<IDictionary<string, string>> switchMappings = null)
         {
             _args = args;
+
+            _switchMappings = new Dictionary<string, string>();
+            switchMappings?.Invoke(_switchMappings);
         }
 
         public ICliAppBuilder ConfigureLogging(Action<IServiceCollection> configureLogging)
         {
             _configureLogging = configureLogging;
-            return this;
-        }
-
-        public ICliAppBuilder ConfigureCliSwitchMappings(Func<IDictionary<string, string>> switchMappings)
-        {
-            _switchMappings = switchMappings;
             return this;
         }
 
@@ -57,8 +58,7 @@ namespace DotNet.Basics.Cli
             _configureLogging?.Invoke(_services);
 
             //configure cli args config
-            var switchMappings = _switchMappings?.Invoke();
-            var argsConfig = (switchMappings == null ? new ConfigurationBuilder().AddCommandLine(_args) : new ConfigurationBuilder().AddCommandLine(_args, switchMappings)).Build();
+            var argsConfig = new ConfigurationBuilder().AddCommandLine(_args, _switchMappings).Build();
 
             //configure app configuration
             var appConfigBuilder = new ConfigurationBuilder();
