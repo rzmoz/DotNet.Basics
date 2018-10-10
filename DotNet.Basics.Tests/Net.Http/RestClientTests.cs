@@ -3,12 +3,12 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using DotNet.Basics.Rest;
+using DotNet.Basics.Net.Http;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Rest
+namespace DotNet.Basics.Tests.Net.Http
 {
     public class RestClientTests
     {

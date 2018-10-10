@@ -2,7 +2,7 @@
 using System.Text;
 using Newtonsoft.Json;
 
-namespace DotNet.Basics.Rest
+namespace DotNet.Basics.Net.Http
 {
     public class JsonContent : StringContent
     {

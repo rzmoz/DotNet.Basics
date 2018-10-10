@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Http;
-using DotNet.Basics.Rest;
+using DotNet.Basics.Net.Http;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Rest
+namespace DotNet.Basics.Tests.Net.Http
 {
     public class RestRequestsTests
     {

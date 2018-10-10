@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DotNet.Basics.Rest
+namespace DotNet.Basics.Net.Http
 {
     public static class UriExtensions
     {

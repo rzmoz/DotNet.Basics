@@ -1,9 +1,9 @@
 ﻿using System;
-using DotNet.Basics.Rest;
+using DotNet.Basics.Net.Http;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Rest
+namespace DotNet.Basics.Tests.Net.Http
 {
     public class UriTests
     {

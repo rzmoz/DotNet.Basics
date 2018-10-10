@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DotNet.Basics.Rest;
+using DotNet.Basics.Net.Http;
 using FluentAssertions;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Rest
+namespace DotNet.Basics.Tests.Net.Http
 {
     public class HttpContentExtensionsTests
     {
@@ -49,7 +49,7 @@ namespace DotNet.Basics.Tests.Rest
 
 
         [Fact]
-        public async Task Ctor_Serialization_ContentIsSerilaizedToProperJson()
+        public async Task Ctor_Serialization_ContentIsSerializedToProperJson()
         {
             //act
             var content = new JsonContent(_testObject);

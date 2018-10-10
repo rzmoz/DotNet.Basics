@@ -4,15 +4,15 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DotNet.Basics.Rest
+namespace DotNet.Basics.Net.Http
 {
     public class RestClient : IRestClient
     {
-        private readonly HttpClient _client;
+        private readonly System.Net.Http.HttpClient _client;
 
-        public RestClient(string baseUri = null, HttpClient httpClient = null)
+        public RestClient(string baseUri = null, System.Net.Http.HttpClient httpClient = null)
         {
-            _client = httpClient ?? new HttpClient();
+            _client = httpClient ?? new System.Net.Http.HttpClient();
             if (baseUri != null)
                 _client.BaseAddress = new Uri(baseUri);
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/json"));

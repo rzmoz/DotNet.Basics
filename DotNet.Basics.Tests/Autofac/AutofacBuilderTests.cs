@@ -1,7 +1,9 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using DotNet.Basics.Autofac;
 using DotNet.Basics.Tests.Autofac.TestHelpers;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Autofac
@@ -11,7 +13,7 @@ namespace DotNet.Basics.Tests.Autofac
         [Fact]
         public void AddRegistrations_Add_RegistrationsAreAdded()
         {
-            var builder= new AutofacBuilder();
+            var builder = new AutofacBuilder();
             builder.AddRegistrations(new MyAutofacRegistrations());
 
             var container = builder.Container;

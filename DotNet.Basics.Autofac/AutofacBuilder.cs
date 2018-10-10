@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Autofac.Features.ResolveAnything;
@@ -22,29 +24,25 @@ namespace DotNet.Basics.Autofac
 
         public IContainer Container => _getContainer.Value;
         public IServiceProvider ServiceProvider => new AutofacServiceProvider(Container);
-
-        public void AddByContainerBuilder(Action<ContainerBuilder> registerServices)
-        {
-            registerServices?.Invoke(_containerBuilder);
-        }
-
-        public void AddByServiceCollection(Action<IServiceCollection> registerServices)
-        {
-            var serviceCollection = new ServiceCollection();
-            registerServices?.Invoke(serviceCollection);
-            _containerBuilder.Populate(serviceCollection);
-        }
-
+        
         public void AddServiceCollections(params IServiceCollection[] serviceCollections)
         {
             foreach (var serviceCollection in serviceCollections)
                 _containerBuilder.Populate(serviceCollection);
         }
-        
+
         public void AddRegistrations(params IAutofacRegistrations[] registrations)
         {
             foreach (var r in registrations)
                 r.RegisterIn(_containerBuilder);
+        }
+
+        public void AddRegistrations(params Assembly[] assemblies)
+        {
+            AddRegistrations(assemblies.SelectMany(a => a.GetTypes())
+                .Where(t => typeof(IAutofacRegistrations).IsAssignableFrom(t))
+                .Select(Activator.CreateInstance)
+                .Cast<IAutofacRegistrations>().ToArray());
         }
     }
 }

@@ -10,18 +10,23 @@ namespace DotNet.Basics.NLog
 {
     public static class NLogExtensions
     {
-        public static void AddNLogging(this IServiceCollection services, Action<NLogConfigurator> addTargets = null, LoggingConfiguration config = null, LogLevel minimumLogLevel = LogLevel.Trace)
+        public static void AddNLogging(this IServiceCollection services, Action<NLogBuilder> addTargets = null, LoggingConfiguration config = null, LogLevel minimumLogLevel = LogLevel.Trace)
         {
-            using (var conf = new NLogConfigurator(config))
+            using (var conf = new NLogBuilder(config))
             {
-                if (addTargets == null)
-                    conf.AddTarget(new ColoredConsoleTarget().WithDefaultColors());
-                else
-                    addTargets(conf);
+                addTargets?.Invoke(conf);
             }
 
             services.TryAddSingleton<ILogger, Logger<ILogger>>();
             services.AddLogging(builder => builder.AddNLog().SetMinimumLevel(minimumLogLevel));
+        }
+
+        public static void AddDotNetBasicsColoredConsoleTarget(this NLogBuilder logBuilder)
+        {
+            logBuilder?.AddTarget(new ColoredConsoleTarget
+            {
+                Layout = "${message}"
+            }.WithDefaultColors());
         }
     }
 }

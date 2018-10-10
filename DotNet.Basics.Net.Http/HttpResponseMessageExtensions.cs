@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace DotNet.Basics.Rest
+namespace DotNet.Basics.Net.Http
 {
     public static class HttpResponseMessageExtensions
     {

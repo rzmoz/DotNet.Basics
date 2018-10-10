@@ -9,13 +9,13 @@ namespace DotNet.Basics.NLog
     /// <summary>
     /// https://en.wikipedia.org/wiki/Builder_pattern
     /// </summary>
-    public class NLogConfigurator : IDisposable
+    public class NLogBuilder : IDisposable
     {
         /// <summary>
         /// Remember to call Build() upon completion to set configuration to global NLog LogManager configuration
         /// </summary>
         /// <param name="config"></param>
-        public NLogConfigurator(LoggingConfiguration config = null)
+        public NLogBuilder(LoggingConfiguration config = null)
         {
             Config = config ?? new LoggingConfiguration();
         }
@@ -50,7 +50,7 @@ namespace DotNet.Basics.NLog
         }
 
         /// <summary>
-        /// Be aware that will set the global NLog logmanager configuration. Only set this once during app initialization
+        /// Be aware that will set the global NLog logManager configuration. Only set this once during app initialization
         /// </summary>
         public void Build()
         {
@@ -58,7 +58,7 @@ namespace DotNet.Basics.NLog
         }
 
         /// <summary>
-        /// Be aware that will set the global NLog logmanager configuration. Only set this once during app initialization
+        /// Be aware that will set the global NLog logManager configuration. Only set this once during app initialization
         /// </summary>
         /// <param name="timeSource"></param>
         public void Build(TimeSource timeSource)

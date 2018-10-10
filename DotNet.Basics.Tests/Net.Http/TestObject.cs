@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.Tests.Rest
+﻿namespace DotNet.Basics.Tests.Net.Http
 {
     public class TestObject
     {
