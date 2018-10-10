@@ -7,10 +7,9 @@ namespace DotNet.Basics.Tests.DependencyInjection
     public class DependencyInjectionTests
     {
         [Fact]
-        public void AddRegistrations_Add_RegistrationsAreAdded()
+        public void RegisterIn_Register_RegistrationsAreAdded()
         {
             var serviceCollection = new ServiceCollection();
-
             var registrations = new MyServiceCollectionRegistrations();
 
             registrations.RegisterIn(serviceCollection);
