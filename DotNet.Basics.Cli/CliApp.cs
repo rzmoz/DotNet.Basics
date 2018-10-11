@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DotNet.Basics.Cli
 {
@@ -8,16 +9,17 @@ namespace DotNet.Basics.Cli
     {
         public CliApp(IConfigurationRoot configuration, IServiceProvider serviceProvider)
         {
-            Configuration = configuration;
-            ServiceProvider = serviceProvider;
+            Configuration = configuration ?? new ConfigurationBuilder().Build();
+            ServiceProvider = serviceProvider ?? new ServiceCollection().BuildServiceProvider();
         }
 
         public IConfigurationRoot Configuration { get; }
         public IServiceProvider ServiceProvider { get; }
-        public async Task<int> RunAsync(Func<ICliApp, Task<int>> runAsync)
+
+        public async Task<int> RunAsync(Func<IConfigurationRoot, IServiceProvider, Task<int>> runAsync)
         {
             if (runAsync == null) throw new ArgumentNullException(nameof(runAsync));
-            return await runAsync.Invoke(this).ConfigureAwait(false);
+            return await runAsync.Invoke(Configuration, ServiceProvider).ConfigureAwait(false);
         }
     }
 }

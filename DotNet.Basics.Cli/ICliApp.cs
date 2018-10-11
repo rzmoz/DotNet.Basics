@@ -8,6 +8,6 @@ namespace DotNet.Basics.Cli
     {
         IConfigurationRoot Configuration { get; }
         IServiceProvider ServiceProvider { get; }
-        Task<int> RunAsync(Func<ICliApp, Task<int>> runAsync);
+        Task<int> RunAsync(Func<IConfigurationRoot, IServiceProvider, Task<int>> runAsync);
     }
 }
