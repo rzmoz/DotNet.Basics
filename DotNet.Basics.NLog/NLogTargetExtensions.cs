@@ -34,9 +34,9 @@ namespace DotNet.Basics.NLog
         public static ColoredConsoleTarget WithDefaultColors(this ColoredConsoleTarget target)
         {
             target.RowHighlightingRules.Clear();
-            target.AddLogColor(LogLevel.Trace, ConsoleOutputColor.Gray)
-                .AddLogColor(LogLevel.Debug, ConsoleOutputColor.DarkGray)
-                .AddLogColor(LogLevel.Info, ConsoleOutputColor.White)
+            target.AddLogColor(LogLevel.Trace, ConsoleOutputColor.DarkGray)
+                .AddLogColor(LogLevel.Debug, ConsoleOutputColor.Gray)
+                .AddLogColor(LogLevel.Info, ConsoleOutputColor.Cyan)
                 .AddLogColor(LogLevel.Warn, ConsoleOutputColor.Yellow, ConsoleOutputColor.Black)
                 .AddLogColor(LogLevel.Error, ConsoleOutputColor.Red, ConsoleOutputColor.Black)
                 .AddLogColor(LogLevel.Fatal, ConsoleOutputColor.White, ConsoleOutputColor.DarkRed);
