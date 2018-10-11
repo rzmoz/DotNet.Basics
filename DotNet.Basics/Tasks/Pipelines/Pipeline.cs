@@ -11,22 +11,29 @@ namespace DotNet.Basics.Tasks.Pipelines
 {
     public class Pipeline<T> : ManagedTask<T> where T : class, new()
     {
+        private readonly Func<IServiceProvider> _getServiceProvider;
         private readonly ConcurrentQueue<ManagedTask<T>> _tasks;
         private readonly Func<T, ConcurrentLog, CancellationToken, Task> _innerRun;
 
-        public Pipeline() : this(Invoke.Sequential)
+        public Pipeline(Func<IServiceProvider> getServiceProvider = null) : this(getServiceProvider, Invoke.Sequential)
         { }
 
-        public Pipeline(string name) : this(name, Invoke.Sequential)
+        public Pipeline(Invoke invoke) : this(null, null, invoke)
         { }
 
-        public Pipeline(Invoke invoke)
-            : this(null, invoke)
+        public Pipeline(string name) : this(null, name, Invoke.Sequential)
         { }
-
         public Pipeline(string name, Invoke invoke)
+            : this(null, name, invoke)
+        { }
+        public Pipeline(Func<IServiceProvider> getServiceProvider, Invoke invoke)
+            : this(getServiceProvider, null, invoke)
+        { }
+
+        public Pipeline(Func<IServiceProvider> getServiceProvider, string name, Invoke invoke)
             : base(name)
         {
+            _getServiceProvider = getServiceProvider;
             _tasks = new ConcurrentQueue<ManagedTask<T>>();
             Invoke = invoke;
             switch (Invoke)
@@ -70,10 +77,15 @@ namespace DotNet.Basics.Tasks.Pipelines
             });
         }
 
-        public Pipeline<T> AddStep<TTask>(IServiceProvider serviceProvider, string name = null) where TTask : ManagedTask<T>
+        public Pipeline<T> AddStep<TTask>(string name = null) where TTask : ManagedTask<T>
         {
-            if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
-            var lazyTask = new LazyLoadStep<T, TTask>(name, () => serviceProvider.GetService(typeof(TTask)) as TTask);
+            var lazyTask = new LazyLoadStep<T, TTask>(name, () =>
+            {
+                var serviceProvider = _getServiceProvider?.Invoke();
+                if (serviceProvider == null)
+                    throw new NoServiceProviderInPipelineException($"Pipeline must be instantiated with an IServiceProvider when adding tasks by type");
+                return serviceProvider.GetService(typeof(TTask)) as TTask;
+            });
             InitEvents(lazyTask);
             _tasks.Enqueue(lazyTask);
             return this;
@@ -123,7 +135,7 @@ namespace DotNet.Basics.Tasks.Pipelines
         public Pipeline<T> AddBlock(string name, Invoke invoke = Invoke.Parallel, params Func<T, ConcurrentLog, CancellationToken, Task>[] tasks)
         {
             var count = _tasks.Count(s => s.GetType() == typeof(Pipeline<>));
-            var block = new Pipeline<T>(name ?? $"Block {count}", invoke);
+            var block = new Pipeline<T>(_getServiceProvider, name ?? $"Block {count}", invoke);
             foreach (var task in tasks)
                 block.AddStep(task);
             InitEvents(block);

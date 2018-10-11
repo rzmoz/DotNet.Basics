@@ -3,7 +3,7 @@
     {
       "name": "DotNet.Basics",
       "version": "9.5.3",
-      "prerelease": "rc.2"
+      "prerelease": "rc.3"
     },
     {
       "name": "DotNet.Basics.Autofac",

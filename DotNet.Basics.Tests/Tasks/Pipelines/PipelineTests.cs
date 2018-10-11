@@ -20,22 +20,22 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public void RegisterPipelineSteps_RegisterSteps_StepsAndCtorParamsAreRegisteredRecursive()
         {
-            AssertRegisterPipelineSteps<EventArgs>((p, sp) => { p.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(sp); });
+            AssertRegisterPipelineSteps<EventArgs>(p => { p.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(); });
         }
 
         [Fact]
         public void RegisterPipelineSteps_RegisterBlock_BlocksAreRegistered()
         {
-            AssertRegisterPipelineSteps<EventArgs>((p, sp) => { p.AddBlock("MyBlock"); });
+            AssertRegisterPipelineSteps<EventArgs>(p => { p.AddBlock("MyBlock"); });
         }
 
         [Fact]
-        public void LazyLoad_RegisterStepsInBlock_StepsAndCtorParamsAreRegisteredRecursive()
+        public void LazyLoad_RegisterStepsInBlock_StepsAndCtorParamsAreRegisteredRecursively()
         {
-            AssertRegisterPipelineSteps<EventArgs>((p, sp) => { p.AddBlock("MyBlock").AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(sp); });
+            AssertRegisterPipelineSteps<EventArgs>(p => { p.AddBlock("MyBlock").AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(); });
         }
 
-        private void AssertRegisterPipelineSteps<T>(Action<Pipeline<T>, IServiceProvider> addAction) where T : class, new()
+        private void AssertRegisterPipelineSteps<T>(Action<Pipeline<T>> addAction) where T : class, new()
         {
             var provider = GetServiceProvider(services =>
             {
@@ -49,8 +49,8 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
                 pipelineSteps.ForEach(p => services.AddTransient(p));
             });
 
-            var pipeline = new Pipeline<T>();
-            addAction(pipeline, provider);
+            var pipeline = new Pipeline<T>(() => provider);
+            addAction(pipeline);
 
             Func<Task> action = async () => await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
@@ -67,10 +67,10 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
                 services.AddSingleton<AddLogEntryStep>();
             });
 
-            var pipeline = new Pipeline<EventArgs>(invoke);
+            var pipeline = new Pipeline<EventArgs>(() => provider, invoke);
             var count = 15;
             foreach (var i in Enumerable.Range(0, count))
-                pipeline.AddStep<AddLogEntryStep>(provider);
+                pipeline.AddStep<AddLogEntryStep>();
 
             var result = await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
@@ -83,7 +83,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         public void Ctor_LazyLoadStepName_NameIsSetOnAdd()
         {
             var pipeline = new Pipeline<EventArgs>();
-            pipeline.AddStep<AddLogEntryStep>(new ServiceCollection().BuildServiceProvider());
+            pipeline.AddStep<AddLogEntryStep>();
 
             pipeline.Tasks.Single().Name.Should().Be(nameof(AddLogEntryStep));
         }
@@ -99,11 +99,11 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var argsInit = new DescendantArgs();
             argsInit.AncestorUpdated.Should().BeFalse();
             argsInit.DescendantUpdated.Should().BeFalse();
-            var pipeline = new Pipeline<DescendantArgs>();
+            var pipeline = new Pipeline<DescendantArgs>(() => provider);
 
             //act
             pipeline.AddStep((args, log, ct) => new AncestorStep().RunAsync(args, ct));
-            pipeline.AddStep<DescendantStep>(provider);
+            pipeline.AddStep<DescendantStep>();
 
             //assert
             var argsUpdated = await pipeline.RunAsync(argsInit, CancellationToken.None).ConfigureAwait(false);
@@ -141,8 +141,8 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
                 services.AddSingleton<IncrementArgsStep>();
             });
 
-            var pipeline = new Pipeline<EventArgs<int>>();
-            pipeline.AddStep<IncrementArgsStep>(provider);
+            var pipeline = new Pipeline<EventArgs<int>>(() => provider);
+            pipeline.AddStep<IncrementArgsStep>();
             string stepName = null;
 
             pipeline.Started += (e) =>
@@ -211,12 +211,12 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
                 services.AddSingleton<IncrementArgsStep>();
             });
 
-            var pipeline = new Pipeline<EventArgs<int>>();
-            pipeline.AddStep<IncrementArgsStep>(provider);
-            pipeline.AddStep<IncrementArgsStep>(provider);
-            pipeline.AddBlock("1").AddStep<IncrementArgsStep>(provider);
-            pipeline.AddStep<IncrementArgsStep>(provider);
-            pipeline.AddBlock("2").AddStep<IncrementArgsStep>(provider);
+            var pipeline = new Pipeline<EventArgs<int>>(() => provider);
+            pipeline.AddStep<IncrementArgsStep>();
+            pipeline.AddStep<IncrementArgsStep>();
+            pipeline.AddBlock("1").AddStep<IncrementArgsStep>();
+            pipeline.AddStep<IncrementArgsStep>();
+            pipeline.AddBlock("2").AddStep<IncrementArgsStep>();
 
             var resultArgs = new EventArgs<int>();
             await pipeline.RunAsync(resultArgs, CancellationToken.None).ConfigureAwait(false);
@@ -230,7 +230,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var taskCount = 7;
 
             foreach (var i in Enumerable.Range(0, taskCount))
-                block.AddStep<ManagedTask<EventArgs>>(new ServiceCollection().BuildServiceProvider());
+                block.AddStep<ManagedTask<EventArgs>>();
 
             block.Tasks.Count().Should().Be(taskCount);
         }
@@ -308,8 +308,8 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             string stepStarted = string.Empty;
             string stepEnded = string.Empty;
 
-            var pipeline = new Pipeline<EventArgs<int>>();
-            pipeline.AddBlock().AddStep<IncrementArgsStep>(provider);
+            var pipeline = new Pipeline<EventArgs<int>>(() => provider);
+            pipeline.AddBlock().AddStep<IncrementArgsStep>();
 
             pipeline.Started += args =>
             {

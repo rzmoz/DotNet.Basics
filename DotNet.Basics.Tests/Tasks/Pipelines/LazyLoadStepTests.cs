@@ -19,9 +19,9 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var services = new ServiceCollection();
             services.AddTransient<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
 
-            var pipeline = new Pipeline<EventArgs>();
+            var pipeline = new Pipeline<EventArgs>(services.BuildServiceProvider);
 
-            pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(services.BuildServiceProvider());
+            pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
 
             var assert = pipeline.AssertLazyLoadSteps();
 
@@ -36,9 +36,9 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var services = new ServiceCollection();
             services.AddTransient(typeof(GenericThatTakesAnotherConcreteClassAsArgStep<>));
 
-            var pipeline = new Pipeline<EventArgs>();
+            var pipeline = new Pipeline<EventArgs>(services.BuildServiceProvider);
 
-            pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(services.BuildServiceProvider());
+            pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
 
             var assert = pipeline.AssertLazyLoadSteps();
 
@@ -70,10 +70,10 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         public async Task AddStep_StepIsRegisteredInContainer_StepIsResolved()
         {
             var services = new ServiceCollection();
-            var pipeline = new Pipeline<EventArgs>();
             services.AddTransient<AddLogEntryStep>();
+            var pipeline = new Pipeline<EventArgs>(services.BuildServiceProvider);
 
-            pipeline.AddStep<AddLogEntryStep>(services.BuildServiceProvider());
+            pipeline.AddStep<AddLogEntryStep>();
 
             Exception exceptionEncountered;
             try
@@ -92,9 +92,9 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         public void AddStep_StepIsNotRegisteredProperlyInContainer_ExceptionIsThrownOnRun()
         {
             var services = new ServiceCollection();
-            var pipeline = new Pipeline<EventArgs>();
+            var pipeline = new Pipeline<EventArgs>(services.BuildServiceProvider);
 
-            pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(services.BuildServiceProvider());
+            pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
 
             Func<Task> act = async () => await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
