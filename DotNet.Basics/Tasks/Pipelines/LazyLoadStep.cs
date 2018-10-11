@@ -30,7 +30,7 @@ namespace DotNet.Basics.Tasks.Pipelines
         {
             var mt = _loadTask();
             if (mt == null)
-                throw new LazyLoadTaskFailedToLoadException($"{Name} was null");
+                throw new TaskLoadFailedException($"Name: {Name}");
 
             var result = await mt.RunAsync(args, ct).ConfigureAwait(false);
             log.AddRange(result.Log);
