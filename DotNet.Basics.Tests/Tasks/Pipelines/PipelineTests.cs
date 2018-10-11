@@ -43,10 +43,10 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
                 services.AddTransient<IAbstract, ConcreteClass>();
                 services.AddTransient<ClassThatTakesAnAbstractClassAsCtorParam>();
                 //abstract dependency registrations are not overridden
-                var pipelines = typeof(PipelineTests).Assembly.GetPipelineTypes();
-                pipelines.ForEach(services.AddTransient);
+                var pipelines = typeof(PipelineTests).Assembly.GetPipelineTypes().ToList();
+                pipelines.ForEach(p => services.AddTransient(p));
                 var pipelineSteps = typeof(PipelineTests).Assembly.GetPipelineStepTypes();
-                pipelineSteps.ForEach(services.AddTransient);
+                pipelineSteps.ForEach(p => services.AddTransient(p));
             });
 
             var pipeline = new Pipeline<T>();
