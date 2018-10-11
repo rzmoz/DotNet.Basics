@@ -6,8 +6,7 @@ namespace DotNet.Basics.Cli
 {
     public interface ICliApp
     {
-        IConfigurationRoot CliArgsConfiguration { get; }
-        IConfigurationRoot AppConfiguration { get; }
+        IConfigurationRoot Configuration { get; }
         IServiceProvider ServiceProvider { get; }
         Task<int> RunAsync(Func<ICliApp, Task<int>> runAsync);
     }

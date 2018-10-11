@@ -6,15 +6,13 @@ namespace DotNet.Basics.Cli
 {
     public class CliApp : ICliApp
     {
-        public CliApp(IConfigurationRoot argsConfiguration, IConfigurationRoot appConfiguration, IServiceProvider serviceProvider)
+        public CliApp(IConfigurationRoot configuration, IServiceProvider serviceProvider)
         {
-            CliArgsConfiguration = argsConfiguration;
-            AppConfiguration = appConfiguration;
+            Configuration = configuration;
             ServiceProvider = serviceProvider;
         }
 
-        public IConfigurationRoot CliArgsConfiguration { get; }
-        public IConfigurationRoot AppConfiguration { get; }
+        public IConfigurationRoot Configuration { get; }
         public IServiceProvider ServiceProvider { get; }
         public async Task<int> RunAsync(Func<ICliApp, Task<int>> runAsync)
         {

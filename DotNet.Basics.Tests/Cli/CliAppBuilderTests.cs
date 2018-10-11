@@ -15,26 +15,6 @@ namespace DotNet.Basics.Tests.Cli
         private const string _argValue = "MyPath";
 
         [Fact]
-        public void Ctor_CliArgsConfiguration_ArgsConfigAreConfiguredInApp()
-        {
-            var app = new CliAppBuilder($"{_argKey}={_argValue}").ConfigureAppConfiguration((argsConfig, builder) =>
-                {
-                    argsConfig[_argKey].Should().Be(_argValue);
-                }).Build();
-
-            app.CliArgsConfiguration[_argKey].Should().Be(_argValue);
-        }
-
-        [Fact]
-        public void ConfigureCliSwitchMappings_CliArgsConfiguration_ArgsConfigAreConfiguredInApp()
-        {
-            var shortSwitch = $"-{_argKey[0]}";
-
-            var app = new CliAppBuilder(new[] { $"{shortSwitch}={_argValue}" }, dic => dic.Add(shortSwitch, _argKey)).Build();
-            app.CliArgsConfiguration[_argKey].Should().Be(_argValue);
-        }
-
-        [Fact]
         public void ConfigureLogging_AddService_ServiceIsAdded()
         {
             var type = typeof(CliAppBuilderTests);
@@ -72,18 +52,18 @@ namespace DotNet.Basics.Tests.Cli
         [Fact]
         public void ConfigureAppConfiguration_AppConfiguration_AppConfigIsSet()
         {
-            var app = new CliAppBuilder().ConfigureAppConfiguration((argsConfig, builder) =>
+            var app = new CliAppBuilder().ConfigureConfiguration((builder) =>
                 {
                     builder.AddInMemoryCollection(new[] { new KeyValuePair<string, string>(_argKey, _argValue) });
                 }).Build();
 
-            app.AppConfiguration[_argKey].Should().Be(_argValue);
+            app.Configuration[_argKey].Should().Be(_argValue);
         }
 
         [Fact]
         public void Build_InvocationAndOrder_AllMethodsAreInvoked()
         {
-            var appBuilder = new CliAppBuilder(new string[0] { });
+            var appBuilder = new CliAppBuilder();
 
             //arrange
 
@@ -98,7 +78,7 @@ namespace DotNet.Basics.Tests.Cli
                 loggingConfigured = true;
             });
 
-            appBuilder.ConfigureAppConfiguration((argsConfig, builder) =>
+            appBuilder.ConfigureConfiguration((builder) =>
             {
                 configurationConfigured.Should().BeFalse();
                 configurationConfigured = true;
