@@ -1,6 +1,7 @@
 ﻿using DotNet.Basics.Sys;
 using DotNet.Basics.IO;
 using FluentAssertions;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
@@ -13,6 +14,24 @@ namespace DotNet.Basics.Tests.Sys
         private const string _testDirRoot = @"K:\testDir";
         private const string _testDoubleDir = @"\testa\testb";
         private const string _testSingleDir = @"\testk\";
+
+        public DirPath DirPath { get; set; }//Used for deserialization test
+
+        [Fact]
+        public void ExplicitCast_FromString_StringIsCast()
+        {
+            var dirStr = "lorem/ipsum/";
+            var dirPath = (DirPath)dirStr;
+            dirPath.RawPath.Should().Be(dirStr);
+        }
+
+        [Fact]
+        public void Deserialization_StringToDirPath_StringIsDeserializedToDirPath()
+        {
+            var dirStr = "lorem/ipsum/";
+            var obj = JsonConvert.DeserializeObject<DirPathTests>($"{{'{nameof(DirPath)}':'{dirStr}'}}");
+            obj.DirPath.RawPath.Should().Be(dirStr);
+        }
 
         [Fact]
         public void Add_Dir_SameTypeIsReturned()

@@ -9,5 +9,10 @@
         public FilePath(string path, char pathSeparator, params string[] segments)
             : base(path, PathType.File, pathSeparator, segments)
         { }
+
+        public static explicit operator FilePath(string s)
+        {
+            return new FilePath(s);
+        }
     }
 }

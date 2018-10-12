@@ -7,6 +7,11 @@
 
         public DirPath(string path, char pathSeparator, params string[] segments)
             : base(path, PathType.Dir, pathSeparator, segments)
-        { }        
+        { }
+
+        public static explicit operator DirPath(string s)
+        {
+            return new DirPath(s);
+        }
     }
 }

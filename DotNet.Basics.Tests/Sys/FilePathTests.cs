@@ -1,6 +1,7 @@
 ﻿using DotNet.Basics.Sys;
 using DotNet.Basics.IO;
 using FluentAssertions;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
@@ -9,7 +10,25 @@ namespace DotNet.Basics.Tests.Sys
     {
         private const string _path = "c:/mypath";
         private const string _segment = "segment";
-        
+
+        public FilePath FilePath { get; set; }//Used for deserialization test
+
+        [Fact]
+        public void ExplicitCast_FromString_StringIsCastToFilePath()
+        {
+            var fileStr = "lorem/ipsum";
+            var filePath = (FilePath)fileStr;
+            filePath.RawPath.Should().Be(fileStr);
+        }
+
+        [Fact]
+        public void Deserialization_StringToFilPath_StringIsDeserialized()
+        {
+            var fileStr = "lorem/ipsum";
+            var obj = JsonConvert.DeserializeObject<FilePathTests>($"{{'{nameof(FilePath)}':'{fileStr}'}}");
+            obj.FilePath.RawPath.Should().Be(fileStr);
+        }
+
         [Fact]
         public void Add_File_SameTypeIsReturned()
         {
@@ -27,7 +46,7 @@ namespace DotNet.Basics.Tests.Sys
             file.Should().BeOfType<FilePath>();
             file.RawPath.Should().Be(_path + $"/{_segment }");
         }
-        
+
         [Theory]
         [InlineData("SomeDir\\MyFile.txt", "MyFile")]//has extension
         [InlineData("SomeDir\\MyFile", "MyFile")]//no extension
