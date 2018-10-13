@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -8,6 +9,7 @@ using DotNet.Basics.Tasks;
 using DotNet.Basics.Tasks.Pipelines;
 using DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers;
 using DotNet.Basics.Collections;
+using DotNet.Basics.Diagnostics;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -67,16 +69,19 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
                 services.AddSingleton<AddLogEntryStep>();
             });
 
+            var logEntries = new List<LogEntry>();
+
             var pipeline = new Pipeline<EventArgs>(() => provider, invoke);
+            pipeline.EntryLogged += (name, le) => logEntries.Add(le);
+
             var count = 15;
             foreach (var i in Enumerable.Range(0, count))
                 pipeline.AddStep<AddLogEntryStep>();
 
-            var result = await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
-            result.Log.Count.Should().Be(count);
-            result.Log.All(i => i.Message == nameof(AddLogEntryStep)).Should().BeTrue();
-            result.Log.All(i => i.Exception == null).Should().BeTrue();
+            logEntries.Count(e => e.Message == nameof(AddLogEntryStep)).Should().Be(count);
+            logEntries.All(i => i.Exception == null).Should().BeTrue();
         }
 
         [Fact]
@@ -102,7 +107,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var pipeline = new Pipeline<DescendantArgs>(() => provider);
 
             //act
-            pipeline.AddStep((args, log, ct) => new AncestorStep().RunAsync(args, ct));
+            pipeline.AddStep((args, ct) => new AncestorStep().RunAsync(args, ct));
             pipeline.AddStep<DescendantStep>();
 
             //assert
@@ -125,7 +130,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var stepCount = 101;
 
             for (var i = 0; i < stepCount; i++)
-                pipeline.AddStep((args, log, ct) => Task.FromResult(++counter));
+                pipeline.AddStep((args, ct) => Task.FromResult(++counter));
 
             await pipeline.RunAsync(ts.Token).ConfigureAwait(false);
 
@@ -145,10 +150,10 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             pipeline.AddStep<IncrementArgsStep>();
             string stepName = null;
 
-            pipeline.Started += (e) =>
+            pipeline.Started += (n, args) =>
             {
-                if (e.Name.EndsWith("step", StringComparison.OrdinalIgnoreCase))
-                    stepName = e.Name;
+                if (n.EndsWith("step", StringComparison.OrdinalIgnoreCase))
+                    stepName = n;
             };
 
             await pipeline.RunAsync().ConfigureAwait(false);
@@ -165,7 +170,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var runCount = 101;
 
             for (var i = 0; i < runCount; i++)
-                block.AddStep(async (args, log, ct) => await Task.Delay(TimeSpan.FromSeconds(1), ct));
+                block.AddStep(async (args, ct) => await Task.Delay(TimeSpan.FromSeconds(1), ct));
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -183,8 +188,8 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var task1Called = false;
             var task2Called = false;
 
-            pipeline.AddBlock("1", async (args, log, ct) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200), ct); });
-            pipeline.AddBlock("2", (args, log, ct) =>
+            pipeline.AddBlock("1", async (args, ct) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200), ct); });
+            pipeline.AddBlock("2", (args, ct) =>
             {
                 if (task1Called == false)
                     throw new ArgumentException("Task 1 not called");
@@ -242,7 +247,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var taskCount = 7;
 
             foreach (var i in Enumerable.Range(0, taskCount))
-                block.AddStep((args, log, ct) => { });
+                block.AddStep((args, ct) => { });
 
             block.Tasks.Count().Should().Be(taskCount);
         }
@@ -257,10 +262,8 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 
             var raceConditionEncountered = 0;
             for (var i = 0; i < stepCount; i++)
-                block.AddStep(async (args, log, ct) =>
+                block.AddStep(async (args, ct) =>
                 {
-                    log.Add(LogLevel.Error, i.ToString());
-
                     if (Interlocked.CompareExchange(ref lockFlag, 1, 0) == 0)
                     {
                         Monitor.Enter(lockFlag);
@@ -275,9 +278,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 
             var argsParam = new EventArgs<int>();
 
-            var result = await block.RunAsync(argsParam, CancellationToken.None).ConfigureAwait(false);
-
-            result.Log.Count.Should().Be(stepCount);
+            await block.RunAsync(argsParam, CancellationToken.None).ConfigureAwait(false);
 
             if (invoke == Invoke.Parallel)
             {
@@ -311,23 +312,23 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var pipeline = new Pipeline<EventArgs<int>>(() => provider);
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
 
-            pipeline.Started += args =>
+            pipeline.Started += (name, args) =>
             {
-                if (args.Name.EndsWith("step", StringComparison.OrdinalIgnoreCase))
-                    stepStarted = args.Name;
-                else if (args.Name.StartsWith("block", StringComparison.OrdinalIgnoreCase))
-                    blockStarted = args.Name;
-                else if (args.Name.StartsWith("pipeline", StringComparison.OrdinalIgnoreCase))
-                    pipelineStarted = args.Name;
+                if (name.EndsWith("step", StringComparison.OrdinalIgnoreCase))
+                    stepStarted = name;
+                else if (name.StartsWith("block", StringComparison.OrdinalIgnoreCase))
+                    blockStarted = name;
+                else if (name.StartsWith("pipeline", StringComparison.OrdinalIgnoreCase))
+                    pipelineStarted = name;
             };
-            pipeline.Ended += args =>
+            pipeline.Ended += (name, args, e) =>
             {
-                if (args.Name.EndsWith("step", StringComparison.OrdinalIgnoreCase))
-                    stepEnded = args.Name;
-                else if (args.Name.StartsWith("block", StringComparison.OrdinalIgnoreCase))
-                    blockEnded = args.Name;
-                else if (args.Name.StartsWith("pipeline", StringComparison.OrdinalIgnoreCase))
-                    pipelineEnded = args.Name;
+                if (name.EndsWith("step", StringComparison.OrdinalIgnoreCase))
+                    stepEnded = name;
+                else if (name.StartsWith("block", StringComparison.OrdinalIgnoreCase))
+                    blockEnded = name;
+                else if (name.StartsWith("pipeline", StringComparison.OrdinalIgnoreCase))
+                    pipelineEnded = name;
             };
 
             //act

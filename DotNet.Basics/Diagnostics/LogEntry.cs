@@ -5,23 +5,20 @@ namespace DotNet.Basics.Diagnostics
 {
     public class LogEntry
     {
-        public LogEntry(LogLevel logLevel, string message, Exception exception = null)
+        public LogEntry(LogLevel level, string message, Exception exception = null)
         {
-            LogLevel = logLevel;
+            Level = level;
             Message = message ?? string.Empty;
             Exception = exception;
-            HasException = Exception != null;
         }
 
-        public LogLevel LogLevel { get; }
+        public LogLevel Level { get; }
         public string Message { get; }
         public Exception Exception { get; }
 
-        public bool HasException { get; }
-
         public override string ToString()
         {
-            return $"{Message}";
+            return $"{Message} | {Exception}";
         }
     }
 }

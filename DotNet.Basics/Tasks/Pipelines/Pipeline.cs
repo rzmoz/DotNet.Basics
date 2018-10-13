@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using DotNet.Basics.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Tasks.Pipelines
@@ -13,7 +12,7 @@ namespace DotNet.Basics.Tasks.Pipelines
     {
         private readonly Func<IServiceProvider> _getServiceProvider;
         private readonly ConcurrentQueue<ManagedTask<T>> _tasks;
-        private readonly Func<T, ConcurrentLog, CancellationToken, Task> _innerRun;
+        private readonly Func<T, CancellationToken, Task> _innerRun;
 
         public Pipeline(Func<IServiceProvider> getServiceProvider = null) : this(getServiceProvider, Invoke.Sequential)
         { }
@@ -52,29 +51,27 @@ namespace DotNet.Basics.Tasks.Pipelines
         public IReadOnlyCollection<ManagedTask<T>> Tasks => _tasks.ToList();
         public Invoke Invoke { get; }
 
-        public TaskResult AssertLazyLoadSteps()
+        public bool AssertLazyLoadSteps()
         {
             return AssertLazyLoadSteps(Tasks);
         }
 
-        private TaskResult AssertLazyLoadSteps(IReadOnlyCollection<ITask> tasks)
+        private bool AssertLazyLoadSteps(IReadOnlyCollection<ITask> tasks)
         {
-            return new TaskResult(log =>
+            var success = true;
+            foreach (var lazyLoadStep in tasks.OfType<ILazyLoadStep>())
             {
-                foreach (var pipeline in tasks.OfType<Pipeline<T>>())
-                    log.AddRange(AssertLazyLoadSteps(pipeline.Tasks).Log);
-                foreach (var lazyLoadStep in tasks.OfType<ILazyLoadStep>())
+                try
                 {
-                    try
-                    {
-                        lazyLoadStep.GetTask();
-                    }
-                    catch (InvalidOperationException e)
-                    {
-                        log.Add(LogLevel.Error, $"Failed to load: {lazyLoadStep.GetTaskType().Name} - {e.Message}", e);
-                    }
+                    lazyLoadStep.GetTask();
                 }
-            });
+                catch (InvalidOperationException e)
+                {
+                    success = false;
+                    Log(LogLevel.Critical, $"Failed to load: {lazyLoadStep.GetTaskType().Name} - {e.Message}", e);
+                }
+            }
+            return success;
         }
 
         public Pipeline<T> AddStep<TTask>(string name = null) where TTask : ManagedTask<T>
@@ -91,25 +88,25 @@ namespace DotNet.Basics.Tasks.Pipelines
             return this;
         }
 
-        public Pipeline<T> AddStep(Action<T, ConcurrentLog, CancellationToken> task)
+        public Pipeline<T> AddStep(Action<T, CancellationToken> task)
         {
             var mt = new ManagedTask<T>(task);
             return AddStep(mt);
         }
 
-        public Pipeline<T> AddStep(string name, Action<T, ConcurrentLog, CancellationToken> task)
+        public Pipeline<T> AddStep(string name, Action<T, CancellationToken> task)
         {
             var mt = new ManagedTask<T>(name, task);
             return AddStep(mt);
         }
 
-        public Pipeline<T> AddStep(Func<T, ConcurrentLog, CancellationToken, Task> task)
+        public Pipeline<T> AddStep(Func<T, CancellationToken, Task> task)
         {
             var mt = new ManagedTask<T>(task);
             return AddStep(mt);
         }
 
-        public Pipeline<T> AddStep(string name, Func<T, ConcurrentLog, CancellationToken, Task> task)
+        public Pipeline<T> AddStep(string name, Func<T, CancellationToken, Task> task)
         {
             var mt = new ManagedTask<T>(name, task);
             return AddStep(mt);
@@ -122,17 +119,17 @@ namespace DotNet.Basics.Tasks.Pipelines
             return this;
         }
 
-        public Pipeline<T> AddBlock(params Func<T, ConcurrentLog, CancellationToken, Task>[] tasks)
+        public Pipeline<T> AddBlock(params Func<T, CancellationToken, Task>[] tasks)
         {
             return AddBlock(null, tasks);
         }
 
-        public Pipeline<T> AddBlock(string name, params Func<T, ConcurrentLog, CancellationToken, Task>[] tasks)
+        public Pipeline<T> AddBlock(string name, params Func<T, CancellationToken, Task>[] tasks)
         {
             return AddBlock(name, Invoke.Parallel, tasks);
         }
 
-        public Pipeline<T> AddBlock(string name, Invoke invoke = Invoke.Parallel, params Func<T, ConcurrentLog, CancellationToken, Task>[] tasks)
+        public Pipeline<T> AddBlock(string name, Invoke invoke = Invoke.Parallel, params Func<T, CancellationToken, Task>[] tasks)
         {
             var count = _tasks.Count(s => s.GetType() == typeof(Pipeline<>));
             var block = new Pipeline<T>(_getServiceProvider, name ?? $"Block {count}", invoke);
@@ -143,39 +140,38 @@ namespace DotNet.Basics.Tasks.Pipelines
             return block;
         }
 
-        protected override async Task InnerRunAsync(T args, ConcurrentLog log, CancellationToken ct)
+        protected override async Task InnerRunAsync(T args, CancellationToken ct)
         {
-            await _innerRun(args, log, ct).ConfigureAwait(false);
+            await _innerRun(args, ct).ConfigureAwait(false);
         }
 
-        protected async Task InnerParallelRunAsync(T args, ConcurrentLog log, CancellationToken ct)
+        protected async Task InnerParallelRunAsync(T args, CancellationToken ct)
         {
             if (ct.IsCancellationRequested)
                 return;
-            var tasks = Tasks.Select(async t =>
+            var tasks = Tasks.Select(async task =>
             {
-                var result = await t.RunAsync(args, ct).ConfigureAwait(false);
-                log.AddRange(result.Log);
+                await task.RunAsync(args, ct).ConfigureAwait(false);
 
             }).ToList();
             await Task.WhenAll(tasks).ConfigureAwait(false);
         }
 
-        protected async Task InnerSequentialRunAsync(T args, ConcurrentLog log, CancellationToken ct)
+        protected async Task InnerSequentialRunAsync(T args, CancellationToken ct)
         {
             foreach (var task in Tasks)
             {
                 if (ct.IsCancellationRequested)
                     break;
-                var result = await task.RunAsync(args, ct).ConfigureAwait(false);
-                log.AddRange(result.Log);
+                await task.RunAsync(args, ct).ConfigureAwait(false);
             }
         }
 
-        private void InitEvents(ManagedTask<T> section)
+        private void InitEvents(ManagedTask<T> task)
         {
-            section.Started += FireStarted;
-            section.Ended += FireEnded;
+            task.EntryLogged += Log;
+            task.Started += FireStarted;
+            task.Ended += FireEnded;
         }
     }
 }

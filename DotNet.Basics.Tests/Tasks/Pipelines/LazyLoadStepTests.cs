@@ -18,16 +18,15 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         {
             var services = new ServiceCollection();
             services.AddTransient<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
-
+            var errorMessage = "";
             var pipeline = new Pipeline<EventArgs>(services.BuildServiceProvider);
-
             pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
+            pipeline.EntryLogged += (name, le) => errorMessage = le.Message;
 
             var assert = pipeline.AssertLazyLoadSteps();
 
-            assert.Log.Count.Should().Be(1);
-            assert.Log.Single().Message.Should().Be("Failed to load: GenericThatTakesAnotherConcreteClassAsArgStep`1 - Unable to resolve service for type 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.ClassThatTakesAnAbstractClassAsCtorParam' while attempting to activate 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.GenericThatTakesAnotherConcreteClassAsArgStep`1[System.EventArgs]'.");
-            assert.Log.Single().Exception.Should().BeOfType<InvalidOperationException>();
+            assert.Should().BeFalse();
+            errorMessage.Should().Be("Failed to load: GenericThatTakesAnotherConcreteClassAsArgStep`1 - Unable to resolve service for type 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.ClassThatTakesAnAbstractClassAsCtorParam' while attempting to activate 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.GenericThatTakesAnotherConcreteClassAsArgStep`1[System.EventArgs]'.");
         }
 
         [Fact]
@@ -36,14 +35,16 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var services = new ServiceCollection();
             services.AddTransient(typeof(GenericThatTakesAnotherConcreteClassAsArgStep<>));
 
+            var errorMessage = "";
             var pipeline = new Pipeline<EventArgs>(services.BuildServiceProvider);
-
             pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
+            pipeline.EntryLogged += (name, le) => errorMessage = le.Message;
 
+            //act
             var assert = pipeline.AssertLazyLoadSteps();
 
-            assert.Log.Count.Should().Be(1);
-            assert.Log.Single().Message.Should().Be("Failed to load: GenericThatTakesAnotherConcreteClassAsArgStep`1 - Unable to resolve service for type 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.ClassThatTakesAnAbstractClassAsCtorParam' while attempting to activate 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.GenericThatTakesAnotherConcreteClassAsArgStep`1[System.EventArgs]'.");
+            assert.Should().BeFalse();
+            errorMessage.Should().Be("Failed to load: GenericThatTakesAnotherConcreteClassAsArgStep`1 - Unable to resolve service for type 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.ClassThatTakesAnAbstractClassAsCtorParam' while attempting to activate 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.GenericThatTakesAnotherConcreteClassAsArgStep`1[System.EventArgs]'.");
         }
 
         [Fact]
