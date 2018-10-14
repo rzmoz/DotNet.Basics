@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using DotNet.Basics.Diagnostics;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {
@@ -68,7 +68,7 @@ namespace DotNet.Basics.Tasks.Pipelines
                 catch (InvalidOperationException e)
                 {
                     success = false;
-                    Log(LogLevel.Critical, $"Failed to load: {lazyLoadStep.GetTaskType().Name} - {e.Message}", e);
+                    Log.LogCritical($"Failed to load: {lazyLoadStep.GetTaskType().Name} - {e.Message}", e);
                 }
             }
             return success;
@@ -88,25 +88,25 @@ namespace DotNet.Basics.Tasks.Pipelines
             return this;
         }
 
-        public Pipeline<T> AddStep(Action<T, CancellationToken> task)
+        public Pipeline<T> AddStep(Action<T, LoggingContext, CancellationToken> task)
         {
             var mt = new ManagedTask<T>(task);
             return AddStep(mt);
         }
 
-        public Pipeline<T> AddStep(string name, Action<T, CancellationToken> task)
+        public Pipeline<T> AddStep(string name, Action<T, LoggingContext, CancellationToken> task)
         {
             var mt = new ManagedTask<T>(name, task);
             return AddStep(mt);
         }
 
-        public Pipeline<T> AddStep(Func<T, CancellationToken, Task> task)
+        public Pipeline<T> AddStep(Func<T, LoggingContext, CancellationToken, Task> task)
         {
             var mt = new ManagedTask<T>(task);
             return AddStep(mt);
         }
 
-        public Pipeline<T> AddStep(string name, Func<T, CancellationToken, Task> task)
+        public Pipeline<T> AddStep(string name, Func<T, LoggingContext, CancellationToken, Task> task)
         {
             var mt = new ManagedTask<T>(name, task);
             return AddStep(mt);
@@ -119,17 +119,17 @@ namespace DotNet.Basics.Tasks.Pipelines
             return this;
         }
 
-        public Pipeline<T> AddBlock(params Func<T, CancellationToken, Task>[] tasks)
+        public Pipeline<T> AddBlock(params Func<T, LoggingContext, CancellationToken, Task>[] tasks)
         {
             return AddBlock(null, tasks);
         }
 
-        public Pipeline<T> AddBlock(string name, params Func<T, CancellationToken, Task>[] tasks)
+        public Pipeline<T> AddBlock(string name, params Func<T, LoggingContext, CancellationToken, Task>[] tasks)
         {
             return AddBlock(name, Invoke.Parallel, tasks);
         }
 
-        public Pipeline<T> AddBlock(string name, Invoke invoke = Invoke.Parallel, params Func<T, CancellationToken, Task>[] tasks)
+        public Pipeline<T> AddBlock(string name, Invoke invoke = Invoke.Parallel, params Func<T, LoggingContext, CancellationToken, Task>[] tasks)
         {
             var count = _tasks.Count(s => s.GetType() == typeof(Pipeline<>));
             var block = new Pipeline<T>(_getServiceProvider, name ?? $"Block {count}", invoke);
@@ -169,7 +169,7 @@ namespace DotNet.Basics.Tasks.Pipelines
 
         private void InitEvents(ManagedTask<T> task)
         {
-            task.EntryLogged += Log;
+            task.EntryLogged += Log.Log;
             task.Started += FireStarted;
             task.Ended += FireEnded;
         }

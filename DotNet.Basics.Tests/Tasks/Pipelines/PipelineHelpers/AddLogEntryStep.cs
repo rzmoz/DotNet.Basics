@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Tasks.Pipelines;
-using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers
 {
@@ -10,7 +9,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers
     {
         protected override Task RunImpAsync(EventArgs args, CancellationToken ct)
         {
-            Log(LogLevel.Warning, nameof(AddLogEntryStep));
+            Log.LogWarning(nameof(AddLogEntryStep));
             return Task.CompletedTask;
         }
     }

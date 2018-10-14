@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks
@@ -11,10 +15,42 @@ namespace DotNet.Basics.Tests.Tasks
     public class ManagedTaskTests
     {
         [Fact]
+        public async Task RunAsync_InlineTas_NoErrorsWereLogged()
+        {
+            var entriesLogged = new List<LogEntry>();
+
+            var task = new ManagedTask<EventArgs>((args, log, ct) => { });
+            task.EntryLogged += e => entriesLogged.Add(e);
+
+            //act
+            await task.RunAsync().ConfigureAwait(false);
+
+            entriesLogged.Any(e => e.Level > LogLevel.Debug).Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task RunAsync_InlineTask_EntryIsLogged()
+        {
+            var message = "MyMessage.Lorem.Ipsum";
+            var entriesLogged = new List<LogEntry>();
+
+            var task = new ManagedTask<EventArgs>((args, log, ct) =>
+            {
+                log.LogError(message);
+            });
+            task.EntryLogged += e => entriesLogged.Add(e);
+
+            //act
+            await task.RunAsync().ConfigureAwait(false);
+
+            entriesLogged.Count(e => e.Message.EndsWith(message)).Should().Be(1);
+        }
+
+        [Fact]
         public async Task RunAsyncResult_NoCustomEntries_ResultIsGood()
         {
             var loggedEntries = 0;
-            var task = new ManagedTask<EventArgs>((args, ct) => { });
+            var task = new ManagedTask<EventArgs>((args, log, ct) => { });
             task.EntryLogged += entry => loggedEntries++;
             var result = await task.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
@@ -31,7 +67,7 @@ namespace DotNet.Basics.Tests.Tasks
                 Value = value
             };
 
-            var task = new ManagedTask<EventArgs<int>>((args, t) =>
+            var task = new ManagedTask<EventArgs<int>>((args, log, ct) =>
             {
                 args.Value++;
             });
@@ -46,7 +82,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var argsIsNotNull = false;
 
-            var task = new ManagedTask<EventArgs>((args, ct) => argsIsNotNull = args != null);
+            var task = new ManagedTask<EventArgs>((args, log, ct) => argsIsNotNull = args != null);
             await task.RunAsync(CancellationToken.None);
 
             argsIsNotNull.Should().BeTrue();
@@ -60,7 +96,7 @@ namespace DotNet.Basics.Tests.Tasks
             var ctSource = new CancellationTokenSource();
             ctSource.Cancel();
 
-            var task = new ManagedTask<EventArgs<int>>((args, ct) => { args.Value = argsValue; });
+            var task = new ManagedTask<EventArgs<int>>((args, log, ct) => { args.Value = argsValue; });
 
             using (var monitoredTask = task.Monitor())
             {
@@ -76,7 +112,7 @@ namespace DotNet.Basics.Tests.Tasks
         public async Task RunAsync_Exception_ExceptionIsCapturedInTaskEndEvent()
         {
             var exMessage = "buuh";
-            var task = new ManagedTask<EventArgs<int>>((args, ct) => { throw new ArgumentException(exMessage); });
+            var task = new ManagedTask<EventArgs<int>>((args, log, ct) => { throw new ArgumentException(exMessage); });
 
             Exception capturedException = null;
 

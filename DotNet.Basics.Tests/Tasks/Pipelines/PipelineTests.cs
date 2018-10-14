@@ -107,7 +107,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var pipeline = new Pipeline<DescendantArgs>(() => provider);
 
             //act
-            pipeline.AddStep((args, ct) => new AncestorStep().RunAsync(args, ct));
+            pipeline.AddStep((args, log, ct) => new AncestorStep().RunAsync(args, ct));
             pipeline.AddStep<DescendantStep>();
 
             //assert
@@ -130,7 +130,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var stepCount = 101;
 
             for (var i = 0; i < stepCount; i++)
-                pipeline.AddStep((args, ct) => Task.FromResult(++counter));
+                pipeline.AddStep((args, log, ct) => Task.FromResult(++counter));
 
             await pipeline.RunAsync(ts.Token).ConfigureAwait(false);
 
@@ -170,7 +170,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var runCount = 101;
 
             for (var i = 0; i < runCount; i++)
-                block.AddStep(async (args, ct) => await Task.Delay(TimeSpan.FromSeconds(1), ct));
+                block.AddStep(async (args, log, ct) => await Task.Delay(TimeSpan.FromSeconds(1), ct));
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -188,8 +188,8 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var task1Called = false;
             var task2Called = false;
 
-            pipeline.AddBlock("1", async (args, ct) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200), ct); });
-            pipeline.AddBlock("2", (args, ct) =>
+            pipeline.AddBlock("1", async (args, log, ct) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200), ct); });
+            pipeline.AddBlock("2", (args, log, ct) =>
             {
                 if (task1Called == false)
                     throw new ArgumentException("Task 1 not called");
@@ -247,7 +247,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var taskCount = 7;
 
             foreach (var i in Enumerable.Range(0, taskCount))
-                block.AddStep((args, ct) => { });
+                block.AddStep((args, log, ct) => { });
 
             block.Tasks.Count().Should().Be(taskCount);
         }
@@ -262,7 +262,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 
             var raceConditionEncountered = 0;
             for (var i = 0; i < stepCount; i++)
-                block.AddStep(async (args, ct) =>
+                block.AddStep(async (args, log, ct) =>
                 {
                     if (Interlocked.CompareExchange(ref lockFlag, 1, 0) == 0)
                     {

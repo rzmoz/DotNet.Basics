@@ -15,12 +15,18 @@ namespace DotNet.Basics.Diagnostics
         }
 
         public LogLevel Level { get; }
-        public string Message { get; }
+        public string Message { get; private set; }
         public Exception Exception { get; }
+
+        public void AddMessagePrefix(string prefix)
+        {
+            Message = prefix + Message;
+        }
 
         public override string ToString()
         {
-            return $"{Message} | {Exception}";
+            var exceptionString = Exception == null ? string.Empty : $" | {Exception}";
+            return $"{Message}{exceptionString}";
         }
     }
 }

@@ -31,9 +31,9 @@ namespace DotNet.Basics.Tasks.Pipelines
             if (mt == null)
                 throw new TaskLoadFailedException($"Name: {Name}");
 
-            mt.EntryLogged += Log;
+            mt.EntryLogged += Log.Log;
             await mt.RunAsync(args, ct).ConfigureAwait(false);
-            mt.EntryLogged -= Log;
+            mt.EntryLogged -= Log.Log;
         }
     }
 }
