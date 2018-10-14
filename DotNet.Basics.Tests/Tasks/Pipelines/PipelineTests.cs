@@ -150,10 +150,10 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             pipeline.AddStep<IncrementArgsStep>();
             string stepName = null;
 
-            pipeline.Started += (n, args) =>
+            pipeline.Started += (name) =>
             {
-                if (n.EndsWith("step", StringComparison.OrdinalIgnoreCase))
-                    stepName = n;
+                if (name.EndsWith("step", StringComparison.OrdinalIgnoreCase))
+                    stepName = name;
             };
 
             await pipeline.RunAsync().ConfigureAwait(false);
@@ -312,7 +312,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var pipeline = new Pipeline<EventArgs<int>>(() => provider);
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
 
-            pipeline.Started += (name, args) =>
+            pipeline.Started += name =>
             {
                 if (name.EndsWith("step", StringComparison.OrdinalIgnoreCase))
                     stepStarted = name;
@@ -321,7 +321,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
                 else if (name.StartsWith("pipeline", StringComparison.OrdinalIgnoreCase))
                     pipelineStarted = name;
             };
-            pipeline.Ended += (name, args, e) =>
+            pipeline.Ended += (name, e) =>
             {
                 if (name.EndsWith("step", StringComparison.OrdinalIgnoreCase))
                     stepEnded = name;

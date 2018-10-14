@@ -57,23 +57,19 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var argsValue = 12312313;
 
-            EventArgs<int> startedArgs = null;
-            EventArgs<int> endedArgs = null;
-
             var ctSource = new CancellationTokenSource();
             ctSource.Cancel();
 
             var task = new ManagedTask<EventArgs<int>>((args, ct) => { args.Value = argsValue; });
 
-            task.Started += (name, args) => { startedArgs = args; };
-            task.Ended += (name, args, e) => { endedArgs = args; };
+            using (var monitoredTask = task.Monitor())
+            {
+                //act
+                await task.RunAsync(ctSource.Token).ConfigureAwait(false);
 
-            //act
-            await task.RunAsync(ctSource.Token).ConfigureAwait(false);
-
-            //assert
-            startedArgs.Should().NotBeNull();
-            endedArgs.Should().NotBeNull();
+                monitoredTask.Should().Raise(nameof(task.Started));
+                monitoredTask.Should().Raise(nameof(task.Ended));
+            }
         }
 
         [Fact]
@@ -84,7 +80,7 @@ namespace DotNet.Basics.Tests.Tasks
 
             Exception capturedException = null;
 
-            task.Ended += (name, args, e) => { capturedException = e; };
+            task.Ended += (name, e) => { capturedException = e; };
 
             try
             {
@@ -99,22 +95,6 @@ namespace DotNet.Basics.Tests.Tasks
             capturedException.Should().BeOfType<ArgumentException>();
         }
 
-        [Fact]
-        public async Task TaskStarted_EventRaising_EndedEventIsRaised()
-        {
-            var eventRaised = false;
-
-            var task = new ManagedTask<EventArgs<int>>((args, ct) => { });
-
-            task.Started += (name, args) =>
-            {
-                eventRaised = true;
-            };
-
-            await task.RunAsync(CancellationToken.None);
-
-            eventRaised.Should().BeTrue("Event raised");
-        }
 
         [Fact]
         public async Task RunAsync_SyncTask_TaskIsOnlyRunWhenInvoked()

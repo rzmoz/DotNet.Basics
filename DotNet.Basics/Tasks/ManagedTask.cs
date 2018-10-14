@@ -12,8 +12,8 @@ namespace DotNet.Basics.Tasks
         private string _name;
 
         public delegate void TaskLogEventHandler(string taskName, LogEntry entry);
-        public delegate void TaskStartedEventHandler(string taskName, T args);
-        public delegate void TaskEndedEventHandler(string taskName, T args, Exception e);
+        public delegate void TaskStartedEventHandler(string taskName);
+        public delegate void TaskEndedEventHandler(string taskName, Exception e);
 
         public event TaskLogEventHandler EntryLogged;
         public event TaskStartedEventHandler Started;
@@ -72,19 +72,19 @@ namespace DotNet.Basics.Tasks
             if (args == null)
                 args = new T();
 
-            FireStarted(Name, args);
+            FireStarted(Name);
 
             try
             {
                 if (ct.IsCancellationRequested == false)
                     await InnerRunAsync(args, ct).ConfigureAwait(false);
 
-                FireEnded(Name, args);
+                FireEnded(Name);
                 return args;
             }
             catch (Exception e)
             {
-                FireEnded(Name, args, e);
+                FireEnded(Name, e);
                 throw;
             }
         }
@@ -104,15 +104,15 @@ namespace DotNet.Basics.Tasks
             EntryLogged?.Invoke(taskName, entry);
         }
 
-        protected void FireStarted(string taskName, T args)
+        protected void FireStarted(string taskName)
         {
-            Started?.Invoke(taskName, args);
+            Started?.Invoke(taskName);
             Log(LogLevel.Trace, $"Started: {Name} in ({GetType().FullName})");
         }
 
-        protected void FireEnded(string taskName, T args, Exception e = null)
+        protected void FireEnded(string taskName, Exception e = null)
         {
-            Ended?.Invoke(taskName, args, e);
+            Ended?.Invoke(taskName, e);
             if (e != null)
                 Log(LogLevel.Error, e.Message, e);
             Log(LogLevel.Trace, $"Ended: {Name} in ({GetType().FullName}");
