@@ -15,7 +15,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             var loggedEntries = 0;
             var task = new ManagedTask<EventArgs>((args, ct) => { });
-            task.EntryLogged += (name, le) => loggedEntries++;
+            task.EntryLogged += entry => loggedEntries++;
             var result = await task.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
             result.Should().BeOfType<EventArgs>();

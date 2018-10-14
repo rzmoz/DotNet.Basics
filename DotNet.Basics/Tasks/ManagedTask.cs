@@ -6,57 +6,18 @@ using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Tasks
 {
-    public abstract class ManagedTask : ITask
+    public class ManagedTask<T> : ITask, IHasLogging where T : class, new()
     {
+        private readonly Func<T, CancellationToken, Task> _task;
+
         private string _name;
 
-        public delegate void TaskLogEventHandler(string taskName, LogEntry entry);
         public delegate void TaskStartedEventHandler(string taskName);
         public delegate void TaskEndedEventHandler(string taskName, Exception e);
 
-        public event TaskLogEventHandler EntryLogged;
+        public event LogEntry.TaskLogEventHandler EntryLogged;
         public event TaskStartedEventHandler Started;
         public event TaskEndedEventHandler Ended;
-
-        protected ManagedTask(string name)
-        {
-            Name = name;
-        }
-
-        public string Name
-        {
-            get => _name;
-            set => _name = value ?? GetType().Name;
-        }
-
-        protected void Log(LogLevel level, string message, Exception e = null)
-        {
-            Log(Name, new LogEntry(level, message, e));
-        }
-
-        protected void Log(string taskName, LogEntry entry)
-        {
-            EntryLogged?.Invoke(taskName, entry);
-        }
-
-        protected void FireStarted(string taskName)
-        {
-            Started?.Invoke(taskName);
-            Log(LogLevel.Trace, $"Started: {Name} in ({GetType().FullName})");
-        }
-
-        protected void FireEnded(string taskName, Exception e = null)
-        {
-            Ended?.Invoke(taskName, e);
-            if (e != null)
-                Log(LogLevel.Error, e.Message, e);
-            Log(LogLevel.Trace, $"Ended: {Name} in ({GetType().FullName}");
-        }
-    }
-
-    public class ManagedTask<T> : ManagedTask where T : class, new()
-    {
-        private readonly Func<T, CancellationToken, Task> _task;
 
         public ManagedTask(string name) : this(name, (args, ct) => null)
         { }
@@ -85,9 +46,15 @@ namespace DotNet.Basics.Tasks
         { }
 
         public ManagedTask(string name, Func<T, CancellationToken, Task> task)
-        : base(name)
         {
             _task = task ?? throw new ArgumentNullException(nameof(task));
+            Name = name;
+        }
+
+        public string Name
+        {
+            get => _name;
+            set => _name = value ?? GetType().Name;
         }
 
         public Task<T> RunAsync()
@@ -125,6 +92,30 @@ namespace DotNet.Basics.Tasks
         protected virtual async Task InnerRunAsync(T args, CancellationToken ct)
         {
             await _task(args, ct).ConfigureAwait(false);
+        }
+
+        protected void Log(LogLevel level, string message, Exception e = null)
+        {
+            Log(new LogEntry(level, message, e));
+        }
+
+        protected void Log(LogEntry entry)
+        {
+            EntryLogged?.Invoke(entry);
+        }
+
+        protected void FireStarted(string taskName)
+        {
+            Started?.Invoke(taskName);
+            Log(LogLevel.Trace, $"Started: {Name} in ({GetType().FullName})");
+        }
+
+        protected void FireEnded(string taskName, Exception e = null)
+        {
+            Ended?.Invoke(taskName, e);
+            if (e != null)
+                Log(LogLevel.Error, e.Message, e);
+            Log(LogLevel.Trace, $"Ended: {Name} in ({GetType().FullName}");
         }
     }
 }

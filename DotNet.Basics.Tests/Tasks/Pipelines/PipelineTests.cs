@@ -72,7 +72,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var logEntries = new List<LogEntry>();
 
             var pipeline = new Pipeline<EventArgs>(() => provider, invoke);
-            pipeline.EntryLogged += (name, le) => logEntries.Add(le);
+            pipeline.EntryLogged += le => logEntries.Add(le);
 
             var count = 15;
             foreach (var i in Enumerable.Range(0, count))

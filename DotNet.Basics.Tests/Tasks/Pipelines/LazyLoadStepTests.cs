@@ -21,7 +21,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var errorMessage = "";
             var pipeline = new Pipeline<EventArgs>(services.BuildServiceProvider);
             pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
-            pipeline.EntryLogged += (name, le) => errorMessage = le.Message;
+            pipeline.EntryLogged += le => errorMessage = le.Message;
 
             var assert = pipeline.AssertLazyLoadSteps();
 
@@ -38,7 +38,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var errorMessage = "";
             var pipeline = new Pipeline<EventArgs>(services.BuildServiceProvider);
             pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
-            pipeline.EntryLogged += (name, le) => errorMessage = le.Message;
+            pipeline.EntryLogged += le => errorMessage = le.Message;
 
             //act
             var assert = pipeline.AssertLazyLoadSteps();

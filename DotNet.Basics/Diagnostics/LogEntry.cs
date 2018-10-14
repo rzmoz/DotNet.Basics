@@ -5,6 +5,8 @@ namespace DotNet.Basics.Diagnostics
 {
     public class LogEntry
     {
+        public delegate void TaskLogEventHandler(LogEntry entry);
+
         public LogEntry(LogLevel level, string message, Exception exception = null)
         {
             Level = level;
