@@ -48,7 +48,7 @@ namespace DotNet.Basics.Tasks
         {
             _task = task ?? throw new ArgumentNullException(nameof(task));
             Name = name;
-            Log = new LoggingContext(Name);
+            Log = new LoggingContext();
             Log.EntryLogged += e => EntryLogged?.Invoke(e);
         }
 

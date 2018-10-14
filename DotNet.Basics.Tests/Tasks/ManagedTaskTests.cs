@@ -43,7 +43,7 @@ namespace DotNet.Basics.Tests.Tasks
             //act
             await task.RunAsync().ConfigureAwait(false);
 
-            entriesLogged.Count(e => e.Message.EndsWith(message)).Should().Be(1);
+            entriesLogged.Count(e => e.Message == message).Should().Be(1);
         }
 
         [Fact]
