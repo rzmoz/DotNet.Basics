@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
+using DotNet.Basics.Reflection;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {
@@ -15,14 +15,6 @@ namespace DotNet.Basics.Tasks.Pipelines
         public static IEnumerable<Type> GetPipelineStepTypes(this Assembly assembly)
         {
             return assembly.GetTypesOf(typeof(PipelineStep<>));
-        }
-
-        public static IEnumerable<Type> GetTypesOf(this Assembly assembly, Type typeOf)
-        {
-            return assembly.GetTypes().Where(t => t.BaseType != null &&
-                                                  t.IsAbstract == false &&
-                                                  t.BaseType.IsGenericType &&
-                                                  t.BaseType.GetGenericTypeDefinition() == typeOf);
         }
     }
 }

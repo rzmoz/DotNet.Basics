@@ -6,23 +6,25 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks.Pipelines
 {
-    public class PipelineFactoryTests
+    public class PipelineExtensionsTests
     {
         [Fact]
         public void GetPipelineTypes_ScanForPipelines_PipelinesAreFound()
         {
-            var pipelines = typeof(PipelineFactoryTests).Assembly.GetPipelineTypes();
-            pipelines.Count().Should().Be(3);
+            var pipelines = typeof(PipelineExtensionsTests).Assembly.GetPipelineTypes();
+            pipelines.Count().Should().Be(4);
         }
 
         [Fact]
         public void GetPipelineStepTypes_ScanForPipelineSteps_PipelineStepsAreFound()
         {
-            var steps = typeof(PipelineFactoryTests).Assembly.GetPipelineStepTypes();
+            var steps = typeof(PipelineExtensionsTests).Assembly.GetPipelineStepTypes();
             steps.Count().Should().Be(6);
         }
 
-        public class PipelineFromGeneric : Pipeline<EventArgs<int>>
+        public class PipelineFromPipeline : Pipeline<EventArgs<int>>
+        { }
+        public class PipelineFromPipelinePipeline : PipelineFromPipeline
         { }
     }
 }
