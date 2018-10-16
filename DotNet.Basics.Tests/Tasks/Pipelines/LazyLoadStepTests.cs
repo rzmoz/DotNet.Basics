@@ -16,10 +16,8 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public void AssertLazyLoadSteps_MissingDirectRegistration_AssertHasEntries()
         {
-            var services = new ServiceCollection();
-            services.AddTransient<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
-            var errorMessage = "";
-            var pipeline = new Pipeline<EventArgs>(services.BuildServiceProvider);
+            var errorMessage = string.Empty;
+            var pipeline = new Pipeline<EventArgs>(services => services.AddTransient<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>());
             pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
             pipeline.EntryLogged += le => errorMessage = le.Message;
 
@@ -32,11 +30,10 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public void AssertLazyLoadSteps_MissingCtorRegistration_AssertHasEntries()
         {
-            var services = new ServiceCollection();
-            services.AddTransient(typeof(GenericThatTakesAnotherConcreteClassAsArgStep<>));
+            var errorMessage = string.Empty;
+            var pipeline = new Pipeline<EventArgs>(services => services.AddTransient(typeof(GenericThatTakesAnotherConcreteClassAsArgStep<>)));
 
-            var errorMessage = "";
-            var pipeline = new Pipeline<EventArgs>(services.BuildServiceProvider);
+
             pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
             pipeline.EntryLogged += le => errorMessage = le.Message;
 
@@ -70,9 +67,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public async Task AddStep_StepIsRegisteredInContainer_StepIsResolved()
         {
-            var services = new ServiceCollection();
-            services.AddTransient<AddLogEntryStep>();
-            var pipeline = new Pipeline<EventArgs>(services.BuildServiceProvider);
+            var pipeline = new Pipeline<EventArgs>(services => services.AddTransient<AddLogEntryStep>());
 
             pipeline.AddStep<AddLogEntryStep>();
 
@@ -92,14 +87,13 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         [Fact]
         public void AddStep_StepIsNotRegisteredProperlyInContainer_ExceptionIsThrownOnRun()
         {
-            var services = new ServiceCollection();
-            var pipeline = new Pipeline<EventArgs>(services.BuildServiceProvider);
+            var pipeline = new Pipeline<EventArgs>();
 
             pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
 
             Func<Task> act = async () => await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
-            act.Should().Throw<TaskLoadFailedException>();
+            act.Should().Throw<TaskNotResolvedFromServiceProviderException>();
         }
     }
 }

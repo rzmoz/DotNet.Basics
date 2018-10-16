@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {
@@ -14,25 +15,18 @@ namespace DotNet.Basics.Tasks.Pipelines
         private readonly ConcurrentQueue<ManagedTask<T>> _tasks;
         private readonly Func<T, CancellationToken, Task> _innerRun;
 
-        public Pipeline(Func<IServiceProvider> getServiceProvider = null) : this(getServiceProvider, Invoke.Sequential)
-        { }
-
-        public Pipeline(Invoke invoke) : this(null, null, invoke)
-        { }
-
-        public Pipeline(string name) : this(null, name, Invoke.Sequential)
-        { }
-        public Pipeline(string name, Invoke invoke)
+        public Pipeline(string name = null, Invoke invoke = Invoke.Sequential) 
             : this(null, name, invoke)
         { }
-        public Pipeline(Func<IServiceProvider> getServiceProvider, Invoke invoke)
-            : this(getServiceProvider, null, invoke)
+
+        public Pipeline(Action<IServiceCollection> configureServices, string name = null, Invoke invoke = Invoke.Sequential)
+            : this(GetServiceProvider(configureServices), name, invoke)
         { }
 
-        public Pipeline(Func<IServiceProvider> getServiceProvider, string name, Invoke invoke)
+        public Pipeline(Func<IServiceProvider> getServiceProvider, string name = null, Invoke invoke = Invoke.Sequential)
             : base(name)
         {
-            _getServiceProvider = getServiceProvider;
+            _getServiceProvider = getServiceProvider ?? new ServiceCollection().BuildServiceProvider;
             _tasks = new ConcurrentQueue<ManagedTask<T>>();
             Invoke = invoke;
             switch (Invoke)
@@ -170,8 +164,13 @@ namespace DotNet.Basics.Tasks.Pipelines
         private void InitEvents(ManagedTask<T> task)
         {
             task.EntryLogged += Log.Log;
-            task.Started += FireStarted;
-            task.Ended += FireEnded;
+        }
+
+        private static Func<IServiceProvider> GetServiceProvider(Action<IServiceCollection> configuresServices)
+        {
+            var services = new ServiceCollection();
+            configuresServices?.Invoke(services);
+            return () => services.BuildServiceProvider();
         }
     }
 }

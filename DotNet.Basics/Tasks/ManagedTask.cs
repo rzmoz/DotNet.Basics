@@ -18,6 +18,8 @@ namespace DotNet.Basics.Tasks
         private string _name;
 
         protected LoggingContext Log { get; }
+        protected bool MuteStarted { get; set; }
+        protected bool MuteEnded { get; set; }
 
         public ManagedTask(string name) : this(name, (args, log, ct) => null)
         { }
@@ -73,19 +75,23 @@ namespace DotNet.Basics.Tasks
             if (args == null)
                 args = new T();
 
-            FireStarted(Name);
+            if (MuteStarted == false)
+                FireStarted(Name);
 
             try
             {
                 if (ct.IsCancellationRequested == false)
                     await InnerRunAsync(args, ct).ConfigureAwait(false);
 
-                FireEnded(Name);
+                if (MuteEnded == false)
+                    FireEnded(Name);
                 return args;
             }
             catch (Exception e)
             {
-                FireEnded(Name, e);
+                if (MuteEnded == false)
+                    FireEnded(Name, e);
+                Log.LogError(e.Message, e);
                 throw;
             }
         }
@@ -98,15 +104,13 @@ namespace DotNet.Basics.Tasks
         protected void FireStarted(string taskName)
         {
             Started?.Invoke(taskName);
-            Log.LogTrace($"Started: {Name} in ({GetType().FullName})");
+            Log.LogTrace($"{Name} started");
         }
 
         protected void FireEnded(string taskName, Exception e = null)
         {
             Ended?.Invoke(taskName, e);
-            if (e != null)
-                Log.LogError(e.Message, e);
-            Log.LogTrace($"Ended: {Name} in ({GetType().FullName}");
+            Log.LogTrace($"{Name} ended");
         }
     }
 }

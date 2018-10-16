@@ -23,17 +23,19 @@ namespace DotNet.Basics.Tasks.Pipelines
         public LazyLoadStep(string name, Func<TTask> loadTask) : base(name ?? typeof(TTask).Name)
         {
             _loadTask = loadTask ?? throw new ArgumentNullException(nameof(loadTask));
+            MuteStarted = true;
+            MuteEnded = true;
         }
 
         protected override async Task InnerRunAsync(T args, CancellationToken ct)
         {
-            var mt = _loadTask();
-            if (mt == null)
-                throw new TaskLoadFailedException($"Name: {Name}");
+            var lazyLoadedTask = _loadTask();
+            if (lazyLoadedTask == null)
+                throw new TaskNotResolvedFromServiceProviderException($"Name: {Name}");
 
-            mt.EntryLogged += Log.Log;
-            await mt.RunAsync(args, ct).ConfigureAwait(false);
-            mt.EntryLogged -= Log.Log;
+            lazyLoadedTask.EntryLogged += Log.Log;
+            await lazyLoadedTask.RunAsync(args, ct).ConfigureAwait(false);
+            lazyLoadedTask.EntryLogged -= Log.Log;
         }
     }
 }

@@ -13,11 +13,12 @@ namespace DotNet.Basics.Tests.NLog
         {
             var services = new ServiceCollection();
 
+            //act
             services.AddNLogging(config => config.AddColoredConsoleTargetWithDotNetBasicsDefaultSettings());
 
+            //assert
             var provider = services.BuildServiceProvider();
             var log = provider.GetService<ILogger>();
-
             log.Should().BeOfType<Logger<ILogger>>();
         }
     }

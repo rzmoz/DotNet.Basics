@@ -5,13 +5,14 @@ namespace DotNet.Basics.Diagnostics
 {
     public class LoggingContext : IHasLogging
     {
-        public LoggingContext(string name = null)
+        public event LogEntry.TaskLogEventHandler EntryLogged;
+
+        public LoggingContext(string messagePrefix = null)
         {
-            Name = name;
+            MessagePrefix = messagePrefix;
         }
 
-        public string Name { get; }
-        public event LogEntry.TaskLogEventHandler EntryLogged;
+        public string MessagePrefix { get; }
 
         public void LogTrace(string message, Exception e = null)
         {
@@ -46,8 +47,8 @@ namespace DotNet.Basics.Diagnostics
         {
             if (entry == null)
                 return;
-            if (Name != null)
-                entry.AddMessagePrefix($"{Name}: ");
+            if (MessagePrefix != null)
+                entry.AddMessagePrefix($"{MessagePrefix} ");
             EntryLogged?.Invoke(entry);
         }
     }

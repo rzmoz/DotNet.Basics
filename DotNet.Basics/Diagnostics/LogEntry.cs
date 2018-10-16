@@ -8,12 +8,18 @@ namespace DotNet.Basics.Diagnostics
         public delegate void TaskLogEventHandler(LogEntry entry);
 
         public LogEntry(LogLevel level, string message, Exception exception = null)
+        : this(DateTime.Now, level, message, exception)
+        { }
+
+        public LogEntry(DateTime timeStamp, LogLevel level, string message, Exception exception)
         {
+            TimeStamp = timeStamp;
             Level = level;
-            Message = message ?? string.Empty;
+            Message = message;
             Exception = exception;
         }
 
+        public DateTime TimeStamp { get; }
         public LogLevel Level { get; }
         public string Message { get; private set; }
         public Exception Exception { get; }
@@ -26,7 +32,7 @@ namespace DotNet.Basics.Diagnostics
         public override string ToString()
         {
             var exceptionString = Exception == null ? string.Empty : $" | {Exception}";
-            return $"{Message}{exceptionString}";
+            return $"{TimeStamp:s}:<{Level}> {Message} {exceptionString}";
         }
     }
 }

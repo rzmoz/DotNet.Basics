@@ -6,7 +6,7 @@
     {
       "name": "DotNet.Basics",
       "version": "9.5.4",
-      "prerelease": "rc.6"
+      "prerelease": "rc.7"
     },
     {
       "name": "DotNet.Basics.Autofac",
