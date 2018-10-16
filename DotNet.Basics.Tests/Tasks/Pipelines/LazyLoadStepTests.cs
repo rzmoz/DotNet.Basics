@@ -24,7 +24,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var assert = pipeline.AssertLazyLoadSteps();
 
             assert.Should().BeFalse();
-            errorMessage.Should().Be("Failed to load: GenericThatTakesAnotherConcreteClassAsArgStep`1 - Unable to resolve service for type 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.ClassThatTakesAnAbstractClassAsCtorParam' while attempting to activate 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.GenericThatTakesAnotherConcreteClassAsArgStep`1[System.EventArgs]'.");
+            errorMessage.Should().Be("Pipeline<EventArgs>: Failed to load: GenericThatTakesAnotherConcreteClassAsArgStep`1 - Unable to resolve service for type 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.ClassThatTakesAnAbstractClassAsCtorParam' while attempting to activate 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.GenericThatTakesAnotherConcreteClassAsArgStep`1[System.EventArgs]'.");
         }
 
         [Fact]
@@ -41,17 +41,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             var assert = pipeline.AssertLazyLoadSteps();
 
             assert.Should().BeFalse();
-            errorMessage.Should().Be("Failed to load: GenericThatTakesAnotherConcreteClassAsArgStep`1 - Unable to resolve service for type 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.ClassThatTakesAnAbstractClassAsCtorParam' while attempting to activate 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.GenericThatTakesAnotherConcreteClassAsArgStep`1[System.EventArgs]'.");
-        }
-
-        [Fact]
-        public void GetTask_TaskExist_TaskIsRetrieved()
-        {
-            var lazyStep = new LazyLoadStep<EventArgs, ManagedTask<EventArgs>>("mystep", () => new ManagedTask<EventArgs>(""));
-
-            var task = lazyStep.GetTask();
-
-            task.Should().BeOfType(typeof(ManagedTask<>));
+            errorMessage.Should().Be("Pipeline<EventArgs>: Failed to load: GenericThatTakesAnotherConcreteClassAsArgStep`1 - Unable to resolve service for type 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.ClassThatTakesAnAbstractClassAsCtorParam' while attempting to activate 'DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers.GenericThatTakesAnotherConcreteClassAsArgStep`1[System.EventArgs]'.");
         }
 
         [Fact]

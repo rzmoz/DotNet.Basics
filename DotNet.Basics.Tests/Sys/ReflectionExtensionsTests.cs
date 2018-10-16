@@ -1,8 +1,8 @@
-﻿using Xunit;
-using DotNet.Basics.Reflection;
+﻿using DotNet.Basics.Sys;
 using FluentAssertions;
+using Xunit;
 
-namespace DotNet.Basics.Tests.Reflection
+namespace DotNet.Basics.Tests.Sys
 {
     public class ReflectionExtensionsTests
     {

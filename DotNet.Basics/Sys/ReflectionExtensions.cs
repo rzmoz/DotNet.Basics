@@ -3,10 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace DotNet.Basics.Reflection
+namespace DotNet.Basics.Sys
 {
     public static class ReflectionExtensions
     {
+        public static string GetNameWithGenericsExpanded(this Type type)
+        {
+            if (type == null)
+                return null;
+            var name = type.Name;
+            if (type.IsGenericType)
+            {
+                name = name.Substring(0, name.IndexOf('`'));
+                name += $"<{string.Join(",", type.GetGenericArguments().Select(t => t.GetNameWithGenericsExpanded()).ToArray())}>";
+            }
+            return name;
+        }
+
+
         public static bool IsBaseClassOf<T>(this Type baseClass)
         {
             if (baseClass == null) throw new ArgumentNullException(nameof(baseClass));

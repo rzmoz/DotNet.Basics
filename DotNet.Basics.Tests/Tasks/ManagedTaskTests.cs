@@ -43,7 +43,7 @@ namespace DotNet.Basics.Tests.Tasks
             //act
             await task.RunAsync().ConfigureAwait(false);
 
-            entriesLogged.Count(e => e.Message == message).Should().Be(1);
+            entriesLogged.Count(e => e.Message == $"ManagedTask<EventArgs>: {message}").Should().Be(1);
         }
 
         [Fact]
@@ -55,7 +55,7 @@ namespace DotNet.Basics.Tests.Tasks
             var result = await task.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
             result.Should().BeOfType<EventArgs>();
-            loggedEntries.Should().Be(2);//start+end are logged
+            loggedEntries.Should().Be(0);
         }
 
         [Fact]

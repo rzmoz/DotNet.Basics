@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {
@@ -20,22 +21,34 @@ namespace DotNet.Basics.Tasks.Pipelines
             return typeof(TTask);
         }
 
-        public LazyLoadStep(string name, Func<TTask> loadTask) : base(name ?? typeof(TTask).Name)
+        public LazyLoadStep(string name, Func<IServiceProvider> getServiceProviderTask) : base(name ?? typeof(TTask).GetNameWithGenericsExpanded())
         {
-            _loadTask = loadTask ?? throw new ArgumentNullException(nameof(loadTask));
-            MuteStarted = true;
-            MuteEnded = true;
+            if (getServiceProviderTask == null) throw new ArgumentNullException(nameof(getServiceProviderTask));
+
+            _loadTask = () =>
+            {
+                var serviceProvider = getServiceProviderTask.Invoke();
+                if (serviceProvider == null)
+                    throw new ServiceProviderIsNullException(Name);
+                return serviceProvider.GetService(typeof(TTask)) as TTask;
+            };
         }
 
         protected override async Task InnerRunAsync(T args, CancellationToken ct)
         {
             var lazyLoadedTask = _loadTask();
             if (lazyLoadedTask == null)
-                throw new TaskNotResolvedFromServiceProviderException($"Name: {Name}");
+                throw new TaskNotResolvedFromServiceProviderException(Name);
 
-            lazyLoadedTask.EntryLogged += Log.Log;
-            await lazyLoadedTask.RunAsync(args, ct).ConfigureAwait(false);
-            lazyLoadedTask.EntryLogged -= Log.Log;
+            try
+            {
+                lazyLoadedTask.EntryLogged += Log.Log;
+                await lazyLoadedTask.RunAsync(args, ct).ConfigureAwait(false);
+            }
+            finally
+            {
+                lazyLoadedTask.EntryLogged -= Log.Log;
+            }
         }
     }
 }

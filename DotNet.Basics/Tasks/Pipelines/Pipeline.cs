@@ -15,7 +15,7 @@ namespace DotNet.Basics.Tasks.Pipelines
         private readonly ConcurrentQueue<ManagedTask<T>> _tasks;
         private readonly Func<T, CancellationToken, Task> _innerRun;
 
-        public Pipeline(string name = null, Invoke invoke = Invoke.Sequential) 
+        public Pipeline(string name = null, Invoke invoke = Invoke.Sequential)
             : this(null, name, invoke)
         { }
 
@@ -62,7 +62,7 @@ namespace DotNet.Basics.Tasks.Pipelines
                 catch (InvalidOperationException e)
                 {
                     success = false;
-                    Log.LogCritical($"Failed to load: {lazyLoadStep.GetTaskType().Name} - {e.Message}", e);
+                    Log.LogError($"Failed to load: {lazyLoadStep.GetTaskType().Name} - {e.Message}", e);
                 }
             }
             return success;
@@ -70,13 +70,7 @@ namespace DotNet.Basics.Tasks.Pipelines
 
         public Pipeline<T> AddStep<TTask>(string name = null) where TTask : ManagedTask<T>
         {
-            var lazyTask = new LazyLoadStep<T, TTask>(name, () =>
-            {
-                var serviceProvider = _getServiceProvider?.Invoke();
-                if (serviceProvider == null)
-                    throw new NoServiceProviderInPipelineException($"Pipeline must be instantiated with an IServiceProvider when adding tasks by type");
-                return serviceProvider.GetService(typeof(TTask)) as TTask;
-            });
+            var lazyTask = new LazyLoadStep<T, TTask>(name, _getServiceProvider);
             InitEvents(lazyTask);
             _tasks.Enqueue(lazyTask);
             return this;
@@ -163,7 +157,9 @@ namespace DotNet.Basics.Tasks.Pipelines
 
         private void InitEvents(ManagedTask<T> task)
         {
+            task.Started += FireStarted;
             task.EntryLogged += Log.Log;
+            task.Ended += FireEnded;
         }
 
         private static Func<IServiceProvider> GetServiceProvider(Action<IServiceCollection> configuresServices)

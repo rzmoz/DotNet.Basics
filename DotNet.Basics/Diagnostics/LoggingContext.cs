@@ -7,12 +7,12 @@ namespace DotNet.Basics.Diagnostics
     {
         public event LogEntry.TaskLogEventHandler EntryLogged;
 
-        public LoggingContext(string messagePrefix = null)
+        public LoggingContext(string name)
         {
-            MessagePrefix = messagePrefix;
+            Name = name ?? string.Empty;
         }
 
-        public string MessagePrefix { get; }
+        public string Name { get; }
 
         public void LogTrace(string message, Exception e = null)
         {
@@ -43,12 +43,13 @@ namespace DotNet.Basics.Diagnostics
         {
             Log(new LogEntry(level, message, e));
         }
+
         public void Log(LogEntry entry)
         {
             if (entry == null)
                 return;
-            if (MessagePrefix != null)
-                entry.AddMessagePrefix($"{MessagePrefix} ");
+            if (Name != null)
+                entry.AddMessagePrefix($"{Name}: ");
             EntryLogged?.Invoke(entry);
         }
     }

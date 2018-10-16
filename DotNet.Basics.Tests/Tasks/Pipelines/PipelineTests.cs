@@ -19,23 +19,6 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
     public class PipelineTests
     {
         [Fact]
-        public async Task Events_StartedLog_EachTaskIsLoggedOnce()
-        {
-            var logEntries = new List<LogEntry>();
-
-            var pipeline = new Pipeline<EventArgs>(services => services.AddTransient<SimpleStep>());
-            pipeline.AddStep<SimpleStep>();//add from lazy load
-            pipeline.AddStep("InlineStep", (args, log, ct) => { });//add from inline
-            pipeline.AddBlock("InlineBlock");//add block
-            pipeline.EntryLogged += logEntries.Add;
-
-            await pipeline.RunAsync().ConfigureAwait(false);
-
-            logEntries.Count(e => e.Message.EndsWith("started")).Should().Be(4);
-        }
-
-
-        [Fact]
         public void RegisterPipelineSteps_RegisterSteps_StepsAndCtorParamsAreRegisteredRecursive()
         {
             AssertRegisterPipelineSteps<EventArgs>(p => { p.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(); });
@@ -90,9 +73,9 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             foreach (var i in Enumerable.Range(0, count))
                 pipeline.AddStep<AddLogEntryStep>();
 
-            await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await pipeline.RunAsync().ConfigureAwait(false);
 
-            logEntries.Count(e => e.Message == nameof(AddLogEntryStep)).Should().Be(count);
+            logEntries.Count.Should().Be(count);
             logEntries.All(i => i.Exception == null).Should().BeTrue();
         }
 
@@ -302,48 +285,39 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
         public async Task RunAsync_Events_StartAndEndEventsAreRaised()
         {
             //arrange
-            string pipelineStarted = string.Empty;
-            string pipelineEnded = string.Empty;
-            string blockStarted = string.Empty;
-            string blockEnded = string.Empty;
-            string stepStarted = string.Empty;
-            string stepEnded = string.Empty;
+            var started = new List<string>();
+            var logEntries = new List<string>();
+            var ended = new List<string>();
+
 
             var pipeline = new Pipeline<EventArgs<int>>(services =>
             {
                 services.AddSingleton<IncrementArgsStep>();
             });
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
+            pipeline.AddStep("StepInline", (args, log, ct) => { });
 
-            pipeline.Started += name =>
-            {
-                if (name.EndsWith("step", StringComparison.OrdinalIgnoreCase))
-                    stepStarted = name;
-                else if (name.StartsWith("block", StringComparison.OrdinalIgnoreCase))
-                    blockStarted = name;
-                else if (name.StartsWith("pipeline", StringComparison.OrdinalIgnoreCase))
-                    pipelineStarted = name;
-            };
-            pipeline.Ended += (name, e) =>
-            {
-                if (name.EndsWith("step", StringComparison.OrdinalIgnoreCase))
-                    stepEnded = name;
-                else if (name.StartsWith("block", StringComparison.OrdinalIgnoreCase))
-                    blockEnded = name;
-                else if (name.StartsWith("pipeline", StringComparison.OrdinalIgnoreCase))
-                    pipelineEnded = name;
-            };
+            pipeline.Started += started.Add;
+            pipeline.Ended += (name, e) => ended.Add(name);
+            pipeline.EntryLogged += e => logEntries.Add(e.Message);
 
             //act
             await pipeline.RunAsync().ConfigureAwait(false);
 
             //assert
-            pipelineStarted.Should().Be("Pipeline`1", nameof(pipelineStarted));
-            pipelineEnded.Should().Be("Pipeline`1", nameof(pipelineEnded));
-            blockStarted.Should().Be("Block 0", nameof(blockStarted));
-            blockEnded.Should().Be("Block 0", nameof(blockEnded));
-            stepStarted.Should().Be("IncrementArgsStep", nameof(stepStarted));
-            stepEnded.Should().Be("IncrementArgsStep", nameof(stepEnded));
+            started.Count.Should().Be(4);
+            logEntries.Count.Should().Be(0);
+            ended.Count.Should().Be(4);
+
+            started.Count(s => s == "Pipeline<EventArgs<Int32>>").Should().Be(1);
+            started.Count(s => s == "Block 0").Should().Be(1);
+            started.Count(s => s == "IncrementArgsStep").Should().Be(1);
+            started.Count(s => s == "StepInline").Should().Be(1);
+
+            ended.Count(s => s == "Pipeline<EventArgs<Int32>>").Should().Be(1);
+            ended.Count(s => s == "Block 0").Should().Be(1);
+            ended.Count(s => s == "IncrementArgsStep").Should().Be(1);
+            ended.Count(s => s == "StepInline").Should().Be(1);
         }
     }
 }

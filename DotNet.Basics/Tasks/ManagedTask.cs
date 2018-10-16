@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Diagnostics;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Tasks
 {
@@ -18,8 +19,6 @@ namespace DotNet.Basics.Tasks
         private string _name;
 
         protected LoggingContext Log { get; }
-        protected bool MuteStarted { get; set; }
-        protected bool MuteEnded { get; set; }
 
         public ManagedTask(string name) : this(name, (args, log, ct) => null)
         { }
@@ -50,15 +49,17 @@ namespace DotNet.Basics.Tasks
         {
             _task = task ?? throw new ArgumentNullException(nameof(task));
             Name = name;
-            Log = new LoggingContext();
+            Log = new LoggingContext(Name);
             Log.EntryLogged += e => EntryLogged?.Invoke(e);
         }
 
         public string Name
         {
             get => _name;
-            set => _name = value ?? GetType().Name;
+            set => _name = value ?? GetType().GetNameWithGenericsExpanded();
         }
+
+        
 
         public Task<T> RunAsync()
         {
@@ -75,23 +76,19 @@ namespace DotNet.Basics.Tasks
             if (args == null)
                 args = new T();
 
-            if (MuteStarted == false)
-                FireStarted(Name);
-
+            FireStarted(Name);
             try
             {
                 if (ct.IsCancellationRequested == false)
                     await InnerRunAsync(args, ct).ConfigureAwait(false);
 
-                if (MuteEnded == false)
-                    FireEnded(Name);
+                FireEnded(Name);
                 return args;
             }
             catch (Exception e)
             {
-                if (MuteEnded == false)
-                    FireEnded(Name, e);
-                Log.LogError(e.Message, e);
+
+                FireEnded(Name, e);
                 throw;
             }
         }
@@ -101,16 +98,14 @@ namespace DotNet.Basics.Tasks
             await _task(args, Log, ct).ConfigureAwait(false);
         }
 
-        protected void FireStarted(string taskName)
+        protected virtual void FireStarted(string taskName)
         {
             Started?.Invoke(taskName);
-            Log.LogTrace($"{Name} started");
         }
 
-        protected void FireEnded(string taskName, Exception e = null)
+        protected virtual void FireEnded(string taskName, Exception e = null)
         {
             Ended?.Invoke(taskName, e);
-            Log.LogTrace($"{Name} ended");
         }
     }
 }
