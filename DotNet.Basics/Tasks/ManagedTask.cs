@@ -6,7 +6,7 @@ using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Tasks
 {
-    public class ManagedTask<T> : ITask, IHasLogging where T : class, new()
+    public abstract class ManagedTask : ITask
     {
         public delegate void TaskStartedEventHandler(string taskName);
         public delegate void TaskEndedEventHandler(string taskName, Exception e);
@@ -15,8 +15,22 @@ namespace DotNet.Basics.Tasks
         public event TaskStartedEventHandler Started;
         public event TaskEndedEventHandler Ended;
 
+        protected ManagedTask(string name = null)
+        {
+            Name = name ?? GetType().GetNameWithGenericsExpanded();
+        }
+
+        public string Name { get; }
+    }
+
+    public class ManagedTask<T> : ManagedTask where T : class, new()
+    {
+        public event LogEntry.TaskLogEventHandler EntryLogged;
+        public event TaskStartedEventHandler Started;
+        public event TaskEndedEventHandler Ended;
+
         private readonly Func<T, LoggingContext, CancellationToken, Task> _task;
-        private string _name;
+
 
         protected LoggingContext Log { get; }
 
@@ -46,20 +60,12 @@ namespace DotNet.Basics.Tasks
         { }
 
         public ManagedTask(string name, Func<T, LoggingContext, CancellationToken, Task> task)
+        : base(name)
         {
             _task = task ?? throw new ArgumentNullException(nameof(task));
-            Name = name;
             Log = new LoggingContext(Name);
             Log.EntryLogged += e => EntryLogged?.Invoke(e);
         }
-
-        public string Name
-        {
-            get => _name;
-            set => _name = value ?? GetType().GetNameWithGenericsExpanded();
-        }
-
-        
 
         public Task<T> RunAsync()
         {

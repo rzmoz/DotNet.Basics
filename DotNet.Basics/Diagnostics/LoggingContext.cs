@@ -7,7 +7,7 @@ namespace DotNet.Basics.Diagnostics
     {
         public event LogEntry.TaskLogEventHandler EntryLogged;
 
-        public LoggingContext(string name)
+        public LoggingContext(string name = null)
         {
             Name = name ?? string.Empty;
         }
@@ -48,7 +48,7 @@ namespace DotNet.Basics.Diagnostics
         {
             if (entry == null)
                 return;
-            if (Name != null)
+            if (string.IsNullOrWhiteSpace(Name) == false)
                 entry.AddMessagePrefix($"{Name}: ");
             EntryLogged?.Invoke(entry);
         }
