@@ -49,7 +49,7 @@ namespace DotNet.Basics.Diagnostics
             if (entry == null)
                 return;
             if (string.IsNullOrWhiteSpace(Name) == false)
-                entry.AddMessagePrefix($"{Name}: ");
+                entry.AddMessagePrefix($"{Name} / ");
             EntryLogged?.Invoke(entry);
         }
     }

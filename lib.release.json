@@ -5,8 +5,8 @@
   "releases": [
     {
       "name": "DotNet.Basics",
-      "version": "9.5.4",
-      "prerelease": "rc.9"
+      "version": "9.5.5",
+      "prerelease": "rc.1"
     },
     {
       "name": "DotNet.Basics.Autofac",
