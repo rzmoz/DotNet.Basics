@@ -21,16 +21,26 @@ namespace DotNet.Basics.Tasks
         }
 
         public string Name { get; }
+
+        protected virtual void FireStarted(string taskName)
+        {
+            Started?.Invoke(taskName);
+        }
+
+        protected virtual void FireEnded(string taskName, Exception e = null)
+        {
+            Ended?.Invoke(taskName, e);
+        }
+
+        protected virtual void FireEntryLogged(LogEntry entry)
+        {
+            EntryLogged?.Invoke(entry);
+        }
     }
 
     public class ManagedTask<T> : ManagedTask where T : class, new()
     {
-        public event LogEntry.TaskLogEventHandler EntryLogged;
-        public event TaskStartedEventHandler Started;
-        public event TaskEndedEventHandler Ended;
-
         private readonly Func<T, LoggingContext, CancellationToken, Task> _task;
-
 
         protected LoggingContext Log { get; }
 
@@ -64,7 +74,7 @@ namespace DotNet.Basics.Tasks
         {
             _task = task ?? throw new ArgumentNullException(nameof(task));
             Log = new LoggingContext(Name);
-            Log.EntryLogged += e => EntryLogged?.Invoke(e);
+            Log.EntryLogged += FireEntryLogged;
         }
 
         public Task<T> RunAsync()
@@ -102,16 +112,6 @@ namespace DotNet.Basics.Tasks
         protected virtual async Task InnerRunAsync(T args, CancellationToken ct)
         {
             await _task(args, Log, ct).ConfigureAwait(false);
-        }
-
-        protected virtual void FireStarted(string taskName)
-        {
-            Started?.Invoke(taskName);
-        }
-
-        protected virtual void FireEnded(string taskName, Exception e = null)
-        {
-            Ended?.Invoke(taskName, e);
         }
     }
 }
