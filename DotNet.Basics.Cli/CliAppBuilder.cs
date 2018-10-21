@@ -31,7 +31,7 @@ namespace DotNet.Basics.Cli
             return this;
         }
 
-        public ICliAppBuilder ConfigureServiceProvider(Func<IServiceCollection, IServiceProvider> configureServiceProvider)
+        public ICliAppBuilder CreateServiceProvider(Func<IServiceCollection, IServiceProvider> configureServiceProvider)
         {
             _configureServiceProvider = configureServiceProvider;
             return this;

@@ -9,20 +9,32 @@ namespace DotNet.Basics.Tests.Autofac
 {
     public class AutofacExtensionsTests
     {
-        private readonly ContainerBuilder _builder;
-
-        public AutofacExtensionsTests()
+        [Fact]
+        public void BuildAutofacServiceProvider_Build_InitializeAutofacProvider()
         {
-            _builder = new ContainerBuilder();
+            //arrange
+            var services = new ServiceCollection();
+            services.AddTransient<TypeWithValue>();
+
+            //act
+            var serviceProvider = services.BuildAutofacServiceProvider();
+
+            //assert
+            //resolve registered Type
+            var myType = serviceProvider.GetService<TypeWithValue>();
+            myType.Should().BeOfType<TypeWithValue>();
+            //resolve unregistered Type
+            var unregisteredType = serviceProvider.GetService<AutofacExtensionsTests>();
+            unregisteredType.Should().BeNull();
         }
 
         [Fact]
         public void EnableResolvingIfTypesNotRegistered_UnRegisteredTypes_TypesAreResolved()
         {
             //act
-            _builder.EnableResolvingIfTypesNotRegistered();
+            var builder = new ContainerBuilder().EnableResolvingIfTypesNotRegistered();
 
-            var serviceProvider = _builder.BuildServiceProvider();
+            var serviceProvider = builder.BuildServiceProvider();
             var myType = serviceProvider.GetService<TypeWithValue>();
             myType.Should().BeOfType<TypeWithValue>();
         }

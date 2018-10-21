@@ -45,7 +45,7 @@ namespace DotNet.Basics.Tests.Cli
             var appWithDefaultServiceProvider = new CliAppBuilder().Build();
             appWithDefaultServiceProvider.ServiceProvider.Should().BeOfType<ServiceProvider>();
 
-            var appWithCustomServiceProvider = new CliAppBuilder().ConfigureServiceProvider(services => new MyServiceProvider()).Build();
+            var appWithCustomServiceProvider = new CliAppBuilder().CreateServiceProvider(services => new MyServiceProvider()).Build();
             appWithCustomServiceProvider.ServiceProvider.Should().BeOfType<MyServiceProvider>();
         }
 
@@ -89,7 +89,7 @@ namespace DotNet.Basics.Tests.Cli
                 servicesConfigured.Should().BeFalse();
                 servicesConfigured = true;
             });
-            appBuilder.ConfigureServiceProvider(services =>
+            appBuilder.CreateServiceProvider(services =>
             {
                 servicesConfigured.Should().BeTrue();
                 serviceProviderConfigured = true;

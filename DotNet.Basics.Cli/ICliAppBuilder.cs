@@ -9,7 +9,7 @@ namespace DotNet.Basics.Cli
         ICliAppBuilder ConfigureLogging(Action<IServiceCollection> configureServices);
         ICliAppBuilder ConfigureConfiguration(Action<IConfigurationBuilder> configureConfiguration);
         ICliAppBuilder ConfigureServices(Action<IServiceCollection> configureServices);
-        ICliAppBuilder ConfigureServiceProvider(Func<IServiceCollection, IServiceProvider> configureServiceProvider);
+        ICliAppBuilder CreateServiceProvider(Func<IServiceCollection, IServiceProvider> configureServiceProvider);
 
         ICliApp Build();
     }
