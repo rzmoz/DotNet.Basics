@@ -45,8 +45,8 @@ namespace DotNet.Basics.Tests.Cli
             var appWithDefaultServiceProvider = new CliAppBuilder().Build();
             appWithDefaultServiceProvider.ServiceProvider.Should().BeOfType<ServiceProvider>();
 
-            var appWithCustomServiceProvider = new CliAppBuilder().ConfigureServiceProvider(services => new AutofacBuilder().ServiceProvider).Build();
-            appWithCustomServiceProvider.ServiceProvider.Should().BeOfType<AutofacServiceProvider>();
+            var appWithCustomServiceProvider = new CliAppBuilder().ConfigureServiceProvider(services => new MyServiceProvider()).Build();
+            appWithCustomServiceProvider.ServiceProvider.Should().BeOfType<MyServiceProvider>();
         }
 
         [Fact]

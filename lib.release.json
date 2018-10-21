@@ -11,7 +11,7 @@
     {
       "name": "DotNet.Basics.Autofac",
       "version": "4.8.1",
-      "prerelease": "rc.5"
+      "prerelease": ""
     },
     {
       "name": "DotNet.Basics.Cli",

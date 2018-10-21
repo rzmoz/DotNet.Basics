@@ -1,13 +1,13 @@
-﻿using Autofac;
-using DotNet.Basics.Autofac;
+﻿using DotNet.Basics.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DotNet.Basics.Tests.Autofac.TestHelpers
 {
-    public class MyAutofacRegistrations : IAutofacRegistrations
+    public class MyAutofacRegistrations : IConfigureServices
     {
-        public void RegisterIn(ContainerBuilder builder)
+        public void Configure(IServiceCollection services)
         {
-            builder.RegisterType<MyType1>().As<IMyType>();
+            services.AddTransient<IMyType, MyType1>();
         }
     }
 }
