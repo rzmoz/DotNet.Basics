@@ -25,17 +25,17 @@ namespace DotNet.Basics.NLog
                 target.Name = target.GetType().FullName;
             config.AddTarget(target);
 
-            var rule = new LoggingRule("*", target);
-            rule.EnableLoggingForLevels(LogLevel.Trace, LogLevel.Fatal);
+            var rule = new LoggingRule("*", LogLevel.Trace, LogLevel.Fatal, target);
             configureLoggingRule?.Invoke(rule);
             config.LoggingRules.Add(rule);
             return config;
         }
 
-        public static void ConfigureNLogging(this LoggingConfiguration config, Action<LoggingConfiguration> configureNLog = null, TimeSource timeSource = null)
+        public static void ConfigureNLog(this LoggingConfiguration config, Action<LoggingConfiguration> configureNLog = null, TimeSource timeSource = null)
         {
             TimeSource.Current = timeSource ?? new FastUtcTimeSource();
             configureNLog?.Invoke(config);
+            LogManager.Configuration = config;
         }
     }
 }

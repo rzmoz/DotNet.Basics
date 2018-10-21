@@ -2,7 +2,7 @@
 using System.IO;
 using DotNet.Basics.IO;
 using DotNet.Basics.Tests.IO.Testa;
-using DotNet.Basics.TestsRoot;
+
 using DotNet.Basics.Sys;
 using FluentAssertions;
 using Xunit;
@@ -18,7 +18,7 @@ namespace DotNet.Basics.Tests.IO
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        public void CopyTo_EnsureTargetdir_TargetDirIsEnsured(bool ensureTargetDir)
+        public void CopyTo_EnsureTargetDir_TargetDirIsEnsured(bool ensureTargetDir)
         {
             ArrangeActAssertPaths(dir =>
             {

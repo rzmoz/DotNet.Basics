@@ -10,11 +10,11 @@ namespace DotNet.Basics.SevenZip
     {
         private static readonly Assembly _sevenZipAssembly = typeof(SevenZipExe).Assembly;
 
-        private readonly CliApplication _sevenZipApp;
+        private readonly CmdApplication _sevenZipApp;
 
         public SevenZipExe(DirPath installDir)
         {
-            _sevenZipApp = new CliApplication(installDir.ToDir("7Zip"), "7za.exe", _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.exe"))
+            _sevenZipApp = new CmdApplication(installDir.ToDir("7Zip"), "7za.exe", _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.exe"))
                 .WithFile("7za.dll", _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.dll"))
                 .WithFile("7zxa.dll", _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7zxa.dll"));
         }

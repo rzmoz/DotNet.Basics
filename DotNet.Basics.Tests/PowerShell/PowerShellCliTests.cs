@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using DotNet.Basics.PowerShell;
-using DotNet.Basics.TestsRoot;
+
 using DotNet.Basics.IO;
 using FluentAssertions;
 using Xunit;

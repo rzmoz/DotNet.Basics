@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using DotNet.Basics.SevenZip;
 using DotNet.Basics.Sys;
-using DotNet.Basics.TestsRoot;
+
 using DotNet.Basics.IO;
 using FluentAssertions;
 using Xunit;

@@ -4,7 +4,7 @@ using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using Xunit.Abstractions;
 
-namespace DotNet.Basics.TestsRoot
+namespace DotNet.Basics.Tests
 {
     public abstract class TestWithHelpers
     {
@@ -45,9 +45,9 @@ namespace DotNet.Basics.TestsRoot
             Robocopy.Run(emptyDir.FullName(), rootDir.FullName(), "/MIR");//robust clean dir pre testing
             try
             {
-                var testRootdir = rootDir.Add(TestPathPrefix);
-                Output.WriteLine($"TestRootDir: {testRootdir}");
-                arrangeActAssert?.Invoke(testRootdir);
+                var testRootDir = rootDir.Add(TestPathPrefix);
+                Output.WriteLine($"TestRootDir: {testRootDir}");
+                arrangeActAssert?.Invoke(testRootDir);
             }
             finally
             {

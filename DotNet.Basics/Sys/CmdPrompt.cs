@@ -1,6 +1,6 @@
 ﻿namespace DotNet.Basics.Sys
 {
-    public static class CliPrompt
+    public static class CmdPrompt
     {
         public static (string Input, int ExitCode, string Output) Run(string commandString)
         {

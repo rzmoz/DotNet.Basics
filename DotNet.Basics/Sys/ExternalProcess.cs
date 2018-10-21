@@ -23,7 +23,7 @@ namespace DotNet.Basics.Sys
                 using (var process = new Process { StartInfo = si })
                 {
                     process.Start();
-                    logger?.Invoke($"Nee process started: [{process.Id}] {path} {args}");
+                    logger?.Invoke($"Process started: [{process.Id}] {path} {args}");
                     var result = process.StandardOutput.ReadToEnd();
                     process.WaitForExit();
                     logger?.Invoke($"Process [{process.Id}] exited with code: {process.ExitCode}");

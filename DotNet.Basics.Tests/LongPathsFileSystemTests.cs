@@ -1,10 +1,11 @@
 ﻿using System.IO;
 using DotNet.Basics.IO;
+
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DotNet.Basics.TestsRoot
+namespace DotNet.Basics.Tests
 {
     public abstract class LongPathsFileSystemTests : TestWithHelpers
     {
