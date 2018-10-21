@@ -128,21 +128,17 @@ namespace DotNet.Basics.Tasks.Pipelines
             return block;
         }
 
-        protected override async Task InnerRunAsync(T args, CancellationToken ct)
+        protected override Task InnerRunAsync(T args, CancellationToken ct)
         {
-            await _innerRun(args, ct).ConfigureAwait(false);
+            return _innerRun(args, ct);
         }
 
-        protected async Task InnerParallelRunAsync(T args, CancellationToken ct)
+        protected Task InnerParallelRunAsync(T args, CancellationToken ct)
         {
             if (ct.IsCancellationRequested)
-                return;
-            var tasks = Tasks.Select(async task =>
-            {
-                await task.RunAsync(args, ct).ConfigureAwait(false);
-
-            }).ToList();
-            await Task.WhenAll(tasks).ConfigureAwait(false);
+                return Task.CompletedTask;
+            var tasks = Tasks.Select(task => task.RunAsync(args, ct));
+            return Task.WhenAll(tasks);
         }
 
         protected async Task InnerSequentialRunAsync(T args, CancellationToken ct)

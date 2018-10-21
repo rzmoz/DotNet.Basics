@@ -109,9 +109,9 @@ namespace DotNet.Basics.Tasks
             }
         }
 
-        protected virtual async Task InnerRunAsync(T args, CancellationToken ct)
+        protected virtual Task InnerRunAsync(T args, CancellationToken ct)
         {
-            await _task(args, Log, ct).ConfigureAwait(false);
+            return _task(args, Log, ct);
         }
     }
 }

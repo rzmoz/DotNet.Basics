@@ -26,9 +26,9 @@ namespace DotNet.Basics.Collections
             Parallel.ForEach(col, forEachAction);
         }
 
-        public static async Task ForEachParallelAsync<T>(this IEnumerable<T> col, Func<T, Task> forEachAction)
+        public static Task ForEachParallelAsync<T>(this IEnumerable<T> col, Func<T, Task> forEachAction)
         {
-            await Task.WhenAll(col.Select(forEachAction)).ConfigureAwait(false);
+            return Task.WhenAll(col.Select(forEachAction));
         }
 
         public static void ForEach<T>(this IEnumerable<T> col, Action<T> forEachAction)

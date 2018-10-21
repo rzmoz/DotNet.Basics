@@ -16,10 +16,10 @@ namespace DotNet.Basics.Cli
         public IConfigurationRoot Configuration { get; }
         public IServiceProvider ServiceProvider { get; }
 
-        public async Task<int> RunAsync(Func<IConfigurationRoot, IServiceProvider, Task<int>> runAsync)
+        public Task<int> RunAsync(Func<IConfigurationRoot, IServiceProvider, Task<int>> runAsync)
         {
             if (runAsync == null) throw new ArgumentNullException(nameof(runAsync));
-            return await runAsync.Invoke(Configuration, ServiceProvider).ConfigureAwait(false);
+            return runAsync.Invoke(Configuration, ServiceProvider);
         }
     }
 }

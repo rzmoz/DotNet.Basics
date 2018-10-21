@@ -34,7 +34,7 @@ namespace DotNet.Basics.Tasks.Pipelines
             };
         }
 
-        protected override async Task InnerRunAsync(T args, CancellationToken ct)
+        protected override Task InnerRunAsync(T args, CancellationToken ct)
         {
             var lazyLoadedTask = _loadTask();
             if (lazyLoadedTask == null)
@@ -43,7 +43,7 @@ namespace DotNet.Basics.Tasks.Pipelines
             try
             {
                 lazyLoadedTask.EntryLogged += Log.Log;
-                await lazyLoadedTask.RunAsync(args, ct).ConfigureAwait(false);
+                return lazyLoadedTask.RunAsync(args, ct);
             }
             finally
             {

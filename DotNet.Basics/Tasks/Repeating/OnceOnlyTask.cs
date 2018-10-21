@@ -42,9 +42,9 @@ namespace DotNet.Basics.Tasks.Repeating
         {
             _syncTask();
         }
-        public async Task RunAsync()
+        public Task RunAsync()
         {
-            await _asyncTask().ConfigureAwait(false);
+            return _asyncTask();
         }
     }
 }

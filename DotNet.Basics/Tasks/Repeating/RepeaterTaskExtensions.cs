@@ -22,22 +22,22 @@ namespace DotNet.Basics.Tasks.Repeating
             return task;
         }
 
-        public static async Task<bool> UntilNoExceptionsAsync(this RepeaterTask task)
+        public static Task<bool> UntilNoExceptionsAsync(this RepeaterTask task)
         {
-            return await task.UntilAsync(e => e == null).ConfigureAwait(false);
+            return task.UntilAsync(e => e == null);
         }
 
-        public static async Task<bool> UntilAsync(this RepeaterTask task, Func<bool> untilPredicate)
+        public static Task<bool> UntilAsync(this RepeaterTask task, Func<bool> untilPredicate)
         {
-            return await task.UntilAsync(e => untilPredicate()).ConfigureAwait(false);
+            return task.UntilAsync(e => untilPredicate());
         }
 
-        private static async Task<bool> UntilAsync(this RepeaterTask task, Func<Exception, bool> untilPredicate)
+        private static Task<bool> UntilAsync(this RepeaterTask task, Func<Exception, bool> untilPredicate)
         {
             try
             {
                 var runner = new RepeaterTaskRunner();
-                return await runner.RunAsync(task, untilPredicate, task.Options).ConfigureAwait(false);
+                return runner.RunAsync(task, untilPredicate, task.Options);
             }
             catch (AggregateException ae)
             {
@@ -66,7 +66,7 @@ namespace DotNet.Basics.Tasks.Repeating
             }
             catch (AggregateException ae)
             {
-                throw ae.InnerException??ae;
+                throw ae.InnerException ?? ae;
             }
         }
     }
