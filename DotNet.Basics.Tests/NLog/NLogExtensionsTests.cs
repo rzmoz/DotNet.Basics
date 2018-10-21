@@ -14,7 +14,7 @@ namespace DotNet.Basics.Tests.NLog
             var services = new ServiceCollection();
 
             //act
-            services.AddNLogging(config => config.AddColoredConsoleTargetWithDotNetBasicsDefaultSettings());
+            services.AddNLogging(config => config.AddColoredConsoleTarget());
 
             //assert
             var provider = services.BuildServiceProvider();
