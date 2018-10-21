@@ -2,11 +2,15 @@
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNet.Basics.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Tasks.Repeating
 {
-    public class RepeaterTaskRunner
+    public class RepeaterTaskRunner : IHasLogging
     {
+        public event LogEntry.TaskLogEventHandler EntryLogged;
+
         public async Task<bool> RunAsync(ManagedTask<EventArgs> task, Func<Exception, Task<bool>> untilPredicate, RepeatOptions options = null)
         {
             if (task == null)
@@ -88,9 +92,9 @@ namespace DotNet.Basics.Tasks.Repeating
             {
                 options.PingOnRetry();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                //TODO: Write to debug
+                EntryLogged?.Invoke(new LogEntry(LogLevel.Warning, e.Message, e));
             }
         }
 
