@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>Convenient helpers for working with NLog and Microsoft.Extensions.Logging + Microsoft.Extensions.DependencyInjection</Description>
+    <Description>Syntactical sugar for bootstrapping ILogger and IServiceCollection with NLog</Description>
     <PackageProjectUrl>
     </PackageProjectUrl>
-    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <PackageLicenseUrl>https://github.com/NLog/NLog/blob/dev/LICENSE.txt</PackageLicenseUrl>
     <Authors>rzmoz</Authors>
     <Company />
     <Product />
