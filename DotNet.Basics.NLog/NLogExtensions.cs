@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using NLog.Config;
 using NLog.Extensions.Logging;
-using NLog.Targets;
 
 namespace DotNet.Basics.NLog
 {
