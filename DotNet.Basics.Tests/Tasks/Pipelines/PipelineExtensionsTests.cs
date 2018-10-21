@@ -1,13 +1,43 @@
 ﻿using System.Linq;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks.Pipelines;
+using DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Tasks.Pipelines
 {
     public class PipelineExtensionsTests
     {
+        [Fact]
+        public void AddPipelines_AddToServiceCollection_PipelinesAreAdded()
+        {
+            var services = new ServiceCollection();
+
+            //act
+            services.AddPipelines(typeof(PipelineExtensionsTests).Assembly);
+
+            var provider = services.BuildServiceProvider();
+
+            var step = provider.GetService<PipelineFromPipeline>();
+            step.Should().BeOfType<PipelineFromPipeline>();
+        }
+
+        [Fact]
+        public void AddPipelineTypes_AddToServiceCollection_StepsAreAdded()
+        {
+            var services = new ServiceCollection();
+
+            //act
+            services.AddPipelineSteps(typeof(PipelineExtensionsTests).Assembly);
+
+            var provider = services.BuildServiceProvider();
+
+            var step = provider.GetService<AddLogEntryStep>();
+            step.Should().BeOfType<AddLogEntryStep>();
+        }
+
         [Fact]
         public void GetPipelineTypes_ScanForPipelines_PipelinesAreFound()
         {
