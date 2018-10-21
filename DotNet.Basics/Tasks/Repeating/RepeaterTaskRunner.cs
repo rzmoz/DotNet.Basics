@@ -7,7 +7,7 @@ namespace DotNet.Basics.Tasks.Repeating
 {
     public class RepeaterTaskRunner
     {
-        public async Task<bool> RunAsync(ManagedTask<EventArgs> task, Func<Exception, bool> untilPredicate, RepeatOptions options = null)
+        public async Task<bool> RunAsync(ManagedTask<EventArgs> task, Func<Exception, Task<bool>> untilPredicate, RepeatOptions options = null)
         {
             if (task == null)
                 return false;
@@ -44,7 +44,7 @@ namespace DotNet.Basics.Tasks.Repeating
                         options.RepeatMaxTriesPredicate?.LoopCallback();
                     }
 
-                    if (untilPredicate.Invoke(exceptionInLastLoop))
+                    if (await untilPredicate.Invoke(exceptionInLastLoop).ConfigureAwait(false))
                     {
                         success = true;
                         break;

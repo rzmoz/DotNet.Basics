@@ -24,15 +24,15 @@ namespace DotNet.Basics.Tasks.Repeating
 
         public static Task<bool> UntilNoExceptionsAsync(this RepeaterTask task)
         {
-            return task.UntilAsync(e => e == null);
+            return task.UntilAsync(e => Task.FromResult(e == null));
         }
 
-        public static Task<bool> UntilAsync(this RepeaterTask task, Func<bool> untilPredicate)
+        public static Task<bool> UntilAsync(this RepeaterTask task, Func<Task<bool>> untilPredicate)
         {
             return task.UntilAsync(e => untilPredicate());
         }
 
-        private static Task<bool> UntilAsync(this RepeaterTask task, Func<Exception, bool> untilPredicate)
+        private static Task<bool> UntilAsync(this RepeaterTask task, Func<Exception, Task<bool>> untilPredicate)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace DotNet.Basics.Tasks.Repeating
             try
             {
                 var runner = new RepeaterTaskRunner();
-                var asyncTask = runner.RunAsync(task, untilPredicate, task.Options);
+                var asyncTask = runner.RunAsync(task, async e => untilPredicate(e), task.Options);
                 asyncTask.Wait();
                 return asyncTask.Result;
             }

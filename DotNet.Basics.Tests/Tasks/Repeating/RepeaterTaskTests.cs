@@ -78,7 +78,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             actionExceptionCaught.Should().BeTrue();
             @finally.Should().BeTrue("Finally should run");
         }
-        
+
         [Fact]
         public async Task DontRethrowOnTaskFailedType_NamedExceptionsWillBeThrownOnTaskEnd_TaskFails()
         {
@@ -93,12 +93,12 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
                         o.PingOnRetry = () => { Console.WriteLine(doCounter); };
                     })
 
-                .UntilAsync(() => false).ConfigureAwait(false);
+                .UntilAsync(() => Task.FromResult(false)).ConfigureAwait(false);
 
             result.Should().BeFalse();
             doCounter.Should().Be(until);
         }
-        
+
         [Fact]
         public void Task_ExceptionIgnoredDuringRepeatUntilPredicateSetButNeverSucceeded_ActionIsInvokedFiveTimesAndExceptionIsThrownAtTheEnd()
         {
@@ -135,7 +135,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
                     o.RetryDelay = 10.Milliseconds();
                     o.PingOnRetry = () => pinged++;
                 })
-                .UntilAsync(() => invoked == until).ConfigureAwait(false);
+                .UntilAsync(() => Task.FromResult(invoked == until)).ConfigureAwait(false);
 
             invoked.Should().Be(until);
             pinged.Should().Be(until - 1);
