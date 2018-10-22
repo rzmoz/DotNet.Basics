@@ -40,6 +40,7 @@ namespace DotNet.Basics.IO
         {
             if (pi.Exists() == false)
                 return true;
+
             Repeat.Task(() =>
                 {
                     if (pi.PathType == PathType.Dir)
@@ -51,7 +52,7 @@ namespace DotNet.Basics.IO
                 {
                     o.Timeout = timeout;
                     o.RetryDelay = 1.Seconds();
-                    o.DontRethrowOnTaskFailedType = typeof(IOException);
+                    o.MuteExceptions.Add<IOException>();
                 })
                 .Until(() => pi.Exists() == false);
 

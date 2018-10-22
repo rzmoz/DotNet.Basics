@@ -10,7 +10,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
     public class RepeaterTaskTests
     {
         [Fact]
-        public void Ping_Success_PingOnImmediateSucccess_PingIsOnlyCalledOnRetry()
+        public void Ping_Success_PingOnImmediateSuccess_PingIsOnlyCalledOnRetry()
         {
             var pingWasCalled = false;
             var taskRan = false;
@@ -26,7 +26,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
         }
 
         [Fact]
-        public void Finally_NoExceptionInAction_ExceptionInfinallyIsFloated()
+        public void Finally_NoExceptionInAction_ExceptionInFinallyIsFloated()
         {
             Action action = () => Repeat.Task(() => { })
                 .WithOptions(o =>
@@ -89,7 +89,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
                     {
                         o.RetryDelay = 10.Milliseconds();
                         o.MaxTries = until;
-                        o.DontRethrowOnTaskFailedType = typeof(System.IO.IOException);
+                        o.MuteExceptions.Add<System.IO.IOException>();
                         o.PingOnRetry = () => { Console.WriteLine(doCounter); };
                     })
 
@@ -148,9 +148,9 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             const int stopThrowingExceptionsAt = 5;
             var tried = 0;
 
-            var throwExceptionUntilXTriesDummeTask = new ThrowExceptionUntilXTriesDummeTask<System.IO.IOException>(stopThrowingExceptionsAt);
+            var throwExceptionUntilXTriesDummyTask = new ThrowExceptionUntilXTriesDummeTask<System.IO.IOException>(stopThrowingExceptionsAt);
 
-            var result = Repeat.Task(() => throwExceptionUntilXTriesDummeTask.DoSomething())
+            var result = Repeat.Task(() => throwExceptionUntilXTriesDummyTask.DoSomething())
                 .WithOptions(o =>
                 {
                     o.PingOnRetry = () => tried++;
@@ -218,7 +218,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
         }
 
         [Fact]
-        public void Task_InvokeAndPingback_ActionsAreInvokedTheRightNumberOfTimes()
+        public void Task_InvokeAndPingBack_ActionsAreInvokedTheRightNumberOfTimes()
         {
             var doCounter = 0;
             var pingCounter = 0;
@@ -240,7 +240,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
         }
 
         [Fact]
-        public void TaskOnce_InvokeAndPingback_ActionsAreInvokedTheRightNumberOfTimes()
+        public void TaskOnce_InvokeAndPingBack_ActionsAreInvokedTheRightNumberOfTimes()
         {
             var doCounter = 0;
             var pingCounter = 0;
@@ -261,7 +261,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             result.Should().BeFalse();
         }
         [Fact]
-        public void TaskOnceAsync_InvokeAndPingback_ActionsAreInvokedTheRightNumberOfTimes()
+        public void TaskOnceAsync_InvokeAndPingBack_ActionsAreInvokedTheRightNumberOfTimes()
         {
             var doCounter = 0;
             var pingCounter = 0;

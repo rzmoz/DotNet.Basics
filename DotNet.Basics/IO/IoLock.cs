@@ -38,9 +38,9 @@ namespace DotNet.Basics.IO
                 {
                     o.MaxTries = maxTries ?? 10;
                     o.RetryDelay = 1.Seconds();
-                    o.DontRethrowOnTaskFailedType = typeof(IOException);
+                    o.MuteExceptions.Add<IOException>();
                 }).UntilNoExceptions();
-                
+
                 return lockAcquired;
             }
             catch (Exception)

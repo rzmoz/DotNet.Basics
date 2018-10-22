@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DotNet.Basics.Tasks.Repeating
 {
@@ -31,7 +32,7 @@ namespace DotNet.Basics.Tasks.Repeating
         /// <summary>
         /// Exceptions of this type will be ignored and task will finish with success even if exceptions of this type occur
         /// </summary>
-        public Type DontRethrowOnTaskFailedType { get; set; }
+        public TypeList MuteExceptions { get; } = new TypeList(2);
 
         /// <summary>
         /// Will always be invoked once on finish regardless of result

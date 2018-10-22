@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -60,7 +61,7 @@ namespace DotNet.Basics.Tasks.Repeating
                         break;
                     }
 
-                    RetryPingback(options);
+                    RetryPingBack(options);
 
                     await Task.Delay(options.RetryDelay).ConfigureAwait(false);
 
@@ -83,7 +84,7 @@ namespace DotNet.Basics.Tasks.Repeating
             return success;
         }
 
-        private void RetryPingback(RepeatOptions options)
+        private void RetryPingBack(RepeatOptions options)
         {
             if (options.PingOnRetry == null)
                 return;
@@ -101,18 +102,20 @@ namespace DotNet.Basics.Tasks.Repeating
         private bool ShouldContinue(Exception lastException, RepeatOptions options)
         {
             bool breakPrematurely = options.RepeatMaxTriesPredicate != null && options.RepeatMaxTriesPredicate.ShouldBreak() ||
-                               options.RepeatTimeoutPredicate != null && options.RepeatTimeoutPredicate.ShouldBreak();
+                                    options.RepeatTimeoutPredicate != null && options.RepeatTimeoutPredicate.ShouldBreak();
 
             if (breakPrematurely)
             {
                 if (lastException == null)
                     return false;
 
-                if (options.DontRethrowOnTaskFailedType == null)
+                if (options.MuteExceptions == null)
                     throw lastException;
 
-                if (lastException.GetType().GetTypeInfo().IsSubclassOf(options.DontRethrowOnTaskFailedType) ||
-                    lastException.GetType() == options.DontRethrowOnTaskFailedType)
+                var lastExceptionType = lastException.GetType();
+
+                if (options.MuteExceptions.Contains(lastExceptionType) ||
+                    options.MuteExceptions.Any(mutedException=>lastExceptionType.IsSubclassOf(mutedException)))
                     return false;
 
                 throw lastException;
