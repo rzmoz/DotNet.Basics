@@ -60,7 +60,7 @@ namespace DotNet.Basics.Tasks.Repeating
             try
             {
                 var runner = new RepeaterTaskRunner();
-                var asyncTask = runner.RunAsync(task, async e => untilPredicate(e), task.Options);
+                var asyncTask = runner.RunAsync(task, e => Task.FromResult(untilPredicate(e)), task.Options);
                 asyncTask.Wait();
                 return asyncTask.Result;
             }
