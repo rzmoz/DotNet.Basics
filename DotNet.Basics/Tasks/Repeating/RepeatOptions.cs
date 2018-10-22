@@ -12,7 +12,7 @@ namespace DotNet.Basics.Tasks.Repeating
 
         public TimeSpan RetryDelay { get; set; }
 
-        public uint? MaxTries
+        public int? MaxTries
         {
             get => RepeatMaxTriesPredicate?.MaxTries;
             set => RepeatMaxTriesPredicate = value == null ? null : new RepeatMaxTriesPredicate(value.Value);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -49,10 +50,19 @@ namespace DotNet.Basics.Tasks.Repeating
                         options.RepeatMaxTriesPredicate?.LoopCallback();
                     }
 
-                    if (await untilPredicate.Invoke(exceptionInLastLoop).ConfigureAwait(false))
+                    try
                     {
-                        success = true;
-                        break;
+                        if (await untilPredicate.Invoke(exceptionInLastLoop).ConfigureAwait(false))
+                        {
+                            success = true;
+                            break;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        lastException = e;
+                        if (IgnoreException(e, options.MuteExceptions) == false)
+                            throw;
                     }
 
                     if (ShouldContinue(lastException, options) == false)
@@ -99,6 +109,7 @@ namespace DotNet.Basics.Tasks.Repeating
             }
         }
 
+
         private bool ShouldContinue(Exception lastException, RepeatOptions options)
         {
             bool breakPrematurely = options.RepeatMaxTriesPredicate != null && options.RepeatMaxTriesPredicate.ShouldBreak() ||
@@ -109,18 +120,23 @@ namespace DotNet.Basics.Tasks.Repeating
                 if (lastException == null)
                     return false;
 
-                if (options.MuteExceptions == null)
+                if (options.MuteExceptions == null || options.MuteExceptions.Count == 0)
                     throw lastException;
 
-                var lastExceptionType = lastException.GetType();
-
-                if (options.MuteExceptions.Contains(lastExceptionType) ||
-                    options.MuteExceptions.Any(mutedException=>lastExceptionType.IsSubclassOf(mutedException)))
+                if (IgnoreException(lastException, options.MuteExceptions))
                     return false;
 
                 throw lastException;
             }
             return true;
+        }
+
+        private bool IgnoreException(Exception e, IList<Type> ignoredExceptions)
+        {
+            var lastExceptionType = e.GetType();
+
+            return ignoredExceptions.Contains(lastExceptionType) ||
+                    ignoredExceptions.Any(mutedException => lastExceptionType.IsSubclassOf(mutedException));
         }
     }
 }

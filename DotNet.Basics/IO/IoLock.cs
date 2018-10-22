@@ -24,7 +24,7 @@ namespace DotNet.Basics.IO
             return _lockHandle != null;
         }
 
-        public bool TryAcquire(uint? maxTries = 10)
+        public bool TryAcquire(int? maxTries = 10)
         {
             _lockDir.CreateIfNotExists();
             //try to acquire exclusive handle ownership

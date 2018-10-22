@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using DotNet.Basics.Tasks.Repeating;
 using FluentAssertions;
@@ -9,6 +10,23 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
 {
     public class RepeaterTaskTests
     {
+        [Fact]
+        public void MutedExceptions_MutedExceptionsInPredicateDoesNotCauseRepeatToStop_MutedExceptionsAreIgnoredInPredicate()
+        {
+            var tries = 3;
+
+            var taskRan = 0;
+            Repeat.Task(() => { taskRan++; })
+                .WithOptions(o =>
+                {
+                    o.MaxTries = tries;
+                    o.MuteExceptions.Add<IOException>();
+                })
+                .Until(() => throw new IOException());
+
+            taskRan.Should().Be(tries);
+        }
+
         [Fact]
         public void Ping_Success_PingOnImmediateSuccess_PingIsOnlyCalledOnRetry()
         {

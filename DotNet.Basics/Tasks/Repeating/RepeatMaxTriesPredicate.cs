@@ -4,13 +4,13 @@
     {
         private uint _tryCount;
 
-        public RepeatMaxTriesPredicate(uint maxTries = 10)
+        public RepeatMaxTriesPredicate(int maxTries = 10)
         {
             MaxTries = maxTries;
             Init();
         }
 
-        public uint MaxTries { get; }
+        public int MaxTries { get; }
 
         public void Init()
         {
