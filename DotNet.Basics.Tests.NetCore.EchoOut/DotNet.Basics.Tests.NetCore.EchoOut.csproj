@@ -9,8 +9,4 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DotNet.Basics.NLog\DotNet.Basics.NLog.csproj" />
-  </ItemGroup>
-
 </Project>

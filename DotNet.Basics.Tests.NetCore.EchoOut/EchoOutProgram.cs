@@ -1,7 +1,4 @@
 ﻿using System;
-using DotNet.Basics.NLog;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Tests.NetCore.EchoOut
 {
@@ -9,15 +6,8 @@ namespace DotNet.Basics.Tests.NetCore.EchoOut
     {
         static int Main(string[] args)
         {
-            var services = new ServiceCollection();
-            services.AddNLogging(config => config.AddColoredConsoleTarget());
-            var sp = services.BuildServiceProvider();
-            var logger = sp.GetService<ILogger>();
-            
-            logger.LogInformation($"Starting {typeof(EchoOutProgram).Namespace}...");
-
             foreach (var arg in args)
-                logger.LogDebug(arg);
+                Console.WriteLine(arg);
 
             try
             {
