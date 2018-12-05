@@ -37,37 +37,35 @@ namespace DotNet.Basics.PowerShell
             {
                 runspace.Open();
 
-                var pipeline = runspace.CreatePipeline();
-                pipeline.Commands.AddScript(_bypassExecutionPolicy);
-                foreach (var script in scripts)
+                using (var pipeline = runspace.CreatePipeline())
                 {
-                    pipeline.Commands.AddScript(script);
-                }
+                    pipeline.Commands.AddScript(_bypassExecutionPolicy);
+                    foreach (var script in scripts)
+                        pipeline.Commands.AddScript(script);
 
-                var passThru = pipeline.Invoke();
-                runspace.Close();
+                    var passThru = pipeline.Invoke();
+                    runspace.Close();
 
-                if (pipeline.HadErrors)
-                {
-                    if (!(pipeline.Error.Read() is PSObject errorsObject))
-                        throw new ArgumentException("Unknown error in PowerShell script");
-
-                    if (errorsObject.BaseObject is ErrorRecord error)
+                    if (pipeline.HadErrors)
                     {
-                        if (error.Exception != null)
+                        if (!(pipeline.Error.Read() is PSObject errorsObject))
+                            throw new ArgumentException("Unknown error in PowerShell script");
+
+                        switch (errorsObject.BaseObject)
                         {
-                            throw error.Exception;
+                            case ErrorRecord error when error.Exception != null:
+                                throw error.Exception;
+                            case ErrorRecord error:
+                                throw new ArgumentException(error.ErrorDetails.Message);
+                            case Collection<ErrorRecord> errors:
+                            {
+                                var errorMessage = errors.Aggregate(string.Empty, (current, err) => current + (err.Exception.ToString() + Environment.NewLine));
+                                throw new ArgumentException(errorMessage);
+                            }
                         }
-                        throw new ArgumentException(error.ErrorDetails.Message);
                     }
-
-                    if (errorsObject.BaseObject is Collection<ErrorRecord> errors)
-                    {
-                        var errorMessage = errors.Aggregate(string.Empty, (current, err) => current + (err.Exception.ToString() + Environment.NewLine));
-                        throw new ArgumentException(errorMessage);
-                    }
+                    return passThru.Select(pt => pt.BaseObject).ToArray();
                 }
-                return passThru.Select(pt => pt.BaseObject).ToArray();
             }
         }
     }
