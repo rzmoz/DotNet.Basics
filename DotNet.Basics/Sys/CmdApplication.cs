@@ -53,11 +53,11 @@ namespace DotNet.Basics.Sys
             return CmdPrompt.Run($"{EntryFile.FullName()} {argString}");
         }
 
-        private void Install()
+        public bool Install()
         {
             //if already installed
             if (_installedHandle.Exists())
-                return;
+                return true;
 
             using (var ioLock = new IoLock(InstallDir, _installingHandleName))
             {
@@ -65,7 +65,7 @@ namespace DotNet.Basics.Sys
 
                 //someone else already installed the app in another thread so we're aborting
                 if (lockAcquired && IsInstalled())
-                    return;
+                    return true;
 
                 //install and don't rely on rollback (try/catch) since it might conflict with other task
                 foreach (var installAction in _installActions)
@@ -74,6 +74,8 @@ namespace DotNet.Basics.Sys
                 //app installed successfully
                 File.Create(_installedHandle.FullName())?.Close();
             }
+
+            return IsInstalled();
         }
 
         public bool IsInstalled()
@@ -81,9 +83,10 @@ namespace DotNet.Basics.Sys
             return _installedHandle.Exists();
         }
 
-        public void UnInstall()
+        public bool UnInstall()
         {
             InstallDir.DeleteIfExists();
+            return IsInstalled() == false;
         }
     }
 }
