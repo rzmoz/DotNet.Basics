@@ -10,13 +10,15 @@ namespace DotNet.Basics.SevenZip
     {
         private static readonly Assembly _sevenZipAssembly = typeof(SevenZipExe).Assembly;
 
-        private readonly CmdApplication _sevenZipApp;
+        private readonly FileApplication _sevenZipApp;
+        private const string _entryFileName = "7za.exe";
 
         public SevenZipExe(DirPath installDir)
         {
-            _sevenZipApp = new CmdApplication(installDir.ToDir("7Zip"), "7za.exe", _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.exe"))
-                .WithFile("7za.dll", _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.dll"))
-                .WithFile("7zxa.dll", _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7zxa.dll"));
+            _sevenZipApp = new FileApplication(installDir.ToDir("7Zip"))
+                .WithStream(_entryFileName, _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.exe"))
+                .WithStream("7za.dll", _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.dll"))
+                .WithStream("7zxa.dll", _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7zxa.dll"));
         }
 
         public (string Input, int ExitCode, string Output) ExtractToDirectory(string archivePath, string targetDirPath)
@@ -43,7 +45,7 @@ namespace DotNet.Basics.SevenZip
             allArgs.Add(command);
             allArgs.AddRange(@params);
             allArgs.Add("-y");
-            return _sevenZipApp.Run(allArgs.ToArray());
+            return _sevenZipApp.RunFromCmd(_entryFileName, allArgs.ToArray());
         }
     }
 }

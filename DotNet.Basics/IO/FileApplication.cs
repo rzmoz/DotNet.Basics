@@ -2,35 +2,47 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DotNet.Basics.IO;
+using DotNet.Basics.Sys;
 
-namespace DotNet.Basics.Sys
+namespace DotNet.Basics.IO
 {
-    public class CmdApplication
+    public class FileApplication
     {
         private const string _installingHandleName = "installing.dat";
         private const string _installedHandleName = "installed.dat";
         private readonly FilePath _installedHandle;
         private readonly IList<Action> _installActions;
 
-        public CmdApplication(string appName, string executableFilename, Stream content, bool disposeStreamWhenDone = true)
-        : this(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).ToDir(appName),
-            executableFilename, content, disposeStreamWhenDone)
+        public FileApplication(string appName)
+            : this(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).ToDir(appName))
         { }
 
-        public CmdApplication(DirPath installDir, string executableFilename, Stream content, bool disposeStreamWhenDone = true)
+        public FileApplication(DirPath installDir)
         {
             InstallDir = installDir ?? throw new ArgumentNullException(nameof(installDir));
-            EntryFile = installDir.ToFile(executableFilename);
             _installedHandle = installDir.ToFile(_installedHandleName);
             _installActions = new List<Action>();
-            WithFile(executableFilename, content, disposeStreamWhenDone);
         }
 
         public DirPath InstallDir { get; }
-        public FilePath EntryFile { get; }
 
-        public CmdApplication WithFile(string filename, Stream content, bool disposeStreamWhenDone = true)
+        public (string Input, int ExitCode, string Output) RunFromCmd(string fileName, params string[] args)
+        {
+            Install();
+            var argString = args.Aggregate(string.Empty, (current, param) => current + $" {param}");
+
+            var file = InstallDir.ToFile(fileName);
+            if (file.Exists() == false)
+                throw new FileNotFoundException(file.FullName());
+
+            return CmdPrompt.Run($"{file.FullName()} {argString}");
+        }
+
+        public FileApplication WithStream(string filename, Stream content, Action<FilePath> postInstallAction = null)
+        {
+            return WithStream(filename, content, true, postInstallAction);
+        }
+        public FileApplication WithStream(string filename, Stream content, bool disposeStreamWhenDone, Action<FilePath> postInstallAction = null)
         {
             if (content == null) throw new ArgumentNullException(nameof(content));
             var target = InstallDir.ToFile(filename);
@@ -43,14 +55,9 @@ namespace DotNet.Basics.Sys
                 if (disposeStreamWhenDone)
                     content.Dispose();
             });
+            if (postInstallAction != null)
+                _installActions.Add(() => postInstallAction?.Invoke(target));
             return this;
-        }
-
-        public (string Input, int ExitCode, string Output) Run(params string[] args)
-        {
-            Install();
-            var argString = args.Aggregate(string.Empty, (current, param) => current + $" {param}");
-            return CmdPrompt.Run($"{EntryFile.FullName()} {argString}");
         }
 
         public bool Install()
