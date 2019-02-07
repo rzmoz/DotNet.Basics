@@ -23,7 +23,7 @@ namespace DotNet.Basics.Tests.Sys
             (lowerWithPreRelease > higherWithPreRelease).Should().BeFalse();
         }
 
-        [Fact]
+        [Fact(Skip = "TODO")]
         public void PreRelease_Precedence_AnyPreReleaseTakesLowerPrecedence()
         {
             var woPreRelease = new SemVersion(1, 0, 0);
