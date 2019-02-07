@@ -9,4 +9,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DotNet.Basics.Serilog\DotNet.Basics.Serilog.csproj" />
+  </ItemGroup>
+
 </Project>

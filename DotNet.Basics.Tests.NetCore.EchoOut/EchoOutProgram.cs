@@ -1,4 +1,5 @@
 ﻿using System;
+using Serilog;
 
 namespace DotNet.Basics.Tests.NetCore.EchoOut
 {
@@ -6,8 +7,12 @@ namespace DotNet.Basics.Tests.NetCore.EchoOut
     {
         static int Main(string[] args)
         {
+            var log = new LoggerConfiguration()
+                .WriteTo.ColoredConsole()
+                .CreateLogger();
+
             foreach (var arg in args)
-                Console.WriteLine(arg);
+                log.Information(arg);
 
             try
             {
@@ -15,9 +20,7 @@ namespace DotNet.Basics.Tests.NetCore.EchoOut
             }
             catch (Exception e)
             {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.BackgroundColor = ConsoleColor.Black;
-                Console.WriteLine(e.ToString());
+                log.Error(e, e.ToString());
                 return -100000;
             }
         }
