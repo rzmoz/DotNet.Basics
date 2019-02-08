@@ -25,8 +25,8 @@
     },
     {
       "name": "DotNet.Basics.PowerShell",
-      "version": "6.1.0",
-      "prerelease": "rc.3"
+      "version": "6.1.2",
+      "prerelease": ""
     },
     {
       "name": "DotNet.Basics.SevenZip",
