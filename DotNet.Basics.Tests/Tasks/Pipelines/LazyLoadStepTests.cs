@@ -64,7 +64,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             Exception exceptionEncountered;
             try
             {
-                await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                await pipeline.RunAsync(null).ConfigureAwait(false);
                 exceptionEncountered = null;
             }
             catch (Exception e)
@@ -81,7 +81,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 
             pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
 
-            Func<Task> act = async () => await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            Func<Task> act = async () => await pipeline.RunAsync(null).ConfigureAwait(false);
 
             act.Should().Throw<TaskNotResolvedFromServiceProviderException>();
         }

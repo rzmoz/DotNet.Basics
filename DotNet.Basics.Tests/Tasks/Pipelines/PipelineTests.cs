@@ -51,7 +51,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             });
             addAction(pipeline);
 
-            Func<Task> action = async () => await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            Func<Task> action = async () => await pipeline.RunAsync(null).ConfigureAwait(false);
 
             action.Should().NotThrow();
         }
@@ -73,7 +73,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             foreach (var i in Enumerable.Range(0, count))
                 pipeline.AddStep<AddLogEntryStep>();
 
-            await pipeline.RunAsync().ConfigureAwait(false);
+            await pipeline.RunAsync(null).ConfigureAwait(false);
 
             logEntries.Count.Should().Be(count);
             logEntries.All(i => i.Exception == null).Should().BeTrue();
@@ -125,7 +125,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             for (var i = 0; i < stepCount; i++)
                 pipeline.AddStep((args, log, ct) => Task.FromResult(++counter));
 
-            await pipeline.RunAsync(ts.Token).ConfigureAwait(false);
+            await pipeline.RunAsync(null, ts.Token).ConfigureAwait(false);
 
             pipeline.Tasks.Count().Should().Be(stepCount);
             counter.Should().Be(0);
@@ -147,7 +147,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
                     stepName = name;
             };
 
-            await pipeline.RunAsync().ConfigureAwait(false);
+            await pipeline.RunAsync(new EventArgs<int>()).ConfigureAwait(false);
 
             stepName.Should().Be(nameof(IncrementArgsStep));
         }
@@ -165,7 +165,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await pipeline.RunAsync(null).ConfigureAwait(false);
             stopwatch.Stop();
 
             //total timespan should be close to 1 second since tasks were run in parallel
@@ -193,7 +193,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             task1Called.Should().BeFalse();
             task2Called.Should().BeFalse();
 
-            await pipeline.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await pipeline.RunAsync(null).ConfigureAwait(false);
 
             task1Called.Should().BeTrue();
             task2Called.Should().BeTrue();
@@ -302,7 +302,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             pipeline.EntryLogged += e => logEntries.Add(e.Message);
 
             //act
-            await pipeline.RunAsync().ConfigureAwait(false);
+            await pipeline.RunAsync(new EventArgs<int>()).ConfigureAwait(false);
 
             //assert
             started.Count.Should().Be(4);

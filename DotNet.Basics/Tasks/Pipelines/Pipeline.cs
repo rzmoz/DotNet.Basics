@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {
-    public class Pipeline<T> : ManagedTask<T> where T : class, new()
+    public class Pipeline<T> : ManagedTask<T>
     {
         private readonly Func<IServiceProvider> _getServiceProvider;
         private readonly ConcurrentQueue<ManagedTask<T>> _tasks;

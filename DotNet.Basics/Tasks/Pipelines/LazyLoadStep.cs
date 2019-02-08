@@ -6,7 +6,6 @@ using DotNet.Basics.Sys;
 namespace DotNet.Basics.Tasks.Pipelines
 {
     public class LazyLoadStep<T, TTask> : ManagedTask<T>, ILazyLoadStep
-        where T : class, new()
         where TTask : ManagedTask<T>
     {
         private readonly Func<TTask> _loadTask;

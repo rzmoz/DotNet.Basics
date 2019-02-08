@@ -38,7 +38,7 @@ namespace DotNet.Basics.Tasks
         }
     }
 
-    public class ManagedTask<T> : ManagedTask where T : class, new()
+    public class ManagedTask<T> : ManagedTask
     {
         private readonly Func<T, LoggingContext, CancellationToken, Task> _task;
 
@@ -77,21 +77,13 @@ namespace DotNet.Basics.Tasks
             Log.EntryLogged += FireEntryLogged;
         }
 
-        public Task<T> RunAsync()
+        public Task<T> RunAsync(T args)
         {
-            return RunAsync(CancellationToken.None);
-        }
-
-        public Task<T> RunAsync(CancellationToken ct)
-        {
-            return RunAsync(default(T), ct);
+            return RunAsync(args, CancellationToken.None);
         }
 
         public async Task<T> RunAsync(T args, CancellationToken ct)
         {
-            if (args == null)
-                args = new T();
-
             FireStarted(Name);
             try
             {
@@ -103,7 +95,6 @@ namespace DotNet.Basics.Tasks
             }
             catch (Exception e)
             {
-
                 FireEnded(Name, e);
                 throw;
             }

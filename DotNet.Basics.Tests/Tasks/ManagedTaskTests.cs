@@ -23,7 +23,7 @@ namespace DotNet.Basics.Tests.Tasks
             task.EntryLogged += e => entriesLogged.Add(e);
 
             //act
-            await task.RunAsync().ConfigureAwait(false);
+            await task.RunAsync(null).ConfigureAwait(false);
 
             entriesLogged.Any(e => e.Level > LogLevel.Debug).Should().BeFalse();
         }
@@ -41,7 +41,7 @@ namespace DotNet.Basics.Tests.Tasks
             task.EntryLogged += e => entriesLogged.Add(e);
 
             //act
-            await task.RunAsync().ConfigureAwait(false);
+            await task.RunAsync(null).ConfigureAwait(false);
 
             entriesLogged.Count(e => e.Message.Contains(message)).Should().Be(1);
         }
@@ -52,7 +52,7 @@ namespace DotNet.Basics.Tests.Tasks
             var loggedEntries = 0;
             var task = new ManagedTask<EventArgs>((args, log, ct) => { });
             task.EntryLogged += entry => loggedEntries++;
-            var result = await task.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            var result = await task.RunAsync(new EventArgs()).ConfigureAwait(false);
 
             result.Should().BeOfType<EventArgs>();
             loggedEntries.Should().Be(0);
@@ -78,14 +78,15 @@ namespace DotNet.Basics.Tests.Tasks
         }
 
         [Fact]
-        public async Task RunAsync_ArgsIsNull_ArgsIsDefault()
+        public async Task RunAsync_ArgsIsNull_ArgsIsNull()
         {
-            var argsIsNotNull = false;
+            string argsInput = null;
+            var argsIsNull = false;
 
-            var task = new ManagedTask<EventArgs>((args, log, ct) => argsIsNotNull = args != null);
-            await task.RunAsync(CancellationToken.None);
+            var task = new ManagedTask<string>((args, log, ct) => argsIsNull = args == null);
+            await task.RunAsync(argsInput, CancellationToken.None);
 
-            argsIsNotNull.Should().BeTrue();
+            argsIsNull.Should().BeTrue();
         }
 
         [Fact]
@@ -101,7 +102,7 @@ namespace DotNet.Basics.Tests.Tasks
             using (var monitoredTask = task.Monitor())
             {
                 //act
-                await task.RunAsync(ctSource.Token).ConfigureAwait(false);
+                await task.RunAsync(null, ctSource.Token).ConfigureAwait(false);
 
                 monitoredTask.Should().Raise(nameof(task.Started));
                 monitoredTask.Should().Raise(nameof(task.Ended));
@@ -120,7 +121,7 @@ namespace DotNet.Basics.Tests.Tasks
 
             try
             {
-                await task.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                await task.RunAsync(null).ConfigureAwait(false);
             }
             catch (Exception)
             {
@@ -140,7 +141,7 @@ namespace DotNet.Basics.Tests.Tasks
             var task = new ManagedTask<EventArgs>(() => taskRan = true);
 
             taskRan.Should().BeFalse();
-            await task.RunAsync().ConfigureAwait(false);
+            await task.RunAsync(null).ConfigureAwait(false);
             taskRan.Should().BeTrue();
         }
         [Fact]
@@ -156,7 +157,7 @@ namespace DotNet.Basics.Tests.Tasks
             );
 
             taskRan.Should().BeFalse();
-            await task.RunAsync().ConfigureAwait(false);
+            await task.RunAsync(null).ConfigureAwait(false);
             taskRan.Should().BeTrue();
         }
 
