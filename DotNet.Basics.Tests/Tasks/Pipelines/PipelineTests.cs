@@ -36,7 +36,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             AssertRegisterPipelineSteps<EventArgs>(p => { p.AddBlock("MyBlock").AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(); });
         }
 
-        private void AssertRegisterPipelineSteps<T>(Action<Pipeline<T>> addAction) where T : class, new()
+        private void AssertRegisterPipelineSteps<T>(Action<Pipeline<T>> addAction)
         {
             var pipeline = new Pipeline<T>(services =>
             {
@@ -51,7 +51,7 @@ namespace DotNet.Basics.Tests.Tasks.Pipelines
             });
             addAction(pipeline);
 
-            Func<Task> action = async () => await pipeline.RunAsync(null).ConfigureAwait(false);
+            Func<Task> action = async () => await pipeline.RunAsync(default(T)).ConfigureAwait(false);
 
             action.Should().NotThrow();
         }

@@ -2,12 +2,12 @@
 
 namespace DotNet.Basics.Tests.Tasks
 {
-    public class ThrowExceptionUntilXTriesDummeTask<T> where T : Exception, new()
+    public class ThrowExceptionUntilXTriesDummyTask<T> where T : Exception, new()
     {
         private int _tries;
         public int SwitchStateAfterTries { get; }
 
-        public ThrowExceptionUntilXTriesDummeTask(int switchStateAfterTries)
+        public ThrowExceptionUntilXTriesDummyTask(int switchStateAfterTries)
         {
             SwitchStateAfterTries = switchStateAfterTries;
         }

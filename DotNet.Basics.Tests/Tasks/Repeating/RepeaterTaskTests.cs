@@ -166,7 +166,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             const int stopThrowingExceptionsAt = 5;
             var tried = 0;
 
-            var throwExceptionUntilXTriesDummyTask = new ThrowExceptionUntilXTriesDummeTask<System.IO.IOException>(stopThrowingExceptionsAt);
+            var throwExceptionUntilXTriesDummyTask = new ThrowExceptionUntilXTriesDummyTask<System.IO.IOException>(stopThrowingExceptionsAt);
 
             var result = Repeat.Task(() => throwExceptionUntilXTriesDummyTask.DoSomething())
                 .WithOptions(o =>

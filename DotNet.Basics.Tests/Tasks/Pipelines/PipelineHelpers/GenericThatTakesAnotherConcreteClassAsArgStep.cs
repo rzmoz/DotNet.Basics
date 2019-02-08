@@ -4,7 +4,7 @@ using DotNet.Basics.Tasks.Pipelines;
 
 namespace DotNet.Basics.Tests.Tasks.Pipelines.PipelineHelpers
 {
-    public class GenericThatTakesAnotherConcreteClassAsArgStep<T> : PipelineStep<T> where T : class, new()
+    public class GenericThatTakesAnotherConcreteClassAsArgStep<T> : PipelineStep<T>
     {
         private ClassThatTakesAnAbstractClassAsCtorParam _argStepDependsOn;
 

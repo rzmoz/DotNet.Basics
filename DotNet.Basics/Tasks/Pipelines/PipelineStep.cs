@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks.Pipelines
 {
-    public abstract class PipelineStep<T> : ManagedTask<T> where T : class, new()
+    public abstract class PipelineStep<T> : ManagedTask<T>
     {
         protected PipelineStep() : this(null)
         { }
