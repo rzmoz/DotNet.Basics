@@ -1,8 +1,6 @@
-﻿using DotNet.Basics.Diagnostics;
-
-namespace DotNet.Basics.Tasks
+﻿namespace DotNet.Basics.Tasks
 {
-    public interface ITask : IHasLogging
+    public interface ITask
     {
         string Name { get; }
         event ManagedTask.TaskStartedEventHandler Started;

@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using DotNet.Basics.Diagnostics;
-using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Tasks.Repeating
 {
-    public class RepeaterTaskRunner : IHasLogging
+    public class RepeaterTaskRunner
     {
-        public event LogEntry.TaskLogEventHandler EntryLogged;
-
         public async Task<bool> RunAsync(ManagedTask<EventArgs> task, Func<Exception, Task<bool>> untilPredicate, RepeatOptions options = null)
         {
             if (task == null)
@@ -96,17 +91,7 @@ namespace DotNet.Basics.Tasks.Repeating
 
         private void RetryPingBack(RepeatOptions options)
         {
-            if (options.PingOnRetry == null)
-                return;
-
-            try
-            {
-                options.PingOnRetry();
-            }
-            catch (Exception e)
-            {
-                EntryLogged?.Invoke(new LogEntry(LogLevel.Warning, e.Message, e));
-            }
+            options.PingOnRetry?.Invoke();
         }
 
 

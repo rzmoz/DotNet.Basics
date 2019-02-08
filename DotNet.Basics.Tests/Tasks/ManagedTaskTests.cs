@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
 using FluentAssertions;
@@ -14,68 +13,6 @@ namespace DotNet.Basics.Tests.Tasks
 {
     public class ManagedTaskTests
     {
-        [Fact]
-        public async Task RunAsync_InlineTas_NoErrorsWereLogged()
-        {
-            var entriesLogged = new List<LogEntry>();
-
-            var task = new ManagedTask<EventArgs>((args, log, ct) => { });
-            task.EntryLogged += e => entriesLogged.Add(e);
-
-            //act
-            await task.RunAsync(null).ConfigureAwait(false);
-
-            entriesLogged.Any(e => e.Level > LogLevel.Debug).Should().BeFalse();
-        }
-
-        [Fact]
-        public async Task RunAsync_InlineTask_EntryIsLogged()
-        {
-            var message = "MyMessage.Lorem.Ipsum";
-            var entriesLogged = new List<LogEntry>();
-
-            var task = new ManagedTask<EventArgs>((args, log, ct) =>
-            {
-                log.LogError(message);
-            });
-            task.EntryLogged += e => entriesLogged.Add(e);
-
-            //act
-            await task.RunAsync(null).ConfigureAwait(false);
-
-            entriesLogged.Count(e => e.Message.Contains(message)).Should().Be(1);
-        }
-
-        [Fact]
-        public async Task RunAsyncResult_NoCustomEntries_ResultIsGood()
-        {
-            var loggedEntries = 0;
-            var task = new ManagedTask<EventArgs>((args, log, ct) => { });
-            task.EntryLogged += entry => loggedEntries++;
-            var result = await task.RunAsync(new EventArgs()).ConfigureAwait(false);
-
-            result.Should().BeOfType<EventArgs>();
-            loggedEntries.Should().Be(0);
-        }
-
-        [Fact]
-        public async Task RunAsyncResult_Log_EntryIsLogged()
-        {
-            var value = 101;
-            var inputArgs = new EventArgs<int>
-            {
-                Value = value
-            };
-
-            var task = new ManagedTask<EventArgs<int>>((args, log, ct) =>
-            {
-                args.Value++;
-            });
-            var result = await task.RunAsync(inputArgs, CancellationToken.None).ConfigureAwait(false);
-
-            inputArgs.Value.Should().Be(value + 1);
-            result.Value.Should().Be(value + 1);
-        }
 
         [Fact]
         public async Task RunAsync_ArgsIsNull_ArgsIsNull()
@@ -83,7 +20,7 @@ namespace DotNet.Basics.Tests.Tasks
             string argsInput = null;
             var argsIsNull = false;
 
-            var task = new ManagedTask<string>((args, log, ct) => argsIsNull = args == null);
+            var task = new ManagedTask<string>((args, ct) => argsIsNull = args == null);
             await task.RunAsync(argsInput, CancellationToken.None);
 
             argsIsNull.Should().BeTrue();
@@ -97,7 +34,7 @@ namespace DotNet.Basics.Tests.Tasks
             var ctSource = new CancellationTokenSource();
             ctSource.Cancel();
 
-            var task = new ManagedTask<EventArgs<int>>((args, log, ct) => { args.Value = argsValue; });
+            var task = new ManagedTask<EventArgs<int>>((args, ct) => { args.Value = argsValue; });
 
             using (var monitoredTask = task.Monitor())
             {
@@ -113,7 +50,7 @@ namespace DotNet.Basics.Tests.Tasks
         public async Task RunAsync_Exception_ExceptionIsCapturedInTaskEndEvent()
         {
             var exMessage = "buuh";
-            var task = new ManagedTask<EventArgs<int>>((args, log, ct) => { throw new ArgumentException(exMessage); });
+            var task = new ManagedTask<EventArgs<int>>((args, ct) => { throw new ArgumentException(exMessage); });
 
             Exception capturedException = null;
 

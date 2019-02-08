@@ -1,4 +1,4 @@
-﻿using DotNet.Basics.DependencyInjection;
+﻿using DotNet.Basics.Autofac;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DotNet.Basics.Tests.Autofac.TestHelpers

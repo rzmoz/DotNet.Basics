@@ -6,12 +6,12 @@
     {
       "name": "DotNet.Basics",
       "version": "9.7.0",
-      "prerelease": "rc.2"
+      "prerelease": "rc.3"
     },
     {
       "name": "DotNet.Basics.Autofac",
-      "version": "4.8.1",
-      "prerelease": ""
+      "version": "4.8.2",
+      "prerelease": "rc.1"
     },
     {
       "name": "DotNet.Basics.SeriLog",
@@ -21,6 +21,11 @@
     {
       "name": "DotNet.Basics.Net.Http",
       "version": "4.3.4",
+      "prerelease": "rc.1"
+    },
+    {
+      "name": "DotNet.Basics.Pipelines",
+      "version": "9.7.0",
       "prerelease": "rc.1"
     },
     {
