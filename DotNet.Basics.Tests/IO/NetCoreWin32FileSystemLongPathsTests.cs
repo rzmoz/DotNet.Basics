@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
 using DotNet.Basics.IO;
-
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;

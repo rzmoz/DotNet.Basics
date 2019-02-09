@@ -14,7 +14,7 @@ namespace DotNet.Basics.Tasks.Repeating
                 return false;
 
             if (untilPredicate == null)
-                throw new ArgumentNullException(nameof(untilPredicate), $"Task will potentially run forever. Set untilPredicate and also consider adding timeout and maxtries to task options");
+                throw new ArgumentNullException(nameof(untilPredicate), "Task will potentially run forever. Set untilPredicate and also consider adding timeout and maxtries to task options");
 
             if (options == null)
                 options = new RepeatOptions();
