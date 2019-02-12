@@ -19,7 +19,7 @@ namespace DotNet.Basics.IO
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static (string Input, int ExitCode, string Output) Run(string source, string target, string filesToCopy = null, string options = " /np /ndl /nfl")
+        public static (string Input, int ExitCode) Run(string source, string target, string filesToCopy = null, string options = " /np /ndl /nfl", Action<string> writeOutput = null, Action<string> writeError = null)
         {
             if (source == null) { throw new ArgumentNullException(nameof(source)); }
             if (target == null) { throw new ArgumentNullException(nameof(target)); }
@@ -28,7 +28,7 @@ namespace DotNet.Basics.IO
             if (string.IsNullOrWhiteSpace(filesToCopy) == false)
                 command += $" \"{filesToCopy}\" ";
             command += options ?? string.Empty;
-            return CmdPrompt.Run(command);
+            return CmdPrompt.Run(command, writeOutput, writeError);
         }
 
         /// <summary>
@@ -36,12 +36,12 @@ namespace DotNet.Basics.IO
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static (string Input, int ExitCode, string Output) CopyFile(string sourceDir, string targetDir, string sourceFileName, string extraOptions = null)
+        public static (string Input, int ExitCode) CopyFile(string sourceDir, string targetDir, string sourceFileName, string extraOptions = null, Action<string> writeOutput = null, Action<string> writeError = null)
         {
             if (sourceFileName == null) throw new ArgumentNullException(nameof(sourceFileName));
             if (targetDir == null) throw new ArgumentNullException(nameof(targetDir));
             if (string.IsNullOrEmpty(sourceDir)) throw new ArgumentException(nameof(sourceDir));
-            return Run(sourceDir, targetDir, sourceFileName, extraOptions ?? "/np");
+            return Run(sourceDir, targetDir, sourceFileName, extraOptions ?? "/np", writeOutput, writeError);
         }
 
         /// <summary>
@@ -49,22 +49,22 @@ namespace DotNet.Basics.IO
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static (string Input, int ExitCode, string Output) CopyDir(string sourceDir, string targetDir, bool includeSubFolders = false, string extraOptions = null)
+        public static (string Input, int ExitCode) CopyDir(string sourceDir, string targetDir, bool includeSubFolders = false, string extraOptions = null, Action<string> writeOutput = null, Action<string> writeError = null)
         {
             var options = string.Empty;
             if (includeSubFolders)
                 options = _includeSubfoldersOption;
             if (string.IsNullOrWhiteSpace(extraOptions) == false)
                 options += $" {extraOptions}";//space in front of options
-            return Run(sourceDir, targetDir, null, options);
+            return Run(sourceDir, targetDir, null, options, writeOutput, writeError);
         }
 
-        public static (string Input, int ExitCode, string Output) MoveFolder(string sourceDir, string targetDir, string filter = null, bool recurse = false, string extraOptions = null)
+        public static (string Input, int ExitCode) MoveFolder(string sourceDir, string targetDir, string filter = null, bool recurse = false, string extraOptions = null, Action<string> writeOutput = null, Action<string> writeError = null)
         {
             string options = $"{_moveOption} {extraOptions}";
             if (recurse)
                 options = $"{_includeSubfoldersOption} {options}";
-            var moveResult = Run(sourceDir, targetDir, filter, options);
+            var moveResult = Run(sourceDir, targetDir, filter, options, writeOutput, writeError);
             return moveResult;
         }
 
@@ -73,9 +73,9 @@ namespace DotNet.Basics.IO
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static (string Input, int ExitCode, string Output) MoveContent(string sourceDir, string targetDir, string filter = null, bool recurse = false, string extraOptions = null)
+        public static (string Input, int ExitCode) MoveContent(string sourceDir, string targetDir, string filter = null, bool recurse = false, string extraOptions = null, Action<string> writeOutput = null, Action<string> writeError = null)
         {
-            var result = MoveFolder(sourceDir, targetDir, filter, recurse, extraOptions);
+            var result = MoveFolder(sourceDir, targetDir, filter, recurse, extraOptions, writeOutput, writeError);
             Directory.CreateDirectory(sourceDir);
             return result;
         }

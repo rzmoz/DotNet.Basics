@@ -8,17 +8,21 @@ namespace DotNet.Basics.IO
 {
     public class FileApplication
     {
+        private readonly Action<string> _writeOutput;
+        private readonly Action<string> _writeError;
         private const string _installingHandleName = "installing.dat";
         private const string _installedHandleName = "installed.dat";
         private readonly FilePath _installedHandle;
         private readonly IList<Action> _installActions;
 
-        public FileApplication(string appName)
-            : this(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).ToDir(appName))
+        public FileApplication(string appName, Action<string> writeOutput = null, Action<string> writeError = null)
+            : this(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).ToDir(appName), writeOutput, writeError)
         { }
 
-        public FileApplication(DirPath installDir)
+        public FileApplication(DirPath installDir, Action<string> writeOutput = null, Action<string> writeError = null)
         {
+            _writeOutput = writeOutput;
+            _writeError = writeError;
             InstallDir = installDir ?? throw new ArgumentNullException(nameof(installDir));
             _installedHandle = installDir.ToFile(_installedHandleName);
             _installActions = new List<Action>();
@@ -26,7 +30,7 @@ namespace DotNet.Basics.IO
 
         public DirPath InstallDir { get; }
 
-        public (string Input, int ExitCode, string Output) RunFromCmd(string fileName, params string[] args)
+        public (string Input, int ExitCode) RunFromCmd(string fileName, params string[] args)
         {
             Install();
             var argString = args.Aggregate(string.Empty, (current, param) => current + $" {param}");
@@ -35,7 +39,7 @@ namespace DotNet.Basics.IO
             if (file.Exists() == false)
                 throw new FileNotFoundException(file.FullName());
 
-            return CmdPrompt.Run($"{file.FullName()} {argString}");
+            return CmdPrompt.Run($"{file.FullName()} {argString}", _writeOutput, _writeError);
         }
 
         public FileApplication WithStream(string filename, Stream content, Action<FilePath> postInstallAction = null)

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using DotNet.Basics.SevenZip;
 using DotNet.Basics.Sys;
-
 using DotNet.Basics.IO;
 using FluentAssertions;
 using Xunit;
@@ -22,7 +21,7 @@ namespace DotNet.Basics.Tests.SevenZip
         {
             WithTestRoot(testRoot =>
             {
-                _sevenZip = new SevenZipExe(testRoot);
+                _sevenZip = new SevenZipExe(testRoot, o => Output.WriteLine(o));
                 _sourceArchive = testRoot.ToFile("SevenZip", "myArchive.zip");
             });
         }
@@ -126,7 +125,6 @@ namespace DotNet.Basics.Tests.SevenZip
 
                 var result = _sevenZip.ExtractToDirectory(_sourceArchive.FullName(), targetDir.FullName());
                 Output.WriteLine($"ExtractToDirectory input: {result.Input}");
-                Output.WriteLine($"ExtractToDirectory result: {result.Output}");
                 targetDir.Exists().Should().BeTrue($"Exists:{targetDir.FullName()}");
                 targetDir.ToDir().EnumeratePaths().Count().Should().Be(1);
                 targetFile.Exists().Should().BeTrue($"Exists:{targetDir.FullName()}");
