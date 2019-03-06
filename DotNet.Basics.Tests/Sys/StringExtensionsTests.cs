@@ -9,7 +9,7 @@ namespace DotNet.Basics.Tests.Sys
     {
         const string _str = "myStr";
         const string _prefix = "myPrefix";
-        const string _postfix = "myPostfix";
+        const string _suffix = "myPostfix";
 
         [Theory]
         [InlineData("BobsYourUncle", "elcnUruoYsboB")]
@@ -110,18 +110,18 @@ namespace DotNet.Basics.Tests.Sys
         [Fact]
         public void EnsurePostFix_WhenPostFixDoesntExist_StrIsSame()
         {
-            var withPostFix = _str.EnsureSuffix(_postfix);
+            var withPostFix = _str.EnsureSuffix(_suffix);
 
-            withPostFix.Should().Be(_str + _postfix);
+            withPostFix.Should().Be(_str + _suffix);
         }
 
         [Fact]
         public void EnsurePostFix_WhenPostFixExists_StrIsSame()
         {
-            const string str = _str + _postfix;
-            var withPostFix = str.EnsureSuffix(_postfix.ToUpper());
+            const string str = _str + _suffix;
+            var withPostFix = str.EnsureSuffix(_suffix.ToUpper());
 
-            withPostFix.Should().Be(_str + _postfix.ToUpper());
+            withPostFix.Should().Be(_str + _suffix.ToUpper());
         }
 
         [Fact]
@@ -143,20 +143,30 @@ namespace DotNet.Basics.Tests.Sys
 
 
         [Fact]
-        public void RemovePostfix_WhenPostfixDoesntExist_PostfixRemoved()
+        public void RemoveSuffix_WhenSuffixDoesntExist_SuffixRemoved()
         {
-            var woPpostFix = _str.RemoveSuffix(_postfix.ToUpper());
+            var woSuffix = _str.RemoveSuffix(_suffix.ToUpper());
 
-            woPpostFix.Should().Be(_str);
+            woSuffix.Should().Be(_str);
         }
 
         [Fact]
-        public void RemovePostfix_WhenPostfixExists_PostfixRemoved()
+        public void RemoveSuffix_WhenSuffixExists_SuffixRemoved()
         {
-            const string str = _str + _postfix;
-            var woPostfix = str.RemoveSuffix(_postfix);
+            const string str = _str + _suffix;
+            var woSuffix = str.RemoveSuffix(_suffix);
 
-            woPostfix.Should().Be(_str);
+            woSuffix.Should().Be(_str);
+        }
+        [Theory]
+        [InlineData((string)null)]
+        [InlineData("")]
+        public void RemoveSuffix_WhenSuffixIsEmpty_SuffixIsRemoved(string suffix)
+        {
+            var str = "HelloWorld!";
+            var woSuffix= str.RemoveSuffix(suffix);
+
+            woSuffix.Should().Be(str);
         }
 
         [Fact]
