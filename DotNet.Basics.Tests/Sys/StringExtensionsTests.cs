@@ -11,6 +11,15 @@ namespace DotNet.Basics.Tests.Sys
         const string _prefix = "myPrefix";
         const string _postfix = "myPostfix";
 
+        [Theory]
+        [InlineData("BobsYourUncle", "elcnUruoYsboB")]
+        public void Reverse_ReversString_StringIsReversed(string input, string expected)
+        {
+            var result = input.Reverse();
+
+            result.Should().Be(expected);
+        }
+
         [Fact]
         public void ToStream_ConvertToStream_StreamIsGenerated()
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
@@ -8,6 +9,22 @@ namespace DotNet.Basics.Sys
 {
     public static class StringExtensions
     {
+        public static string Reverse(this string str)
+        {
+            if (str == null)
+                throw new ArgumentNullException(nameof(str));
+
+            return string.Join("", str.GraphemeClusters().Reverse().ToArray());
+        }
+        private static IEnumerable<string> GraphemeClusters(this string s)
+        {
+            var enumerator = StringInfo.GetTextElementEnumerator(s);
+            while (enumerator.MoveNext())
+            {
+                yield return (string)enumerator.Current;
+            }
+        }
+
         public static string ToCamelCase(this string str, CultureInfo cultureInfo = null)
         {
             if (str == null)
