@@ -17,7 +17,6 @@ namespace DotNet.Basics.Net.Http
         IRestRequest WithFormUrlEncodedContent(IEnumerable<KeyValuePair<string, string>> content, Encoding encoding = null);
         IRestRequest WithJsonContent(string jsonContent);
 
-        IRestRequest WithStringContent(string content, string mediaType = JsonContent.DefaultMediaType, Encoding encoding = null);
         IRestRequest WithHttpContent(HttpContent content);
         IRestRequest WithHeaders(Action<HttpRequestHeaders> headers);
         IRestRequest WithVersion(Version version);

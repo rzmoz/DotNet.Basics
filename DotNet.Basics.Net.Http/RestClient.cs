@@ -8,15 +8,13 @@ namespace DotNet.Basics.Net.Http
 {
     public class RestClient : IRestClient
     {
-        private readonly System.Net.Http.HttpClient _client;
+        private readonly HttpClient _client;
 
-        public RestClient(string baseUri = null, System.Net.Http.HttpClient httpClient = null)
+        public RestClient(string baseUri = null, HttpClient httpClient = null)
         {
-            _client = httpClient ?? new System.Net.Http.HttpClient();
+            _client = httpClient ?? new HttpClient();
             if (baseUri != null)
                 _client.BaseAddress = new Uri(baseUri);
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/json"));
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
             _client.DefaultRequestHeaders.AcceptCharset.Add(new StringWithQualityHeaderValue("utf-8"));
         }
 

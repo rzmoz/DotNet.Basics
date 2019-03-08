@@ -8,14 +8,8 @@ namespace DotNet.Basics.Net.Http
     public class FormUrlEncodedContent : StringContent
     {
         public const string DefaultMediaType = "application/x-www-form-urlencoded";
-        public static readonly Encoding DefaultEncoding = Encoding.UTF8;
 
-        public FormUrlEncodedContent(IEnumerable<KeyValuePair<string, string>> content)
-            : this(content, DefaultEncoding)
-        {
-        }
-
-        public FormUrlEncodedContent(IEnumerable<KeyValuePair<string, string>> content, Encoding encoding)
+        public FormUrlEncodedContent(IEnumerable<KeyValuePair<string, string>> content, Encoding encoding=null)
             : base(ParseContent(content), encoding, DefaultMediaType)
         {
         }
