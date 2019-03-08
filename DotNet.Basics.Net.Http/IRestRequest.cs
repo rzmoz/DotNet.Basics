@@ -14,7 +14,6 @@ namespace DotNet.Basics.Net.Http
         HttpRequestHeaders Headers { get; }
         Version Version { get; }
 
-        IRestRequest WithFormUrlEncodedContent(IEnumerable<KeyValuePair<string, string>> content, Encoding encoding = null);
         IRestRequest WithJsonContent(string jsonContent);
 
         IRestRequest WithHttpContent(HttpContent content);

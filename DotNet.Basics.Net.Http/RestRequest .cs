@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 
 namespace DotNet.Basics.Net.Http
 {
@@ -23,7 +22,7 @@ namespace DotNet.Basics.Net.Http
         public HttpRequestHeaders Headers => HttpRequestMessage.Headers;
         public Version Version => HttpRequestMessage.Version;
 
-        public IRestRequest WithFormUrlEncodedContent(IEnumerable<KeyValuePair<string, string>> content, Encoding encoding = null)
+        public IRestRequest WithFormUrlEncodedContent(IEnumerable<KeyValuePair<string, string>> content)
         {
             if (content == null) throw new ArgumentNullException(nameof(content));
             return WithHttpContent(new FormUrlEncodedContent(content));

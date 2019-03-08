@@ -21,7 +21,7 @@
     {
       "name": "DotNet.Basics.Net.Http",
       "version": "4.3.4",
-      "prerelease": "rc.4"
+      "prerelease": "rc.5"
     },
     {
       "name": "DotNet.Basics.Pipelines",
