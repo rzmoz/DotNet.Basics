@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Web;
 
 namespace DotNet.Basics.Net.Http
 {
@@ -21,16 +25,24 @@ namespace DotNet.Basics.Net.Http
         public HttpRequestHeaders Headers => HttpRequestMessage.Headers;
         public Version Version => HttpRequestMessage.Version;
 
-        public IRestRequest WithContent(HttpContent content)
+        public IRestRequest WithFormUrlEncodedContent(IEnumerable<KeyValuePair<string, string>> content, Encoding encoding = null)
+        {
+            if (content == null) throw new ArgumentNullException(nameof(content));
+            return WithHttpContent(new FormUrlEncodedContent(content));
+        }
+        public IRestRequest WithJsonContent(string content)
+        {
+            return WithHttpContent(new JsonContent(content));
+        }
+        public IRestRequest WithStringContent(string content, string mediaType = JsonContent.DefaultMediaType, Encoding encoding = null)
+        {
+            return WithHttpContent(new StringContent(content, encoding, mediaType));
+        }
+        public IRestRequest WithHttpContent(HttpContent content)
         {
             if (content != null)
                 HttpRequestMessage.Content = content;
             return this;
-        }
-
-        public IRestRequest WithJsonContent(string content)
-        {
-            return WithContent(new JsonContent(content));
         }
 
         public IRestRequest WithHeaders(Action<HttpRequestHeaders> addHeaders)

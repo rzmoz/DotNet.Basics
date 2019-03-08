@@ -6,7 +6,7 @@ namespace DotNet.Basics.Net.Http
 {
     public class JsonContent : StringContent
     {
-        public const string DefaultContentType = "application/json";
+        public const string DefaultMediaType = "application/json";
         public static readonly Encoding DefaultEncoding = Encoding.UTF8;
 
         public JsonContent(object obj) : this(JsonConvert.SerializeObject(obj), DefaultEncoding)
@@ -18,7 +18,7 @@ namespace DotNet.Basics.Net.Http
         public JsonContent(string json) : this(json, DefaultEncoding)
         { }
 
-        public JsonContent(string json, Encoding encoding) : base(json, encoding, DefaultContentType)
+        public JsonContent(string json, Encoding encoding) : base(json, encoding, DefaultMediaType)
         { }
     }
 }
