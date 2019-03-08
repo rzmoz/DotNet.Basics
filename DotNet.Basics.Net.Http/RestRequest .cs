@@ -31,11 +31,17 @@ namespace DotNet.Basics.Net.Http
         {
             return WithHttpContent(new JsonContent(content));
         }
+
         public IRestRequest WithHttpContent(HttpContent content)
         {
             if (content != null)
                 HttpRequestMessage.Content = content;
             return this;
+        }
+
+        public IRestRequest WithHeader(string name, string value)
+        {
+            return WithHeaders(headers => headers.Add(name, value));
         }
 
         public IRestRequest WithHeaders(Action<HttpRequestHeaders> addHeaders)

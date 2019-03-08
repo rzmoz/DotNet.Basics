@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -10,11 +11,16 @@ namespace DotNet.Basics.Net.Http
     {
         private readonly HttpClient _client;
 
-        public RestClient(string baseUri = null, HttpClient httpClient = null)
+        public RestClient(string baseUri = null, IEnumerable<KeyValuePair<string, string>> defaultRequestHeaders = null, HttpClient httpClient = null)
         {
             _client = httpClient ?? new HttpClient();
             if (baseUri != null)
                 _client.BaseAddress = new Uri(baseUri);
+
+            if (defaultRequestHeaders != null)
+                foreach (var header in defaultRequestHeaders)
+                    _client.DefaultRequestHeaders.Add(header.Key, header.Value);
+
             _client.DefaultRequestHeaders.AcceptCharset.Add(new StringWithQualityHeaderValue("utf-8"));
         }
 

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 
 namespace DotNet.Basics.Net.Http
 {
@@ -15,8 +14,10 @@ namespace DotNet.Basics.Net.Http
         Version Version { get; }
 
         IRestRequest WithJsonContent(string jsonContent);
+        IRestRequest WithFormUrlEncodedContent(IEnumerable<KeyValuePair<string, string>> content);
 
         IRestRequest WithHttpContent(HttpContent content);
+        IRestRequest WithHeader(string name, string value);
         IRestRequest WithHeaders(Action<HttpRequestHeaders> headers);
         IRestRequest WithVersion(Version version);
 

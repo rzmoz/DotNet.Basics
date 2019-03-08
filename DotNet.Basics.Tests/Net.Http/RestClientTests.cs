@@ -20,7 +20,7 @@ namespace DotNet.Basics.Tests.Net.Http
             echoHttpClient.SendAsync(Arg.Any<HttpRequestMessage>(), CancellationToken.None)
                 .ReturnsForAnyArgs(info => new HttpResponseMessage { RequestMessage = info.Arg<HttpRequestMessage>() });
 
-            _echoRestClient = new RestClient("http://localhost/", echoHttpClient);
+            _echoRestClient = new RestClient("http://localhost/", httpClient: echoHttpClient);
         }
 
         [Fact]
