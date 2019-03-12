@@ -19,7 +19,7 @@ namespace DotNet.Basics.IO
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static (string Input, int ExitCode) Run(string source, string target, string filesToCopy = null, string options = " /np /ndl /nfl", Action<string> writeOutput = null, Action<string> writeError = null)
+        public static (string Input, int ExitCode) Run(string source, string target, string filesToCopy = null, string options = " /NS /NC /NFL /NDL /NP", Action<string> writeOutput = null, Action<string> writeError = null)
         {
             if (source == null) { throw new ArgumentNullException(nameof(source)); }
             if (target == null) { throw new ArgumentNullException(nameof(target)); }
