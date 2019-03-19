@@ -16,7 +16,7 @@
     {
       "name": "DotNet.Basics.SeriLog",
       "version": "2.8.0",
-      "prerelease": "rc.2"
+      "prerelease": ""
     },
     {
       "name": "DotNet.Basics.Net.Http",
