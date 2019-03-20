@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DotNet.Basics.Sys;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
@@ -8,7 +9,8 @@ namespace DotNet.Basics.Cli
 {
     public class CliArgsBuilder
     {
-        private const string _microsoftExtensionsArgsSwitch = "--";
+        private const char _shortExtensionsArgsSwitch = '-';
+        public const string MicrosoftExtensionsArgsSwitch = "--";
 
         public CliArgsBuilder WithSerilog(Action<LoggerConfiguration> configureLogger = null)
         {
@@ -21,23 +23,23 @@ namespace DotNet.Basics.Cli
             return this;
         }
 
-        public CliArgs Build(string[] args, IDictionary<string, string> switchMappings = null, Action<IConfigurationBuilder> add = null, string argsSwitch = "-")
+        public CliArgs Build(string[] args, SwitchMappings switchMappings = null, Action<IConfigurationBuilder> add = null)
         {
             var configArgs = args.Select(a =>
             {
-                if (a.StartsWith(argsSwitch))
-                    a = $"{_microsoftExtensionsArgsSwitch}{a.Substring(argsSwitch.Length)}";
+                if (a.StartsWith(_shortExtensionsArgsSwitch.ToString()))
+                    a = a.TrimStart(_shortExtensionsArgsSwitch).EnsurePrefix(MicrosoftExtensionsArgsSwitch);
                 return a;
             }).ToArray();
 
             var configBuilder = new ConfigurationBuilder()
-                .AddCommandLine(configArgs, switchMappings ?? new Dictionary<string, string>());
+                .AddCommandLine(configArgs, (switchMappings ?? new SwitchMappings()).ToDictionary());
 
             add?.Invoke(configBuilder);
 
             var config = configBuilder.Build();
 
-            return new CliArgs(args, config, argsSwitch);
+            return new CliArgs(args, config);
         }
     }
 }

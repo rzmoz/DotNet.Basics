@@ -18,7 +18,7 @@ namespace DotNet.Basics.Tests.Cli
 
             cliArgs.IsDebug.Should().BeTrue();
         }
-
+        
         [Theory]
         [InlineData("myKey", "myValue")]
         public void Index_FindByKey_ValueIsFound(string key, string value)
