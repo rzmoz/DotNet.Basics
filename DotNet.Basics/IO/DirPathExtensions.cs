@@ -33,12 +33,12 @@ namespace DotNet.Basics.IO
             return dp.GetPaths().Count == 0;
         }
 
-        public static void CreateIfNotExists(this DirPath dp)
+        public static DirPath CreateIfNotExists(this DirPath dp)
         {
-            if (dp.Exists())
-                return;
+            if (dp.Exists() == false)
+                Directory.CreateDirectory(dp.FullName());
 
-            Directory.CreateDirectory(dp.FullName());
+            return dp;
         }
 
         public static DirPath CreateSubDir(this DirPath dp, string subDirName)

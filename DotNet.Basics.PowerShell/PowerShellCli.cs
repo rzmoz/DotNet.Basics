@@ -10,20 +10,6 @@ namespace DotNet.Basics.PowerShell
     {
         private const string _bypassExecutionPolicy = "Set-ExecutionPolicy Bypass -Scope Process";
 
-        public static object[] RemoveItem(string path, bool force = false, bool recurse = false)
-        {
-            return RemoveItem(new[] { path }, force, recurse);
-        }
-
-        public static object[] RemoveItem(string[] paths, bool force = false, bool recurse = false)
-        {
-            var cmdlet = new PowerShellCmdlet("Remove-Item")
-                .WithParam("Path", paths)
-                .WithForce(force)
-                .WithRecurse(recurse);
-            return RunScript(cmdlet.ToString());
-        }
-
         public static object[] RunCmdlet(PowerShellCmdlet cmdLet)
         {
             return RunScript(cmdLet.ToString());
@@ -58,10 +44,10 @@ namespace DotNet.Basics.PowerShell
                             case ErrorRecord error:
                                 throw new ArgumentException(error.ErrorDetails.Message);
                             case Collection<ErrorRecord> errors:
-                            {
-                                var errorMessage = errors.Aggregate(string.Empty, (current, err) => current + (err.Exception.ToString() + Environment.NewLine));
-                                throw new ArgumentException(errorMessage);
-                            }
+                                {
+                                    var errorMessage = errors.Aggregate(string.Empty, (current, err) => current + (err.Exception.ToString() + Environment.NewLine));
+                                    throw new ArgumentException(errorMessage);
+                                }
                         }
                     }
                     return passThru.Select(pt => pt.BaseObject).ToArray();

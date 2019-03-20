@@ -9,11 +9,10 @@ namespace DotNet.Basics.PowerShell
     {
         private readonly IList<KeyValuePair<string, object>> _parameters;
 
-        public PowerShellCmdlet(string name, params KeyValuePair<string, object>[] parameters)
+        public PowerShellCmdlet(string name)
         {
-            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
             Name = name ?? throw new ArgumentNullException(nameof(name));
-            _parameters = new List<KeyValuePair<string, object>>(); ;
+            _parameters = new List<KeyValuePair<string, object>>();
         }
 
         public string Name { get; }
