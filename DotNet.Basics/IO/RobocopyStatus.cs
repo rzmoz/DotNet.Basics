@@ -29,18 +29,18 @@ namespace DotNet.Basics.IO
             "Serious error. Robocopy did not copy any files. Either a usage error or an error due to insufficient access privileges on the source or destination directories."//16
         };
 
-        public RobocopyStatus(int statusCode)
+        public RobocopyStatus(int exitCode)
         {
-            if (statusCode < 0 || statusCode > 16)
-                statusCode = 16;//set to serious error if exit code is not understood
-            StatusCode = statusCode;
-            Success = StatusCode < 8;
-            StatusMessage = _statusMessages[statusCode];
+            if (exitCode < 0 || exitCode > 16)
+                exitCode = 16;//set to serious error if exit code is not understood
+            ExitCode = exitCode;
+            Failed = ExitCode >= 8;
+            StatusMessage = _statusMessages[exitCode];
 
         }
 
-        public int StatusCode { get; }
-        public bool Success { get; }
+        public int ExitCode { get; }
+        public bool Failed { get; }
         public string StatusMessage { get; }
     }
 }

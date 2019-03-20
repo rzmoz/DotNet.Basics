@@ -57,8 +57,8 @@ namespace DotNet.Basics.Tests.IO
                 //act
                 var result = Robocopy.CopyFile(sourceFile.Directory().FullName(), targetFile.Directory().FullName(), sourceFile.Name);
 
-                result.StatusCode.Should().BeLessThan(8); //http://ss64.com/nt/robocopy-exit.html
-                result.Success.Should().BeTrue();
+                result.ExitCode.Should().BeLessThan(8); //http://ss64.com/nt/robocopy-exit.html
+                result.Failed.Should().BeFalse();
                 targetFile.Exists().Should().BeTrue("target file is copied");
             });
         }
@@ -84,8 +84,8 @@ namespace DotNet.Basics.Tests.IO
                 var result = Robocopy.CopyDir(source.FullName(), target.FullName(), true);
 
                 //assert
-                result.StatusCode.Should().BeLessThan(8); //http://ss64.com/nt/robocopy-exit.html
-                result.Success.Should().BeTrue();
+                result.ExitCode.Should().BeLessThan(8); //http://ss64.com/nt/robocopy-exit.html
+                result.Failed.Should().BeFalse();
                 target.Exists().Should().BeTrue();
                 targetFile.Exists().Should().BeTrue();
                 targetFile.ReadAllText().Should().Be(fileContent);
