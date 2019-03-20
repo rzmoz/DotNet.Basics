@@ -14,6 +14,11 @@
       "prerelease": "rc.1"
     },
     {
+      "name": "DotNet.Basics.Cli",
+      "version": "2.2.0",
+      "prerelease": "rc.1"
+    },
+    {
       "name": "DotNet.Basics.SeriLog",
       "version": "2.8.0",
       "prerelease": ""

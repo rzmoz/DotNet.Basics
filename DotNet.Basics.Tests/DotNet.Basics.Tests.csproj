@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DotNet.Basics.Autofac\DotNet.Basics.Autofac.csproj" />
+    <ProjectReference Include="..\DotNet.Basics.Cli\DotNet.Basics.Cli.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Net.Http\DotNet.Basics.Net.Http.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Pipelines\DotNet.Basics.Pipelines.csproj" />
     <ProjectReference Include="..\DotNet.Basics.PowerShell\DotNet.Basics.PowerShell.csproj" />
