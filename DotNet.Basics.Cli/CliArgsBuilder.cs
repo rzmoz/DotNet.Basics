@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -20,7 +21,7 @@ namespace DotNet.Basics.Cli
             return this;
         }
 
-        public CliArgs Build(string[] args, Action<IConfigurationBuilder> add = null, string argsSwitch = "-")
+        public CliArgs Build(string[] args, IDictionary<string, string> switchMappings = null, Action<IConfigurationBuilder> add = null, string argsSwitch = "-")
         {
             var configArgs = args.Select(a =>
             {
@@ -30,7 +31,7 @@ namespace DotNet.Basics.Cli
             }).ToArray();
 
             var configBuilder = new ConfigurationBuilder()
-                .AddCommandLine(configArgs);
+                .AddCommandLine(configArgs, switchMappings ?? new Dictionary<string, string>());
 
             add?.Invoke(configBuilder);
 
