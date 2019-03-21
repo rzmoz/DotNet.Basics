@@ -9,27 +9,29 @@
             Patch = patch;
             PreRelease = preRelease ?? string.Empty;
             Metadata = metadata ?? string.Empty;
-            
-            //set semver10 string
-            SemVer10String = $"{Major}.{Minor}.{Patch}";
-            
-            //set semver20 string
-            SemVer20String = SemVer10String;
-            if (string.IsNullOrWhiteSpace(PreRelease) == false)
-                SemVer20String += $"{SemVersionLexer.PreReleaseSeparator}{PreRelease.TrimStart(SemVersionLexer.PreReleaseSeparator)}";
-            if (string.IsNullOrWhiteSpace(Metadata) == false)
-                SemVer20String += $"{SemVersionLexer.MetadataSeparator}{Metadata.TrimStart(SemVersionLexer.MetadataSeparator)}";
         }
 
-        public int Major { get; }
-        public int Minor { get; }
-        public int Patch { get; }
-        public string PreRelease { get; }
-        public string Metadata { get; }
+        public int Major { get; set; }
+        public int Minor { get; set; }
+        public int Patch { get; set; }
+        public string PreRelease { get; set; }
+        public string Metadata { get; set; }
 
-        public string SemVer10String { get; }
-        public string SemVer20String { get; }
-        
+        public string SemVer10String => $"{Major}.{Minor}.{Patch}";
+
+        public string SemVer20String
+        {
+            get
+            {
+                var semVer20String = SemVer10String;
+                if (string.IsNullOrWhiteSpace(PreRelease) == false)
+                    semVer20String += $"{SemVersionLexer.PreReleaseSeparator}{PreRelease.TrimStart(SemVersionLexer.PreReleaseSeparator)}";
+                if (string.IsNullOrWhiteSpace(Metadata) == false)
+                    semVer20String += $"{SemVersionLexer.MetadataSeparator}{Metadata.TrimStart(SemVersionLexer.MetadataSeparator)}";
+                return semVer20String;
+            }
+        }
+
         public static SemVersion Parse(string semVer)
         {
             var lexer = new SemVersionLexer();
@@ -61,6 +63,31 @@
             if (a.Patch > b.Patch)
                 return true;
             return false;
+        }
+
+        protected bool Equals(SemVersion other)
+        {
+            return Major == other.Major && Minor == other.Minor && Patch == other.Patch && string.Equals(PreRelease, other.PreRelease);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((SemVersion) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = Major;
+                hashCode = (hashCode * 397) ^ Minor;
+                hashCode = (hashCode * 397) ^ Patch;
+                hashCode = (hashCode * 397) ^ (PreRelease != null ? PreRelease.GetHashCode() : 0);
+                return hashCode;
+            }
         }
     }
 }
