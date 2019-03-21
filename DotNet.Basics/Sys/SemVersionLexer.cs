@@ -12,7 +12,7 @@ namespace DotNet.Basics.Sys
         public IReadOnlyList<string> Lex(string semVer)
         {
             if (semVer == null) throw new ArgumentNullException(nameof(semVer));
-            var tokens = new List<string> { string.Empty, string.Empty, string.Empty, string.Empty, string.Empty };
+            var tokens = new List<string> { "0", "0", "0", string.Empty, string.Empty };
             var stateIndex = 0;
 
             foreach (var @char in semVer)
@@ -22,6 +22,7 @@ namespace DotNet.Basics.Sys
 
                 stateIndex = GetStateIndex(stateIndex, @char);
             }
+
             return tokens;
         }
 
