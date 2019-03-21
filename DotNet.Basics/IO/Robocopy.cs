@@ -60,10 +60,10 @@ namespace DotNet.Basics.IO
             return Run(sourceDir, targetDir, null, options, writeOutput, writeError);
         }
 
-        public static RobocopyStatus MoveFolder(string sourceDir, string targetDir, string filter = null, bool recurse = false, string extraOptions = null, Action<string> writeOutput = null, Action<string> writeError = null)
+        public static RobocopyStatus MoveFolder(string sourceDir, string targetDir, string filter = null, bool includeSubFolders = false, string extraOptions = null, Action<string> writeOutput = null, Action<string> writeError = null)
         {
             string options = $"{_moveOption} {extraOptions}";
-            if (recurse)
+            if (includeSubFolders)
                 options = $"{_includeSubfoldersOption} {options}";
             var moveResult = Run(sourceDir, targetDir, filter, options, writeOutput, writeError);
             return moveResult;
@@ -74,9 +74,9 @@ namespace DotNet.Basics.IO
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static RobocopyStatus MoveContent(string sourceDir, string targetDir, string filter = null, bool recurse = false, string extraOptions = null, Action<string> writeOutput = null, Action<string> writeError = null)
+        public static RobocopyStatus MoveContent(string sourceDir, string targetDir, string filter = null, bool includeSubFolders = false, string extraOptions = null, Action<string> writeOutput = null, Action<string> writeError = null)
         {
-            var result = MoveFolder(sourceDir, targetDir, filter, recurse, extraOptions, writeOutput, writeError);
+            var result = MoveFolder(sourceDir, targetDir, filter, includeSubFolders, extraOptions, writeOutput, writeError);
             Directory.CreateDirectory(sourceDir);
             return result;
         }

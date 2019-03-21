@@ -32,7 +32,6 @@ namespace DotNet.Basics.Tests.Sys
         [Fact]
         public void Metadata_Set_ToSemverStringReflectsChangesToSemVerStrings()
         {
-
             var semVer = SemVersion.Parse(_fullSemver20String);
             var before = semVer.SemVer20String;
             //act
@@ -40,6 +39,19 @@ namespace DotNet.Basics.Tests.Sys
 
             //assert
             semVer.SemVer20String.Should().NotBe(before);
+
+        }
+        [Fact]
+        public void Metadata_UpdateBlank_MetadataIsUpdated()
+        {
+            var metadata = "Something.else";
+            var semVer = new SemVersion(1,1,1);
+            
+            //act
+            semVer.Metadata += metadata;
+
+            //assert
+            semVer.SemVer20String.Should().Be($"1.1.1+{metadata }");
 
         }
 
