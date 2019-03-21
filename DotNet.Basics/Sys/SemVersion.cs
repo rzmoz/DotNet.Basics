@@ -43,7 +43,7 @@ namespace DotNet.Basics.Sys
                 return semVer20String;
             }
         }
-        private static SemVersion Parse(string semVer)
+        public static SemVersion Parse(string semVer)
         {
             if (semVer == null)
                 return null;
