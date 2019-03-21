@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using DotNet.Basics.Sys;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +10,7 @@ namespace DotNet.Basics.Cli
     {
         private const char _shortExtensionsArgsSwitch = '-';
         public const string MicrosoftExtensionsArgsSwitch = "--";
+        public SwitchMappings SwitchMappings { get; } = new SwitchMappings();
 
         public CliArgsBuilder WithSerilog(Action<LoggerConfiguration> configureLogger = null)
         {
@@ -22,8 +22,13 @@ namespace DotNet.Basics.Cli
             Log.Logger = loggerConfiguration.CreateLogger();
             return this;
         }
+        public CliArgsBuilder WithSwitchMappings(Func<SwitchMappings> switchMappings)
+        {
+            SwitchMappings.AddRange(switchMappings?.Invoke());
+            return this;
+        }
 
-        public CliArgs Build(string[] args, SwitchMappings switchMappings = null, Action<IConfigurationBuilder> add = null)
+        public CliArgs Build(string[] args, Action<IConfigurationBuilder> add = null)
         {
             var configArgs = args.Select(a =>
             {
@@ -33,7 +38,7 @@ namespace DotNet.Basics.Cli
             }).ToArray();
 
             var configBuilder = new ConfigurationBuilder()
-                .AddCommandLine(configArgs, (switchMappings ?? new SwitchMappings()).ToDictionary());
+                .AddCommandLine(configArgs, SwitchMappings.ToDictionary());
 
             add?.Invoke(configBuilder);
 

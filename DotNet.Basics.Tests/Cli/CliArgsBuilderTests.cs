@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using DotNet.Basics.Cli;
+﻿using DotNet.Basics.Cli;
 using FluentAssertions;
 using Xunit;
 
@@ -17,13 +14,14 @@ namespace DotNet.Basics.Tests.Cli
             var mainKey = "configuration";
             var value = "myValue";
             var inputArgs = new[] { $"--{argsKey}", value };
+            
 
-            var mappings = new SwitchMappings
-            {
-                {argsKey,mainKey }
-            };
-
-            var args = new CliArgsBuilder().Build(inputArgs, mappings);
+            var args = new CliArgsBuilder()
+                .WithSwitchMappings(() => new SwitchMappings
+                {
+                    {argsKey, mainKey}
+                })
+                .Build(inputArgs);
 
             args[mainKey].Should().Be(value);
         }

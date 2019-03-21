@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using DotNet.Basics.Sys;
 
@@ -10,7 +11,16 @@ namespace DotNet.Basics.Cli
 
         public void Add(string key, string value)
         {
+            if (key == null) throw new ArgumentNullException(nameof(key));
             _switchMappings.Add(key.EnsurePrefix(CliArgsBuilder.MicrosoftExtensionsArgsSwitch), value);
+        }
+
+        public void AddRange(IEnumerable<KeyValuePair<string, string>> mappings)
+        {
+            if (mappings == null)
+                return;
+            foreach (var mapping in mappings)
+                Add(mapping.Key, mapping.Value);
         }
 
         public void Clear()

@@ -17,9 +17,9 @@ namespace DotNet.Basics.Cli
         }
 
         public string this[string key] => Config[key];
+        public string this[int index] => index < Args.Count ? Args[index] : null;
 
-        public bool IsSet(string key, bool firstCharIsShortKey = true,
-            StringComparison stringComparison = StringComparison.OrdinalIgnoreCase)
+        public bool IsSet(string key, bool firstCharIsShortKey = true, StringComparison stringComparison = StringComparison.OrdinalIgnoreCase)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
 
@@ -40,6 +40,7 @@ namespace DotNet.Basics.Cli
                 return loweredArg == shortKey;
             });
         }
+
         public IReadOnlyList<string> Args { get; }
         public IConfigurationRoot Config { get; }
     }

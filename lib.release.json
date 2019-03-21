@@ -16,7 +16,7 @@
     {
       "name": "DotNet.Basics.Cli",
       "version": "2.2.0",
-      "prerelease": "rc.7"
+      "prerelease": "rc.8"
     },
     {
       "name": "DotNet.Basics.SeriLog",
