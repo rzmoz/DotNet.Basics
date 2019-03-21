@@ -26,12 +26,7 @@ namespace DotNet.Basics.Cli
         {
             if (args.IsDebug())
             {
-                Log.Logger = new LoggerConfiguration()
-                    .MinimumLevel.Verbose()
-                    .WriteTo.ColoredConsole()
-                    .CreateLogger();
-
-                Log.Warning("Paused for debug. PID: {ProcessId} | Name: {ProcessName}. Press {ENTER} to continue..", Process.GetCurrentProcess().Id, Process.GetCurrentProcess().ProcessName, "[ENTER]");
+                Console.WriteLine($"Paused for debug. Name: {Process.GetCurrentProcess().Id} | PID: {Process.GetCurrentProcess().ProcessName}. Press [ENTER] to continue..");
                 Console.ReadLine();
 
                 Log.Logger = null;
