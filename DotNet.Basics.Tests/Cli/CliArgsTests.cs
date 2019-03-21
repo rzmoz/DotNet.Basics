@@ -13,12 +13,9 @@ namespace DotNet.Basics.Tests.Cli
         public void IsSet_Debug_IsFound(string arg)
         {
             var args = new[] { arg.EnsurePrefix("-") };
-
-            var cliArgs = new CliArgsBuilder().Build(args);
-
-            cliArgs.IsDebug.Should().BeTrue();
+            args.IsDebug().Should().BeTrue();
         }
-        
+
         [Theory]
         [InlineData("myKey", "myValue")]
         public void Index_FindByKey_ValueIsFound(string key, string value)

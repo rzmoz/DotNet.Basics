@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
-using Serilog;
 using static System.Char;
 
 namespace DotNet.Basics.Cli
@@ -16,7 +14,6 @@ namespace DotNet.Basics.Cli
         {
             Args = args ?? throw new ArgumentNullException(nameof(args));
             Config = config ?? throw new ArgumentNullException(nameof(config));
-            IsDebug = IsSet("debug");
         }
 
         public string this[string key] => Config[key];
@@ -27,7 +24,6 @@ namespace DotNet.Basics.Cli
             if (key == null) throw new ArgumentNullException(nameof(key));
 
             var strippedKey = key.TrimStart(ConfigurationSwitchFlags);
-
 
             //full match
             if (Args.Any(a => a.TrimStart(ConfigurationSwitchFlags).Equals(strippedKey, stringComparison)))
@@ -44,17 +40,6 @@ namespace DotNet.Basics.Cli
                 return loweredArg == shortKey;
             });
         }
-
-        public void PauseIfDebug()
-        {
-            if (IsDebug)
-            {
-                Log.Warning("Paused for debug. PID: {ProcessId} | Name: {ProcessName}. Press {ENTER} to continue..", Process.GetCurrentProcess().Id, Process.GetCurrentProcess().ProcessName, "[ENTER]");
-                Console.ReadLine();
-            }
-        }
-
-        public bool IsDebug { get; }
         public IReadOnlyList<string> Args { get; }
         public IConfigurationRoot Config { get; }
     }
