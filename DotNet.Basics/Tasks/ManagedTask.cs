@@ -29,6 +29,11 @@ namespace DotNet.Basics.Tasks
         {
             Ended?.Invoke(taskName, e);
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     public class ManagedTask<T> : ManagedTask
@@ -64,7 +69,7 @@ namespace DotNet.Basics.Tasks
         : base(name)
         {
             _task = task ?? throw new ArgumentNullException(nameof(task));
-            
+
         }
 
         public Task<T> RunAsync(T args)
