@@ -27,7 +27,7 @@ namespace DotNet.Basics.Pipelines.Dispatching
             IsDebug = true;
             return this;
         }
-        public PipelineDispatcherBuilder WithRootNamespace(string rootNamespace)
+        public PipelineDispatcherBuilder InNamespace(string rootNamespace)
         {
             RootNamespace = rootNamespace?.EnsureSuffix(".");
             return this;

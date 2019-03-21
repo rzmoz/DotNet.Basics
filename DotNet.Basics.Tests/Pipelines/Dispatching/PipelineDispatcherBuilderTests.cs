@@ -10,7 +10,7 @@ namespace DotNet.Basics.Tests.Pipelines.Dispatching
         public void Build_BuildDispatcher_DispatcherIsBuild()
         {
             var dispatcher = new PipelineDispatcherBuilder()
-                .WithRootNamespace(typeof(PipelineDispatcherBuilderTests).Namespace)
+                .InNamespace(typeof(PipelineDispatcherBuilderTests).Namespace)
                 .Build(typeof(PipelineDispatcherBuilderTests).Assembly);
 
             dispatcher.Pipelines.Count.Should().Be(1);

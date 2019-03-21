@@ -4,5 +4,12 @@ namespace DotNet.Basics.Tests.Pipelines.Dispatching
 {
     public class DispatchTestPipeline : Pipeline<DispatchTestArgs>
     {
+        public DispatchTestPipeline()
+        {
+            AddStep("MyStep", (args, ct) =>
+            {
+                args.SetByPipeline = "Yes";
+            });
+        }
     }
 }

@@ -13,33 +13,29 @@ namespace DotNet.Basics.Pipelines.Dispatching
 
         public PipelineDispatcher(Dictionary<string, PipelineDispatchInfo> pipelines)
         {
-            Pipelines = pipelines;
+            Pipelines = pipelines ?? new Dictionary<string, PipelineDispatchInfo>();
         }
 
         public IReadOnlyDictionary<string, PipelineDispatchInfo> Pipelines { get; }
 
-        public async Task RunAsync(string pipelineName, string argsString, CancellationToken ct = default(CancellationToken))
+        public async Task<object> RunAsync(string pipelineName, string argsString, CancellationToken ct = default(CancellationToken))
         {
             if (pipelineName == null)
-            {
-                Log.Error($"Pipeline name not set");
-                return;
-            }
+                throw new PipelineDispatchException($"Pipeline name not set");
 
             Log.Information("Dispatching Pipeline: {Pipeline}", pipelineName);
             if (Pipelines.ContainsKey(pipelineName.ToLowerInvariant()) == false)
-            {
-                Log.Error($"Pipeline not found: {pipelineName }");
-                return;
-            }
+                throw new PipelineDispatchException($"Pipeline not found: {pipelineName }");
 
-            Log.Debug($"Pipeline found: {pipelineName }");
+            Log.Debug($"Pipeline found: {pipelineName}");
             var pipeline = Pipelines[pipelineName.ToLowerInvariant()].Pipeline;
             var pipelineType = pipeline.GetType();
             var args = _argsFactory.Create(pipeline, argsString);
             var runAsyncMethodInfo = pipelineType.GetMethods().FirstOrDefault(methodInfo => methodInfo.Name == "RunAsync" && methodInfo.GetParameters().Length == 2);
             LogPipelineStartingInfo(pipelineName, args);
-            await ((Task)runAsyncMethodInfo.Invoke(pipeline, new[] { (object)args, CancellationToken.None })).ConfigureAwait(false);
+            var task = ((Task)runAsyncMethodInfo.Invoke(pipeline, new[] { (object)args, ct }));
+            await task.ConfigureAwait(false);
+            return (object)((dynamic)task).Result;
         }
 
         private void LogPipelineStartingInfo(string pipelineName, object args)
