@@ -28,8 +28,6 @@ namespace DotNet.Basics.Cli
             {
                 Console.WriteLine($"Paused for debug. Name: {Process.GetCurrentProcess().Id} | PID: {Process.GetCurrentProcess().ProcessName}. Press [ENTER] to continue..");
                 Console.ReadLine();
-
-                Log.Logger = null;
             }
         }
     }
