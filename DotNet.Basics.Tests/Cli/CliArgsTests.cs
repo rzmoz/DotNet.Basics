@@ -8,12 +8,13 @@ namespace DotNet.Basics.Tests.Cli
     public class CliArgsTests
     {
         [Theory]
-        [InlineData("debug")]
-        [InlineData("d")]
-        public void IsSet_Debug_IsFound(string arg)
+        [InlineData("debug", "debug", true)]
+        [InlineData("d", "debug", true)]
+        [InlineData("v", "nvvvvvv", false)]
+        public void IsSet_Flag_IsFound(string arg, string flag, bool isSet)
         {
             var args = new[] { arg.EnsurePrefix("-") };
-            args.IsDebug().Should().BeTrue();
+            args.IsSet(flag).Should().Be(isSet);
         }
 
         [Theory]
@@ -24,7 +25,7 @@ namespace DotNet.Basics.Tests.Cli
 
             var cliArgs = new CliArgsBuilder().Build(args);
 
-            cliArgs.IsSet(key).Should().BeTrue();
+            args.IsSet(key).Should().BeTrue();
             cliArgs.Config[key].Should().NotBeNull();
             cliArgs[key].Should().Be(cliArgs.Config[key]);
             cliArgs[key].Should().Be(value);
