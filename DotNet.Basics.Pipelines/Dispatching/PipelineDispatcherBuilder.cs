@@ -19,12 +19,12 @@ namespace DotNet.Basics.Pipelines.Dispatching
         }
 
         public string PipelineIndicator { get; }
-        public bool IsDebug { get; private set; } = false;
+        public bool IsDebug { get; private set; }
         public string RootNamespace { get; private set; }
 
-        public PipelineDispatcherBuilder WithDebug()
+        public PipelineDispatcherBuilder WithDebug(bool isDebug = true)
         {
-            IsDebug = true;
+            IsDebug = isDebug;
             return this;
         }
         public PipelineDispatcherBuilder InNamespace(string rootNamespace)
