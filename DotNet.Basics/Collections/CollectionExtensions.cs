@@ -7,6 +7,11 @@ namespace DotNet.Basics.Collections
 {
     public static class CollectionExtensions
     {
+        public static string ToPrintString(this IEnumerable<string> source, string separator = "|")
+        {
+            return string.Join(separator, source);
+        }
+
         public static bool None<TSource>(this IEnumerable<TSource> source)
         {
             return source.Any() == false;
