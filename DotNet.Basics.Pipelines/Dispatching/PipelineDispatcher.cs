@@ -27,7 +27,6 @@ namespace DotNet.Basics.Pipelines.Dispatching
             if (Pipelines.ContainsKey(pipelineName.ToLowerInvariant()) == false)
                 throw new PipelineDispatchException($"Pipeline not found: {pipelineName }");
 
-            Log.Debug($"Pipeline found: {pipelineName}");
             var pipeline = Pipelines[pipelineName.ToLowerInvariant()].Pipeline;
             var pipelineType = pipeline.GetType();
             var args = _argsFactory.Create(pipeline, argsString);

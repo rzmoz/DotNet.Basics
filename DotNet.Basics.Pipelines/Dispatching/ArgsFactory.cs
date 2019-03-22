@@ -9,7 +9,7 @@ namespace DotNet.Basics.Pipelines.Dispatching
 {
     public class ArgsFactory
     {
-        public object Create(ManagedTask pipeline, string argsString = null)
+        public object Create(ManagedTask pipeline, string argsString = null, bool isDebug = false)
         {
             var pipelineType = pipeline.GetType();
             var argsContainingType = pipelineType;
@@ -17,7 +17,8 @@ namespace DotNet.Basics.Pipelines.Dispatching
                 argsContainingType = argsContainingType.BaseType;
 
             var argsType = argsContainingType.GetGenericArguments().Single();
-            Log.Debug($"Resolving args for : {pipelineType.FullName}<{argsType.Name}>");
+            if (isDebug)
+                Log.Debug($"Resolving args for : {pipelineType.FullName}<{argsType.Name}>");
 
             var args = Activator.CreateInstance(argsType);
 
@@ -29,7 +30,8 @@ namespace DotNet.Basics.Pipelines.Dispatching
 
                 if (argsParam.ToFile().Exists())
                 {
-                    Log.Debug($"args found at {argsParam.ToFile().FullName()}");
+                    if (isDebug)
+                        Log.Debug($"args found at {argsParam.ToFile().FullName()}");
                     argsJson = argsParam.ToFile().ReadAllText(IfNotExists.Mute);
                 }
                 else
@@ -39,7 +41,8 @@ namespace DotNet.Basics.Pipelines.Dispatching
 
                 if (argsJson != null)
                 {
-                    Log.Debug($"Populating args with: {argsJson}");
+                    if (isDebug)
+                        Log.Debug($"Populating args with: {argsJson}");
                     JsonConvert.PopulateObject(argsJson, args);
                 }
             }

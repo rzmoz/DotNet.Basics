@@ -70,7 +70,7 @@ namespace DotNet.Basics.Pipelines.Dispatching
 
                 pipeline.Started += name => Log.Verbose($"{name} started");
                 pipeline.Ended += (name, e) => Log.Verbose($"{name} ended {e}");
-                var args = _argsFactory.Create(pipeline);
+                var args = _argsFactory.Create(pipeline, isDebug: IsDebug);
                 var pipelineInfo = new PipelineDispatchInfo(pipelineName, pipeline, JsonConvert.SerializeObject(args));
 
                 pipelines.Add(pipelineInfo.Key, pipelineInfo);
