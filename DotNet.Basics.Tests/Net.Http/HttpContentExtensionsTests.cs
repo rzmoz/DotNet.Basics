@@ -32,43 +32,6 @@ namespace DotNet.Basics.Tests.Net.Http
             result.Should().Be(expected);
         }
 
-        [Fact]
-        public void Ctor_JsonSerializerSettings_SettingsAreUsed()
-        {
-            //json with superfluous member
-            var content = new JsonContent(@"{""Mutable"":""mutable"",""Immutable"":""immutable"",""MissingMember"":""value""}");
 
-            //act
-            Func<Task> act = () => content.ReadAsTypeAsync<TestObject>(new JsonSerializerSettings
-            {
-                MissingMemberHandling = MissingMemberHandling.Error
-            });
-
-            act.Should().Throw<JsonSerializationException>();
-        }
-
-
-        [Fact]
-        public async Task Ctor_Serialization_ContentIsSerializedToProperJson()
-        {
-            //act
-            var content = new JsonContent(_testObject);
-
-            var testObjectJson = await content.ReadAsStringAsync().ConfigureAwait(false);
-
-            testObjectJson.Should().Be(@"{""Mutable"":""mutable"",""Immutable"":""immutable""}");
-        }
-
-
-        [Fact]
-        public async Task ReadAsType_ToType_TypeIsDeserialized()
-        {
-            var content = new JsonContent(_testObject);
-
-            var testObject = await content.ReadAsTypeAsync<TestObject>().ConfigureAwait(false);
-
-            testObject.Immutable.Should().Be(_immutableString);
-            testObject.Mutable.Should().Be(_mutableString);
-        }
     }
 }

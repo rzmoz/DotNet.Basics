@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace DotNet.Basics.Net.Http
 {
@@ -15,11 +14,6 @@ namespace DotNet.Basics.Net.Http
             if (response == null) throw new ArgumentNullException(nameof(response));
             var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             return TrimQuotes(content);
-        }
-
-        public static Task<T> ContentAsync<T>(this HttpResponseMessage response, JsonSerializerSettings jsonSerializerSettings = null)
-        {
-            return response.Content.ReadAsTypeAsync<T>(jsonSerializerSettings);
         }
 
         public static string TrimQuotes(string content)

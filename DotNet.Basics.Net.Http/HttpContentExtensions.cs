@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web;
-using Newtonsoft.Json;
 
 namespace DotNet.Basics.Net.Http
 {
@@ -18,12 +15,6 @@ namespace DotNet.Basics.Net.Http
             foreach (var entry in keyValues)
                 bodyBuilder.Append($"&{entry.Key}={HttpUtility.UrlEncode(entry.Value ?? string.Empty)}");
             return bodyBuilder.ToString().TrimStart('&');
-        }
-
-        public static async Task<T> ReadAsTypeAsync<T>(this HttpContent content, JsonSerializerSettings jsonSerializerSettings = null)
-        {
-            var json = await content.ReadAsStringAsync().ConfigureAwait(false);
-            return JsonConvert.DeserializeObject<T>(json, jsonSerializerSettings);
         }
 
         public static string TrimQuotes(string content)
