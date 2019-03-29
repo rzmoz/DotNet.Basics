@@ -7,12 +7,9 @@ namespace DotNet.Basics.Tests.NetCore.EchoOut
     {
         static int Main(string[] args)
         {
-            var log = new LoggerConfiguration()
-                .WriteTo.ColoredConsole()
-                .CreateLogger();
-
+            
             foreach (var arg in args)
-                log.Information(arg);
+                Console.WriteLine(arg);
 
             try
             {
@@ -20,7 +17,7 @@ namespace DotNet.Basics.Tests.NetCore.EchoOut
             }
             catch (Exception e)
             {
-                log.Error(e, e.ToString());
+                Console.WriteLine(e.ToString());
                 return -100000;
             }
         }

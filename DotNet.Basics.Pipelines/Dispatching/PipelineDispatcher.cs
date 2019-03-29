@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNet.Basics.Diagnostics;
 using Newtonsoft.Json;
-using Serilog;
 
 namespace DotNet.Basics.Pipelines.Dispatching
 {
@@ -23,7 +23,7 @@ namespace DotNet.Basics.Pipelines.Dispatching
             if (pipelineName == null)
                 throw new PipelineDispatchException($"Pipeline name not set");
 
-            Log.Information("Dispatching Pipeline: {Pipeline}", pipelineName);
+            Log.Information($"Dispatching Pipeline: {pipelineName}");
             if (Pipelines.ContainsKey(pipelineName.ToLowerInvariant()) == false)
                 throw new PipelineDispatchException($"Pipeline not found: {pipelineName }");
 

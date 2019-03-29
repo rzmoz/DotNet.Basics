@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
 using Newtonsoft.Json;
-using Serilog;
 
 namespace DotNet.Basics.Pipelines.Dispatching
 {
@@ -80,7 +80,7 @@ namespace DotNet.Basics.Pipelines.Dispatching
             {
                 Log.Debug($"Available pipelines:");
                 foreach (var p in pipelines.Values.OrderBy(p => p.Key))
-                    Log.Debug($"    {{Name}} --args=\"{p.ArgsInfo}\"", p.Name);
+                    Log.Debug($"    {p.Name} --args=\"{p.ArgsInfo}\"");
             }
 
             return new PipelineDispatcher(pipelines);

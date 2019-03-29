@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
+using DotNet.Basics.Diagnostics;
 using DotNet.Basics.IO;
 using DotNet.Basics.Tasks;
 using Newtonsoft.Json;
-using Serilog;
 
 namespace DotNet.Basics.Pipelines.Dispatching
 {
