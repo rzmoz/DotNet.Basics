@@ -2,6 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
+    <Description>Orchestration and dispatching of operations in pipelines. Support for events, IoC and runtime resolution of dispatching and args</Description>
+    <PackageProjectUrl/>
+    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <Authors>rzmoz</Authors>
+    <Company />
+    <Product />
+    <RepositoryUrl>https://github.com/rzmoz/DotNet.Basics</RepositoryUrl>
+    <Version>0.0.0</Version>
+    <AssemblyVersion>0.0.0</AssemblyVersion>
+    <FileVersion>0.0.0</FileVersion>
+    <PackageReleaseNotes></PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

@@ -14,9 +14,13 @@ namespace DotNet.Basics.Cli
         public const string MicrosoftExtensionsArgsSwitch = "--";
         public SwitchMappings SwitchMappings { get; } = new SwitchMappings();
 
-        public CliArgsBuilder WithSerilog(Action<LoggerConfiguration> writeTo = null, LogLevel minimumLevel = LogLevel.Trace)
+        public CliArgsBuilder WithSerilog(Action<LoggerConfiguration> config = null, LogLevel minimumLevel = LogLevel.Trace)
         {
-            Diagnostics.Log.Logger.WithSerilog(conf => conf.WriteTo.ColoredConsole(), minimumLevel);
+            Diagnostics.Log.Logger.WithSerilog(conf =>
+            {
+                conf.WriteTo.ColoredConsole();
+                config?.Invoke(conf);
+            }, minimumLevel);
             return this;
         }
 
