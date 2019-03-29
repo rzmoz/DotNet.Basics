@@ -8,22 +8,6 @@ namespace DotNet.Basics.Tests.Cli
 {
     public class CliArgsTests
     {
-        [Fact]
-        public void GetRange_ArgsCanBeRanged_RangeIsFound()
-        {
-            var key = "myKey";
-            var value1 = "value1";
-            var value2 = "value2";
-
-            var args = new[] { $"--{key}", value1, value2, "--AnotherKey" };
-
-            var cliArgs = new CliArgsBuilder().Build(args);
-
-            cliArgs.GetRange(key).Count().Should().Be(2);
-            cliArgs.GetRange(key).First().Should().Be(value1);
-            cliArgs.GetRange(key).Last().Should().Be(value2);
-        }
-
 
         [Theory]
         [InlineData("key", "myValue")]
@@ -32,8 +16,8 @@ namespace DotNet.Basics.Tests.Cli
             var args = new[] { value };
 
             var cliArgs = new CliArgsBuilder().Build(args);
-            cliArgs.Get(key).Should().BeNull();//key not set
-            cliArgs.Get(key, 0).Should().Be(value);//found by position
+            cliArgs[key].Should().BeNull();//key not set
+            cliArgs[key,0].Should().Be(value);//found by position
         }
 
         [Theory]
@@ -56,8 +40,8 @@ namespace DotNet.Basics.Tests.Cli
 
             args.IsSet(key).Should().BeTrue();
             cliArgs.Config[key].Should().NotBeNull();
-            cliArgs.Get(key).Should().Be(cliArgs.Config[key]);
-            cliArgs.Get(key).Should().Be(value);
+            cliArgs[key].Should().Be(cliArgs.Config[key]);
+            cliArgs[key].Should().Be(value);
         }
         [Theory]
         [InlineData("myKey", "myValue")]
@@ -68,7 +52,7 @@ namespace DotNet.Basics.Tests.Cli
 
             var cliArgs = new CliArgsBuilder().Build(args);
 
-            cliArgs.Get(1).Should().Be(pos1);
+            cliArgs[1].Should().Be(pos1);
         }
     }
 }
