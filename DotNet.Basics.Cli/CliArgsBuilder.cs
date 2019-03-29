@@ -8,7 +8,7 @@ namespace DotNet.Basics.Cli
 {
     public class CliArgsBuilder
     {
-        private const char _shortExtensionsArgsSwitch = '-';
+        public const char DefaultArgsSwitch = '-';
         public const string MicrosoftExtensionsArgsSwitch = "--";
         public SwitchMappings SwitchMappings { get; } = new SwitchMappings();
 
@@ -27,13 +27,13 @@ namespace DotNet.Basics.Cli
             SwitchMappings.AddRange(switchMappings?.Invoke());
             return this;
         }
-
+        
         public CliArgs Build(string[] args, Action<IConfigurationBuilder> add = null)
         {
             var configArgs = args.Select(a =>
             {
-                if (a.StartsWith(_shortExtensionsArgsSwitch.ToString()))
-                    a = a.TrimStart(_shortExtensionsArgsSwitch).EnsurePrefix(MicrosoftExtensionsArgsSwitch);
+                if (a.StartsWith(DefaultArgsSwitch.ToString()))
+                    a = a.TrimStart(DefaultArgsSwitch).EnsurePrefix(MicrosoftExtensionsArgsSwitch);
                 return a;
             }).ToArray();
 

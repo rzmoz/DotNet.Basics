@@ -23,7 +23,7 @@ namespace DotNet.Basics.Tests.Cli
                 })
                 .Build(inputArgs);
 
-            args[mainKey].Should().Be(value);
+            args.Get(mainKey).Should().Be(value);
         }
     }
 }
