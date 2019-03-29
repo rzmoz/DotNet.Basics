@@ -16,7 +16,7 @@
     {
       "name": "DotNet.Basics.Cli",
       "version": "2.2.1",
-      "prerelease": "rc.1"
+      "prerelease": "rc.3"
     },
     {
       "name": "DotNet.Basics.Net.Http",

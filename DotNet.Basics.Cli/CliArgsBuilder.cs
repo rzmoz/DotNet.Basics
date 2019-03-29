@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Linq;
+using DotNet.Basics.Serilog;
 using DotNet.Basics.Sys;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace DotNet.Basics.Cli
 {
@@ -11,12 +14,18 @@ namespace DotNet.Basics.Cli
         public const string MicrosoftExtensionsArgsSwitch = "--";
         public SwitchMappings SwitchMappings { get; } = new SwitchMappings();
 
+        public CliArgsBuilder WithSerilog(Action<LoggerConfiguration> writeTo = null, LogLevel minimumLevel = LogLevel.Trace)
+        {
+            Diagnostics.Log.Logger.WithSerilog(conf => conf.WriteTo.ColoredConsole(), minimumLevel);
+            return this;
+        }
+
         public CliArgsBuilder WithSwitchMappings(Func<SwitchMappings> switchMappings)
         {
             SwitchMappings.AddRange(switchMappings?.Invoke());
             return this;
         }
-        
+
         public CliArgs Build(string[] args, Action<IConfigurationBuilder> add = null)
         {
             var configArgs = args.Select(a =>
