@@ -18,7 +18,7 @@ namespace DotNet.Basics.Pipelines.Dispatching
 
         public IReadOnlyDictionary<string, PipelineDispatchInfo> Pipelines { get; }
 
-        public async Task<object> RunAsync(string pipelineName, string argsString, CancellationToken ct = default(CancellationToken))
+        public async Task<object> RunAsync(string pipelineName, params string[] argStrings)
         {
             if (pipelineName == null)
                 throw new PipelineDispatchException($"Pipeline name not set");
@@ -29,10 +29,10 @@ namespace DotNet.Basics.Pipelines.Dispatching
 
             var pipeline = Pipelines[pipelineName.ToLowerInvariant()].Pipeline;
             var pipelineType = pipeline.GetType();
-            var args = _argsFactory.Create(pipeline, argsString);
+            var args = _argsFactory.Create(pipeline, argStrings);
             var runAsyncMethodInfo = pipelineType.GetMethods().FirstOrDefault(methodInfo => methodInfo.Name == "RunAsync" && methodInfo.GetParameters().Length == 2);
             LogPipelineStartingInfo(pipelineName, args);
-            var task = ((Task)runAsyncMethodInfo.Invoke(pipeline, new[] { (object)args, ct }));
+            var task = ((Task)runAsyncMethodInfo.Invoke(pipeline, new[] { (object)args, CancellationToken.None }));
             await task.ConfigureAwait(false);
             return (object)((dynamic)task).Result;
         }

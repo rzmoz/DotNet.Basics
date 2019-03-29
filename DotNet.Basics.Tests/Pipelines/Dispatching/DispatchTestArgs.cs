@@ -4,5 +4,6 @@
     {
         public string SetByArgs { get; set; }
         public string SetByPipeline { get; set; }
+        public string[] SplitArgs { get; set; }
     }
 }
