@@ -82,5 +82,24 @@ namespace DotNet.Basics.IO
             }
             return null;
         }
+
+        public static FileStream OpenRead(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
+        {
+            try
+            {
+                return File.OpenRead(fp.FullName());
+            }
+            catch (DirectoryNotFoundException)
+            {
+                if (ifNotExists == IfNotExists.ThrowIoException)
+                    throw;
+            }
+            catch (FileNotFoundException)
+            {
+                if (ifNotExists == IfNotExists.ThrowIoException)
+                    throw;
+            }
+            return null;
+        }
     }
 }
