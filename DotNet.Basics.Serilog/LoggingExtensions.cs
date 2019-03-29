@@ -8,7 +8,7 @@ namespace DotNet.Basics.Serilog
 {
     public static class LoggingExtensions
     {
-        public static Diagnostics.Log WithSerilog(this Diagnostics.Log logger, LogLevel minimumLevel, Action<LoggerConfiguration> writeTo = null)
+        public static Diagnostics.Log WithSerilog(this Diagnostics.Log logger, Action<LoggerConfiguration> writeTo = null, LogLevel minimumLevel = LogLevel.Trace)
         {
             if (minimumLevel == LogLevel.None)
                 return logger;
