@@ -33,11 +33,11 @@ namespace DotNet.Basics.Sys
                             if (data.Data != null) { writeError.Invoke(data.Data); }
                         };
                     process.Start();
-                    writeOutput?.Invoke($"Process started: [{process.Id}] {path} {args}");
+                    writeOutput?.Invoke($"Process [{process.ProcessName} | {process.Id}] started: {path} {args}");
                     process.BeginOutputReadLine();
                     process.BeginErrorReadLine();
                     process.WaitForExit();
-                    writeOutput?.Invoke($"Process [{process.Id}] exited with code: {process.ExitCode}");
+                    writeOutput?.Invoke($"Process [{process.ProcessName} | {process.Id}] exited with code: {process.ExitCode}");
                     return ($"{path} {args}", process.ExitCode);
                 }
             }
