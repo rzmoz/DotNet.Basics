@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.Tests.Pipelines.Dispatching
+﻿/*namespace DotNet.Basics.Tests.Pipelines.Dispatching
 {
     public class DispatchTestArgs
     {
@@ -7,3 +7,4 @@
         public string[] SplitArgs { get; set; }
     }
 }
+*/
