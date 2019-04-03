@@ -1,15 +1,50 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Linq;
+using DotNet.Basics.Collections;
 using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Diagnostics
 {
     public class LogDispatcher : IDisposable
     {
+        private readonly object _syncRoot = new object();
         public delegate void MessageLoggedEventHandler(LogLevel level, string message, Exception e);
         public event MessageLoggedEventHandler MessageLogged;
 
         public delegate void CloseAndFlushEventHandler();
         public event CloseAndFlushEventHandler ClosingAndFlushing;
+
+        private readonly ConcurrentStack<string> _context = new ConcurrentStack<string>();
+
+        public string Context { get; private set; }
+
+        public LogDispatcher PushContext(string context)
+        {
+            if (string.IsNullOrWhiteSpace(context))
+                return this;
+            _context.Push(context);
+            UpdateContext();
+            return this;
+        }
+        public LogDispatcher PopContext(string context)
+        {
+            if (string.IsNullOrWhiteSpace(context))
+                return this;
+            _context.Push(context);
+            UpdateContext();
+            return this;
+        }
+
+        private void UpdateContext()
+        {
+            if (_context.None())
+                return;
+            lock (_syncRoot)
+            {
+                Context = string.Join(" / ", _context.Reverse()) + " / ";
+            }
+        }
 
         public void CloseAndFlush()
         {
@@ -67,7 +102,7 @@ namespace DotNet.Basics.Diagnostics
 
         public void Write(LogLevel level, string message, Exception e)
         {
-            MessageLogged?.Invoke(level, message, e);
+            MessageLogged?.Invoke(level, $"{Context}{message}", e);
         }
 
         public void Dispose()
