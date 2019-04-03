@@ -1,38 +1,28 @@
 ﻿using System;
-using System.Text;
-using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Diagnostics
 {
-    public class Log
+    public static class Log
     {
-        public delegate void MessageLoggedEventHandler(LogLevel level, string message, Exception e);
-        public static event MessageLoggedEventHandler MessageLogged;
-
-        public delegate void CloseAndFlushEventHandler();
-        public static event CloseAndFlushEventHandler ClosingAndFlushing;
-
         static Log()
         {
-            Logger = new Log();
+            Logger = new LogDispatcher();
         }
 
-        public static Log Logger { get; }
+        public static LogDispatcher Logger { get; }
 
         public static void CloseAndFlush()
         {
-            ClosingAndFlushing?.Invoke();
+            Logger.CloseAndFlush();
         }
 
         public static void Verbose(string message)
         {
             Verbose(message, null);
-            var builder = new StringBuilder();
-            Console.Out.Write(builder.ToString());
         }
         public static void Verbose(string message, Exception e)
         {
-            MessageLogged?.Invoke(LogLevel.Trace, message, e);
+            Logger.Verbose(message, e);
         }
         public static void Debug(string message)
         {
@@ -40,7 +30,7 @@ namespace DotNet.Basics.Diagnostics
         }
         public static void Debug(string message, Exception e)
         {
-            MessageLogged?.Invoke(LogLevel.Debug, message, e);
+            Logger.Debug(message, e);
         }
         public static void Information(string message)
         {
@@ -48,7 +38,7 @@ namespace DotNet.Basics.Diagnostics
         }
         public static void Information(string message, Exception e)
         {
-            MessageLogged?.Invoke(LogLevel.Information, message, e);
+            Logger.Information(message, e);
         }
         public static void Warning(string message)
         {
@@ -56,7 +46,7 @@ namespace DotNet.Basics.Diagnostics
         }
         public static void Warning(string message, Exception e)
         {
-            MessageLogged?.Invoke(LogLevel.Warning, message, e);
+            Logger.Warning(message, e);
         }
         public static void Error(string message)
         {
@@ -64,7 +54,7 @@ namespace DotNet.Basics.Diagnostics
         }
         public static void Error(string message, Exception e)
         {
-            MessageLogged?.Invoke(LogLevel.Error, message, e);
+            Logger.Error(message, e);
         }
         public static void Critical(string message)
         {
@@ -72,7 +62,7 @@ namespace DotNet.Basics.Diagnostics
         }
         public static void Critical(string message, Exception e)
         {
-            MessageLogged?.Invoke(LogLevel.Critical, message, e);
+            Logger.Critical(message, e);
         }
     }
 }

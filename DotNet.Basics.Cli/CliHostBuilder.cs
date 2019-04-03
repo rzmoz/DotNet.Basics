@@ -21,7 +21,7 @@ namespace DotNet.Basics.Cli
                 config?.Invoke(conf);
             }, minimumLevel);
 
-            Diagnostics.Log.ClosingAndFlushing += Log.CloseAndFlush;
+            Diagnostics.Log.Logger.ClosingAndFlushing += Log.CloseAndFlush;
             return this;
         }
 

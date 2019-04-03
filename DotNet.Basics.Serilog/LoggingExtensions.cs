@@ -1,18 +1,20 @@
 ﻿using System;
+using DotNet.Basics.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
+using Log = Serilog.Log;
 
 namespace DotNet.Basics.Serilog
 {
     public static class LoggingExtensions
     {
-        public static Diagnostics.Log WithSerilog(this Diagnostics.Log logger, Action<LoggerConfiguration> writeTo = null, LogLevel minimumLevel = LogLevel.Trace)
+        public static LogDispatcher WithSerilog(this LogDispatcher logger, Action<LoggerConfiguration> writeTo = null, LogLevel minimumLevel = LogLevel.Trace)
         {
             if (minimumLevel == LogLevel.None)
                 return logger;
-            Diagnostics.Log.MessageLogged += (level, message, e) => Log.Logger.Write(level.ToSeriLogEventLevel(), e, message);
+            logger.MessageLogged += (level, message, e) => Log.Logger.Write(level.ToSeriLogEventLevel(), e, message);
 
             var loggerConfiguration = new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(new LoggingLevelSwitch(minimumLevel.ToSeriLogEventLevel()));
