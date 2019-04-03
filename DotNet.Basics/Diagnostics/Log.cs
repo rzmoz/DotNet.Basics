@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Diagnostics
@@ -8,6 +9,9 @@ namespace DotNet.Basics.Diagnostics
         public delegate void MessageLoggedEventHandler(LogLevel level, string message, Exception e);
         public static event MessageLoggedEventHandler MessageLogged;
 
+        public delegate void CloseAndFlushEventHandler();
+        public static event CloseAndFlushEventHandler ClosingAndFlushing;
+
         static Log()
         {
             Logger = new Log();
@@ -15,9 +19,16 @@ namespace DotNet.Basics.Diagnostics
 
         public static Log Logger { get; }
 
+        public static void CloseAndFlush()
+        {
+            ClosingAndFlushing?.Invoke();
+        }
+
         public static void Verbose(string message)
         {
             Verbose(message, null);
+            var builder = new StringBuilder();
+            Console.Out.Write(builder.ToString());
         }
         public static void Verbose(string message, Exception e)
         {

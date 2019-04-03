@@ -16,7 +16,7 @@ namespace DotNet.Basics.Tests.Cli
             var inputArgs = new[] { $"--{argsKey}", value };
             
 
-            var args = new CliArgsBuilder()
+            var args = new CliHostBuilder()
                 .WithSwitchMappings(() => new SwitchMappings
                 {
                     {argsKey, mainKey}

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using DotNet.Basics.Diagnostics;
 using Microsoft.Extensions.Configuration;
 
 namespace DotNet.Basics.Cli
 {
-    public class CliArgs
+    public class CliHost : IDisposable
     {
-        public CliArgs(string[] args, IConfigurationRoot config)
+        public CliHost(string[] args, IConfigurationRoot config)
         {
             Args = args ?? throw new ArgumentNullException(nameof(args));
             Config = config ?? throw new ArgumentNullException(nameof(config));
@@ -18,5 +19,10 @@ namespace DotNet.Basics.Cli
 
         public IReadOnlyList<string> Args { get; }
         public IConfigurationRoot Config { get; }
+
+        public void Dispose()
+        {
+            Log.CloseAndFlush();
+        }
     }
 }

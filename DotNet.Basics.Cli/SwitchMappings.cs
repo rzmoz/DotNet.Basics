@@ -12,7 +12,7 @@ namespace DotNet.Basics.Cli
         public void Add(string key, string value)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
-            _switchMappings.Add(key.EnsurePrefix(CliArgsBuilder.MicrosoftExtensionsArgsSwitch), value);
+            _switchMappings.Add(key.EnsurePrefix(CliHostBuilder.MicrosoftExtensionsArgsSwitch), value);
         }
 
         public void AddRange(IEnumerable<KeyValuePair<string, string>> mappings)

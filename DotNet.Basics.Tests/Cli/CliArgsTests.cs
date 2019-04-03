@@ -15,7 +15,7 @@ namespace DotNet.Basics.Tests.Cli
         {
             var args = new[] { value };
 
-            var cliArgs = new CliArgsBuilder().Build(args);
+            var cliArgs = new CliHostBuilder().Build(args);
             cliArgs[key].Should().BeNull();//key not set
             cliArgs[key,0].Should().Be(value);//found by position
         }
@@ -36,7 +36,7 @@ namespace DotNet.Basics.Tests.Cli
         {
             var args = new[] { key.EnsurePrefix("-"), value };
 
-            var cliArgs = new CliArgsBuilder().Build(args);
+            var cliArgs = new CliHostBuilder().Build(args);
 
             args.IsSet(key).Should().BeTrue();
             cliArgs.Config[key].Should().NotBeNull();
@@ -50,7 +50,7 @@ namespace DotNet.Basics.Tests.Cli
             var pos1 = "HelloWorld!";
             var args = new[] { "pos0", pos1, "pos2" };
 
-            var cliArgs = new CliArgsBuilder().Build(args);
+            var cliArgs = new CliHostBuilder().Build(args);
 
             cliArgs[1].Should().Be(pos1);
         }
