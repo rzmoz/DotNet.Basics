@@ -7,7 +7,6 @@ namespace DotNet.Basics.Tests.NetCore.EchoOut
     {
         static int Main(string[] args)
         {
-            
             foreach (var arg in args)
                 Console.WriteLine(arg);
 
