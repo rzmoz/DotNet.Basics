@@ -43,7 +43,6 @@ namespace DotNet.Basics.Tests.Pipelines
             var pipelineName = "MyPipeline";
             var pipelineStarted = 0;
 
-
             var pipeline = new Pipeline<EventArgs>(pipelineName);
             var block = pipeline.AddBlock();
 
@@ -51,7 +50,7 @@ namespace DotNet.Basics.Tests.Pipelines
 
             pipeline.Started += (e) =>
             {
-                if (e == pipelineName)
+                if (e == "My")
                     pipelineStarted++;
             };
 
@@ -81,7 +80,7 @@ namespace DotNet.Basics.Tests.Pipelines
             await pipeline.RunAsync(EventArgs.Empty).ConfigureAwait(false);
 
             //assert
-            pipelineReceived.Should().Be($"{pipelineName} / {blockName} / {stepName} / {message}");
+            pipelineReceived.Should().Be($"My / My / My / {message}");
         }
 
         [Fact]
@@ -128,7 +127,7 @@ namespace DotNet.Basics.Tests.Pipelines
             var pipeline = new Pipeline<EventArgs>();
             pipeline.AddStep<SimpleStep>();
 
-            pipeline.Tasks.Single().Name.Should().Be(nameof(SimpleStep));
+            pipeline.Tasks.Single().Name.Should().Be("Simple");
         }
 
         [Fact]
@@ -186,13 +185,13 @@ namespace DotNet.Basics.Tests.Pipelines
 
             pipeline.Started += (name) =>
             {
-                if (name.EndsWith("step", StringComparison.OrdinalIgnoreCase))
+                if (name.StartsWith("IncrementArgs", StringComparison.OrdinalIgnoreCase))
                     stepName = name;
             };
 
             await pipeline.RunAsync(new EventArgs<int>()).ConfigureAwait(false);
 
-            stepName.Should().Be(nameof(IncrementArgsStep));
+            stepName.Should().Be("IncrementArgs");
         }
 
         [Fact]
@@ -353,12 +352,12 @@ namespace DotNet.Basics.Tests.Pipelines
 
             started.Count(s => s == "Pipeline<EventArgs<Int32>>").Should().Be(1);
             started.Count(s => s == "Block 0").Should().Be(1);
-            started.Count(s => s == "IncrementArgsStep").Should().Be(1);
+            started.Count(s => s == "IncrementArgs").Should().Be(1);
             started.Count(s => s == "StepInline").Should().Be(1);
 
             ended.Count(s => s == "Pipeline<EventArgs<Int32>>").Should().Be(1);
             ended.Count(s => s == "Block 0").Should().Be(1);
-            ended.Count(s => s == "IncrementArgsStep").Should().Be(1);
+            ended.Count(s => s == "IncrementArgs").Should().Be(1);
             ended.Count(s => s == "StepInline").Should().Be(1);
         }
     }

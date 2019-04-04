@@ -79,25 +79,25 @@ namespace DotNet.Basics.Pipelines
 
         public Pipeline<T> AddStep(Action<T, ILogDispatcher, CancellationToken> task)
         {
-            var mt = new ManagedTask<T>(task);
+            var mt = new ManagedTask<T>(task, "Step");
             return AddStep(mt);
         }
 
         public Pipeline<T> AddStep(string name, Action<T, ILogDispatcher, CancellationToken> task)
         {
-            var mt = new ManagedTask<T>(name, task);
+            var mt = new ManagedTask<T>(name, task, "Step");
             return AddStep(mt);
         }
 
         public Pipeline<T> AddStep(Func<T, ILogDispatcher, CancellationToken, Task> task)
         {
-            var mt = new ManagedTask<T>(task);
+            var mt = new ManagedTask<T>(task, "Step");
             return AddStep(mt);
         }
 
         public Pipeline<T> AddStep(string name, Func<T, ILogDispatcher, CancellationToken, Task> task)
         {
-            var mt = new ManagedTask<T>(name, task);
+            var mt = new ManagedTask<T>(name, task, "Step");
             return AddStep(mt);
         }
 

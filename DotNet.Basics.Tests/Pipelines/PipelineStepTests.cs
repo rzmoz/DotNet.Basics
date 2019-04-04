@@ -22,7 +22,7 @@ namespace DotNet.Basics.Tests.Pipelines
             await task.RunAsync(new DescendantArgs()).ConfigureAwait(false);
 
             //assert
-            taskReceived.Should().Be($"{nameof(DescendantStep)} / Hello World!");
+            taskReceived.Should().Be($"Descendant / Hello World!");
         }
 
         [Fact]
