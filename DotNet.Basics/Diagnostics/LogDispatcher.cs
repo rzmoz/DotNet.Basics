@@ -99,7 +99,10 @@ namespace DotNet.Basics.Diagnostics
         {
             Write(LogLevel.Critical, message, e);
         }
-
+        public void Write(LogLevel level, string message)
+        {
+            Write(level, message, null);
+        }
         public void Write(LogLevel level, string message, Exception e)
         {
             MessageLogged?.Invoke(level, $"{Context}{message}", e);

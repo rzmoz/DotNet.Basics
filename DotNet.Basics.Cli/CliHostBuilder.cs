@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Linq;
-using DotNet.Basics.Serilog;
 using DotNet.Basics.Sys;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Serilog;
 
 namespace DotNet.Basics.Cli
 {
@@ -14,20 +11,16 @@ namespace DotNet.Basics.Cli
         public const string MicrosoftExtensionsArgsSwitch = "--";
         public SwitchMappings SwitchMappings { get; } = new SwitchMappings();
 
-        public CliHostBuilder WithSerilog(Action<LoggerConfiguration> config = null, LogLevel minimumLevel = LogLevel.Trace)
-        {
-            Diagnostics.Log.Logger.WithSerilog(conf =>
-            {
-                config?.Invoke(conf);
-            }, minimumLevel);
-
-            Diagnostics.Log.Logger.ClosingAndFlushing += Log.CloseAndFlush;
-            return this;
-        }
-
         public CliHostBuilder WithSwitchMappings(Func<SwitchMappings> switchMappings)
         {
             SwitchMappings.AddRange(switchMappings?.Invoke());
+            return this;
+        }
+
+        public CliHostBuilder WithColoredConsole(bool includeTimestamp = false, ColoredConsoleTheme consoleTheme = null)
+        {
+            var coloredConsole = new ColoredConsoleWriter(includeTimestamp, consoleTheme);
+            Diagnostics.Log.Logger.MessageLogged += coloredConsole.Write;
             return this;
         }
 
@@ -47,7 +40,8 @@ namespace DotNet.Basics.Cli
 
             var config = configBuilder.Build();
 
-            return new CliHost(args, config);
+
+            return new CliHost(args, config, Diagnostics.Log.Logger);
         }
     }
 }

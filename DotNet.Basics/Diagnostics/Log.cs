@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Diagnostics
 {
@@ -63,6 +64,14 @@ namespace DotNet.Basics.Diagnostics
         public static void Critical(string message, Exception e)
         {
             Logger.Critical(message, e);
+        }
+        public static void Write(LogLevel level, string message)
+        {
+            Write(level, message, null);
+        }
+        public static void Write(LogLevel level, string message, Exception e)
+        {
+            Logger.Write(level, message, e);
         }
     }
 }

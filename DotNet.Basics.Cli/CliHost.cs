@@ -7,10 +7,11 @@ namespace DotNet.Basics.Cli
 {
     public class CliHost : IDisposable
     {
-        public CliHost(string[] args, IConfigurationRoot config)
+        public CliHost(string[] args, IConfigurationRoot config, LogDispatcher log)
         {
             Args = args ?? throw new ArgumentNullException(nameof(args));
             Config = config ?? throw new ArgumentNullException(nameof(config));
+            Log = log;
         }
 
         public string this[string key, int index] => this[key] ?? this[index];
@@ -19,6 +20,8 @@ namespace DotNet.Basics.Cli
 
         public IReadOnlyList<string> Args { get; }
         public IConfigurationRoot Config { get; }
+        public LogDispatcher Log { get; }
+    
 
         public void Dispose()
         {

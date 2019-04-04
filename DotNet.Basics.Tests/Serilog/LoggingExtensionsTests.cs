@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Text;
 using DotNet.Basics.Serilog;
@@ -23,4 +23,4 @@ namespace DotNet.Basics.Tests.Serilog
             LogLevel.Critical.ToSeriLogEventLevel().Should().Be(LogEventLevel.Fatal);
         }
     }
-}
+}*/
