@@ -6,7 +6,7 @@
     {
       "name": "DotNet.Basics",
       "version": "9.8.0",
-      "prerelease": "rc.10"
+      "prerelease": ""
     },
     {
       "name": "DotNet.Basics.Autofac",
@@ -16,7 +16,7 @@
     {
       "name": "DotNet.Basics.Cli",
       "version": "2.2.2",
-      "prerelease": "rc.3"
+      "prerelease": ""
     },
     {
       "name": "DotNet.Basics.Net.Http",
@@ -25,13 +25,13 @@
     },
     {
       "name": "DotNet.Basics.Pipelines",
-      "version": "9.7.2",
-      "prerelease": "rc.8"
+      "version": "9.8.0",
+      "prerelease": ""
     },
     {
       "name": "DotNet.Basics.PowerShell",
       "version": "6.2.0",
-      "prerelease": "rc.1"
+      "prerelease": ""
     },
     {
       "name": "DotNet.Basics.SeriLog",
