@@ -8,7 +8,7 @@ namespace DotNet.Basics.Cli
         public static ConsoleTheme Default { get; } = new ConsoleTheme
         {
             Verbose = new ConsoleFormat(Color.DarkSlateGray, Color.Empty, Color.DarkGray),
-            Debug = new ConsoleFormat(Color.DarkCyan, Color.Empty, Color.Gray),
+            Debug = new ConsoleFormat(Color.DarkCyan, Color.Empty, Color.Green),
             Information = new ConsoleFormat(Color.White, Color.Empty, Color.Cyan),
             Warning = new ConsoleFormat(Color.Yellow, Color.Empty, Color.DarkOrange),
             Error = new ConsoleFormat(Color.Red, Color.Empty, Color.Red, Color.Black),

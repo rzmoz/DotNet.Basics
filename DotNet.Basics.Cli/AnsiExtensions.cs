@@ -1,20 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
-using System.Threading;
-using DotNet.Basics.Sys;
+using DotNet.Basics.Diagnostics;
 
 namespace DotNet.Basics.Cli
 {
     public static class AnsiExtensions
     {
-        private const string _highlightPrefix = "[!]";
-        private const string _highlightSuffix = "[/]";
-
-        public static string AnsiHighlight(this string str)
-        {
-            return str.EnsurePrefix(_highlightPrefix).EnsureSuffix(_highlightSuffix);
-        }
         public static string AnsiColorize(this string text, AnsiColor color)
         {
             if (string.IsNullOrEmpty(text))
@@ -34,7 +25,7 @@ namespace DotNet.Basics.Cli
 
             var colorsAnsiCode = ToAnsiCode(format.ForegroundColor, format.BackgroundColor);
             var highlightAnsiCode = ToAnsiCode(format.HighlightForegroundColor, format.HighlightBackgroundColor);
-            text = text.Replace(_highlightPrefix, highlightAnsiCode).Replace(_highlightSuffix, AnsiColor.ResetString + colorsAnsiCode);
+            text = text.Replace(LogExtensions.HighlightPrefix, highlightAnsiCode).Replace(LogExtensions.HighlightSuffix, AnsiColor.ResetString + colorsAnsiCode);
             var ansi = new StringBuilder();
 
             ansi.Append(colorsAnsiCode);

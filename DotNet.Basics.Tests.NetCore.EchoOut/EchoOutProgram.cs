@@ -2,6 +2,7 @@
 using System.Linq;
 using DotNet.Basics.Cli;
 using DotNet.Basics.Collections;
+using DotNet.Basics.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 
@@ -20,7 +21,7 @@ namespace DotNet.Basics.Tests.NetCore.EchoOut
             range.ForEachParallel(i =>
             {
                 var level = (LogLevel)int.Parse((i % 6).ToString());
-                cliHost.Log.Write(level, $"{Guid.NewGuid()} {"highlight me".AnsiHighlight()} end of string");
+                cliHost.Log.Write(level, $"{Guid.NewGuid()} {"highlight me".Highlight()} end of string");
             });
             
             try

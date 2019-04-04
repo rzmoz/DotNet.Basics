@@ -7,8 +7,7 @@ namespace DotNet.Basics.Cli
     public static class ArgsExtensions
     {
         public static readonly char[] ConfigurationSwitchFlags = { '-', '/' };
-
-
+        
         public static bool IsSet(this string[] args, string key, bool firstCharIsShortKey = true, StringComparison stringComparison = StringComparison.OrdinalIgnoreCase)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
