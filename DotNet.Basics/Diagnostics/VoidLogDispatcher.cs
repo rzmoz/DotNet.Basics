@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Diagnostics
 {
-    public class NullLogDispatcher : ILogDispatcher
+    public class VoidLogDispatcher : ILogDispatcher
     {
         public event LogDispatcher.MessageLoggedEventHandler MessageLogged;
         public ILogDispatcher InContext(string context, bool floatMessageLogged = true)
