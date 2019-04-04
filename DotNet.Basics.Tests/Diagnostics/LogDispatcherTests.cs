@@ -13,14 +13,16 @@ namespace DotNet.Basics.Tests.Diagnostics
             var context2 = "context2";
             var message = "my Message";
 
-            var log = new LogDispatcher();
+            var outerLog = new LogDispatcher();
+            var innerLog = new LogDispatcher();
             var messageReceived = string.Empty;
-            log.PushContext(context1)
-               .PushContext(context2);
-            log.MessageLogged += (lvl, msg, e) => { messageReceived = msg; };
+            outerLog.PushContext(context1);
+            innerLog.PushContext(context2);
+            innerLog.MessageLogged += outerLog.Write;
+            outerLog.MessageLogged += (lvl, msg, e) => { messageReceived = msg; };
 
             //act
-            log.Information(message);
+            innerLog.Information(message);
 
             messageReceived.Should().Be($"{context1} / {context2} / {message}");
         }

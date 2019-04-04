@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Diagnostics
 {
-    public class LogDispatcher : IDisposable
+    public class LogDispatcher : ILogger, IDisposable
     {
         private readonly object _syncRoot = new object();
         public delegate void MessageLoggedEventHandler(LogLevel level, string message, Exception e);
@@ -108,6 +108,11 @@ namespace DotNet.Basics.Diagnostics
         public void Dispose()
         {
             CloseAndFlush();
+        }
+
+        public override string ToString()
+        {
+            return $"{nameof(Context)}: {Context}";
         }
     }
 }

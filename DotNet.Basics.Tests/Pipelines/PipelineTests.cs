@@ -18,6 +18,53 @@ namespace DotNet.Basics.Tests.Pipelines
     public class PipelineTests
     {
         [Fact]
+        public async Task Started_Events_EventsIsOnlyTriggeredOnce()
+        {
+            var pipelineName = "MyPipeline";
+            var pipelineStarted = 0;
+
+
+            var pipeline = new Pipeline<EventArgs>(pipelineName);
+            var block = pipeline.AddBlock();
+
+            block.AddStep((args, log, ct) => { });
+
+            pipeline.Started += (e) =>
+            {
+                if (e == pipelineName)
+                    pipelineStarted++;
+            };
+
+            //act
+            await pipeline.RunAsync(EventArgs.Empty).ConfigureAwait(false);
+
+            //assert
+            pipelineStarted.Should().Be(1);
+        }
+
+        [Fact]
+        public async Task MessageLogged_LogFromSteps_MessagesHaveContext()
+        {
+            var pipelineReceived = string.Empty;
+            var message = "Hello World!";
+
+            var pipelineName = "MyPipeline";
+            var pipeline = new Pipeline<EventArgs>(pipelineName);
+            var blockName = "MyBlock";
+            var block = pipeline.AddBlock(blockName);
+            var stepName = "MyStep";
+            block.AddStep(stepName, (args, log, ct) => log.Debug(message));
+
+            pipeline.MessageLogged += (lvl, msg, e) => pipelineReceived = msg;
+
+            //act
+            await pipeline.RunAsync(EventArgs.Empty).ConfigureAwait(false);
+
+            //assert
+            pipelineReceived.Should().Be($"{pipelineName} / {blockName} / {stepName} / {message}");
+        }
+
+        [Fact]
         public void RegisterPipelineSteps_RegisterSteps_StepsAndCtorParamsAreRegisteredRecursive()
         {
             AssertRegisterPipelineSteps<EventArgs>(p => { p.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(); });
@@ -54,7 +101,7 @@ namespace DotNet.Basics.Tests.Pipelines
 
             action.Should().NotThrow();
         }
-        
+
         [Fact]
         public void Ctor_LazyLoadStepName_NameIsSetOnAdd()
         {
@@ -76,7 +123,7 @@ namespace DotNet.Basics.Tests.Pipelines
             });
 
             //act
-            pipeline.AddStep((args, ct) => new AncestorStep().RunAsync(args, ct));
+            pipeline.AddStep((args, log, ct) => new AncestorStep().RunAsync(args, ct));
             pipeline.AddStep<DescendantStep>();
 
             //assert
@@ -99,7 +146,7 @@ namespace DotNet.Basics.Tests.Pipelines
             var stepCount = 101;
 
             for (var i = 0; i < stepCount; i++)
-                pipeline.AddStep((args, ct) => Task.FromResult(++counter));
+                pipeline.AddStep((args, log, ct) => Task.FromResult(++counter));
 
             await pipeline.RunAsync(null, ts.Token).ConfigureAwait(false);
 
@@ -137,7 +184,7 @@ namespace DotNet.Basics.Tests.Pipelines
             var runCount = 101;
 
             for (var i = 0; i < runCount; i++)
-                block.AddStep(async (args, ct) => await Task.Delay(TimeSpan.FromSeconds(1), ct));
+                block.AddStep(async (args, log, ct) => await Task.Delay(TimeSpan.FromSeconds(1), ct));
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -155,8 +202,8 @@ namespace DotNet.Basics.Tests.Pipelines
             var task1Called = false;
             var task2Called = false;
 
-            pipeline.AddBlock("1", async (args, ct) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200), ct); });
-            pipeline.AddBlock("2", (args, ct) =>
+            pipeline.AddBlock("1", async (args, log, ct) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200), ct); });
+            pipeline.AddBlock("2", (args, log, ct) =>
             {
                 if (task1Called == false)
                     throw new ArgumentException("Task 1 not called");
@@ -212,7 +259,7 @@ namespace DotNet.Basics.Tests.Pipelines
             var taskCount = 7;
 
             foreach (var i in Enumerable.Range(0, taskCount))
-                block.AddStep((args, ct) => { });
+                block.AddStep((args, log, ct) => { });
 
             block.Tasks.Count().Should().Be(taskCount);
         }
@@ -227,7 +274,7 @@ namespace DotNet.Basics.Tests.Pipelines
 
             var raceConditionEncountered = 0;
             for (var i = 0; i < stepCount; i++)
-                block.AddStep(async (args, ct) =>
+                block.AddStep(async (args, log, ct) =>
                 {
                     if (Interlocked.CompareExchange(ref lockFlag, 1, 0) == 0)
                     {
@@ -271,7 +318,7 @@ namespace DotNet.Basics.Tests.Pipelines
                 services.AddSingleton<IncrementArgsStep>();
             });
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
-            pipeline.AddStep("StepInline", (args, ct) => { });
+            pipeline.AddStep("StepInline", (args, log, ct) => { });
 
             pipeline.Started += started.Add;
             pipeline.Ended += (name, e) => ended.Add(name);

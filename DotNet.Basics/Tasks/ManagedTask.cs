@@ -1,24 +1,36 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
+using Microsoft.Extensions.Logging;
+using ILogger = DotNet.Basics.Diagnostics.ILogger;
 
 namespace DotNet.Basics.Tasks
 {
-    public abstract class ManagedTask : ITask
+    public abstract class ManagedTask : ITask, ILogger
     {
         public delegate void TaskStartedEventHandler(string taskName);
         public delegate void TaskEndedEventHandler(string taskName, Exception e);
 
         public event TaskStartedEventHandler Started;
         public event TaskEndedEventHandler Ended;
+        public event LogDispatcher.MessageLoggedEventHandler MessageLogged;
 
         protected ManagedTask(string name = null)
         {
             Name = name ?? GetType().GetNameWithGenericsExpanded();
+            Log = new LogDispatcher().PushContext(Name);
+            Log.MessageLogged += FireMessageLogged;
         }
 
         public string Name { get; }
+        protected LogDispatcher Log { get; }
+
+        protected virtual void FireMessageLogged(LogLevel level, string message, Exception e)
+        {
+            MessageLogged?.Invoke(level, message, e);
+        }
 
         protected virtual void FireStarted(string taskName)
         {
@@ -38,43 +50,42 @@ namespace DotNet.Basics.Tasks
 
     public class ManagedTask<T> : ManagedTask
     {
-        private readonly Func<T, CancellationToken, Task> _task;
+        private readonly Func<T, LogDispatcher, CancellationToken, Task> _task;
 
-        public ManagedTask(string name) : this(name, (args, ct) => null)
+        public ManagedTask(string name) : this(name, (args, log, ct) => { })
         { }
 
-        public ManagedTask(Action syncTask) : this((args, ct) => syncTask())
+        public ManagedTask(Action syncTask) : this((args, log, ct) => syncTask())
         { }
 
-        public ManagedTask(Func<Task> asyncTask) : this((args, ct) => asyncTask())
+        public ManagedTask(Func<Task> asyncTask) : this((args, log, ct) => asyncTask())
         { }
 
-        public ManagedTask(Action<T, CancellationToken> task)
+        public ManagedTask(Action<T, LogDispatcher, CancellationToken> task)
             : this(null, task)
         { }
 
-        public ManagedTask(Func<T, CancellationToken, Task> task)
+        public ManagedTask(Func<T, LogDispatcher, CancellationToken, Task> task)
             : this(null, task)
         { }
 
-        public ManagedTask(string name, Action<T, CancellationToken> task)
-            : this(name, (args, ct) =>
+        public ManagedTask(string name, Action<T, LogDispatcher, CancellationToken> task)
+            : this(name, (args, log, ct) =>
             {
-                task?.Invoke(args, ct);
+                task?.Invoke(args, log, ct);
                 return Task.FromResult(string.Empty);
             })
         { }
 
-        public ManagedTask(string name, Func<T, CancellationToken, Task> task)
+        public ManagedTask(string name, Func<T, LogDispatcher, CancellationToken, Task> task)
         : base(name)
         {
             _task = task ?? throw new ArgumentNullException(nameof(task));
-
         }
 
         public Task<T> RunAsync(T args)
         {
-            return RunAsync(args, CancellationToken.None);
+            return RunAsync(args, default);
         }
 
         public async Task<T> RunAsync(T args, CancellationToken ct)
@@ -83,7 +94,7 @@ namespace DotNet.Basics.Tasks
             try
             {
                 if (ct.IsCancellationRequested == false)
-                    await InnerRunAsync(args, ct).ConfigureAwait(false);
+                    await InnerRunAsync(args, Log, ct).ConfigureAwait(false);
 
                 FireEnded(Name);
                 return args;
@@ -95,9 +106,9 @@ namespace DotNet.Basics.Tasks
             }
         }
 
-        protected virtual Task InnerRunAsync(T args, CancellationToken ct)
+        protected virtual Task InnerRunAsync(T args, LogDispatcher log, CancellationToken ct)
         {
-            return _task(args, ct);
+            return _task?.Invoke(args, log, ct);
         }
     }
 }
