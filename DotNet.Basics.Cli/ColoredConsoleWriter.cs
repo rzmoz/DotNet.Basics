@@ -1,48 +1,85 @@
 ﻿using System;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Text;
 using Microsoft.Extensions.Logging;
+using Pastel;
+
 
 namespace DotNet.Basics.Cli
 {
     public class ColoredConsoleWriter
     {
         private readonly object _syncRoot = new object();
-        private readonly ColoredConsoleTheme _consoleTheme;
-        private readonly Func<LogLevel, string, Exception, string> _format;
-        public ColoredConsoleWriter(bool includeTimestamp = false, ColoredConsoleTheme consoleTheme = null)
-        {
-            _consoleTheme = consoleTheme ?? new ColoredConsoleTheme();
+        private readonly ConsoleTheme _consoleTheme;
 
-            if (includeTimestamp)
-                _format = WithTimestamp;
-            else
-                _format = WithoutTimestamp;
-        }
+        private const int STD_OUTPUT_HANDLE = -11;
+        private const uint ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
+        private const uint DISABLE_NEWLINE_AUTO_RETURN = 0x0008;
 
-        private string WithTimestamp(LogLevel level, string message, Exception e = null)
-        {
-            return $"{DateTime.Now:s} [{WriteLogLevel(level)}] {message}\r\n{e}";
-        }
-        private string WithoutTimestamp(LogLevel level, string message, Exception e = null)
-        {
-            return $"[{WriteLogLevel(level)}] {message}\r\n{e}";
-        }
+        [DllImport("kernel32.dll")]
+        private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
 
-        public void Write(LogLevel level, string message, Exception e = null)
-        {
-            var colors = GetColors(level);
+        [DllImport("kernel32.dll")]
+        private static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
 
-            lock (_syncRoot)
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr GetStdHandle(int nStdHandle);
+
+        [DllImport("kernel32.dll")]
+        public static extern uint GetLastError();
+
+        public ColoredConsoleWriter(ConsoleTheme consoleTheme = null)
+        {
+            _consoleTheme = consoleTheme ?? ConsoleTheme.Default;
+
+            var iStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+            if (!GetConsoleMode(iStdOut, out uint outConsoleMode))
             {
-                Console.ForegroundColor = colors.Foreground;
-                if (colors.Background != ConsoleColor.Black)
-                    Console.BackgroundColor = colors.Background;
-                Console.Out.Write(_format(level, message, e));
-                Console.Out.Flush();
+                Console.ForegroundColor = System.ConsoleColor.Black;
+                Console.BackgroundColor = System.ConsoleColor.Red;
+                Console.WriteLine("failed to get output console mode");
                 Console.ResetColor();
+                Console.ReadKey();
+                return;
+            }
+
+            outConsoleMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING | DISABLE_NEWLINE_AUTO_RETURN;
+            if (!SetConsoleMode(iStdOut, outConsoleMode))
+            {
+                Console.ForegroundColor = System.ConsoleColor.Black;
+                Console.BackgroundColor = System.ConsoleColor.Red;
+                Console.WriteLine($"failed to set output console mode, error code: {GetLastError()}");
+                Console.ResetColor();
+                Console.ReadKey();
+                return;
             }
         }
 
-        private string WriteLogLevel(LogLevel level)
+        private string WriteOutput(LogLevel level, string message, Exception e = null)
+        {
+            var format = _consoleTheme.Get(level);
+
+            var outputBuilder = new StringBuilder();
+            outputBuilder.Append(DateTime.Now.ToString("s").AnsiColorize(new AnsiForegroundColor(Color.DarkGray)));
+            outputBuilder.Append(" ");
+            outputBuilder.Append($"[{ToOutputString(level)}]".AnsiColorize(format));
+            outputBuilder.Append(" ");
+            outputBuilder.Append($"{message.AnsiColorize(format)}\r\n{e?.ToString().AnsiColorize(new AnsiForegroundColor(Color.Gray))}");
+            return outputBuilder.ToString();
+        }
+
+
+        public void Write(LogLevel level, string message, Exception e = null)
+        {
+            lock (_syncRoot)
+            {
+                var output = WriteOutput(level, message, e);
+                Console.Out.Write(output);
+                Console.Out.Flush();
+            }
+        }
+        private static string ToOutputString(LogLevel level)
         {
             switch (level)
             {
@@ -59,48 +96,8 @@ namespace DotNet.Basics.Cli
                 case LogLevel.Critical:
                     return "CRI";
                 default:
-                    return string.Empty;
+                    return level.ToString("u3");
             }
-        }
-
-        private (ConsoleColor Foreground, ConsoleColor Background) GetColors(LogLevel level)
-        {
-            ConsoleColor foreground;
-            ConsoleColor background;
-
-            switch (level)
-            {
-                case LogLevel.Trace:
-                    foreground = _consoleTheme.VerboseForegroundColor;
-                    background = _consoleTheme.VerboseBackgroundColor;
-                    break;
-                case LogLevel.Debug:
-                    foreground = _consoleTheme.DebugForegroundColor;
-                    background = _consoleTheme.DebugBackgroundColor;
-                    break;
-                case LogLevel.Information:
-                    foreground = _consoleTheme.InformationVerboseForegroundColor;
-                    background = _consoleTheme.InformationBackgroundColor;
-                    break;
-                case LogLevel.Warning:
-                    foreground = _consoleTheme.WarningForegroundColor;
-                    background = _consoleTheme.WarningBackgroundColor;
-                    break;
-                case LogLevel.Error:
-                    foreground = _consoleTheme.ErrorForegroundColor;
-                    background = _consoleTheme.ErrorBackgroundColor;
-                    break;
-                case LogLevel.Critical:
-                    foreground = _consoleTheme.CriticalForegroundColor;
-                    background = _consoleTheme.CriticalBackgroundColor;
-                    break;
-                default:
-                    foreground = ConsoleColor.White;
-                    background = ConsoleColor.Blue;
-                    break;
-            }
-
-            return (foreground, background);
         }
     }
 }

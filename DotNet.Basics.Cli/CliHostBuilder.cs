@@ -17,9 +17,9 @@ namespace DotNet.Basics.Cli
             return this;
         }
 
-        public CliHostBuilder WithColoredConsole(bool includeTimestamp = false, ColoredConsoleTheme consoleTheme = null)
+        public CliHostBuilder WithColoredConsole(ConsoleTheme consoleTheme = null)
         {
-            var coloredConsole = new ColoredConsoleWriter(includeTimestamp, consoleTheme);
+            var coloredConsole = new ColoredConsoleWriter(consoleTheme);
             Diagnostics.Log.Logger.MessageLogged += coloredConsole.Write;
             return this;
         }

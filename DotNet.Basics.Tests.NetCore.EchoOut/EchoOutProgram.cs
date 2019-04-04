@@ -11,16 +11,19 @@ namespace DotNet.Basics.Tests.NetCore.EchoOut
     {
         static int Main(string[] args)
         {
-            var cliHost = new CliHostBuilder().WithColoredConsole().Build(args);
+            args.PauseIfDebug();
+
+            var cliHost = new CliHostBuilder().
+                WithColoredConsole().Build(args);
+            
             
             var range = Enumerable.Range(0, 100);
             range.ForEachParallel(i =>
             {
-
                 var level = (LogLevel)int.Parse((i % 6).ToString());
-                cliHost.Log.Write(level, Guid.NewGuid().ToString());
+                cliHost.Log.Write(level, $"{Guid.NewGuid()} {"highlight me".AnsiHighlight()} end of string");
             });
-
+            
             try
             {
                 return int.Parse(args[0]);
