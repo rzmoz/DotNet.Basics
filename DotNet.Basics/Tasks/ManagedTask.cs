@@ -80,7 +80,7 @@ namespace DotNet.Basics.Tasks
         : base(name)
         {
             _task = task ?? throw new ArgumentNullException(nameof(task));
-            _log = new LogDispatcher().PushContext(Name);
+            _log = new LogDispatcher().InContext(Name);
             _log.MessageLogged += base.FireMessageLogged;
         }
 

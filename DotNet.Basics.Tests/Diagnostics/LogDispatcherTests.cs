@@ -14,11 +14,9 @@ namespace DotNet.Basics.Tests.Diagnostics
             var message = "my Message";
 
             var outerLog = new LogDispatcher();
-            var innerLog = new LogDispatcher();
+            var innerLog = outerLog.InContext(context1).InContext(context2);
             var messageReceived = string.Empty;
-            outerLog.PushContext(context1);
-            innerLog.PushContext(context2);
-            innerLog.MessageLogged += outerLog.Write;
+
             outerLog.MessageLogged += (lvl, msg, e) => { messageReceived = msg; };
 
             //act

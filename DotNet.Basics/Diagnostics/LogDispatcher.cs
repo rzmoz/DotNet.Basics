@@ -1,49 +1,45 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
-using DotNet.Basics.Collections;
 using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Diagnostics
 {
     public class LogDispatcher : ILogger, IDisposable
     {
-        private readonly object _syncRoot = new object();
         public delegate void MessageLoggedEventHandler(LogLevel level, string message, Exception e);
         public event MessageLoggedEventHandler MessageLogged;
 
         public delegate void CloseAndFlushEventHandler();
         public event CloseAndFlushEventHandler ClosingAndFlushing;
 
-        private readonly ConcurrentStack<string> _context = new ConcurrentStack<string>();
+        private readonly ConcurrentStack<string> _context;
 
         public string Context { get; private set; }
 
-        public LogDispatcher PushContext(string context)
+        public LogDispatcher(IEnumerable<string> context)
+        : this((context ?? new string[0]).ToArray())
         {
-            if (string.IsNullOrWhiteSpace(context))
-                return this;
-            _context.Push(context);
-            UpdateContext();
-            return this;
         }
-        public LogDispatcher PopContext(string context)
+        public LogDispatcher(params string[] context)
         {
-            if (string.IsNullOrWhiteSpace(context))
-                return this;
-            _context.Push(context);
-            UpdateContext();
-            return this;
+            _context = new ConcurrentStack<string>(context);
+            if (_context.Any())
+                Context = string.Join(" / ", _context.Reverse()) + " / ";
+            else
+                Context = string.Empty;
         }
 
-        private void UpdateContext()
+
+        public LogDispatcher InContext(string context, bool floatMessageLogged = true)
         {
-            if (_context.None())
-                return;
-            lock (_syncRoot)
-            {
-                Context = string.Join(" / ", _context.Reverse()) + " / ";
-            }
+            var newLogger = string.IsNullOrWhiteSpace(context)
+                ? new LogDispatcher(_context)
+                : new LogDispatcher(_context.Append(context));
+            if (floatMessageLogged)
+                newLogger.MessageLogged += (lvl, msg, e) => MessageLogged?.Invoke(lvl, msg, e);
+            return newLogger;
         }
 
         public void CloseAndFlush()
