@@ -23,7 +23,7 @@ namespace DotNet.Basics.Diagnostics
         {
             _context = new ConcurrentStack<string>(context);
             if (_context.Any())
-                Context = string.Join(" / ", _context.Reverse()) + ": ";
+                Context = string.Join(" / ", _context.Reverse()) + " / ";
             else
                 Context = string.Empty;
         }
