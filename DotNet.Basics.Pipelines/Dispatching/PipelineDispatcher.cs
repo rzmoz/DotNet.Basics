@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Diagnostics;
+using DotNet.Basics.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using ILogger = DotNet.Basics.Diagnostics.ILogger;
@@ -14,6 +15,8 @@ namespace DotNet.Basics.Pipelines.Dispatching
     {
         private readonly ArgsFactory _argsFactory = new ArgsFactory();
         public event LogDispatcher.MessageLoggedEventHandler MessageLogged;
+        public event ManagedTask.TaskStartedEventHandler PipelineStarted;
+        public event ManagedTask.TaskEndedEventHandler PipelineEnded;
 
         public PipelineDispatcher(Dictionary<string, PipelineDispatchInfo> pipelines)
         {
@@ -36,6 +39,8 @@ namespace DotNet.Basics.Pipelines.Dispatching
             try
             {
                 pipeline.MessageLogged += FireMessageLogged;
+                pipeline.Started += FirePipelineStarted;
+                pipeline.Ended += FirePipelineEnded;
                 var pipelineType = pipeline.GetType();
                 var args = _argsFactory.Create(pipeline, argStrings);
                 var runAsyncMethodInfo = pipelineType.GetMethods().FirstOrDefault(methodInfo =>
@@ -47,6 +52,8 @@ namespace DotNet.Basics.Pipelines.Dispatching
             }
             finally
             {
+                pipeline.Ended -= FirePipelineEnded;
+                pipeline.Started -= FirePipelineStarted;
                 pipeline.MessageLogged -= FireMessageLogged;
             }
         }
@@ -54,6 +61,14 @@ namespace DotNet.Basics.Pipelines.Dispatching
         private void FireMessageLogged(LogLevel level, string message, Exception e)
         {
             MessageLogged?.Invoke(level, message, e);
+        }
+        private void FirePipelineStarted(string taskName)
+        {
+            PipelineStarted?.Invoke(taskName);
+        }
+        private void FirePipelineEnded(string taskName, Exception e)
+        {
+            PipelineEnded?.Invoke(taskName, e);
         }
 
         private void LogPipelineStartingInfo(string pipelineName, object args)
@@ -63,7 +78,5 @@ namespace DotNet.Basics.Pipelines.Dispatching
             var jsonSettings = new JsonSerializerSettings { ContractResolver = jsonResolver };
             Log.Debug($"With args:\r\n{JsonConvert.SerializeObject(args, Formatting.Indented, jsonSettings)}");
         }
-
-
     }
 }

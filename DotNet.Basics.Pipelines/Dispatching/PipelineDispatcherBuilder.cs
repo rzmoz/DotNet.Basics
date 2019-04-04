@@ -67,9 +67,6 @@ namespace DotNet.Basics.Pipelines.Dispatching
                 }
 
                 var pipeline = (ManagedTask)ctor.Invoke(new object[] { });
-
-                pipeline.Started += name => Log.Verbose($"{name} started");
-                pipeline.Ended += (name, e) => Log.Verbose($"{name} ended {e}");
                 var args = _argsFactory.Create(pipeline);
                 var pipelineInfo = new PipelineDispatchInfo(pipelineName, pipeline, JsonConvert.SerializeObject(args));
 
