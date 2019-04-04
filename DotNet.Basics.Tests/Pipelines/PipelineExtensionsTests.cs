@@ -42,7 +42,7 @@ namespace DotNet.Basics.Tests.Pipelines
         public void GetPipelineTypes_ScanForPipelines_PipelinesAreFound()
         {
             var pipelines = typeof(PipelineExtensionsTests).Assembly.GetPipelineTypes();
-            pipelines.Count().Should().Be(4);
+            pipelines.Count().Should().Be(5);
         }
 
         [Fact]
