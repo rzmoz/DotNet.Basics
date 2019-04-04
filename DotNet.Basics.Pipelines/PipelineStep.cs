@@ -13,11 +13,11 @@ namespace DotNet.Basics.Pipelines
         protected PipelineStep(string name) : base(name)
         { }
 
-        protected override Task InnerRunAsync(T args, LogDispatcher log, CancellationToken ct)
+        protected override Task InnerRunAsync(T args, ILogDispatcher log, CancellationToken ct)
         {
             return RunImpAsync(args, log, ct);
         }
 
-        protected abstract Task RunImpAsync(T args, LogDispatcher log, CancellationToken ct);
+        protected abstract Task RunImpAsync(T args, ILogDispatcher log, CancellationToken ct);
     }
 }

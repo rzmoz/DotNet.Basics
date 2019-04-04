@@ -6,17 +6,14 @@ using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Diagnostics
 {
-    public class LogDispatcher : ILogger, IDisposable
+    public class LogDispatcher : ILogDispatcher
     {
         public delegate void MessageLoggedEventHandler(LogLevel level, string message, Exception e);
         public event MessageLoggedEventHandler MessageLogged;
 
-        public delegate void CloseAndFlushEventHandler();
-        public event CloseAndFlushEventHandler ClosingAndFlushing;
-
         private readonly ConcurrentStack<string> _context;
 
-        public string Context { get; private set; }
+        public string Context { get; }
 
         public LogDispatcher(IEnumerable<string> context)
         : this((context ?? new string[0]).ToArray())
@@ -30,9 +27,8 @@ namespace DotNet.Basics.Diagnostics
             else
                 Context = string.Empty;
         }
-
-
-        public LogDispatcher InContext(string context, bool floatMessageLogged = true)
+        
+        public ILogDispatcher InContext(string context, bool floatMessageLogged = true)
         {
             var newLogger = string.IsNullOrWhiteSpace(context)
                 ? new LogDispatcher(_context)
@@ -40,11 +36,6 @@ namespace DotNet.Basics.Diagnostics
             if (floatMessageLogged)
                 newLogger.MessageLogged += (lvl, msg, e) => MessageLogged?.Invoke(lvl, msg, e);
             return newLogger;
-        }
-
-        public void CloseAndFlush()
-        {
-            ClosingAndFlushing?.Invoke();
         }
 
         public void Verbose(string message)
@@ -102,11 +93,6 @@ namespace DotNet.Basics.Diagnostics
         public void Write(LogLevel level, string message, Exception e)
         {
             MessageLogged?.Invoke(level, $"{Context}{message}", e);
-        }
-
-        public void Dispose()
-        {
-            CloseAndFlush();
         }
 
         public override string ToString()

@@ -6,7 +6,7 @@
     {
       "name": "DotNet.Basics",
       "version": "9.8.0",
-      "prerelease": "rc.8"
+      "prerelease": "rc.9"
     },
     {
       "name": "DotNet.Basics.Autofac",
@@ -16,7 +16,7 @@
     {
       "name": "DotNet.Basics.Cli",
       "version": "2.2.2",
-      "prerelease": "rc.1"
+      "prerelease": "rc.2"
     },
     {
       "name": "DotNet.Basics.Net.Http",
@@ -26,7 +26,7 @@
     {
       "name": "DotNet.Basics.Pipelines",
       "version": "9.7.2",
-      "prerelease": "rc.7"
+      "prerelease": "rc.8"
     },
     {
       "name": "DotNet.Basics.PowerShell",

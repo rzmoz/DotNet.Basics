@@ -35,7 +35,7 @@ namespace DotNet.Basics.Pipelines
             };
         }
 
-        protected override Task InnerRunAsync(T args, LogDispatcher log, CancellationToken ct)
+        protected override Task InnerRunAsync(T args, ILogDispatcher log, CancellationToken ct)
         {
             var lazyLoadedTask = _loadTask();
             if (lazyLoadedTask == null)

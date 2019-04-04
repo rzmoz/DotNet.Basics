@@ -10,13 +10,8 @@ namespace DotNet.Basics.Diagnostics
             Logger = new LogDispatcher();
         }
 
-        public static LogDispatcher Logger { get; }
-
-        public static void CloseAndFlush()
-        {
-            Logger.CloseAndFlush();
-        }
-
+        public static ILogDispatcher Logger { get; }
+        
         public static void Verbose(string message)
         {
             Verbose(message, null);

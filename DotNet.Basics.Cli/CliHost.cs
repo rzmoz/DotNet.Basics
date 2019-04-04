@@ -5,9 +5,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace DotNet.Basics.Cli
 {
-    public class CliHost : IDisposable
+    public class CliHost
     {
-        public CliHost(string[] args, IConfigurationRoot config, LogDispatcher log)
+        public CliHost(string[] args, IConfigurationRoot config, ILogDispatcher log)
         {
             Args = args ?? throw new ArgumentNullException(nameof(args));
             Config = config ?? throw new ArgumentNullException(nameof(config));
@@ -20,12 +20,6 @@ namespace DotNet.Basics.Cli
 
         public IReadOnlyList<string> Args { get; }
         public IConfigurationRoot Config { get; }
-        public LogDispatcher Log { get; }
-    
-
-        public void Dispose()
-        {
-            Log.CloseAndFlush();
-        }
+        public ILogDispatcher Log { get; }
     }
 }

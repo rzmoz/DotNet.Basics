@@ -7,7 +7,7 @@ namespace DotNet.Basics.Tests.Pipelines.PipelineHelpers
 {
     public class DescendantStep : PipelineStep<DescendantArgs>
     {
-        protected override Task RunImpAsync(DescendantArgs args, LogDispatcher log, CancellationToken ct)
+        protected override Task RunImpAsync(DescendantArgs args, ILogDispatcher log, CancellationToken ct)
         {
             args.DescendantUpdated = true;
             log.Debug("Hello World!");

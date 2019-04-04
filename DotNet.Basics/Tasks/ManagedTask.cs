@@ -48,8 +48,8 @@ namespace DotNet.Basics.Tasks
 
     public class ManagedTask<T> : ManagedTask
     {
-        private readonly Func<T, LogDispatcher, CancellationToken, Task> _task;
-        private readonly LogDispatcher _log;
+        private readonly Func<T, ILogDispatcher, CancellationToken, Task> _task;
+        private readonly ILogDispatcher _log;
 
         public ManagedTask(string name) : this(name, (args, log, ct) => { })
         { }
@@ -60,15 +60,15 @@ namespace DotNet.Basics.Tasks
         public ManagedTask(Func<Task> asyncTask) : this((args, log, ct) => asyncTask())
         { }
 
-        public ManagedTask(Action<T, LogDispatcher, CancellationToken> task)
+        public ManagedTask(Action<T, ILogDispatcher, CancellationToken> task)
             : this(null, task)
         { }
 
-        public ManagedTask(Func<T, LogDispatcher, CancellationToken, Task> task)
+        public ManagedTask(Func<T, ILogDispatcher, CancellationToken, Task> task)
             : this(null, task)
         { }
 
-        public ManagedTask(string name, Action<T, LogDispatcher, CancellationToken> task)
+        public ManagedTask(string name, Action<T, ILogDispatcher, CancellationToken> task)
             : this(name, (args, log, ct) =>
             {
                 task?.Invoke(args, log, ct);
@@ -76,7 +76,7 @@ namespace DotNet.Basics.Tasks
             })
         { }
 
-        public ManagedTask(string name, Func<T, LogDispatcher, CancellationToken, Task> task)
+        public ManagedTask(string name, Func<T, ILogDispatcher, CancellationToken, Task> task)
         : base(name)
         {
             _task = task ?? throw new ArgumentNullException(nameof(task));
@@ -112,7 +112,7 @@ namespace DotNet.Basics.Tasks
             _log.Write(level, message, e);
         }
 
-        protected virtual Task InnerRunAsync(T args, LogDispatcher log, CancellationToken ct)
+        protected virtual Task InnerRunAsync(T args, ILogDispatcher log, CancellationToken ct)
         {
             return _task?.Invoke(args, log, ct);
         }

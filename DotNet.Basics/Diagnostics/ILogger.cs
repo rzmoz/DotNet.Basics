@@ -1,4 +1,8 @@
-﻿namespace DotNet.Basics.Diagnostics
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace DotNet.Basics.Diagnostics
 {
     public interface ILogger
     {
