@@ -26,7 +26,7 @@
     {
       "name": "DotNet.Basics.Pipelines",
       "version": "9.7.2",
-      "prerelease": "rc.5"
+      "prerelease": "rc.6"
     },
     {
       "name": "DotNet.Basics.PowerShell",

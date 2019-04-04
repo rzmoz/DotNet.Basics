@@ -8,6 +8,7 @@ namespace DotNet.Basics.Tests.Pipelines.Dispatching
         {
             AddStep("MyStep", (args, log, ct) =>
             {
+                log.Debug("Hello World!");
                 args.SetByPipeline = "Yes";
                 args.SplitArgs = args.SetByArgs.Split('|');
             });
