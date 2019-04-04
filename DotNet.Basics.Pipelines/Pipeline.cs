@@ -156,7 +156,7 @@ namespace DotNet.Basics.Pipelines
         {
             task.Started += FireStarted;
             task.Ended += FireEnded;
-            task.MessageLogged += Log.Write;
+            task.MessageLogged += FireMessageLogged;
         }
 
         private static Func<IServiceProvider> GetServiceProvider(Action<IServiceCollection> configuresServices)

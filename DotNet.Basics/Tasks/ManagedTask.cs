@@ -20,12 +20,10 @@ namespace DotNet.Basics.Tasks
         protected ManagedTask(string name = null)
         {
             Name = name ?? GetType().GetNameWithGenericsExpanded();
-            Log = new LogDispatcher().PushContext(Name);
-            Log.MessageLogged += FireMessageLogged;
         }
 
         public string Name { get; }
-        protected LogDispatcher Log { get; }
+
 
         protected virtual void FireMessageLogged(LogLevel level, string message, Exception e)
         {
@@ -51,6 +49,7 @@ namespace DotNet.Basics.Tasks
     public class ManagedTask<T> : ManagedTask
     {
         private readonly Func<T, LogDispatcher, CancellationToken, Task> _task;
+        private readonly LogDispatcher _log;
 
         public ManagedTask(string name) : this(name, (args, log, ct) => { })
         { }
@@ -81,6 +80,8 @@ namespace DotNet.Basics.Tasks
         : base(name)
         {
             _task = task ?? throw new ArgumentNullException(nameof(task));
+            _log = new LogDispatcher().PushContext(Name);
+            _log.MessageLogged += base.FireMessageLogged;
         }
 
         public Task<T> RunAsync(T args)
@@ -94,7 +95,7 @@ namespace DotNet.Basics.Tasks
             try
             {
                 if (ct.IsCancellationRequested == false)
-                    await InnerRunAsync(args, Log, ct).ConfigureAwait(false);
+                    await InnerRunAsync(args, _log, ct).ConfigureAwait(false);
 
                 FireEnded(Name);
                 return args;
@@ -104,6 +105,11 @@ namespace DotNet.Basics.Tasks
                 FireEnded(Name, e);
                 throw;
             }
+        }
+
+        protected override void FireMessageLogged(LogLevel level, string message, Exception e)
+        {
+            _log.Write(level, message, e);
         }
 
         protected virtual Task InnerRunAsync(T args, LogDispatcher log, CancellationToken ct)
