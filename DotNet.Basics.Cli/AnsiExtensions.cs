@@ -1,6 +1,7 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Cli
@@ -10,31 +11,41 @@ namespace DotNet.Basics.Cli
         private const string _highlightPrefix = "[!]";
         private const string _highlightSuffix = "[/]";
 
-        private const string _ansiEscapeCode = "\u001b[";
-        private const string _ansiTermination = "m";
-        private const string _ansiReset = _ansiEscapeCode + "0" + _ansiTermination;
-
         public static string AnsiHighlight(this string str)
         {
             return str.EnsurePrefix(_highlightPrefix).EnsureSuffix(_highlightSuffix);
         }
-
-        public static string AnsiColorize(this string text, ConsoleFormat format)
-        {
-            return text.AnsiColorize(format.ForegroundColor, format.BackgroundColor);
-        }
-        
-        public static string AnsiColorize(this string text, params AnsiColor[] colors)
+        public static string AnsiColorize(this string text, AnsiColor color)
         {
             if (string.IsNullOrEmpty(text))
                 return string.Empty;
 
             var ansi = new StringBuilder();
-            ansi.Append(string.Join("", colors.Where(color => color.Color != Color.Empty).Select(color => $"{_ansiEscapeCode}{color.ColorString}{_ansiTermination}")));
-            
+            ansi.Append(color.AnsiCode);
             ansi.Append(text);
-            ansi.Append(_ansiReset);
+            ansi.Append(AnsiColor.ResetString);
             return ansi.ToString();
+        }
+
+        public static string AnsiColorize(this string text, ConsoleFormat format)
+        {
+            if (string.IsNullOrEmpty(text))
+                return string.Empty;
+
+            var colorsAnsiCode = ToAnsiCode(format.ForegroundColor, format.BackgroundColor);
+            var highlightAnsiCode = ToAnsiCode(format.HighlightForegroundColor, format.HighlightBackgroundColor);
+            text = text.Replace(_highlightPrefix, highlightAnsiCode).Replace(_highlightSuffix, AnsiColor.ResetString + colorsAnsiCode);
+            var ansi = new StringBuilder();
+
+            ansi.Append(colorsAnsiCode);
+            ansi.Append(text);
+            ansi.Append(AnsiColor.ResetString);
+            return ansi.ToString();
+        }
+
+        internal static string ToAnsiCode(params AnsiColor[] colors)
+        {
+            return string.Join(string.Empty, colors.Select(color => color.AnsiCode));
         }
     }
 }

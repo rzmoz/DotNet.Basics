@@ -5,30 +5,33 @@ namespace DotNet.Basics.Cli
 {
     public class AnsiForegroundColor : AnsiColor
     {
-        public AnsiForegroundColor(Color color, bool bold = false, bool underline = false) : base(color, AnsiColorPlane.Foreground, bold, underline)
+        public AnsiForegroundColor(Color color) : base(color, AnsiColorPlane.Foreground)
         {
         }
         public static AnsiForegroundColor Empty => new AnsiForegroundColor(Color.Empty);
     }
     public class AnsiBackgroundColor : AnsiColor
     {
-        public AnsiBackgroundColor(Color color, bool bold = false, bool underline = false) : base(color, AnsiColorPlane.Background, bold, underline)
+        public AnsiBackgroundColor(Color color) : base(color, AnsiColorPlane.Background)
         {
         }
         public static AnsiBackgroundColor Empty => new AnsiBackgroundColor(Color.Empty);
     }
     public class AnsiColor
     {
-        public AnsiColor(Color color, AnsiColorPlane colorPlane, bool bold = false, bool underline = false)
+        private const string _ansiEscapeCode = "\u001b[";
+        private const string _ansiTermination = "m";
+        private const string _ansiReset = _ansiEscapeCode + "0" + _ansiTermination;
+
+        public AnsiColor(Color color, AnsiColorPlane colorPlane)
         {
             Color = color;
             ColorPlane = colorPlane;
-            Bold = bold;
-            Underline = underline;
-            ColorString = GetColorString();
+            AnsiCode = GetColorString();
         }
 
-        public string ColorString { get; }
+        public string AnsiCode { get; }
+        public static string ResetString { get; } = _ansiReset;
 
         private string GetColorString()
         {
@@ -36,23 +39,20 @@ namespace DotNet.Basics.Cli
                 return string.Empty;
 
             var ansi = new StringBuilder();
+            ansi.Append(_ansiEscapeCode);
             var colorType = ColorPlane == AnsiColorPlane.Foreground ? "38" : "48";
-            ansi.Append($"{colorType};");
-            ansi.Append(Bold ? "1;" : "2;");
-            if (Underline)
-                ansi.Append("4;");
+            ansi.Append($"{colorType};2;");//2 needs to be there
             ansi.Append($"{Color.R};{Color.G};{Color.B}");
+            ansi.Append(_ansiTermination);
             return ansi.ToString();
         }
 
         public Color Color { get; }
         public AnsiColorPlane ColorPlane { get; }
-        public bool Bold { get; }
-        public bool Underline { get; }
 
         public override string ToString()
         {
-            return ColorString;
+            return AnsiCode;
         }
     }
 }

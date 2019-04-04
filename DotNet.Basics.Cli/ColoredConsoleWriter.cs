@@ -3,8 +3,6 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Extensions.Logging;
-using Pastel;
-
 
 namespace DotNet.Basics.Cli
 {
@@ -12,6 +10,7 @@ namespace DotNet.Basics.Cli
     {
         private readonly object _syncRoot = new object();
         private readonly ConsoleTheme _consoleTheme;
+        private static readonly AnsiForegroundColor _gutterColor = new AnsiForegroundColor(Color.DarkGray);
 
         private const int STD_OUTPUT_HANDLE = -11;
         private const uint ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
@@ -61,11 +60,11 @@ namespace DotNet.Basics.Cli
             var format = _consoleTheme.Get(level);
 
             var outputBuilder = new StringBuilder();
-            outputBuilder.Append(DateTime.Now.ToString("s").AnsiColorize(new AnsiForegroundColor(Color.DarkGray)));
+            outputBuilder.Append(DateTime.Now.ToString("s").AnsiColorize(_gutterColor));
             outputBuilder.Append(" ");
             outputBuilder.Append($"[{ToOutputString(level)}]".AnsiColorize(format));
             outputBuilder.Append(" ");
-            outputBuilder.Append($"{message.AnsiColorize(format)}\r\n{e?.ToString().AnsiColorize(new AnsiForegroundColor(Color.Gray))}");
+            outputBuilder.Append($"{message.AnsiColorize(format)}\r\n{e?.ToString().AnsiColorize(_gutterColor)}");
             return outputBuilder.ToString();
         }
 

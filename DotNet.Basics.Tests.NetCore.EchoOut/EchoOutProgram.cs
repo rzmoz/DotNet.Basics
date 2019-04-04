@@ -16,7 +16,6 @@ namespace DotNet.Basics.Tests.NetCore.EchoOut
             var cliHost = new CliHostBuilder().
                 WithColoredConsole().Build(args);
             
-            
             var range = Enumerable.Range(0, 100);
             range.ForEachParallel(i =>
             {

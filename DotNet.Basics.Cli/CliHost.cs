@@ -21,5 +21,5 @@ namespace DotNet.Basics.Cli
         public IReadOnlyList<string> Args { get; }
         public IConfigurationRoot Config { get; }
         public ILogDispatcher Log { get; }
-    }
+ }
 }

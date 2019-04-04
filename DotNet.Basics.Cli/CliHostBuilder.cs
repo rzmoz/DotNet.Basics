@@ -40,7 +40,6 @@ namespace DotNet.Basics.Cli
 
             var config = configBuilder.Build();
 
-
             return new CliHost(args, config, Diagnostics.Log.Logger);
         }
     }

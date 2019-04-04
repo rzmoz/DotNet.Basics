@@ -5,33 +5,22 @@ namespace DotNet.Basics.Cli
 {
     public class ConsoleTheme
     {
-        public static ConsoleTheme Default { get; } = new ConsoleTheme(
-            new ConsoleFormat(new AnsiForegroundColor(Color.DarkGray), AnsiBackgroundColor.Empty, new AnsiForegroundColor(Color.DarkCyan)),
-            new ConsoleFormat(new AnsiForegroundColor(Color.DarkCyan), AnsiBackgroundColor.Empty, new AnsiForegroundColor(Color.White)),
-            new ConsoleFormat(new AnsiForegroundColor(Color.White), AnsiBackgroundColor.Empty, new AnsiForegroundColor(Color.Cyan)),
-            new ConsoleFormat(new AnsiForegroundColor(Color.Yellow), AnsiBackgroundColor.Empty, new AnsiForegroundColor(Color.Black)),
-            new ConsoleFormat(new AnsiForegroundColor(Color.Red), AnsiBackgroundColor.Empty, new AnsiForegroundColor(Color.Blue)),
-            new ConsoleFormat(new AnsiForegroundColor(Color.White), new AnsiBackgroundColor(Color.DarkRed), new AnsiForegroundColor(Color.DarkCyan)));
-
-        public ConsoleTheme()
+        public static ConsoleTheme Default { get; } = new ConsoleTheme
         {
-        }
-        public ConsoleTheme(ConsoleFormat verbose, ConsoleFormat debug, ConsoleFormat information, ConsoleFormat warning, ConsoleFormat error, ConsoleFormat critical)
-        {
-            Verbose = verbose;
-            Debug = debug;
-            Information = information;
-            Warning = warning;
-            Error = error;
-            Critical = critical;
-        }
+            Verbose = new ConsoleFormat(Color.DarkSlateGray, Color.Empty, Color.DarkGray),
+            Debug = new ConsoleFormat(Color.DarkCyan, Color.Empty, Color.Gray),
+            Information = new ConsoleFormat(Color.White, Color.Empty, Color.Cyan),
+            Warning = new ConsoleFormat(Color.Yellow, Color.Empty, Color.DarkOrange),
+            Error = new ConsoleFormat(Color.Red, Color.Empty, Color.Red, Color.Black),
+            Critical = new ConsoleFormat(Color.White, Color.DarkRed, Color.White, Color.Black)
+        };
 
-        public ConsoleFormat Verbose { get; } = ConsoleFormat.Empty;
-        public ConsoleFormat Debug { get; } = ConsoleFormat.Empty;
-        public ConsoleFormat Information { get; } = ConsoleFormat.Empty;
-        public ConsoleFormat Warning { get; } = ConsoleFormat.Empty;
-        public ConsoleFormat Error { get; } = ConsoleFormat.Empty;
-        public ConsoleFormat Critical { get; } = ConsoleFormat.Empty;
+        public ConsoleFormat Verbose { get; set; } = ConsoleFormat.Empty;
+        public ConsoleFormat Debug { get; set; } = ConsoleFormat.Empty;
+        public ConsoleFormat Information { get; set; } = ConsoleFormat.Empty;
+        public ConsoleFormat Warning { get; set; } = ConsoleFormat.Empty;
+        public ConsoleFormat Error { get; set; } = ConsoleFormat.Empty;
+        public ConsoleFormat Critical { get; set; } = ConsoleFormat.Empty;
 
         public ConsoleFormat Get(LogLevel level)
         {
