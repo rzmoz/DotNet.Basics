@@ -25,7 +25,7 @@ namespace DotNet.Basics.Pipelines
         { }
 
         public Pipeline(Func<IServiceProvider> getServiceProvider, string name = null, Invoke invoke = Invoke.Sequential)
-            : base(name)
+            : base(name, "Pipeline", "Block")
         {
             _getServiceProvider = getServiceProvider ?? new ServiceCollection().BuildServiceProvider;
             _tasks = new ConcurrentQueue<ManagedTask<T>>();

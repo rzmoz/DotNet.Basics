@@ -17,9 +17,11 @@ namespace DotNet.Basics.Tasks
         public event TaskEndedEventHandler Ended;
         public event LogDispatcher.MessageLoggedEventHandler MessageLogged;
 
-        protected ManagedTask(string name = null)
+        protected ManagedTask(string name = null, params string[] removeSuffixes)
         {
             Name = name ?? GetType().GetNameWithGenericsExpanded();
+            foreach (var removeSuffix in removeSuffixes)
+                Name = Name.RemoveSuffix(removeSuffix);
         }
 
         public string Name { get; }
@@ -51,33 +53,36 @@ namespace DotNet.Basics.Tasks
         private readonly Func<T, ILogDispatcher, CancellationToken, Task> _task;
         private readonly ILogDispatcher _log;
 
-        public ManagedTask(string name) : this(name, (args, log, ct) => { })
+        public ManagedTask(string name, params string[] removeSuffixes)
+            : this(name, (args, log, ct) => { }, removeSuffixes)
         { }
 
-        public ManagedTask(Action syncTask) : this((args, log, ct) => syncTask())
+        public ManagedTask(Action syncTask, params string[] removeSuffixes)
+            : this((args, log, ct) => syncTask(), removeSuffixes)
         { }
 
-        public ManagedTask(Func<Task> asyncTask) : this((args, log, ct) => asyncTask())
+        public ManagedTask(Func<Task> asyncTask, params string[] removeSuffixes)
+            : this((args, log, ct) => asyncTask(), removeSuffixes)
         { }
 
-        public ManagedTask(Action<T, ILogDispatcher, CancellationToken> task)
-            : this(null, task)
+        public ManagedTask(Action<T, ILogDispatcher, CancellationToken> task, params string[] removeSuffixes)
+            : this(null, task, removeSuffixes)
         { }
 
-        public ManagedTask(Func<T, ILogDispatcher, CancellationToken, Task> task)
-            : this(null, task)
+        public ManagedTask(Func<T, ILogDispatcher, CancellationToken, Task> task, params string[] removeSuffixes)
+            : this(null, task, removeSuffixes)
         { }
 
-        public ManagedTask(string name, Action<T, ILogDispatcher, CancellationToken> task)
+        public ManagedTask(string name, Action<T, ILogDispatcher, CancellationToken> task, params string[] removeSuffixes)
             : this(name, (args, log, ct) =>
             {
                 task?.Invoke(args, log, ct);
                 return Task.FromResult(string.Empty);
-            })
+            }, removeSuffixes)
         { }
 
-        public ManagedTask(string name, Func<T, ILogDispatcher, CancellationToken, Task> task)
-        : base(name)
+        public ManagedTask(string name, Func<T, ILogDispatcher, CancellationToken, Task> task, params string[] removeSuffixes)
+        : base(name, removeSuffixes)
         {
             _task = task ?? throw new ArgumentNullException(nameof(task));
             _log = new LogDispatcher().InContext(Name);

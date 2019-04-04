@@ -18,6 +18,26 @@ namespace DotNet.Basics.Tests.Pipelines
     public class PipelineTests
     {
         [Fact]
+        public void Name_IgnoreSuffix_SuffixIsRemovedFromName()
+        {
+            var pipelineName = "MyPipeline";
+            var pipeline = new Pipeline<EventArgs>(pipelineName);
+            //assert
+            pipeline.Name.Should().Be("My");
+            (pipeline.Name + "Pipeline").Should().Be(pipelineName);
+        }
+        [Fact]
+        public void Name_IgnoreBlock_SuffixIsRemovedFromName()
+        {
+            var blockName = "MyBlock";
+            var pipeline = new Pipeline<EventArgs>();
+            var block = pipeline.AddBlock(blockName);
+            //assert
+            block.Name.Should().Be("My");
+            (block.Name + "Block").Should().Be(blockName);
+        }
+
+        [Fact]
         public async Task Started_Events_EventsIsOnlyTriggeredOnce()
         {
             var pipelineName = "MyPipeline";

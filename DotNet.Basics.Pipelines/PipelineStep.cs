@@ -10,7 +10,7 @@ namespace DotNet.Basics.Pipelines
         protected PipelineStep() : this(null)
         { }
 
-        protected PipelineStep(string name) : base(name)
+        protected PipelineStep(string name) : base(name, "Step")
         { }
 
         protected override Task InnerRunAsync(T args, ILogDispatcher log, CancellationToken ct)

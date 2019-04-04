@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using DotNet.Basics.Pipelines;
 using DotNet.Basics.Tests.Pipelines.PipelineHelpers;
 using FluentAssertions;
 using Xunit;
@@ -21,6 +23,15 @@ namespace DotNet.Basics.Tests.Pipelines
 
             //assert
             taskReceived.Should().Be($"{nameof(DescendantStep)} / Hello World!");
+        }
+
+        [Fact]
+        public void Name_IgnoreSuffix_SuffixIsRemovedFromName()
+        {
+            var step = new IncrementArgsStep();
+            //assert
+            step.Name.Should().Be("IncrementArgs");
+            (step.Name + "Step").Should().Be(nameof(IncrementArgsStep));
         }
     }
 }

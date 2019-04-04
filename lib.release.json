@@ -5,7 +5,7 @@
   "releases": [
     {
       "name": "DotNet.Basics",
-      "version": "9.8.1",
+      "version": "9.8.2",
       "prerelease": ""
     },
     {
@@ -25,7 +25,7 @@
     },
     {
       "name": "DotNet.Basics.Pipelines",
-      "version": "9.8.0",
+      "version": "9.8.2",
       "prerelease": ""
     },
     {
