@@ -11,13 +11,13 @@ namespace DotNet.Basics.Tests.Collections
     public class CollectionExtensionsTests
     {
         [Fact]
-        public void ToPrintString_PrintContent_MakingDebugStringsEasierToRead()
+        public void JoinString_PrintContent_MakingDebugStringsEasierToRead()
         {
-            var source = new int[]{ 0, 1, 2, 3 };
+            var source = new[]{ 0, 1, 2, 3 };
 
-            var printString = source.Select(i => i.ToString()).ToPrintString();
+            var joinString = source.Select(i => i.ToString()).JoinString();
 
-            printString.Should().Be("0|1|2|3");
+            joinString.Should().Be("0|1|2|3");
         }
         [Fact]
         public void None_EmptyList_NoneFound()
