@@ -27,7 +27,6 @@ namespace DotNet.Basics.Sys
 
             //Clean segments
             Segments = Tokenize(path, segments);
-
             PathType = pathType == PathType.Unknown ? DetectPathType(path, segments) : pathType;
 
             //Set rawpath
@@ -38,6 +37,8 @@ namespace DotNet.Basics.Sys
             Name = Path.GetFileName(RawPath.RemoveSuffix(Separator));
             NameWoExtension = Path.GetFileNameWithoutExtension(Name);
             Extension = Path.GetExtension(Name);
+
+            Parent = Segments.Count <= 1 ? null : new DirPath(null, Segments.Take(Segments.Count - 1).ToArray());
         }
 
         public string RawPath { get; }
@@ -46,7 +47,7 @@ namespace DotNet.Basics.Sys
         public string Extension { get; }
         public PathType PathType { get; }
 
-        public DirPath Parent => Segments.Count <= 1 ? null : new DirPath(null, Segments.Take(Segments.Count - 1).ToArray());
+        public DirPath Parent { get; }
         public char Separator { get; }
         public IReadOnlyCollection<string> Segments;
 

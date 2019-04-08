@@ -12,6 +12,13 @@ namespace DotNet.Basics.IO
             return Path.GetFullPath(pi.RawPath);
         }
 
+        public static DirPath Parent(this PathInfo pi)
+        {
+            if (pi == null)
+                return null;
+            return new DirectoryInfo(pi.FullName()).Parent.FullName.ToDir();
+        }
+
         public static DirPath Directory(this PathInfo pi)
         {
             if (pi == null)
@@ -20,7 +27,7 @@ namespace DotNet.Basics.IO
             switch (pi.PathType)
             {
                 case PathType.File:
-                    return pi.Parent ?? pi.FullName().ToPath().Parent;
+                    return pi.Parent() ?? pi.FullName().ToPath().Parent();
                 default:
                     return pi.ToDir();
             }

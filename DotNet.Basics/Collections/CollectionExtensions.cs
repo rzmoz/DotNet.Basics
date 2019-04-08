@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,8 +31,18 @@ namespace DotNet.Basics.Collections
         {
             Parallel.ForEach(col, forEachAction);
         }
+        public static TK[] ForEachParallel<T, TK>(this IEnumerable<T> col, Func<T, TK> forEachAction)
+        {
+            var results = new ConcurrentStack<TK>();
+            Parallel.ForEach(col, item => results.Push(forEachAction.Invoke(item)));
+            return results.ToArray();
+        }
 
         public static Task ForEachParallelAsync<T>(this IEnumerable<T> col, Func<T, Task> forEachAction)
+        {
+            return Task.WhenAll(col.Select(forEachAction));
+        }
+        public static Task<TK[]> ForEachParallelAsync<T, TK>(this IEnumerable<T> col, Func<T, Task<TK>> forEachAction)
         {
             return Task.WhenAll(col.Select(forEachAction));
         }
