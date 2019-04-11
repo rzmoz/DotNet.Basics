@@ -9,6 +9,11 @@ namespace DotNet.Basics.Sys
 {
     public static class StringExtensions
     {
+        public static string JoinString(this IEnumerable<string> source, string separator = "|")
+        {
+            return string.Join(separator, source);
+        }
+
         public static string Reverse(this string str)
         {
             if (str == null)

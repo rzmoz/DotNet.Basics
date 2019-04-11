@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using DotNet.Basics.Sys;
 using FluentAssertions;
 using Xunit;
@@ -11,6 +12,16 @@ namespace DotNet.Basics.Tests.Sys
         const string _prefix = "myPrefix";
         const string _suffix = "myPostfix";
 
+
+        [Fact]
+        public void JoinString_PrintContent_MakingDebugStringsEasierToRead()
+        {
+            var source = new[] { 0, 1, 2, 3 };
+
+            var joinString = source.Select(i => i.ToString()).JoinString();
+
+            joinString.Should().Be("0|1|2|3");
+        }
         [Theory]
         [InlineData("BobsYourUncle", "elcnUruoYsboB")]
         public void Reverse_ReversString_StringIsReversed(string input, string expected)
