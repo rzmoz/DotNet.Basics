@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Microsoft.Extensions.Logging;
+
+namespace DotNet.Basics.Cli
+{
+    public static class ConsoleFormatExtensions
+    {
+        public static string ToOutputString(this LogLevel level)
+        {
+            switch (level)
+            {
+                case LogLevel.Trace:
+                    return "VRB";
+                case LogLevel.Debug:
+                    return "DBG";
+                case LogLevel.Information:
+                    return "INF";
+                case LogLevel.Warning:
+                    return "WRN";
+                case LogLevel.Error:
+                    return "ERR";
+                case LogLevel.Critical:
+                    return "CRI";
+                default:
+                    return level.ToString("u3");
+            }
+        }
+    }
+}

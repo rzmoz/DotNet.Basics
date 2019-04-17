@@ -11,5 +11,9 @@ namespace DotNet.Basics.Diagnostics
         {
             return str.EnsurePrefix(HighlightPrefix).EnsureSuffix(HighlightSuffix);
         }
+        public static string StripHighlight(this string str)
+        {
+            return str.Replace(HighlightPrefix, string.Empty).Replace(HighlightSuffix, string.Empty);
+        }
     }
 }

@@ -35,8 +35,8 @@ namespace DotNet.Basics.Cli
             var iStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
             if (!GetConsoleMode(iStdOut, out uint outConsoleMode))
             {
-                Console.ForegroundColor = System.ConsoleColor.Black;
-                Console.BackgroundColor = System.ConsoleColor.Red;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.BackgroundColor = ConsoleColor.Red;
                 Console.WriteLine("failed to get output console mode");
                 Console.ResetColor();
                 Console.ReadKey();
@@ -46,8 +46,8 @@ namespace DotNet.Basics.Cli
             outConsoleMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING | DISABLE_NEWLINE_AUTO_RETURN;
             if (!SetConsoleMode(iStdOut, outConsoleMode))
             {
-                Console.ForegroundColor = System.ConsoleColor.Black;
-                Console.BackgroundColor = System.ConsoleColor.Red;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.BackgroundColor = ConsoleColor.Red;
                 Console.WriteLine($"failed to set output console mode, error code: {GetLastError()}");
                 Console.ResetColor();
                 Console.ReadKey();
@@ -62,7 +62,7 @@ namespace DotNet.Basics.Cli
             var outputBuilder = new StringBuilder();
             outputBuilder.Append(DateTime.Now.ToString("s").AnsiColorize(_gutterColor));
             outputBuilder.Append(" ");
-            outputBuilder.Append($"[{ToOutputString(level)}]".AnsiColorize(format));
+            outputBuilder.Append($"[{level.ToOutputString()}]".AnsiColorize(format));
             outputBuilder.Append(" ");
             outputBuilder.Append($"{message.AnsiColorize(format)}\r\n{e?.ToString().AnsiColorize(_gutterColor)}");
             return outputBuilder.ToString();
@@ -78,25 +78,6 @@ namespace DotNet.Basics.Cli
                 Console.Out.Flush();
             }
         }
-        private static string ToOutputString(LogLevel level)
-        {
-            switch (level)
-            {
-                case LogLevel.Trace:
-                    return "VRB";
-                case LogLevel.Debug:
-                    return "DBG";
-                case LogLevel.Information:
-                    return "INF";
-                case LogLevel.Warning:
-                    return "WRN";
-                case LogLevel.Error:
-                    return "ERR";
-                case LogLevel.Critical:
-                    return "CRI";
-                default:
-                    return level.ToString("u3");
-            }
-        }
+        
     }
 }

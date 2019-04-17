@@ -24,6 +24,13 @@ namespace DotNet.Basics.Cli
             return this;
         }
 
+        public CliHostBuilder WithSystemConsole()
+        {
+            var systemConsole = new SystemConsoleWriter();
+            Diagnostics.Log.Logger.MessageLogged += systemConsole.Write;
+            return this;
+        }
+
         public CliHost Build(string[] args, Action<IConfigurationBuilder> add = null)
         {
             var configArgs = args.Select(a =>

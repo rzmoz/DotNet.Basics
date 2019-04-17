@@ -6,7 +6,7 @@
     {
       "name": "DotNet.Basics",
       "version": "9.8.3",
-      "prerelease": "rc.3"
+      "prerelease": "rc.4"
     },
     {
       "name": "DotNet.Basics.Autofac",
@@ -15,7 +15,7 @@
     },
     {
       "name": "DotNet.Basics.Cli",
-      "version": "2.2.5",
+      "version": "2.2.6",
       "prerelease": ""
     },
     {
