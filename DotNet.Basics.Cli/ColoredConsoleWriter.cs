@@ -60,8 +60,6 @@ namespace DotNet.Basics.Cli
             var format = _consoleTheme.Get(level);
 
             var outputBuilder = new StringBuilder();
-            outputBuilder.Append(DateTime.Now.ToString("s").AnsiColorize(_gutterColor));
-            outputBuilder.Append(" ");
             outputBuilder.Append($"[{level.ToOutputString()}]".AnsiColorize(format));
             outputBuilder.Append(" ");
             outputBuilder.Append($"{message.AnsiColorize(format)}\r\n{e?.ToString().AnsiColorize(_gutterColor)}");

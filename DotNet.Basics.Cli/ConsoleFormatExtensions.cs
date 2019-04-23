@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using DotNet.Basics.Sys;
 using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Cli
@@ -18,11 +16,10 @@ namespace DotNet.Basics.Cli
                 case LogLevel.Information:
                     return "INF";
                 case LogLevel.Warning:
-                    return "WRN";
+                    return "WARNING";
                 case LogLevel.Error:
-                    return "ERR";
                 case LogLevel.Critical:
-                    return "CRI";
+                    return $"  *****  {level.ToName().ToUpperInvariant()}  *****  ";
                 default:
                     return level.ToString("u3");
             }
