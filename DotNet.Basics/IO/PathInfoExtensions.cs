@@ -13,17 +13,20 @@ namespace DotNet.Basics.IO
             return Path.GetFullPath(pi.RawPath);
         }
 
-        public static DirPath Parent(this PathInfo pi)
+        public static DirPath Parent(this PathInfo pi, bool resolveParentFromFullPathIfNotInCurrentPath = true)
         {
             if (pi == null)
                 return null;
 
-            return pi.Segments.Any() 
-                ? new DirPath(string.Empty, pi.Segments.Take(pi.Segments.Count - 1).ToArray()) 
-                : new DirectoryInfo(pi.FullName()).Parent?.FullName.ToDir().Segments.Last().ToDir();
+            if (pi.Segments.Any())
+                return new DirPath(string.Empty, pi.Segments.Take(pi.Segments.Count - 1).ToArray());
+
+            if (resolveParentFromFullPathIfNotInCurrentPath)
+                return new DirectoryInfo(pi.FullName()).Parent?.FullName.ToDir().Segments.Last().ToDir();
+            return null;
         }
 
-        public static DirPath Directory(this PathInfo pi)
+        public static DirPath Directory(this PathInfo pi, bool resolveDirectoryFromFullPathIfNotInCurrentPath = true)
         {
             if (pi == null)
                 return null;
@@ -31,9 +34,9 @@ namespace DotNet.Basics.IO
             switch (pi.PathType)
             {
                 case PathType.File:
-                    return pi.Parent() ?? pi.FullName().ToPath().Parent();
+                    return pi.Parent(resolveDirectoryFromFullPathIfNotInCurrentPath);
                 default:
-                    return pi.ToDir();
+                    return (DirPath)pi;
             }
         }
 
