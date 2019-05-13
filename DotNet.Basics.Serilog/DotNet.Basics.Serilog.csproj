@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>Syntactical sugar for getting up and running with Serilog</Description>
-    <PackageProjectUrl/>
+    <PackageProjectUrl />
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
     <Authors>rzmoz</Authors>
     <Company />
@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="Serilog" Version="2.8.0" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.2" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.4" />
   </ItemGroup>
 
   <ItemGroup>
