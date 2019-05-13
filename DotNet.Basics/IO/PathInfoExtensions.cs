@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks.Repeating;
 
@@ -16,7 +17,10 @@ namespace DotNet.Basics.IO
         {
             if (pi == null)
                 return null;
-            return new DirectoryInfo(pi.FullName()).Parent.FullName.ToDir();
+
+            return pi.Segments.Any() 
+                ? new DirPath(string.Empty, pi.Segments.Take(pi.Segments.Count - 1).ToArray()) 
+                : new DirectoryInfo(pi.FullName()).Parent?.FullName.ToDir().Segments.Last().ToDir();
         }
 
         public static DirPath Directory(this PathInfo pi)
