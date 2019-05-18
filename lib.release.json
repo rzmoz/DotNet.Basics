@@ -15,7 +15,7 @@
     },
     {
       "name": "DotNet.Basics.Cli",
-      "version": "2.2.7",
+      "version": "2.2.8",
       "prerelease": ""
     },
     {
@@ -40,7 +40,7 @@
     },
     {
       "name": "DotNet.Basics.SevenZip",
-      "version": "18.05.0",
+      "version": "18.05.1",
       "prerelease": ""
     }
   ],
