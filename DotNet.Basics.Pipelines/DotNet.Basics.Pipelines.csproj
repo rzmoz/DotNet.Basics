@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Description>Orchestration and dispatching of operations in pipelines. Support for events, IoC and runtime resolution of dispatching and args</Description>
     <PackageProjectUrl />
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
