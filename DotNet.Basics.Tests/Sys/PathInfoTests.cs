@@ -8,6 +8,22 @@ namespace DotNet.Basics.Tests.Sys
     public class PathInfoTests
     {
         [Fact]
+        public void Directory_TypeIsFile_DirIsParent()
+        {
+            var file = "myParent\\my.file.txt".ToFile();
+
+            file.Directory.Should().Be(file.Parent);
+        }
+
+        [Fact]
+        public void Directory_TypeIsDir_DirIsSame()
+        {
+            var dir = "myParent\\my.dir".ToDir();
+
+            dir.Directory.Should().Be(dir);
+        }
+
+        [Fact]
         public void Parent_NotRootedWithParent_ParentIsReturned()
         {
             var dir = "myParent\\myDir".ToDir();
@@ -16,6 +32,7 @@ namespace DotNet.Basics.Tests.Sys
 
             parent.Should().Be("myParent".ToDir());
         }
+
         [Fact]
         public void Parent_NotRootedNoParent_NullIsReturned()
         {
@@ -126,7 +143,7 @@ namespace DotNet.Basics.Tests.Sys
             var path = pathInput.ToPath();
             path.PathType.Should().Be(pathType);
             var formatted = path.ToString();
-            if (pathType==PathType.Dir)
+            if (pathType == PathType.Dir)
                 formatted.Should().EndWith(path.Separator.ToString());
             else
                 formatted.Should().NotEndWith(path.Separator.ToString());

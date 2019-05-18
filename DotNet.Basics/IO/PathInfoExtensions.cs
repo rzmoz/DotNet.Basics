@@ -30,7 +30,7 @@ namespace DotNet.Basics.IO
                 case PathType.File:
                     return pi.ParentFromFullName();
                 default:
-                    return new DirectoryInfo(pi.FullName()).FullName.ToDir();
+                    return pi.Directory;
             }
         }
 

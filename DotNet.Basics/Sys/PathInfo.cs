@@ -39,6 +39,7 @@ namespace DotNet.Basics.Sys
             Extension = Path.GetExtension(Name);
 
             Parent = Segments.Count <= 1 ? null : new DirPath(null, Segments.Take(Segments.Count - 1).ToArray());
+            Directory = PathType == PathType.File ? Parent : (DirPath)this;
         }
 
         public string RawPath { get; }
@@ -48,6 +49,7 @@ namespace DotNet.Basics.Sys
         public PathType PathType { get; }
 
         public DirPath Parent { get; }
+        public DirPath Directory { get; }
         public char Separator { get; }
         public IReadOnlyCollection<string> Segments;
 
