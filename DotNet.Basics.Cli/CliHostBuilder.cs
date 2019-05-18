@@ -17,10 +17,13 @@ namespace DotNet.Basics.Cli
             return this;
         }
 
-        public CliHostBuilder WithColoredConsole(ConsoleTheme consoleTheme = null)
+        public CliHostBuilder WithColoredConsoleAndSystemConsoleAsFallback(ConsoleTheme consoleTheme = null)
         {
-            var coloredConsole = new ColoredConsoleWriter(consoleTheme);
-            Diagnostics.Log.Logger.MessageLogged += coloredConsole.Write;
+            IConsoleWriter console = new ColoredConsoleWriter(consoleTheme);
+            if (((ColoredConsoleWriter)console).ConsoleModeProperlySet == false)
+                console = new SystemConsoleWriter();
+
+            Diagnostics.Log.Logger.MessageLogged += console.Write;
             return this;
         }
 

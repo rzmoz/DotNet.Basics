@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Cli
 {
-    public class ColoredConsoleWriter
+    public class ColoredConsoleWriter : IConsoleWriter
     {
         private readonly object _syncRoot = new object();
         private readonly ConsoleTheme _consoleTheme;
@@ -53,7 +53,11 @@ namespace DotNet.Basics.Cli
                 Console.ReadKey();
                 return;
             }
+
+            ConsoleModeProperlySet = true;
         }
+
+        public bool ConsoleModeProperlySet { get; }
 
         private string WriteOutput(LogLevel level, string message, Exception e = null)
         {
@@ -76,6 +80,6 @@ namespace DotNet.Basics.Cli
                 Console.Out.Flush();
             }
         }
-        
+
     }
 }

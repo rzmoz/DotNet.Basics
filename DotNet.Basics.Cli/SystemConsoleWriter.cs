@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Cli
 {
-    public class SystemConsoleWriter
+    public class SystemConsoleWriter : IConsoleWriter
     {
         public void Write(LogLevel level, string message, Exception e = null)
         {

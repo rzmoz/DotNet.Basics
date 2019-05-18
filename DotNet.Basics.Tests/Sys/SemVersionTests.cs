@@ -184,9 +184,25 @@ namespace DotNet.Basics.Tests.Sys
             (rc > rc).Should().BeFalse();
 
         }
+        [Fact]
+        public void PreRelease_Precedence_PreReleaseIsOnlyConsideredWhenRestIsTheSame()
+        {
+            var higherWoPreRelease = new SemVersion(1, 0, 1);
+            var lowerWithPreRelease = new SemVersion(1, 0, 0, "rc.1");
+
+            //smaller than
+            (lowerWithPreRelease < higherWoPreRelease).Should().BeTrue();
+
+            //equals
+            (higherWoPreRelease == lowerWithPreRelease).Should().BeFalse();
+            (higherWoPreRelease != lowerWithPreRelease).Should().BeTrue();
+
+            //larger than
+            (higherWoPreRelease > higherWoPreRelease).Should().BeFalse();
+        }
 
         [Fact]
-        public void PreRelease_Precedence_AnyPreReleaseTakesLowerPrecedence()
+        public void PreRelease_Precedence_AnyPreReleaseTakesLowerPrecedenceWhenRestIsTheSame()
         {
             var woPreRelease = new SemVersion(1, 0, 0);
             var withPreRelease = new SemVersion(1, 0, 0, "rc.1");
