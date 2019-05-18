@@ -39,9 +39,6 @@ namespace DotNet.Basics.Sys
             Extension = Path.GetExtension(Name);
 
             Parent = Segments.Count <= 1 ? null : new DirPath(null, Segments.Take(Segments.Count - 1).ToArray());
-            Directory = PathType == PathType.Dir
-                ? new DirPath(null, Segments.ToArray())
-                : Parent;
         }
 
         public string RawPath { get; }
@@ -51,7 +48,6 @@ namespace DotNet.Basics.Sys
         public PathType PathType { get; }
 
         public DirPath Parent { get; }
-        public DirPath Directory { get; }
         public char Separator { get; }
         public IReadOnlyCollection<string> Segments;
 
@@ -128,6 +124,24 @@ namespace DotNet.Basics.Sys
         public override string ToString()
         {
             return RawPath;
+        }
+
+        protected bool Equals(PathInfo other)
+        {
+            return RawPath.Equals(other.RawPath, StringComparison.OrdinalIgnoreCase);//ignore case on comparison since we're mainly Windows. To bad (L)inux systems
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((PathInfo)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            throw new NotImplementedException();
         }
     }
 }

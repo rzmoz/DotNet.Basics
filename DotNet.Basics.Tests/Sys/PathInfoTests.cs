@@ -14,7 +14,7 @@ namespace DotNet.Basics.Tests.Sys
 
             var parent = dir.Parent;
 
-            parent.Should().Be("myParent\\");
+            parent.Should().Be("myParent".ToDir());
         }
         [Fact]
         public void Parent_NotRootedNoParent_NullIsReturned()
