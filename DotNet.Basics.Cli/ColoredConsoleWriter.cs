@@ -35,22 +35,14 @@ namespace DotNet.Basics.Cli
             var iStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
             if (!GetConsoleMode(iStdOut, out uint outConsoleMode))
             {
-                Console.ForegroundColor = ConsoleColor.Black;
-                Console.BackgroundColor = ConsoleColor.Red;
                 Console.WriteLine("failed to get output console mode");
-                Console.ResetColor();
-                Console.ReadKey();
                 return;
             }
 
             outConsoleMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING | DISABLE_NEWLINE_AUTO_RETURN;
             if (!SetConsoleMode(iStdOut, outConsoleMode))
             {
-                Console.ForegroundColor = ConsoleColor.Black;
-                Console.BackgroundColor = ConsoleColor.Red;
                 Console.WriteLine($"failed to set output console mode, error code: {GetLastError()}");
-                Console.ResetColor();
-                Console.ReadKey();
                 return;
             }
 
