@@ -7,6 +7,25 @@ namespace DotNet.Basics.Tests.Sys
 {
     public class PathInfoTests
     {
+        [Fact]
+        public void Parent_NotRootedWithParent_ParentIsReturned()
+        {
+            var dir = "myParent\\myDir".ToDir();
+
+            var parent = dir.Parent;
+
+            parent.Should().Be("myParent\\");
+        }
+        [Fact]
+        public void Parent_NotRootedNoParent_NullIsReturned()
+        {
+            var dir = "myDir".ToDir();
+
+            var parent = dir.Parent;
+
+            parent.Should().BeNull();
+        }
+
         [Theory]
         [InlineData(@"c:\my\path", @"c:\my\path", PathSeparator.Backslash)]//bs to bs
         [InlineData(@"c:\my\path", @"c:/my/path", PathSeparator.Slash)]//bs to bs
