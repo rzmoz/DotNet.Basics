@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using static System.String;
 
 namespace DotNet.Basics.Sys
@@ -14,19 +15,25 @@ namespace DotNet.Basics.Sys
         public SemVersion(SemVersion semVer)
             : this(semVer.Major, semVer.Minor, semVer.Patch, semVer.PreRelease, semVer.Metadata)
         { }
+
         public SemVersion(int major, int minor, int patch, string preRelease = null, string metadata = null)
+        : this(major, minor, patch, new SemVersionPreRelease(preRelease), metadata)
+        {
+
+        }
+        public SemVersion(int major, int minor, int patch, SemVersionPreRelease preRelease, string metadata)
         {
             Major = major;
             Minor = minor;
             Patch = patch;
-            PreRelease = preRelease ?? Empty;
+            PreRelease = preRelease ?? new SemVersionPreRelease();
             Metadata = metadata ?? Empty;
         }
 
         public int Major { get; set; }
         public int Minor { get; set; }
         public int Patch { get; set; }
-        public string PreRelease { get; set; }
+        public SemVersionPreRelease PreRelease { get; set; }
         public string Metadata { get; set; }
 
         public string SemVer10String => $"{Major}.{Minor}.{Patch}";
@@ -36,8 +43,8 @@ namespace DotNet.Basics.Sys
             get
             {
                 var semVer20String = SemVer10String;
-                if (IsNullOrWhiteSpace(PreRelease) == false)
-                    semVer20String += $"{SemVersionLexer.PreReleaseSeparator}{PreRelease.TrimStart(SemVersionLexer.PreReleaseSeparator)}";
+                if (PreRelease.Any)
+                    semVer20String += $"{SemVersionLexer.PreReleaseSeparator}{PreRelease}";
                 if (IsNullOrWhiteSpace(Metadata) == false)
                     semVer20String += $"{SemVersionLexer.MetadataSeparator}{Metadata.TrimStart(SemVersionLexer.MetadataSeparator)}";
                 return semVer20String;
@@ -54,7 +61,7 @@ namespace DotNet.Basics.Sys
             var major = int.Parse(tokens[0]);
             var minor = int.Parse(tokens[1]);
             var patch = int.Parse(tokens[2]);
-            var preRelease = tokens[3];
+            var preRelease = new SemVersionPreRelease(tokens[3]);
             var metaData = tokens[4];
             return new SemVersion(major, minor, patch, preRelease, metaData);
         }
@@ -69,7 +76,7 @@ namespace DotNet.Basics.Sys
             return a.Major == b.Major &&
                    a.Minor == b.Minor &&
                    a.Patch == b.Patch &&
-                   a.PreRelease.Equals(b.PreRelease, StringComparison.OrdinalIgnoreCase);
+                   a.PreRelease == b.PreRelease;
         }
         public static bool operator !=(SemVersion a, SemVersion b)
         {
@@ -83,10 +90,7 @@ namespace DotNet.Basics.Sys
                 return true;
             if (a.Major == b.Major && a.Minor == b.Minor && a.Patch < b.Patch)
                 return true;
-            var compare = Compare(a.PreRelease, b.PreRelease, StringComparison.OrdinalIgnoreCase);
-            if (a.PreRelease.Length > 0 && (compare < 0 || compare == a.PreRelease.Length))
-                return true;
-            return false;
+            return a.PreRelease < b.PreRelease;
         }
         public static bool operator >(SemVersion a, SemVersion b)
         {
@@ -96,10 +100,7 @@ namespace DotNet.Basics.Sys
                 return true;
             if (a.Major == b.Major && a.Minor == b.Minor && a.Patch > b.Patch)
                 return true;
-            var compare = Compare(a.PreRelease, b.PreRelease, StringComparison.OrdinalIgnoreCase);
-            if (b.PreRelease.Length > 0 && (compare > 0 || compare == b.PreRelease.Length * -1))
-                return true;
-            return false;
+            return a.PreRelease > b.PreRelease;
         }
 
         protected bool Equals(SemVersion other)

@@ -8,7 +8,6 @@ namespace DotNet.Basics.Tests.Sys
 {
     public class SemVersionTests
     {
-
         private static readonly int _major = 10;
         private static readonly int _minor = 701;
         private static readonly int _patch = 232;
@@ -65,7 +64,7 @@ namespace DotNet.Basics.Tests.Sys
             semVer.Major.Should().Be(_major);
             semVer.Minor.Should().Be(_minor);
             semVer.Patch.Should().Be(_patch);
-            semVer.PreRelease.Should().BeEmpty();
+            semVer.PreRelease.ToString().Should().BeEmpty();
             semVer.Metadata.Should().BeEmpty();
         }
         [Fact]
@@ -78,7 +77,7 @@ namespace DotNet.Basics.Tests.Sys
             semVer.Major.Should().Be(_major);
             semVer.Minor.Should().Be(_minor);
             semVer.Patch.Should().Be(_patch);
-            semVer.PreRelease.Should().BeEmpty();
+            semVer.PreRelease.ToString().Should().BeEmpty();
             semVer.Metadata.Should().BeEmpty();
         }
 
@@ -92,7 +91,7 @@ namespace DotNet.Basics.Tests.Sys
             semVer.Major.Should().Be(_major);
             semVer.Minor.Should().Be(_minor);
             semVer.Patch.Should().Be(_patch);
-            semVer.PreRelease.Should().BeEmpty();
+            semVer.PreRelease.ToString().Should().BeEmpty();
             semVer.Metadata.Should().Be(_metaData);
         }
 
@@ -106,7 +105,7 @@ namespace DotNet.Basics.Tests.Sys
             semVer.Major.Should().Be(_major);
             semVer.Minor.Should().Be(_minor);
             semVer.Patch.Should().Be(_patch);
-            semVer.PreRelease.Should().Be(_preRelease);
+            semVer.PreRelease.ToString().Should().Be(_preRelease);
             semVer.Metadata.Should().Be(_metaData);
         }
 
@@ -313,6 +312,91 @@ namespace DotNet.Basics.Tests.Sys
             (order3 > order5).Should().BeFalse();
             (order4 > order5).Should().BeFalse();
             (order5 > order5).Should().BeFalse();
+        }
+
+        [Fact]// §11 Precedence in https://semver.org/
+        public void Precedence_FullExampleFromSemVerDotOrg_VersionsAreInOrder()
+        {
+            var semVer1 = new SemVersion("1.0.0-alpha");
+            var semVer2 = new SemVersion("1.0.0-alpha.1");
+            var semVer3 = new SemVersion("1.0.0-alpha.beta");
+            var semVer4 = new SemVersion("1.0.0-beta");
+            var semVer5 = new SemVersion("1.0.0-beta.2");
+            var semVer6 = new SemVersion("1.0.0-beta.11");
+            var semVer7 = new SemVersion("1.0.0-rc.1");
+            var semVer8 = new SemVersion("1.0.0");
+
+
+            (semVer1 < semVer2).Should().BeTrue();
+            (semVer1 < semVer3).Should().BeTrue();
+            (semVer1 < semVer4).Should().BeTrue();
+            (semVer1 < semVer5).Should().BeTrue();
+            (semVer1 < semVer6).Should().BeTrue();
+            (semVer1 < semVer7).Should().BeTrue();
+            (semVer1 < semVer8).Should().BeTrue();
+
+            (semVer2 < semVer3).Should().BeTrue();
+            (semVer2 < semVer4).Should().BeTrue();
+            (semVer2 < semVer5).Should().BeTrue();
+            (semVer2 < semVer6).Should().BeTrue();
+            (semVer2 < semVer7).Should().BeTrue();
+            (semVer2 < semVer8).Should().BeTrue();
+
+            (semVer3 < semVer4).Should().BeTrue();
+            (semVer3 < semVer5).Should().BeTrue();
+            (semVer3 < semVer6).Should().BeTrue();
+            (semVer3 < semVer7).Should().BeTrue();
+            (semVer3 < semVer8).Should().BeTrue();
+
+            (semVer4 < semVer5).Should().BeTrue();
+            (semVer4 < semVer6).Should().BeTrue();
+            (semVer4 < semVer7).Should().BeTrue();
+            (semVer4 < semVer8).Should().BeTrue();
+
+            (semVer5 < semVer6).Should().BeTrue();
+            (semVer5 < semVer7).Should().BeTrue();
+            (semVer5 < semVer8).Should().BeTrue();
+
+            (semVer6 < semVer7).Should().BeTrue();
+            (semVer6 < semVer8).Should().BeTrue();
+
+            (semVer7 < semVer8).Should().BeTrue();
+
+
+            (semVer2 > semVer1).Should().BeTrue();
+            (semVer3 > semVer1).Should().BeTrue();
+            (semVer4 > semVer1).Should().BeTrue();
+            (semVer5 > semVer1).Should().BeTrue();
+            (semVer6 > semVer1).Should().BeTrue();
+            (semVer7 > semVer1).Should().BeTrue();
+            (semVer8 > semVer1).Should().BeTrue();
+
+            (semVer3 > semVer2).Should().BeTrue();
+            (semVer4 > semVer2).Should().BeTrue();
+            (semVer5 > semVer2).Should().BeTrue();
+            (semVer6 > semVer2).Should().BeTrue();
+            (semVer7 > semVer2).Should().BeTrue();
+            (semVer8 > semVer2).Should().BeTrue();
+
+            (semVer4 > semVer3).Should().BeTrue();
+            (semVer5 > semVer3).Should().BeTrue();
+            (semVer6 > semVer3).Should().BeTrue();
+            (semVer7 > semVer3).Should().BeTrue();
+            (semVer8 > semVer3).Should().BeTrue();
+
+            (semVer5 > semVer4).Should().BeTrue();
+            (semVer6 > semVer4).Should().BeTrue();
+            (semVer7 > semVer4).Should().BeTrue();
+            (semVer8 > semVer4).Should().BeTrue();
+
+            (semVer6 > semVer5).Should().BeTrue();
+            (semVer7 > semVer5).Should().BeTrue();
+            (semVer8 > semVer5).Should().BeTrue();
+
+            (semVer7 > semVer6).Should().BeTrue();
+            (semVer8 > semVer6).Should().BeTrue();
+
+            (semVer8 > semVer7).Should().BeTrue();
         }
     }
 }
