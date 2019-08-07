@@ -16,6 +16,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.2.2" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />
+  </ItemGroup>
   
 
 </Project>

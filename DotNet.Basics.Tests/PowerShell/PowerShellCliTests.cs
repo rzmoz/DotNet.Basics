@@ -1,7 +1,7 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
+using DotNet.Basics.Diagnostics;
 using DotNet.Basics.PowerShell;
-
-using DotNet.Basics.IO;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
@@ -10,26 +10,34 @@ namespace DotNet.Basics.Tests.PowerShell
 {
     public class PowerShellCliTests : TestWithHelpers
     {
+        const string _greeting = @"Hello World!";
+        const string _writeGreetingToHost = @"Write-Host ""Hello World!""";
+
         public PowerShellCliTests(ITestOutputHelper output) : base(output)
         {
         }
-        
+
         [Fact]
         public void RunScript_ExecuteScript_HelloWorldIsOutputted()
         {
-            const string greeting = @"Hello World!";
+            var script = $@"""{_greeting}""";
 
-            var result = PowerShellCli.RunScript($"\"{greeting}\"");
+            var result = PowerShellCli.RunScript(script);
 
-            result.Single().ToString().Should().Be(greeting);
+            result.Single().ToString().Should().Be(_greeting);
         }
 
         [Fact]
         public void RunScript_WriteToHost_OutputToHostIsCaptured()
         {
-            const string greeting = "Hello world!";
+            var captured = string.Empty;
+            var log = new LogDispatcher();
+            log.MessageLogged += (lvl, msg, e) => captured += msg;
+            log.MessageLogged += (lvl, msg, e) => Output.WriteLine(msg);
 
-            var result = PowerShellCli.RunScript($"Write-Host \"{greeting}\"");
+            var result = PowerShellCli.RunScript(log, _writeGreetingToHost);
+
+            captured.Should().Be(_greeting);
         }
     }
 }

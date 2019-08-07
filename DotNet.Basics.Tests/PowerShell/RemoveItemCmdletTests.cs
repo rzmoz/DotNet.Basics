@@ -16,7 +16,7 @@ namespace DotNet.Basics.Tests.PowerShell
         [Fact]
         public void RemoveItem_DeleteFilesAndFolders_DirIsEmptied()
         {
-            ArrangeActAssertPaths(dir =>
+            ArrangeActAssertPaths(async dir =>
             {
                 dir.CreateSubDir("myDir");
                 dir.ToFile("myFile.txt").WriteAllText("nothing");
@@ -38,7 +38,7 @@ namespace DotNet.Basics.Tests.PowerShell
         [Fact]
         public void RemoveItem_Filters_OnlyFilteredItemsAreDeleted()
         {
-            ArrangeActAssertPaths(dir =>
+            ArrangeActAssertPaths(async dir =>
             {
                 dir.ToFile("Testa.myFile1.txt").WriteAllText("nothing1");
                 dir.ToFile("Testa.myFile2.txt").WriteAllText("nothing2");
