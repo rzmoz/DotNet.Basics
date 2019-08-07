@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using DotNet.Basics.IO;
 using DotNet.Basics.PowerShell;
 using FluentAssertions;
@@ -14,9 +15,9 @@ namespace DotNet.Basics.Tests.PowerShell
         }
 
         [Fact]
-        public void GetCHildItem_WithFilter_FilteredItemsAreFound()
+        public void GetChildItem_WithFilter_FilteredItemsAreFound()
         {
-            ArrangeActAssertPaths(dir =>
+            ArrangeActAssertPaths(async dir =>
             {
                 dir.ToFile("Testa.myFile1.txt").WriteAllText("nothing1");
                 var file1Name = dir.ToFile("Testa.myFile1.json").WriteAllText("nothing1").FullName();

@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
-using System.Management.Automation.Runspaces;
+using DotNet.Basics.Collections;
+using DotNet.Basics.Diagnostics;
 
 namespace DotNet.Basics.PowerShell
 {
@@ -10,45 +10,42 @@ namespace DotNet.Basics.PowerShell
     {
         private const string _bypassExecutionPolicy = "Set-ExecutionPolicy Bypass -Scope Process";
 
-        public static object[] RunCmdlet(PowerShellCmdlet cmdLet)
+        public static object[] RunCmdlet(PowerShellCmdlet cmdLet, ILogDispatcher log = null)
         {
-            return RunScript(cmdLet.ToString());
+            return RunScript(log, cmdLet.ToString());
         }
 
         public static object[] RunScript(params string[] scripts)
         {
-            if (scripts == null) { throw new ArgumentNullException(nameof(scripts)); }
+            return RunScript(new VoidLogger(), scripts);
+        }
 
-            using (var runspace = RunspaceFactory.CreateRunspace())
+        public static object[] RunScript(ILogDispatcher log, params string[] scripts)
+        {
+
+            using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
             {
-                runspace.Open();
+                ps.AddScript(_bypassExecutionPolicy);
+                foreach (var script in scripts)
+                    ps.AddScript(script);
 
-                using (var pipeline = runspace.CreatePipeline())
+                ps.Streams.Progress.DataAdded += (col, e) => ((PSDataCollection<ProgressRecord>)col).ForEach(rec => log?.Verbose($"{rec.Activity} : {rec.PercentComplete}/100"));
+                ps.Streams.Verbose.DataAdded += (col, e) => ((PSDataCollection<VerboseRecord>)col).ForEach(rec => log?.Verbose(rec.Message));
+                ps.Streams.Debug.DataAdded += (col, e) => ((PSDataCollection<DebugRecord>)col).ForEach(rec => log?.Debug(rec.Message)); ;
+                ps.Streams.Information.DataAdded += (col, e) => ((PSDataCollection<InformationRecord>)col).ForEach(rec => log?.Information(rec.ToString())); ;
+                ps.Streams.Warning.DataAdded += (col, e) => ((PSDataCollection<WarningRecord>)col).ForEach(rec => log?.Warning(rec.Message)); ;
+                ps.Streams.Error.DataAdded += (col, e) => ((PSDataCollection<ErrorRecord>)col).ForEach(rec => log?.Error($"{rec.ErrorDetails.Message}\r\n{rec.ScriptStackTrace}", rec.Exception));
+
+                var passThru= ps.Invoke();
+                
+                if (ps.Streams.Error.Any())
                 {
-                    pipeline.Commands.AddScript(_bypassExecutionPolicy);
-                    foreach (var script in scripts)
-                        pipeline.Commands.AddScript(script);
-
-                    var passThru = pipeline.Invoke();
-                    runspace.Close();
-
-                    if (pipeline.HadErrors)
-                    {
-                        if (!(pipeline.Error.Read() is PSObject errorsObject))
-                            throw new ArgumentException("Unknown error in PowerShell script");
-
-                        switch (errorsObject.BaseObject)
-                        {
-                            case ErrorRecord error when error.Exception != null:
-                                throw error.Exception;
-                            case ErrorRecord error:
-                                throw new ArgumentException(error.ErrorDetails.Message);
-                            case Collection<ErrorRecord> errors:
-                                throw new AggregateException(errors.Select(e => e.Exception ?? new CmdletInvocationException(e.ErrorDetails.ToString())));
-                        }
-                    }
-                    return passThru.Select(pt => pt.BaseObject).ToArray();
+                    if (ps.Streams.Error.Count == 1)
+                        throw ps.Streams.Error.Single().Exception;
+                    throw new AggregateException(ps.Streams.Error.Select(e => e.Exception ?? new CmdletInvocationException(e.ErrorDetails.ToString())));
                 }
+
+                return passThru?.Select(o => o.BaseObject).ToArray();
             }
         }
     }
