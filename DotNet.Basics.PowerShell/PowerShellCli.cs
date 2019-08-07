@@ -44,10 +44,7 @@ namespace DotNet.Basics.PowerShell
                             case ErrorRecord error:
                                 throw new ArgumentException(error.ErrorDetails.Message);
                             case Collection<ErrorRecord> errors:
-                                {
-                                    var errorMessage = errors.Aggregate(string.Empty, (current, err) => current + (err.Exception.ToString() + Environment.NewLine));
-                                    throw new ArgumentException(errorMessage);
-                                }
+                                throw new AggregateException(errors.Select(e => e.Exception ?? new CmdletInvocationException(e.ErrorDetails.ToString())));
                         }
                     }
                     return passThru.Select(pt => pt.BaseObject).ToArray();
