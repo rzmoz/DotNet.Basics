@@ -21,12 +21,16 @@ namespace DotNet.Basics.Diagnostics
         public static void Init(ILogDispatcher log, TimeSpan pingInterval)
         {
             _log = log;
-            _timer = new Timer(pingInterval.TotalMilliseconds)
+
+            if (pingInterval > TimeSpan.Zero)
             {
-                AutoReset = true,
-                Enabled = true
-            };
-            _timer.Elapsed += _timer_Elapsed;
+                _timer = new Timer(pingInterval.TotalMilliseconds)
+                {
+                    AutoReset = true,
+                    Enabled = true
+                };
+                _timer.Elapsed += _timer_Elapsed;
+            }
         }
 
         private static void _timer_Elapsed(object sender, ElapsedEventArgs e)
