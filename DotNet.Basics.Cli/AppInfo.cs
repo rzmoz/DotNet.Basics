@@ -21,5 +21,10 @@ namespace DotNet.Basics.Cli
 
         public string Name { get; }
         public string Version { get; }
+
+        public override string ToString()
+        {
+            return $"{Name} [{Version}]";
+        }
     }
 }

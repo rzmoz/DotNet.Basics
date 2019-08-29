@@ -49,7 +49,7 @@ namespace DotNet.Basics.Cli
 
         public CliHost Build()
         {
-            return new CliHost(_args, _configurationBuilder.Build(), _log);
+            return new CliHost(_configurationBuilder.Build(), _log);
         }
 
         private CliHostBuilder WithConsole(ConsoleTheme consoleTheme = null)
@@ -58,11 +58,8 @@ namespace DotNet.Basics.Cli
             if (((ColoredConsoleWriter)console).ConsoleModeProperlySet == false)
                 console = new SystemConsoleWriter();
 
-            WithDiagnosticsTarget(console.Write, (name, value) => console.Write(LogLevel.Information, $"[{name}] : {value.ToString(CultureInfo.InvariantCulture).Highlight()}".WithIndent(5)));
-
-            var appInfo = $"{_appInfo.Name} [{_appInfo.Version}]";
-            _log.Information($@"Initializing {appInfo.Highlight()}");
-
+            WithDiagnosticsTarget(console.Write, (name, value) => console.Write(LogLevel.Information, $"[{name} : {value.ToString(CultureInfo.InvariantCulture).Highlight()}]".WithIndent(10)));
+            _log.Information($@"Initializing {_appInfo.ToString().Highlight()}");
             _log.Debug($"{console.GetType().Name} logger added as logging target");
             return this;
         }
@@ -75,8 +72,7 @@ namespace DotNet.Basics.Cli
                     a = a.TrimStart(DefaultArgsSwitch).EnsurePrefix(MicrosoftExtensionsArgsSwitch);
                 return a;
             }).ToArray();
-
-
+            
             var switchMappings = new ArgsSwitchMappings();
             switchMappings.AddRange(addSwitchMappings?.Invoke());
 

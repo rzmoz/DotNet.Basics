@@ -12,9 +12,12 @@ namespace DotNet.Basics.ExeTest
                 .Build();
 
 
-            cliHost.Log.Metric("MyMetric", 2.54);
+            return await cliHost.RunAsync("MyTask", async (config, log) =>
+            {
 
-            return 0;
+                log.Metric("MyMetric", 2.5333);
+
+            }).ConfigureAwait(false);
         }
     }
 }
