@@ -6,17 +6,17 @@
     {
       "name": "DotNet.Basics",
       "version": "9.8.5",
-      "prerelease": "RC.2"
+      "prerelease": ""
     },
     {
       "name": "DotNet.Basics.Autofac",
-      "version": "4.9.2",
+      "version": "4.9.4",
       "prerelease": "rc.1"
     },
     {
       "name": "DotNet.Basics.Cli",
-      "version": "2.2.10",
-      "prerelease": ""
+      "version": "2.3.0",
+      "prerelease": "beta.1"
     },
     {
       "name": "DotNet.Basics.Net.Http",
