@@ -46,7 +46,7 @@ namespace DotNet.Basics.Cli
 
         public CliHost Build()
         {
-            return new CliHost(_configurationBuilder.Build(), _log);
+            return new CliHost(_args, _configurationBuilder.Build(), _log);
         }
 
         private CliHostBuilder WithConsole(ConsoleTheme consoleTheme = null)

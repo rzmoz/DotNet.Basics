@@ -61,7 +61,7 @@ namespace DotNet.Basics.Tests.Net.Http
             var relativeUri = "HelloWorld";
             var httpRequest = new HttpRequestMessage(HttpMethod.Head, relativeUri);
             httpRequest.Method.Should().Be(HttpMethod.Head);
-            httpRequest.Version.Should().Be(new Version(2, 0));
+            httpRequest.Version.Should().Be(new Version(1, 1));
             httpRequest.Headers.Should().BeEmpty();
         }
 

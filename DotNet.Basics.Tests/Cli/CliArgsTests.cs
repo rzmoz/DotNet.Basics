@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using DotNet.Basics.Cli;
+﻿using DotNet.Basics.Cli;
 using DotNet.Basics.Sys;
 using FluentAssertions;
 using Xunit;

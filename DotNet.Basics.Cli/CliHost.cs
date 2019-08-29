@@ -10,8 +10,9 @@ namespace DotNet.Basics.Cli
 {
     public class CliHost
     {
-        public CliHost(IConfigurationRoot config, ILogDispatcher log)
+        public CliHost(IReadOnlyList<string> args, IConfigurationRoot config, ILogDispatcher log)
         {
+            Args = args ?? throw new ArgumentNullException(nameof(args));
             Config = config ?? throw new ArgumentNullException(nameof(config));
             Log = log;
         }
