@@ -9,7 +9,9 @@ namespace DotNet.Basics.Diagnostics
     public class LogDispatcher : ILogDispatcher
     {
         public delegate void MessageLoggedEventHandler(LogLevel level, string message, Exception e);
+        public delegate void MetricLoggedEventHandler(string name, double value);
         public event MessageLoggedEventHandler MessageLogged;
+        public event MetricLoggedEventHandler MetricLogged;
 
         private readonly ConcurrentStack<string> _context;
 
@@ -27,15 +29,24 @@ namespace DotNet.Basics.Diagnostics
             else
                 Context = string.Empty;
         }
-        
+
         public ILogDispatcher InContext(string context, bool floatMessageLogged = true)
         {
             var newLogger = string.IsNullOrWhiteSpace(context)
                 ? new LogDispatcher(_context)
                 : new LogDispatcher(_context.Append(context));
             if (floatMessageLogged)
+            {
                 newLogger.MessageLogged += (lvl, msg, e) => MessageLogged?.Invoke(lvl, msg, e);
+                newLogger.MetricLogged += (name, value) => MetricLogged?.Invoke(name, value);
+            }
+
             return newLogger;
+        }
+
+        public void Metric(string name, double value)
+        {
+            MetricLogged?.Invoke(name, value);
         }
 
         public void Verbose(string message)

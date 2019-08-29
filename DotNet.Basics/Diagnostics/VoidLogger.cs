@@ -11,6 +11,10 @@ namespace DotNet.Basics.Diagnostics
             return this;
         }
 
+        public void Metric(string message, double value)
+        {
+        }
+
         public void Verbose(string message)
         {
         }
