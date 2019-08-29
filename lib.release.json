@@ -5,43 +5,43 @@
   "releases": [
     {
       "name": "DotNet.Basics",
-      "version": "9.8.5",
-      "prerelease": ""
+      "version": "10.0.0",
+      "prerelease": "beta.1.0"
     },
     {
       "name": "DotNet.Basics.Autofac",
       "version": "4.9.4",
-      "prerelease": "rc.1"
+      "prerelease": "beta.1.0"
     },
     {
       "name": "DotNet.Basics.Cli",
-      "version": "2.3.0",
-      "prerelease": "beta.1"
+      "version": "10.0.0",
+      "prerelease": "beta.1.0"
     },
     {
       "name": "DotNet.Basics.Net.Http",
-      "version": "4.4.0",
-      "prerelease": ""
+      "version": "10.0.0",
+      "prerelease": "beta.1.0"
     },
     {
       "name": "DotNet.Basics.Pipelines",
-      "version": "9.8.3",
-      "prerelease": ""
+      "version": "10.0.0",
+      "prerelease": "beta.1.0"
     },
     {
       "name": "DotNet.Basics.PowerShell",
-      "version": "6.3.0",
-      "prerelease": ""
+      "version": "7.0.0",
+      "prerelease": "beta.1.0"
     },
     {
       "name": "DotNet.Basics.SeriLog",
       "version": "2.8.1",
-      "prerelease": ""
+      "prerelease": "beta.1.0"
     },
     {
       "name": "DotNet.Basics.SevenZip",
-      "version": "18.05.1",
-      "prerelease": ""
+      "version": "19.00.0",
+      "prerelease": "beta.1.0"
     }
   ],
   "tests": [
