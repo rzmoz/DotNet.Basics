@@ -15,7 +15,7 @@ namespace DotNet.Basics.ExeTest
             return await cliHost.RunAsync("MyTask", async (config, log) =>
             {
                 log.Timing("MyMetric","finished", 10.Minutes());
-                await Task.Delay(5.Seconds()).ConfigureAwait(false);
+                throw new CliException("swefwsfsdfsd", LogOptions.IncludeStackTrace);
             }, 1.Seconds()).ConfigureAwait(false);
         }
     }

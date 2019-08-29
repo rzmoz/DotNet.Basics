@@ -39,12 +39,12 @@ namespace DotNet.Basics.Cli
                 {
                     await asyncAction.Invoke(Config, Log).ConfigureAwait(false);
                 }).ConfigureAwait(false);
-                
+
                 return 0;
             }
             catch (CliException e)
             {
-                Log.Error(e.Message, e.IgnoreStackTraceInLogOutput ? null : e);
+                Log.Error(e.Message, e.LogOptions == LogOptions.IncludeStackTrace ? e : null);
                 return (int)HttpStatusCode.InternalServerError;
             }
             catch (Exception e)

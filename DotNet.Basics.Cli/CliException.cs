@@ -5,26 +5,26 @@ namespace DotNet.Basics.Cli
 {
     public class CliException : Exception
     {
-        public CliException(bool ignoreStackTraceInLogOutput)
+        public CliException(LogOptions logOptions)
         {
-            IgnoreStackTraceInLogOutput = ignoreStackTraceInLogOutput;
+            LogOptions = logOptions;
         }
 
-        protected CliException(SerializationInfo info, StreamingContext context, bool ignoreStackTraceInLogOutput) : base(info, context)
+        protected CliException(SerializationInfo info, StreamingContext context, LogOptions logOptions) : base(info, context)
         {
-            IgnoreStackTraceInLogOutput = ignoreStackTraceInLogOutput;
+            LogOptions = logOptions;
         }
 
-        public CliException(string message, bool ignoreStackTraceInLogOutput) : base(message)
+        public CliException(string message, LogOptions logOptions) : base(message)
         {
-            IgnoreStackTraceInLogOutput = ignoreStackTraceInLogOutput;
+            LogOptions = logOptions;
         }
 
-        public CliException(string message, Exception innerException, bool ignoreStackTraceInLogOutput) : base(message, innerException)
+        public CliException(string message, Exception innerException, LogOptions logOptions) : base(message, innerException)
         {
-            IgnoreStackTraceInLogOutput = ignoreStackTraceInLogOutput;
+            LogOptions = logOptions;
         }
 
-        public bool IgnoreStackTraceInLogOutput { get; set; }
+        public LogOptions LogOptions { get; set; }
     }
 }
