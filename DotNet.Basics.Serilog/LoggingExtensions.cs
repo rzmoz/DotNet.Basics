@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using DotNet.Basics.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -48,3 +48,4 @@ namespace DotNet.Basics.Serilog
         }
     }
 }
+*/
