@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using DotNet.Basics.Cli.ConsoleOutput;
 using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Cli
 {
@@ -36,13 +32,14 @@ namespace DotNet.Basics.Cli
             return this;
         }
 
-        public CliHostBuilder WithDiagnosticsTarget(Action<LogLevel, string, Exception> addLogTarget, Action<string, double> addMetricTarget)
+        public CliHostBuilder WithDiagnosticsTarget(IDiagnosticsTarget diagnosticsTarget)
         {
-            if (addLogTarget != null)
-                _log.MessageLogged += addLogTarget.Invoke;
+            if (diagnosticsTarget == null) throw new ArgumentNullException(nameof(diagnosticsTarget));
+            if (diagnosticsTarget.LogTarget != null)
+                _log.MessageLogged += diagnosticsTarget.LogTarget.Invoke;
 
-            if (addMetricTarget != null)
-                _log.MetricLogged += addMetricTarget.Invoke;
+            if (diagnosticsTarget.TimingTarget != null)
+                _log.TimingLogged += diagnosticsTarget.TimingTarget.Invoke;
 
             return this;
         }
@@ -54,11 +51,11 @@ namespace DotNet.Basics.Cli
 
         private CliHostBuilder WithConsole(ConsoleTheme consoleTheme = null)
         {
-            IConsoleWriter console = new ColoredConsoleWriter(consoleTheme);
+            ConsoleWriter console = new ColoredConsoleWriter(consoleTheme);
             if (((ColoredConsoleWriter)console).ConsoleModeProperlySet == false)
                 console = new SystemConsoleWriter();
 
-            WithDiagnosticsTarget(console.Write, (name, value) => console.Write(LogLevel.Information, $"[{name} : {value.ToString(CultureInfo.InvariantCulture).Highlight()}]".WithIndent(10)));
+            WithDiagnosticsTarget(console);
             _log.Information($@"Initializing {_appInfo.ToString().Highlight()}");
             _log.Debug($"{console.GetType().Name} logger added as logging target");
             return this;
@@ -72,7 +69,7 @@ namespace DotNet.Basics.Cli
                     a = a.TrimStart(DefaultArgsSwitch).EnsurePrefix(MicrosoftExtensionsArgsSwitch);
                 return a;
             }).ToArray();
-            
+
             var switchMappings = new ArgsSwitchMappings();
             switchMappings.AddRange(addSwitchMappings?.Invoke());
 

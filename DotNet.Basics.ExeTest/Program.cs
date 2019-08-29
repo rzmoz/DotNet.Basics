@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using DotNet.Basics.Cli;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.ExeTest
 {
@@ -10,14 +11,12 @@ namespace DotNet.Basics.ExeTest
         {
             var cliHost = new CliHostBuilder(args)
                 .Build();
-
-
+            
             return await cliHost.RunAsync("MyTask", async (config, log) =>
             {
-
-                log.Metric("MyMetric", 2.5333);
-
-            }).ConfigureAwait(false);
+                log.Timing("MyMetric","finished", 10.Minutes());
+                await Task.Delay(5.Seconds()).ConfigureAwait(false);
+            }, 1.Seconds()).ConfigureAwait(false);
         }
     }
 }

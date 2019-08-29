@@ -9,9 +9,9 @@ namespace DotNet.Basics.Diagnostics
     public class LogDispatcher : ILogDispatcher
     {
         public delegate void MessageLoggedEventHandler(LogLevel level, string message, Exception e);
-        public delegate void MetricLoggedEventHandler(string name, double value);
+        public delegate void TimingLoggedEventHandler(string name, string @event, TimeSpan duration);
         public event MessageLoggedEventHandler MessageLogged;
-        public event MetricLoggedEventHandler MetricLogged;
+        public event TimingLoggedEventHandler TimingLogged;
 
         private readonly ConcurrentStack<string> _context;
 
@@ -38,15 +38,15 @@ namespace DotNet.Basics.Diagnostics
             if (floatMessageLogged)
             {
                 newLogger.MessageLogged += (lvl, msg, e) => MessageLogged?.Invoke(lvl, msg, e);
-                newLogger.MetricLogged += (name, value) => MetricLogged?.Invoke(name, value);
+                newLogger.TimingLogged += (name, @event, duration) => TimingLogged?.Invoke(name, @event, duration);
             }
 
             return newLogger;
         }
 
-        public void Metric(string name, double value)
+        public void Timing(string name, string @event, TimeSpan duration)
         {
-            MetricLogged?.Invoke(name, value);
+            TimingLogged?.Invoke(name, @event, duration);
         }
 
         public void Verbose(string message)

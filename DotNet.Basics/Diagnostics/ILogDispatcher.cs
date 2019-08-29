@@ -6,7 +6,7 @@ namespace DotNet.Basics.Diagnostics
     public interface ILogDispatcher : ILogger
     {
         ILogDispatcher InContext(string context, bool floatMessageLogged = true);
-        void Metric(string message, double value);
+        void Timing(string name, string @event, TimeSpan duration);
         void Verbose(string message);
         void Verbose(string message, Exception e);
         void Debug(string message);

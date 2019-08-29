@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Cli.ConsoleOutput
 {
-    public class SystemConsoleWriter : IConsoleWriter
+    public class SystemConsoleWriter : ConsoleWriter
     {
-        public void Write(LogLevel level, string message, Exception e = null)
+        public override void Write(LogLevel level, string message, Exception e = null)
         {
             var outputBuilder = new StringBuilder();
             outputBuilder.Append(DateTime.Now.ToString("s"));

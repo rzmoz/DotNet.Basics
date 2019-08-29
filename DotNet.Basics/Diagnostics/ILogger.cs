@@ -3,6 +3,6 @@
     public interface ILogger
     {
         event LogDispatcher.MessageLoggedEventHandler MessageLogged;
-        event LogDispatcher.MetricLoggedEventHandler MetricLogged;
+        event LogDispatcher.TimingLoggedEventHandler TimingLogged;
     }
 }

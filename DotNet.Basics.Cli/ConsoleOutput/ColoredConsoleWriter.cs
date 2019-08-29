@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Cli.ConsoleOutput
 {
-    public class ColoredConsoleWriter : IConsoleWriter
+    public class ColoredConsoleWriter : ConsoleWriter
     {
         private readonly object _syncRoot = new object();
         private readonly ConsoleTheme _consoleTheme;
@@ -63,7 +63,7 @@ namespace DotNet.Basics.Cli.ConsoleOutput
         }
 
 
-        public void Write(LogLevel level, string message, Exception e = null)
+        public override void Write(LogLevel level, string message, Exception e = null)
         {
             lock (_syncRoot)
             {
@@ -72,6 +72,5 @@ namespace DotNet.Basics.Cli.ConsoleOutput
                 Console.Out.Flush();
             }
         }
-
     }
 }

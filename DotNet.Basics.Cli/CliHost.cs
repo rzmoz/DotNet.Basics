@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using DotNet.Basics.Diagnostics;
+using DotNet.Basics.Sys;
 using Microsoft.Extensions.Configuration;
 
 namespace DotNet.Basics.Cli
@@ -23,13 +24,22 @@ namespace DotNet.Basics.Cli
         public IConfigurationRoot Config { get; }
         public ILogDispatcher Log { get; }
 
-        public async Task<int> RunAsync(string name, Func<IConfigurationRoot, ILogDispatcher, Task> asyncAction)
+        public Task<int> RunAsync(string name, Func<IConfigurationRoot, ILogDispatcher, Task> asyncAction)
+        {
+            return RunAsync(name, asyncAction, 20.Seconds());
+        }
+        public async Task<int> RunAsync(string name, Func<IConfigurationRoot, ILogDispatcher, Task> asyncAction, TimeSpan longRunningOperationsPingInterval)
         {
             if (asyncAction == null) throw new ArgumentNullException(nameof(asyncAction));
             try
             {
-                Log.Debug($"Invoking RunAsync");
-                await asyncAction.Invoke(Config, Log).ConfigureAwait(false);
+                LongRunningOperations.Init(Log, longRunningOperationsPingInterval);
+
+                await LongRunningOperations.StartAsync(name, async () =>
+                {
+                    await asyncAction.Invoke(Config, Log).ConfigureAwait(false);
+                }).ConfigureAwait(false);
+                
                 return 0;
             }
             catch (CliException e)

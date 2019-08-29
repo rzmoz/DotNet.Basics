@@ -6,14 +6,14 @@ namespace DotNet.Basics.Diagnostics
     public class VoidLogger : ILogDispatcher
     {
         public event LogDispatcher.MessageLoggedEventHandler MessageLogged;
-        public event LogDispatcher.MetricLoggedEventHandler MetricLogged;
+        public event LogDispatcher.TimingLoggedEventHandler TimingLogged;
 
         public ILogDispatcher InContext(string context, bool floatMessageLogged = true)
         {
             return this;
         }
 
-        public void Metric(string message, double value)
+        public void Timing(string name, string @event, TimeSpan duration)
         {
         }
 
