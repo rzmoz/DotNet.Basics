@@ -6,6 +6,8 @@ namespace DotNet.Basics.Diagnostics
     public class VoidLogger : ILogDispatcher
     {
         public event LogDispatcher.MessageLoggedEventHandler MessageLogged;
+        public event LogDispatcher.MetricLoggedEventHandler MetricLogged;
+
         public ILogDispatcher InContext(string context, bool floatMessageLogged = true)
         {
             return this;

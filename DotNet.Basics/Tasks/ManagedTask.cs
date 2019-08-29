@@ -16,6 +16,7 @@ namespace DotNet.Basics.Tasks
         public event TaskStartedEventHandler Started;
         public event TaskEndedEventHandler Ended;
         public event LogDispatcher.MessageLoggedEventHandler MessageLogged;
+        public event LogDispatcher.MetricLoggedEventHandler MetricLogged;
 
         protected ManagedTask(string name = null, params string[] removeSuffixes)
         {
@@ -26,6 +27,10 @@ namespace DotNet.Basics.Tasks
 
         public string Name { get; }
 
+        protected virtual void FireMetricLogged(string name, double value)
+        {
+            MetricLogged?.Invoke(name, value);
+        }
 
         protected virtual void FireMessageLogged(LogLevel level, string message, Exception e)
         {
@@ -87,6 +92,7 @@ namespace DotNet.Basics.Tasks
             _task = task ?? throw new ArgumentNullException(nameof(task));
             _log = new LogDispatcher().InContext(Name);
             _log.MessageLogged += base.FireMessageLogged;
+            _log.MetricLogged += base.FireMetricLogged;
         }
 
         public Task<T> RunAsync(T args)
@@ -112,6 +118,10 @@ namespace DotNet.Basics.Tasks
             }
         }
 
+        protected override void FireMetricLogged(string name, double value)
+        {
+            _log.Metric(name, value);
+        }
         protected override void FireMessageLogged(LogLevel level, string message, Exception e)
         {
             _log.Write(level, message, e);

@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
-using DotNet.Basics.Sys;
+using DotNet.Basics.Cli;
 
 namespace DotNet.Basics.ExeTest
 {
@@ -9,12 +8,11 @@ namespace DotNet.Basics.ExeTest
     {
         static async Task<int> Main(string[] args)
         {
-            //Test output from process manually
-            foreach (var index in Enumerable.Range(0, 10))
-            {
-                CmdPrompt.Run("dotnet build Dummy.sln", output => Console.WriteLine($"{index}{output}"));
-                await Task.Delay(500).ConfigureAwait(false);
-            }
+            var cliHost = new CliHostBuilder(args)
+                .Build();
+
+
+            cliHost.Log.Metric("MyMetric", 2.54);
 
             return 0;
         }

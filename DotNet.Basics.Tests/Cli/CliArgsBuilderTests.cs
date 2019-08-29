@@ -14,14 +14,13 @@ namespace DotNet.Basics.Tests.Cli
             var mainKey = "configuration";
             var value = "myValue";
             var inputArgs = new[] { $"--{argsKey}", value };
-            
 
-            var args = new CliHostBuilder()
-                .WithSwitchMappings(() => new SwitchMappings
+
+            var args = new CliHostBuilder(inputArgs, () => new ArgsSwitchMappings
                 {
                     {argsKey, mainKey}
                 })
-                .Build(inputArgs);
+                .Build();
 
             args[mainKey].Should().Be(value);
         }

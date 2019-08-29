@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 
-namespace DotNet.Basics.Cli
+namespace DotNet.Basics.Cli.ConsoleOutput
 {
     public interface IConsoleWriter
     {
