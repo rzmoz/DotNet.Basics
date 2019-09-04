@@ -8,18 +8,7 @@ namespace DotNet.Basics.PowerShell
     public static class PowerShellCli
     {
         private const string _bypassExecutionPolicy = "Set-ExecutionPolicy Bypass -Scope Process";
-
-        public static object[] Run(string name, Action<PowerShellCmdlet> addParams = null)
-        {
-            return Run(new VoidLogger(), name, addParams);
-        }
-        public static object[] Run(ILogDispatcher log, string name, Action<PowerShellCmdlet> addParams = null)
-        {
-            var cmdLet = new PowerShellCmdlet(name);
-            addParams?.Invoke(cmdLet);
-            return Run(log, cmdLet);
-        }
-
+        
         public static object[] Run(PowerShellCmdlet cmdLet)
         {
             return Run(new VoidLogger(), cmdLet);
