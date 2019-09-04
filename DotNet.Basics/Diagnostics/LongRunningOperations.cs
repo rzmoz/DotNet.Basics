@@ -20,7 +20,7 @@ namespace DotNet.Basics.Diagnostics
 
         public static void Init(ILogDispatcher log, TimeSpan pingInterval)
         {
-            _log = log;
+            _log = log??new VoidLogger();
 
             if (pingInterval > TimeSpan.Zero)
             {
@@ -30,6 +30,7 @@ namespace DotNet.Basics.Diagnostics
                     Enabled = true
                 };
                 _timer.Elapsed += _timer_Elapsed;
+                _log.Verbose($"Long running operations initialized with with ping feedback: ${pingInterval:hh\\:mm\\:ss}");
             }
         }
 
