@@ -28,11 +28,13 @@ namespace DotNet.Basics.Tests.PowerShell
                 var result = PowerShellCli.RunCmdlet(new GetChildItemCmdlet(dir.FullName()).WithFilter("*.json").WithRecurse());
 
                 //assert
-                var parsedResult = result.Select(path => path.ToString()).ToList();
+                var parsedResult = result.Select(path => path.ToString().ToLowerInvariant()).OrderByDescending(p => p).ToList();
+
                 parsedResult.Count.Should().Be(2);
-                parsedResult.Should().Contain(file1Name);
-                parsedResult.Should().Contain(file2Name);
+                parsedResult.First().Should().Be(file1Name.ToLowerInvariant());
+                parsedResult.Last().Should().Be(file2Name.ToLowerInvariant());
             });
         }
     }
 }
+
