@@ -89,8 +89,9 @@ namespace DotNet.Basics.Cli
 
             var envConfigRoot = new ConfigurationBuilder().AddCommandLine(configArgs, switchMappings.ToDictionary()).Build();
             var environments = envConfigRoot.Environments();
-
-            _log.Debug($"Environments: {environments.JoinString()}");
+            
+            if (environments.Any())
+                _log.Verbose($"Environments: {environments.JoinString()}");
 
             //configure configuration sources
             _log.Verbose($"Reading config from appSettings.json");
@@ -112,9 +113,9 @@ namespace DotNet.Basics.Cli
 
             var configRoot = configBuilder.Build();
 
-            _log.Debug($"Configuration root initialized with:");
+            _log.Verbose($"Configuration root initialized with:");
             foreach (var entry in configRoot.AsEnumerable(false))
-                _log.Debug($"[{entry.Key}] = {entry.Value}");
+                _log.Verbose($"  [\"{entry.Key}\"] = {entry.Value}");
 
             return configRoot;
         }
