@@ -17,7 +17,7 @@ namespace DotNet.Basics.Tests.PowerShell
         [Fact]
         public void GetChildItem_WithFilter_FilteredItemsAreFound()
         {
-            ArrangeActAssertPaths(async dir =>
+            ArrangeActAssertPaths(dir =>
             {
                 dir.ToFile("Testa.myFile1.txt").WriteAllText("nothing1");
                 var file1Name = dir.ToFile("Testa.myFile1.json").WriteAllText("nothing1").FullName();

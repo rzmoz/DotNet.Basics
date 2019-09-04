@@ -60,9 +60,8 @@ namespace DotNet.Basics.Tests.Cli
             cliArgs[key].Should().Be(cliArgs.Config[key]);
             cliArgs[key].Should().Be(value);
         }
-        [Theory]
-        [InlineData("myKey", "myValue")]
-        public void Index_FindByIndex_ValueIsFound(string key, string value)
+        [Fact]
+        public void Index_FindByIndex_ValueIsFound()
         {
             var pos1 = "HelloWorld!";
             var args = new[] { "pos0", pos1, "pos2" };

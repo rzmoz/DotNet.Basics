@@ -151,6 +151,7 @@ namespace DotNet.Basics.Tests.Sys
             (alpha2 < rc).Should().BeTrue();
 
             //smaller than - false
+#pragma warning disable 1718
             (alpha1 < alpha1).Should().BeFalse();
             (alpha2 < alpha1).Should().BeFalse();
             (beta1 < alpha1).Should().BeFalse();
