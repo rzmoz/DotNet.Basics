@@ -15,7 +15,7 @@ namespace DotNet.Basics.Diagnostics
 
         public static void Init(ILogDispatcher log)
         {
-            Init(log, 20.Seconds());
+            Init(log, 15.Seconds());
         }
 
         public static void Init(ILogDispatcher log, TimeSpan pingInterval)

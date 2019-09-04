@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 using DotNet.Basics.Diagnostics;
-using DotNet.Basics.Sys;
 using Microsoft.Extensions.Configuration;
 
 namespace DotNet.Basics.Cli
@@ -25,16 +23,14 @@ namespace DotNet.Basics.Cli
         public IConfigurationRoot Config { get; }
         public ILogDispatcher Log { get; }
 
-        public Task<int> RunAsync(string name, Func<IConfigurationRoot, ILogDispatcher, Task> asyncAction)
-        {
-            return RunAsync(name, asyncAction, 20.Seconds());
-        }
-        public async Task<int> RunAsync(string name, Func<IConfigurationRoot, ILogDispatcher, Task> asyncAction, TimeSpan longRunningOperationsPingInterval)
+        public async Task<int> RunAsync(string name, Func<IConfigurationRoot, ILogDispatcher, Task> asyncAction, CliHostOptions options = null)
         {
             if (asyncAction == null) throw new ArgumentNullException(nameof(asyncAction));
+            if (options == null)
+                options = new CliHostOptions();
             try
             {
-                LongRunningOperations.Init(Log, longRunningOperationsPingInterval);
+                LongRunningOperations.Init(Log, options.LongRunningOperationsPingInterval);
 
                 await LongRunningOperations.StartAsync(name, async () =>
                 {
@@ -45,13 +41,13 @@ namespace DotNet.Basics.Cli
             }
             catch (CliException e)
             {
-                Log.Error(e.Message, e.LogOptions == LogOptions.IncludeStackTrace ? e : null);
-                return (int)HttpStatusCode.InternalServerError;
+                options.LogOnCliException?.Invoke(e, Log);
+                return options.ReturnCodeOnError;
             }
             catch (Exception e)
             {
-                Log.Critical(e.Message, e);
-                return 0;
+                options.LogOnException?.Invoke(e, Log);
+                return options.ReturnCodeOnError;
             }
         }
     }
