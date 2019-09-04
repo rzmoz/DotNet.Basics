@@ -62,9 +62,8 @@ namespace DotNet.Basics.Diagnostics
             }
             finally
             {
-                _log.Verbose(_operations.TryRemove(operation.Id, out var op)
-                    ? $"{op.Name} successfully removed from stack"
-                    : $"{operation.Name} not removed from stack :-(");
+                if (_operations.TryRemove(operation.Id, out var op) == false)
+                    _log.Verbose($"{operation.Name} not removed from {nameof(LongRunningOperations)} stack :-(");
             }
         }
     }
