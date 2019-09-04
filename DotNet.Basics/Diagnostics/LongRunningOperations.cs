@@ -20,7 +20,7 @@ namespace DotNet.Basics.Diagnostics
 
         public static void Init(ILogDispatcher log, TimeSpan pingInterval)
         {
-            _log = log??new VoidLogger();
+            _log = log ?? new VoidLogger();
 
             if (pingInterval > TimeSpan.Zero)
             {
@@ -30,7 +30,7 @@ namespace DotNet.Basics.Diagnostics
                     Enabled = true
                 };
                 _timer.Elapsed += _timer_Elapsed;
-                _log.Verbose($"Long running operations initialized with with ping feedback: {pingInterval:hh\\:mm\\:ss}");
+                _log.Verbose($"Long running operations initialized with ping feedback: {pingInterval:hh\\:mm\\:ss}");
             }
         }
 
@@ -55,9 +55,16 @@ namespace DotNet.Basics.Diagnostics
                 await action.Invoke().ConfigureAwait(false);
                 _log.Timing(operation.Name, "finished", operation.DurationNow);
             }
+            catch (Exception e)
+            {
+                _log.Timing($"{operation.Name}", $"FAILED: {e.Message}", operation.DurationNow);
+                throw;
+            }
             finally
             {
-                _operations.TryRemove(operation.Id, out var op);
+                _log.Verbose(_operations.TryRemove(operation.Id, out var op)
+                    ? $"{op.Name} successfully removed from stack"
+                    : $"{operation.Name} not removed from stack :-(");
             }
         }
     }
