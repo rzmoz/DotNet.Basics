@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DotNet.Basics.Cli.ConsoleOutput;
 using DotNet.Basics.Diagnostics;
@@ -17,10 +18,12 @@ namespace DotNet.Basics.Cli
         private readonly ILogDispatcher _log;
         private readonly AppInfo _appInfo;
 
-        public CliHostBuilder(string[] args, Func<ArgsSwitchMappings> switchMappings = null, Type classThatContainStaticVoidMain = null)
+        public CliHostBuilder(string[] args, Action<ArgsSwitchMappings> switchMappings = null, Type classThatContainStaticVoidMain = null)
         {
             _args = args;
-            _configurationBuilder = InitConfigurationBuilder(switchMappings);
+            var argsSwitchMappings = new ArgsSwitchMappings();
+            switchMappings?.Invoke(argsSwitchMappings);
+            _configurationBuilder = InitConfigurationBuilder(argsSwitchMappings);
             _log = new LogDispatcher();
             _appInfo = new AppInfo(classThatContainStaticVoidMain);
             WithConsole();
@@ -49,6 +52,12 @@ namespace DotNet.Basics.Cli
             return new CliHost(_args, _configurationBuilder.Build(), _log);
         }
 
+        public T BuildCustomHost<T>(Func<string[], IConfigurationRoot, ILogDispatcher, T> build) where T : CliHost
+        {
+            if (build == null) throw new ArgumentNullException(nameof(build));
+            return build(_args, _configurationBuilder.Build(), _log);
+        }
+
         private CliHostBuilder WithConsole(ConsoleTheme consoleTheme = null)
         {
             ConsoleWriter console = new ColoredConsoleWriter(consoleTheme);
@@ -61,7 +70,7 @@ namespace DotNet.Basics.Cli
             return this;
         }
 
-        private IConfigurationBuilder InitConfigurationBuilder(Func<ArgsSwitchMappings> addSwitchMappings)
+        private IConfigurationBuilder InitConfigurationBuilder(ArgsSwitchMappings switchMappings)
         {
             var configArgs = _args.Select(a =>
             {
@@ -69,9 +78,6 @@ namespace DotNet.Basics.Cli
                     a = a.TrimStart(DefaultArgsSwitch).EnsurePrefix(MicrosoftExtensionsArgsSwitch);
                 return a;
             }).ToArray();
-
-            var switchMappings = new ArgsSwitchMappings();
-            switchMappings.AddRange(addSwitchMappings?.Invoke());
 
             var envConfigRoot = new ConfigurationBuilder().AddCommandLine(configArgs, switchMappings.ToDictionary()).Build();
             var environments = (envConfigRoot["env"] ?? envConfigRoot["envs"] ?? envConfigRoot["environment"] ?? envConfigRoot["environments"])?.Split('|').Select(env => env.Trim()) ?? Enumerable.Empty<string>();

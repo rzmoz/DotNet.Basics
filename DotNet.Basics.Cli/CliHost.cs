@@ -23,7 +23,7 @@ namespace DotNet.Basics.Cli
         public IConfigurationRoot Config { get; }
         public ILogDispatcher Log { get; }
 
-        public async Task<int> RunAsync(string name, Func<IConfigurationRoot, ILogDispatcher, Task> asyncAction, CliHostOptions options = null)
+        public virtual async Task<int> RunAsync(string name, Func<IConfigurationRoot, ILogDispatcher, Task> asyncAction, CliHostOptions options = null)
         {
             if (asyncAction == null) throw new ArgumentNullException(nameof(asyncAction));
             if (options == null)

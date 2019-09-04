@@ -15,6 +15,11 @@ namespace DotNet.Basics.Tests.NetCore.EchoOut
             args.PauseIfDebug();
 
             var cliHost = new CliHostBuilder(args)
+                .WithConfiguration(config =>
+                {
+
+                })
+                
                 .Build();
             
             var range = Enumerable.Range(0, 100);

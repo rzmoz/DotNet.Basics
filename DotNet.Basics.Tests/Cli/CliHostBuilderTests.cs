@@ -17,9 +17,9 @@ namespace DotNet.Basics.Tests.Cli
             var inputArgs = new[] { $"--{argsKey}", value };
 
 
-            var args = new CliHostBuilder(inputArgs, () => new ArgsSwitchMappings
+            var args = new CliHostBuilder(inputArgs, mappings =>
                 {
-                    {argsKey, mainKey}
+                    mappings.Add(argsKey, mainKey);
                 })
                 .Build();
 
@@ -34,7 +34,7 @@ namespace DotNet.Basics.Tests.Cli
 
             var cliArgs = new CliHostBuilder(args).Build();
             cliArgs[key].Should().BeNull();//key not set
-            cliArgs[key,0].Should().Be(value);//found by position
+            cliArgs[key, 0].Should().Be(value);//found by position
         }
 
         [Theory]
