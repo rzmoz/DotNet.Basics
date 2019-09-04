@@ -9,6 +9,16 @@ namespace DotNet.Basics.Cli
     {
         private readonly Dictionary<string, string> _switchMappings = new Dictionary<string, string>();
 
+        public static readonly string EnvironmentsKey = "environments";
+
+        public ArgsSwitchMappings(Action<ArgsSwitchMappings> addSwitchMappings = null)
+        {
+            this.Add("env", EnvironmentsKey);
+            this.Add("envs", EnvironmentsKey);
+            this.Add("environment", EnvironmentsKey);
+            addSwitchMappings?.Invoke(this);
+        }
+
         public void Add(string key, string value)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));

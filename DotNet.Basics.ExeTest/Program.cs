@@ -1,7 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using DotNet.Basics.Cli;
-using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.ExeTest
 {
@@ -9,13 +7,13 @@ namespace DotNet.Basics.ExeTest
     {
         static async Task<int> Main(string[] args)
         {
-            var cliHost = new CliHostBuilder(args)
+            var cliHost = new CliHostBuilder(args, mappings => mappings.Add("lorem","ipsum"))
                 .Build();
             
             return await cliHost.RunAsync("MyTask", async (config, log) =>
             {
-                log.Warning("sdfsdfff");
-                await Task.Delay(5.Seconds()).ConfigureAwait(false);
+                log.Warning(config["ipsum"]);
+
             }).ConfigureAwait(false);
         }
     }
