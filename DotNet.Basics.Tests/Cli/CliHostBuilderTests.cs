@@ -7,6 +7,30 @@ namespace DotNet.Basics.Tests.Cli
 {
     public class CliHostBuilderTests
     {
+        [Fact]
+        public void Build_Args_ArePassed()
+        {
+            var value = "myValue";
+            string[] args = { $"-{nameof(TestCliHost.MySetting)}", value };
+
+            var host = new CliHostBuilder(args)
+                .Build();
+
+            host[nameof(TestCliHost.MySetting)].Should().Be(value);
+        }
+
+        [Fact]
+        public void BuildCustomHost_Args_ArePassed()
+        {
+            var value = "myValue";
+            string[] args = { $"-{nameof(TestCliHost.MySetting)}", value };
+            
+            var host = new CliHostBuilder(args)
+                .BuildCustomHost((args, config, log) => new TestCliHost(args, config, log));
+
+            host.MySetting.Should().Be(value);
+        }
+
         [Theory]
         [InlineData("config")]
         [InlineData("configuration")]
