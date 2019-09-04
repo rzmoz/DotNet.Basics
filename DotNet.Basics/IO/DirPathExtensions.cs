@@ -26,10 +26,16 @@ namespace DotNet.Basics.IO
             if (dp.Exists() == false)
                 return true;
 
-            Parallel.ForEach(dp.EnumeratePaths(), path =>
+            try
             {
-                path.DeleteIfExists();
-            });
+                Parallel.ForEach(dp.EnumeratePaths(), path => { path.DeleteIfExists(); });
+            }
+            catch (AggregateException ae)
+            {
+                if (ae.InnerException != null)
+                    throw ae.InnerException;
+                throw;
+            }
 
             return dp.GetPaths().Count == 0;
         }
