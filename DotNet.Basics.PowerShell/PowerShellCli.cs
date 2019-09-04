@@ -22,6 +22,8 @@ namespace DotNet.Basics.PowerShell
 
         public static object[] RunScript(ILogDispatcher log, params string[] scripts)
         {
+            if (log == null)
+                log = new VoidLogger();
 
             using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
             {
@@ -29,20 +31,20 @@ namespace DotNet.Basics.PowerShell
                 foreach (var script in scripts)
                     ps.AddScript(script);
 
-                ps.Streams.Progress.DataAdded += (col, e) => ((PSDataCollection<ProgressRecord>)col).ForEach(rec => log?.Verbose($"{rec.Activity} : {rec.PercentComplete}/100"));
-                ps.Streams.Verbose.DataAdded += (col, e) => ((PSDataCollection<VerboseRecord>)col).ForEach(rec => log?.Verbose(rec.Message));
-                ps.Streams.Debug.DataAdded += (col, e) => ((PSDataCollection<DebugRecord>)col).ForEach(rec => log?.Debug(rec.Message)); ;
-                ps.Streams.Information.DataAdded += (col, e) => ((PSDataCollection<InformationRecord>)col).ForEach(rec => log?.Information(rec.ToString())); ;
-                ps.Streams.Warning.DataAdded += (col, e) => ((PSDataCollection<WarningRecord>)col).ForEach(rec => log?.Warning(rec.Message)); ;
-                ps.Streams.Error.DataAdded += (col, e) => ((PSDataCollection<ErrorRecord>)col).ForEach(rec => log?.Error($"{rec.ErrorDetails.Message}\r\n{rec.ScriptStackTrace}", rec.Exception));
+                ps.Streams.Progress.DataAdded += (col, e) => ((PSDataCollection<ProgressRecord>)col).ForEach(rec => log.Verbose($"{rec.Activity} : {rec.PercentComplete}/100"));
+                ps.Streams.Verbose.DataAdded += (col, e) => ((PSDataCollection<VerboseRecord>)col).ForEach(rec => log.Verbose(rec.Message));
+                ps.Streams.Debug.DataAdded += (col, e) => ((PSDataCollection<DebugRecord>)col).ForEach(rec => log.Debug(rec.Message)); ;
+                ps.Streams.Information.DataAdded += (col, e) => ((PSDataCollection<InformationRecord>)col).ForEach(rec => log.Information(rec.ToString())); ;
+                ps.Streams.Warning.DataAdded += (col, e) => ((PSDataCollection<WarningRecord>)col).ForEach(rec => log.Warning(rec.Message)); ;
+                ps.Streams.Error.DataAdded += (col, e) => ((PSDataCollection<ErrorRecord>)col).ForEach(rec => log.Error($"{rec.Exception?.Message}", rec.Exception));
 
-                var passThru= ps.Invoke();
-                
+                var passThru = ps.Invoke();
+
                 if (ps.Streams.Error.Any())
                 {
                     if (ps.Streams.Error.Count == 1)
                         throw ps.Streams.Error.Single().Exception;
-                    throw new AggregateException(ps.Streams.Error.Select(e => e.Exception ?? new CmdletInvocationException(e.ErrorDetails.ToString())));
+                    throw new AggregateException(ps.Streams.Error.Select(e => e.Exception ?? new CmdletInvocationException(e.ErrorDetails?.ToString())));
                 }
 
                 return passThru?.Select(o => o.BaseObject).ToArray();
