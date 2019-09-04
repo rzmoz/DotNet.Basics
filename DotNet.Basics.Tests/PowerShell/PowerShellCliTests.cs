@@ -22,7 +22,7 @@ namespace DotNet.Basics.Tests.PowerShell
         {
             var script = $@"""{_greeting}""";
 
-            var result = PowerShellCli.RunScript(script);
+            var result = PowerShellCli.Run(new[] {script});
 
             result.Single().ToString().Should().Be(_greeting);
         }
@@ -35,7 +35,7 @@ namespace DotNet.Basics.Tests.PowerShell
             log.MessageLogged += (lvl, msg, e) => captured += msg;
             log.MessageLogged += (lvl, msg, e) => Output.WriteLine(msg);
 
-            var result = PowerShellCli.RunScript(log, _writeGreetingToHost);
+            var result = PowerShellCli.Run(log, _writeGreetingToHost);
 
             captured.Should().Be(_greeting);
         }

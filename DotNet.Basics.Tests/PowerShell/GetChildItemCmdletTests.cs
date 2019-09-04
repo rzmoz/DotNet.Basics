@@ -25,7 +25,7 @@ namespace DotNet.Basics.Tests.PowerShell
                 dir.ToFile("SomethingElse.myFile1.txt").WriteAllText("nothing3");
 
                 //act
-                var result = PowerShellCli.RunCmdlet(new GetChildItemCmdlet(dir.FullName()).WithFilter("*.json").WithRecurse());
+                var result = PowerShellCli.Run(new GetChildItemCmdlet(dir.FullName()).WithFilter("*.json").WithRecurse());
 
                 //assert
                 var parsedResult = result.Select(path => path.ToString().ToLowerInvariant()).OrderByDescending(p => p).ToList();
