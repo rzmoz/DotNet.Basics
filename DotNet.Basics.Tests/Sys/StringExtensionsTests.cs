@@ -11,7 +11,39 @@ namespace DotNet.Basics.Tests.Sys
         const string _str = "myStr";
         const string _prefix = "myPrefix";
         const string _suffix = "myPostfix";
+        
+        [Fact]
+        public void FixCarriageReturn_NoCarriageReturnNewline_NothingChanges()
+        {
+            var source = "LoremIpsum";
 
+            var output = source.FixCarriageReturn();
+
+            output.Length.Should().Be(source.Length);
+            output.Should().Be(source);
+        }
+
+        [Fact]
+        public void FixCarriageReturn_CarriageReturnNewlineAlready_NothingChanges()
+        {
+            var source = "LoremIpsum\r\nTempo";
+
+            var output = source.FixCarriageReturn();
+
+            output.Length.Should().Be(source.Length);
+            output.Should().Be(source);
+        }
+
+        [Fact]
+        public void FixCarriageReturn_NewlineButNoCarriageReturn_CarriageReturnFixed()
+        {
+            var source = "LoremIpsum\nTempo";
+
+            var output = source.FixCarriageReturn();
+
+            output.Length.Should().Be(source.Length+1);
+            output.Should().NotBe(source);
+        }
 
         [Fact]
         public void JoinString_PrintContent_MakingDebugStringsEasierToRead()

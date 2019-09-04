@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
@@ -68,7 +69,7 @@ namespace DotNet.Basics.IO
         {
             try
             {
-                return File.ReadAllText(fp.FullName());
+                return File.ReadAllText(fp.FullName()).FixCarriageReturn();
             }
             catch (DirectoryNotFoundException)
             {
