@@ -6,7 +6,7 @@
     {
       "name": "DotNet.Basics",
       "version": "10.0.0",
-      "prerelease": "beta.1.3"
+      "prerelease": "beta.2.0"
     },
     {
       "name": "DotNet.Basics.Autofac",
@@ -16,7 +16,7 @@
     {
       "name": "DotNet.Basics.Cli",
       "version": "10.0.0",
-      "prerelease": "beta.1.3"
+      "prerelease": "beta.2.0"
     },
     {
       "name": "DotNet.Basics.Net.Http",

@@ -28,15 +28,14 @@ namespace DotNet.Basics.Cli
             _logDispatcherFactory = logDispatcherFactory;
             return this;
         }
-
         public CliHostBuilder WithLogging(Action<ILogDispatcher> configureLogging)
         {
             _customLogging.Add(configureLogging);
             return this;
         }
-        public CliHostBuilder WithConfiguration(Action<IConfigurationBuilder> add)
+        public CliHostBuilder WithConfiguration(Action<IConfigurationBuilder> configureConfiguration)
         {
-            _customConfiguration.Add(add);
+            _customConfiguration.Add(configureConfiguration);
             return this;
         }
 
@@ -44,16 +43,14 @@ namespace DotNet.Basics.Cli
         {
             return BuildCustomHost((args, config, log) => new CliHost(args, config, log));
         }
-
         public virtual T BuildCustomHost<T>(Func<string[], IConfigurationRoot, ILogDispatcher, T> build) where T : CliHost
         {
             if (build == null) throw new ArgumentNullException(nameof(build));
 
             var log = InitLogging();
-
             log.Information($@"Initializing {_appInfo.ToString().Highlight()} with args {_args.JoinString(" ").Highlight()}");
-
-            var configRoot = InitConfiguration(log);
+            var args = InitArgs(_args);
+            var configRoot = InitConfiguration(args, log);
 
             return build(_args, configRoot, log);
         }
@@ -68,7 +65,15 @@ namespace DotNet.Basics.Cli
             return log;
         }
 
-        protected virtual IConfigurationRoot InitConfiguration(ILogDispatcher log)
+        protected virtual string[] InitArgs(string[] args)
+        {
+            return args.CleanArgsForCli()
+                       .EnsureFlagsHaveValue()
+                       .EnsureEnvironmentsAreDistinct()
+                       .ToArray();
+        }
+
+        protected virtual IConfigurationRoot InitConfiguration(string[] args, ILogDispatcher log)
         {
             if (_switchMappings.Any())
             {
@@ -77,30 +82,26 @@ namespace DotNet.Basics.Cli
                     log.Debug($"{entry.Key} => {entry.Value}");
             }
 
-            var preppedArgs = _args.CleanArgsForCli().EnsureFlagsHaveValue().EnsureEnvironmentsAreDistinct().ToArray();
-            var configForEnvironments = new ConfigurationBuilder().AddCommandLine(preppedArgs, _switchMappings.ToDictionary()).Build();
+            var configForEnvironments = new ConfigurationBuilder().AddCommandLine(args, _switchMappings.ToDictionary()).Build();
             var environments = configForEnvironments.Environments();
 
             log.Verbose($"Environments: {environments.JoinString()}");
 
             //configure configuration sources
             log.Verbose($"Reading config from appSettings.json");
-            var configBuilder = new ConfigurationBuilder().AddJsonFile("appSettings.json", true, false);
-            foreach (var env in environments)
-            {
-                log.Verbose($"Reading config from appSettings.{env}.json");
-                configBuilder.AddJsonFile($"appSettings.{env}.json", true, false);
-            }
 
-            if (_customConfiguration.Any())
-                log.Verbose($"Reading config from custom configuration in host");
+            //add default config file
+            _customConfiguration.Add(config => config.AddJsonFile("appSettings.json", true, false));
+            foreach (var env in environments)//add environment specific configs
+                _customConfiguration.Add(config => config.AddJsonFile($"appSettings.{env}.json", true, false));
+
+            var configBuilder = new ConfigurationBuilder();
             foreach (var configurationAction in _customConfiguration)
                 configurationAction?.Invoke(configBuilder);
 
             if (_args.Any())
-                log.Verbose($"Reading config from args");
-
-            configBuilder.AddCommandLine(preppedArgs, _switchMappings.ToDictionary());
+                log.Verbose("Reading config from args");
+            configBuilder.AddCommandLine(args, _switchMappings.ToDictionary());
 
             var configRoot = configBuilder.Build();
 

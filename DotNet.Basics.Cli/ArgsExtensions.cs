@@ -14,6 +14,7 @@ namespace DotNet.Basics.Cli
         public const char DefaultArgsSwitch = '-';
         public const string MicrosoftExtensionsArgsSwitch = "--";
         public static readonly string EnvironmentsKey = "environments";
+
         private static readonly string[] _environmentAliases = {
             "env",
             "envs",
@@ -34,11 +35,11 @@ namespace DotNet.Basics.Cli
             foreach (var arg in args)
             {
                 if (previousWasEnvironmentsKey)
-                    yield return arg.Split('|', StringSplitOptions.RemoveEmptyEntries).Select(arg => arg.ToLowerInvariant().Trim(' ').ToTitleCase()).Distinct().JoinString(); //return distinct environments
+                    yield return arg.Split('|', StringSplitOptions.RemoveEmptyEntries).Select(arg => arg.Trim(' ').ToTitleCase()).Distinct(StringComparer.InvariantCultureIgnoreCase).JoinString(); //return distinct environments
                 else
                     yield return arg;
 
-                previousWasEnvironmentsKey = _environmentAliases.Contains(arg.TrimStart(DefaultArgsSwitch).ToLowerInvariant());
+                previousWasEnvironmentsKey = _environmentAliases.Contains(arg.TrimStart(DefaultArgsSwitch), StringComparer.InvariantCultureIgnoreCase);
             }
         }
 

@@ -22,6 +22,7 @@ namespace DotNet.Basics.Cli
         public IReadOnlyList<string> Args { get; }
         public IConfigurationRoot Config { get; }
         public ILogDispatcher Log { get; }
+        public IReadOnlyCollection<string> Environments => Config.Environments();
 
         public virtual async Task<int> RunAsync(string name, Func<IConfigurationRoot, ILogDispatcher, Task> asyncAction, CliHostOptions options = null)
         {
