@@ -4,5 +4,6 @@
     {
         event LogDispatcher.MessageLoggedEventHandler MessageLogged;
         event LogDispatcher.TimingLoggedEventHandler TimingLogged;
+        bool HasListeners { get; }
     }
 }

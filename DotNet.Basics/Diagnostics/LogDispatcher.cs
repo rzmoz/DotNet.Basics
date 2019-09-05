@@ -11,6 +11,7 @@ namespace DotNet.Basics.Diagnostics
         public delegate void TimingLoggedEventHandler(string name, string @event, TimeSpan duration);
         public event MessageLoggedEventHandler MessageLogged;
         public event TimingLoggedEventHandler TimingLogged;
+        public bool HasListeners => MessageLogged != null || TimingLogged != null;
 
         private readonly ConcurrentStack<string> _context;
 

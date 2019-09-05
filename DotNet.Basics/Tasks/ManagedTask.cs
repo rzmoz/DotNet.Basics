@@ -15,6 +15,7 @@ namespace DotNet.Basics.Tasks
         public event TaskEndedEventHandler Ended;
         public event LogDispatcher.MessageLoggedEventHandler MessageLogged;
         public event LogDispatcher.TimingLoggedEventHandler TimingLogged;
+        public bool HasListeners => MessageLogged != null || TimingLogged != null;
 
         protected ManagedTask(string name = null, params string[] removeSuffixes)
         {

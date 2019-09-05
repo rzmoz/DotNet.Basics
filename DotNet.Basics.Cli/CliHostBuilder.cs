@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DotNet.Basics.Cli.ConsoleOutput;
 using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
 using Microsoft.Extensions.Configuration;
@@ -58,10 +59,14 @@ namespace DotNet.Basics.Cli
         protected virtual ILogDispatcher InitLogging()
         {
             var log = _logDispatcherFactory?.Invoke() ?? new LogDispatcher();
+            log.Verbose($"Log Dispatcher <{log.GetType().Name}> initialized");
 
             foreach (var apply in _customLogging)
                 apply?.Invoke(log);
-            log.Verbose($"Logger <{log.GetType().Name}> initialized");
+
+            if (log.HasListeners == false)
+                log.AddFirstSupportedConsole();
+            
             return log;
         }
 

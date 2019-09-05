@@ -6,6 +6,7 @@ namespace DotNet.Basics.Diagnostics
     {
         public event LogDispatcher.MessageLoggedEventHandler MessageLogged;
         public event LogDispatcher.TimingLoggedEventHandler TimingLogged;
+        public bool HasListeners => MessageLogged != null || TimingLogged != null;
 
         public void AddDiagnosticsTarget(IDiagnosticsTarget target)
         {
