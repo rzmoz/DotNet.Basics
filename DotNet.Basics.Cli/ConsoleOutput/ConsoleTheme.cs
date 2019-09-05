@@ -1,5 +1,5 @@
 ﻿using System.Drawing;
-using Microsoft.Extensions.Logging;
+using DotNet.Basics.Diagnostics;
 
 namespace DotNet.Basics.Cli.ConsoleOutput
 {
@@ -10,6 +10,7 @@ namespace DotNet.Basics.Cli.ConsoleOutput
             Verbose = new ConsoleFormat(Color.DarkSlateGray, Color.Empty, Color.DarkGray),
             Debug = new ConsoleFormat(Color.DarkCyan, Color.Empty, Color.DarkGray),
             Information = new ConsoleFormat(Color.White, Color.Empty, Color.Cyan),
+            Success = new ConsoleFormat(Color.Green, Color.Empty, Color.LightGreen),
             Warning = new ConsoleFormat(Color.Yellow, Color.Empty, Color.DarkOrange),
             Error = new ConsoleFormat(Color.Red, Color.Empty, Color.Red, Color.Black),
             Critical = new ConsoleFormat(Color.White, Color.DarkRed, Color.White, Color.Black)
@@ -18,6 +19,7 @@ namespace DotNet.Basics.Cli.ConsoleOutput
         public ConsoleFormat Verbose { get; set; } = ConsoleFormat.Empty;
         public ConsoleFormat Debug { get; set; } = ConsoleFormat.Empty;
         public ConsoleFormat Information { get; set; } = ConsoleFormat.Empty;
+        public ConsoleFormat Success { get; set; } = ConsoleFormat.Empty;
         public ConsoleFormat Warning { get; set; } = ConsoleFormat.Empty;
         public ConsoleFormat Error { get; set; } = ConsoleFormat.Empty;
         public ConsoleFormat Critical { get; set; } = ConsoleFormat.Empty;
@@ -26,12 +28,14 @@ namespace DotNet.Basics.Cli.ConsoleOutput
         {
             switch (level)
             {
-                case LogLevel.Trace:
+                case LogLevel.Verbose:
                     return Verbose;
                 case LogLevel.Debug:
                     return Debug;
-                case LogLevel.Information:
+                case LogLevel.Info:
                     return Information;
+                case LogLevel.Success:
+                    return Success;
                 case LogLevel.Warning:
                     return Warning;
                 case LogLevel.Error:

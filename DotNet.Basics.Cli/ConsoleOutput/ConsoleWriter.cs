@@ -1,6 +1,5 @@
 ﻿using System;
 using DotNet.Basics.Diagnostics;
-using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Cli.ConsoleOutput
 {
@@ -10,7 +9,7 @@ namespace DotNet.Basics.Cli.ConsoleOutput
         public Action<LogLevel, string, Exception> LogTarget => Write;
         public Action<string, string, TimeSpan> TimingTarget => (name, @event, duration) =>
         {
-            Write(LogLevel.Information,
+            Write(LogLevel.Info,
                 $"[{name.Highlight()} {@event} in {duration.ToString("hh\\:mm\\:ss").Highlight()}]".WithGutter());
         };
     }

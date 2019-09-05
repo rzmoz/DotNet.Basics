@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Diagnostics
 {
@@ -30,7 +29,16 @@ namespace DotNet.Basics.Diagnostics
                 Context = string.Empty;
         }
 
-        public ILogDispatcher InContext(string context, bool floatMessageLogged = true)
+        public void AddDiagnosticsTarget(IDiagnosticsTarget target)
+        {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (target.LogTarget != null)
+                MessageLogged += target.LogTarget.Invoke;
+            if (target.TimingTarget != null)
+                TimingLogged += target.TimingTarget.Invoke;
+        }
+
+        public virtual ILogDispatcher InContext(string context, bool floatMessageLogged = true)
         {
             var newLogger = string.IsNullOrWhiteSpace(context)
                 ? new LogDispatcher(_context)
@@ -44,18 +52,13 @@ namespace DotNet.Basics.Diagnostics
             return newLogger;
         }
 
-        public void Timing(string name, string @event, TimeSpan duration)
-        {
-            TimingLogged?.Invoke(name, @event, duration);
-        }
-
         public void Verbose(string message)
         {
             Verbose(message, null);
         }
         public void Verbose(string message, Exception e)
         {
-            Write(LogLevel.Trace, message, e);
+            Write(LogLevel.Verbose, message, e);
         }
         public void Debug(string message)
         {
@@ -71,8 +74,17 @@ namespace DotNet.Basics.Diagnostics
         }
         public void Information(string message, Exception e)
         {
-            Write(LogLevel.Information, message, e);
+            Write(LogLevel.Info, message, e);
         }
+        public void Success(string message)
+        {
+            Success(message, null);
+        }
+        public void Success(string message, Exception e)
+        {
+            Write(LogLevel.Success, message, e);
+        }
+
         public void Warning(string message)
         {
             Warning(message, null);
@@ -101,9 +113,13 @@ namespace DotNet.Basics.Diagnostics
         {
             Write(level, message, null);
         }
-        public void Write(LogLevel level, string message, Exception e)
+        public virtual void Write(LogLevel level, string message, Exception e)
         {
             MessageLogged?.Invoke(level, $"{Context}{message}", e);
+        }
+        public virtual void Timing(string name, string @event, TimeSpan duration)
+        {
+            TimingLogged?.Invoke(name, @event, duration);
         }
 
         public override string ToString()

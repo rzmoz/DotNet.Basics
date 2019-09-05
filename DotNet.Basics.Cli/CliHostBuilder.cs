@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DotNet.Basics.Cli.ConsoleOutput;
 using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
 using Microsoft.Extensions.Configuration;
@@ -11,111 +10,103 @@ namespace DotNet.Basics.Cli
     public class CliHostBuilder
     {
         private readonly string[] _args;
-        private readonly Action<ArgsSwitchMappings> _customSwitchMappings;
-        private readonly IList<Action<IConfigurationBuilder>> _configurationActions = new List<Action<IConfigurationBuilder>>();
-        public const char DefaultArgsSwitch = '-';
-        public const string MicrosoftExtensionsArgsSwitch = "--";
-
-        private readonly ILogDispatcher _log;
+        private readonly ArgsSwitchMappings _switchMappings;
+        private readonly IList<Action<IConfigurationBuilder>> _customConfiguration = new List<Action<IConfigurationBuilder>>();
+        private readonly IList<Action<ILogDispatcher>> _customLogging = new List<Action<ILogDispatcher>>();
+        private Func<ILogDispatcher> _logDispatcherFactory;
         private readonly AppInfo _appInfo;
 
         public CliHostBuilder(string[] args, Action<ArgsSwitchMappings> customSwitchMappings = null, Type classThatContainStaticVoidMain = null)
         {
             _args = args;
-            _customSwitchMappings = customSwitchMappings;
-
-            _log = new LogDispatcher();
+            _switchMappings = new ArgsSwitchMappings(customSwitchMappings);
             _appInfo = new AppInfo(classThatContainStaticVoidMain);
-
-            WithConsole();
-            _log.Information($@"Initializing {_appInfo.ToString().Highlight()} with args {_args.JoinString(" ").Highlight()}");
         }
-        public CliHostBuilder WithConfiguration(Action<IConfigurationBuilder> add)
+
+        public CliHostBuilder SetLogDispatcherFactory(Func<ILogDispatcher> logDispatcherFactory)
         {
-            _configurationActions.Add(add);
+            _logDispatcherFactory = logDispatcherFactory;
             return this;
         }
 
-        public CliHostBuilder WithDiagnosticsTarget(IDiagnosticsTarget diagnosticsTarget)
+        public CliHostBuilder WithLogging(Action<ILogDispatcher> configureLogging)
         {
-            if (diagnosticsTarget == null) throw new ArgumentNullException(nameof(diagnosticsTarget));
-            if (diagnosticsTarget.LogTarget != null)
-                _log.MessageLogged += diagnosticsTarget.LogTarget.Invoke;
-
-            if (diagnosticsTarget.TimingTarget != null)
-                _log.TimingLogged += diagnosticsTarget.TimingTarget.Invoke;
-
+            _customLogging.Add(configureLogging);
+            return this;
+        }
+        public CliHostBuilder WithConfiguration(Action<IConfigurationBuilder> add)
+        {
+            _customConfiguration.Add(add);
             return this;
         }
 
         public CliHost Build()
         {
-            return new CliHost(_args, InitConfigurationRoot(), _log);
+            return BuildCustomHost((args, config, log) => new CliHost(args, config, log));
         }
 
-        public T BuildCustomHost<T>(Func<string[], IConfigurationRoot, ILogDispatcher, T> build) where T : CliHost
+        public virtual T BuildCustomHost<T>(Func<string[], IConfigurationRoot, ILogDispatcher, T> build) where T : CliHost
         {
             if (build == null) throw new ArgumentNullException(nameof(build));
-            return build(_args, InitConfigurationRoot(), _log);
+
+            var log = InitLogging();
+
+            log.Information($@"Initializing {_appInfo.ToString().Highlight()} with args {_args.JoinString(" ").Highlight()}");
+
+            var configRoot = InitConfiguration(log);
+
+            return build(_args, configRoot, log);
         }
 
-        private CliHostBuilder WithConsole(ConsoleTheme consoleTheme = null)
+        protected virtual ILogDispatcher InitLogging()
         {
-            ConsoleWriter console = new ColoredConsoleWriter(consoleTheme);
-            if (((ColoredConsoleWriter)console).ConsoleModeProperlySet == false)
-                console = new SystemConsoleWriter();
+            var log = _logDispatcherFactory?.Invoke() ?? new LogDispatcher();
 
-            WithDiagnosticsTarget(console);
-            return this;
+            foreach (var apply in _customLogging)
+                apply?.Invoke(log);
+            log.Verbose($"Logger <{log.GetType().Name}> initialized");
+            return log;
         }
 
-        protected virtual IConfigurationRoot InitConfigurationRoot()
+        protected virtual IConfigurationRoot InitConfiguration(ILogDispatcher log)
         {
-            var configArgs = _args.Select(a =>
+            if (_switchMappings.Any())
             {
-                if (a.StartsWith(DefaultArgsSwitch.ToString()))
-                    a = a.TrimStart(DefaultArgsSwitch).EnsurePrefix(MicrosoftExtensionsArgsSwitch);
-                return a;
-            }).ToArray();
-
-            var switchMappings = new ArgsSwitchMappings(_customSwitchMappings);
-
-            if (switchMappings.Any())
-            {
-                _log.Verbose($"Adding switch mappings to configuration:");
-                foreach (var entry in switchMappings)
-                    _log.Verbose($"{entry.Key} => {entry.Value}");
+                log.Debug($"Args switch mappings:");
+                foreach (var entry in _switchMappings)
+                    log.Debug($"{entry.Key} => {entry.Value}");
             }
 
-            var envConfigRoot = new ConfigurationBuilder().AddCommandLine(configArgs, switchMappings.ToDictionary()).Build();
-            var environments = envConfigRoot.Environments();
-            
-            if (environments.Any())
-                _log.Verbose($"Environments: {environments.JoinString()}");
+            var preppedArgs = _args.CleanArgsForCli().EnsureFlagsHaveValue().EnsureEnvironmentsAreDistinct().ToArray();
+            var configForEnvironments = new ConfigurationBuilder().AddCommandLine(preppedArgs, _switchMappings.ToDictionary()).Build();
+            var environments = configForEnvironments.Environments();
+
+            log.Verbose($"Environments: {environments.JoinString()}");
 
             //configure configuration sources
-            _log.Verbose($"Reading config from appSettings.json");
+            log.Verbose($"Reading config from appSettings.json");
             var configBuilder = new ConfigurationBuilder().AddJsonFile("appSettings.json", true, false);
             foreach (var env in environments)
             {
-                _log.Verbose($"Reading config from appSettings.{env}.json");
+                log.Verbose($"Reading config from appSettings.{env}.json");
                 configBuilder.AddJsonFile($"appSettings.{env}.json", true, false);
             }
 
-            if (_configurationActions.Any())
-                _log.Verbose($"Reading config from custom configuration in host");
-            foreach (var configurationAction in _configurationActions)
+            if (_customConfiguration.Any())
+                log.Verbose($"Reading config from custom configuration in host");
+            foreach (var configurationAction in _customConfiguration)
                 configurationAction?.Invoke(configBuilder);
 
             if (_args.Any())
-                _log.Verbose($"Reading config from args");
-            configBuilder.AddCommandLine(configArgs, switchMappings.ToDictionary());
+                log.Verbose($"Reading config from args");
+
+            configBuilder.AddCommandLine(preppedArgs, _switchMappings.ToDictionary());
 
             var configRoot = configBuilder.Build();
 
-            _log.Verbose($"Configuration root initialized with:");
+            log.Verbose($"Configuration root initialized with:");
             foreach (var entry in configRoot.AsEnumerable(false))
-                _log.Verbose($"  [\"{entry.Key}\"] = {entry.Value}");
+                log.Verbose($"  [\"{entry.Key}\"] = {entry.Value}");
 
             return configRoot;
         }

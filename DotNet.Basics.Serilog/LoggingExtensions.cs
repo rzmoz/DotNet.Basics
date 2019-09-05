@@ -34,8 +34,8 @@ namespace DotNet.Basics.Serilog
                     return LogEventLevel.Verbose;
                 case LogLevel.Debug:
                     return LogEventLevel.Debug;
-                case LogLevel.Information:
-                    return LogEventLevel.Information;
+                case LogLevel.Info:
+                    return LogEventLevel.Info;
                 case LogLevel.Warning:
                     return LogEventLevel.Warning;
                 case LogLevel.Error:

@@ -1,16 +1,25 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using DotNet.Basics.Sys;
 using Microsoft.Extensions.Configuration;
 
 namespace DotNet.Basics.Cli
 {
     public static class ConfigRootExtensions
     {
-        private static readonly IReadOnlyList<string> _emptyList = new List<string>(0);
+        private static readonly string[] _emptyList = new string[0];
 
-        public static IReadOnlyList<string> Environments(this IConfigurationRoot config)
+        public static IReadOnlyCollection<string> Environments(this IConfigurationRoot config)
         {
-            return config[ArgsSwitchMappings.EnvironmentsKey]?.Split('|').Select(env => env.Trim())?.ToList() ?? _emptyList;
+            return config[ArgsExtensions.EnvironmentsKey]?.Split('|') ?? _emptyList;
+        }
+
+        public static IEnumerable<string> ToArgs(this IConfigurationRoot config)
+        {
+            foreach (var entry in config.AsEnumerable(false))
+            {
+                yield return entry.Key.EnsurePrefix(ArgsExtensions.MicrosoftExtensionsArgsSwitch);
+                yield return entry.Value;
+            }
         }
     }
 }

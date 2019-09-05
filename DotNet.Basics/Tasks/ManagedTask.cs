@@ -3,8 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
-using Microsoft.Extensions.Logging;
-using ILogger = DotNet.Basics.Diagnostics.ILogger;
 
 namespace DotNet.Basics.Tasks
 {

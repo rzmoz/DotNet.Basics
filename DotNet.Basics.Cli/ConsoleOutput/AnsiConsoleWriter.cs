@@ -2,11 +2,11 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
-using Microsoft.Extensions.Logging;
+using DotNet.Basics.Diagnostics;
 
 namespace DotNet.Basics.Cli.ConsoleOutput
 {
-    public class ColoredConsoleWriter : ConsoleWriter
+    public class AnsiConsoleWriter : ConsoleWriter
     {
         private readonly object _syncRoot = new object();
         private readonly ConsoleTheme _consoleTheme;
@@ -28,7 +28,7 @@ namespace DotNet.Basics.Cli.ConsoleOutput
         [DllImport("kernel32.dll")]
         public static extern uint GetLastError();
 
-        public ColoredConsoleWriter(ConsoleTheme consoleTheme = null)
+        public AnsiConsoleWriter(ConsoleTheme consoleTheme = null)
         {
             _consoleTheme = consoleTheme ?? ConsoleTheme.Default;
 

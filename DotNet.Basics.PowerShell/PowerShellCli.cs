@@ -8,7 +8,7 @@ namespace DotNet.Basics.PowerShell
     public static class PowerShellCli
     {
         private const string _bypassExecutionPolicy = "Set-ExecutionPolicy Bypass -Scope Process";
-        
+
         public static object[] Run(PowerShellCmdlet cmdLet)
         {
             return Run(new VoidLogger(), cmdLet);
@@ -42,21 +42,16 @@ namespace DotNet.Basics.PowerShell
                 ps.Streams.Error.DataAdded += (col, e) =>
                 {
                     var record = ((PSDataCollection<ErrorRecord>)col).Last();
-                    if (record.Exception is RemoteException)
-                        log.Warning(record.Exception.Message);
-                    else
-                        log.Error(record.Exception.Message, record.Exception);
+                    log.Error(record.Exception.Message, record.Exception);
                 };
 
                 var passThru = ps.Invoke();
 
-                var realErrors = ps.Streams.Error.Select(rec => rec.Exception).Where(e => e != null && e is RemoteException == false).ToList();
-
-                if (realErrors.Any())
+                if (ps.Streams.Error.Any())
                 {
-                    if (realErrors.Count == 1)
-                        throw realErrors.First();
-                    throw new AggregateException(realErrors);
+                    if (ps.Streams.Error.Count == 1)
+                        throw ps.Streams.Error.First().Exception;
+                    throw new AggregateException(ps.Streams.Error.Select(e => e.Exception));
                 }
                 return passThru?.Select(o => o.BaseObject).ToArray();
             }

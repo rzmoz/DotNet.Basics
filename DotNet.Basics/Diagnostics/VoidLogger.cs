@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Diagnostics
 {
@@ -8,15 +7,14 @@ namespace DotNet.Basics.Diagnostics
         public event LogDispatcher.MessageLoggedEventHandler MessageLogged;
         public event LogDispatcher.TimingLoggedEventHandler TimingLogged;
 
+        public void AddDiagnosticsTarget(IDiagnosticsTarget target)
+        {
+        }
+
         public ILogDispatcher InContext(string context, bool floatMessageLogged = true)
         {
             return this;
         }
-
-        public void Timing(string name, string @event, TimeSpan duration)
-        {
-        }
-
         public void Verbose(string message)
         {
         }
@@ -38,6 +36,14 @@ namespace DotNet.Basics.Diagnostics
         }
 
         public void Information(string message, Exception e)
+        {
+        }
+
+        public void Success(string message)
+        {
+        }
+
+        public void Success(string message, Exception e)
         {
         }
 
@@ -70,6 +76,9 @@ namespace DotNet.Basics.Diagnostics
         }
 
         public void Write(LogLevel level, string message, Exception e)
+        {
+        }
+        public void Timing(string name, string @event, TimeSpan duration)
         {
         }
     }
