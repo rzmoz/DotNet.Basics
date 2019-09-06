@@ -1,11 +1,14 @@
 ﻿using System;
-using System.Linq;
 using static System.String;
 
 namespace DotNet.Basics.Sys
 {
     public class SemVersion : IComparable<SemVersion>
     {
+        public SemVersion()
+            : this(Empty)
+        { }
+
         public SemVersion(object semVer)
             : this(semVer?.ToString())
         { }

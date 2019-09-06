@@ -37,7 +37,7 @@ namespace DotNet.Basics.Tests.Sys
         }
 
         [Fact]
-        public void Serialize_NewtonSoft_DirPathIsSerialized()
+        public void Serialize_NewtonSoft_StringIsSerialized()
         {
             var dirStr = "lorem/ipsum/".ToDir();
 

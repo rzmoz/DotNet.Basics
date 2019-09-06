@@ -1,23 +1,55 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DotNet.Basics.Sys;
 using FluentAssertions;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
 {
     public class SemVersionTests
     {
-        private static readonly int _major = 10;
-        private static readonly int _minor = 701;
-        private static readonly int _patch = 232;
-        private static readonly string _preRelease = "rc.1";
-        private static readonly string _metaData = "sdfkjsh.fs.jkhf++djkhf";
-        private static readonly string _semver10String = $"{_major}.{_minor}.{_patch}";
-        private static readonly string _fullSemver20String = $"{_major}.{_minor}.{_patch}-{_preRelease}+{_metaData}";
+        private const int _major = 10;
+        private const int _minor = 701;
+        private const int _patch = 232;
+        private const string _preRelease = "rc.1";
+        private const string _metaData = "sdfkjsh.fs.jkhf++djkhf";
+        private const string _semver10String = "10.701.232";
+        private const string _fullSemver20String = _semver10String + "-" + _preRelease + "+" + _metaData;
+
+        [Fact]
+        public void Serialize_SystemTextJson_IsSerialized()
+        {
+
+            var obj = new SemVersion(_fullSemver20String);
+
+            Action action = () => System.Text.Json.JsonSerializer.Serialize(obj);
+
+            action.Should().NotThrow();
+        }
+
+        [Fact]
+        public void Serialize_NewtonSoft_IsSerialized()
+        {
+            var obj = new SemVersion(_fullSemver20String);
+            string jsonStr;
+            Action action = () => jsonStr = JsonConvert.SerializeObject(obj);
+
+            action.Should().NotThrow();
+        }
+
+        [Fact]
+        public void Deserialization_Newtonsoft_StringIsDeserialized()
+        {
+            var jsonStr = @"{""Major"":10,""Minor"":701,""Patch"":232,""PreRelease"":{""Identifiers"":[{""Identifier"":""rc"",""IsNumeric"":false},{""Identifier"":""1"",""IsNumeric"":true}]},""Metadata"":""sdfkjsh.fs.jkhf++djkhf"",""SemVer10String"":""10.701.232"",""SemVer20String"":""10.701.232-rc.1+sdfkjsh.fs.jkhf++djkhf""}";
+            var obj = JsonConvert.DeserializeObject<SemVersion>(jsonStr);
+            obj.SemVer20String.Should().Be(_fullSemver20String);
+        }
+
 
         [Theory]
-        [InlineData("1.0.5-rc.1+555")]//full string
+        [InlineData(_fullSemver20String)]//full string
         [InlineData("1.0.5+555")]//wo preRelease
         [InlineData("1.0.5-rc.111")]//wo metadata
         public void ToSemver20String_ToString_StringIsFormatted(string semVer20String)
