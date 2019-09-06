@@ -1,4 +1,5 @@
-﻿using DotNet.Basics.Sys;
+﻿using System;
+using DotNet.Basics.Sys;
 using DotNet.Basics.IO;
 using FluentAssertions;
 using Newtonsoft.Json;
@@ -19,6 +20,26 @@ namespace DotNet.Basics.Tests.Sys
             var fileStr = "lorem/ipsum";
             var filePath = (FilePath)fileStr;
             filePath.RawPath.Should().Be(fileStr);
+        }
+
+        [Fact]
+        public void Serialize_SystemTextJson_DirPathIsSerialized()
+        {
+            var fileStr = "lorem/ipsum/myfile.txt".ToFile();
+
+            Action action = () => System.Text.Json.JsonSerializer.Serialize(fileStr);
+
+            action.Should().NotThrow();
+        }
+
+        [Fact]
+        public void Serialize_NewtonSoft_DirPathIsSerialized()
+        {
+            var fileStr = "lorem/ipsum/myfile.txt".ToFile();
+
+            Action action = () => JsonConvert.SerializeObject(fileStr);
+
+            action.Should().NotThrow();
         }
 
         [Fact]

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using DotNet.Basics.Collections;
 
 namespace DotNet.Basics.Sys
@@ -35,21 +37,27 @@ namespace DotNet.Basics.Sys
 
             //set name
             Name = Path.GetFileName(RawPath.RemoveSuffix(Separator));
-            NameWoExtension = Path.GetFileNameWithoutExtension(Name);
-            Extension = Path.GetExtension(Name);
-
-            Parent = Segments.Count <= 1 ? null : new DirPath(null, Segments.Take(Segments.Count - 1).ToArray());
-            Directory = PathType == PathType.File ? Parent : (DirPath)this;
         }
 
         public string RawPath { get; }
         public string Name { get; }
-        public string NameWoExtension { get; }
-        public string Extension { get; }
+        
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public string NameWoExtension => Path.GetFileNameWithoutExtension(Name);
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public string Extension => Path.GetExtension(Name);
+
         public PathType PathType { get; }
 
-        public DirPath Parent { get; }
-        public DirPath Directory { get; }
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public DirPath Parent => Segments.Count <= 1 ? null : new DirPath(null, Segments.Take(Segments.Count - 1).ToArray());
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public DirPath Directory => PathType == PathType.File ? Parent : (DirPath)this;
+
         public char Separator { get; }
         public IReadOnlyCollection<string> Segments;
 
