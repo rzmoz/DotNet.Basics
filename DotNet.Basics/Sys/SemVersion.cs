@@ -89,20 +89,38 @@ namespace DotNet.Basics.Sys
         {
             if (a.Major < b.Major)
                 return true;
-            if (a.Major == b.Major && a.Minor < b.Minor)
+            if (a.Major > b.Major)
+                return false;
+
+            if (a.Minor < b.Minor)
                 return true;
-            if (a.Major == b.Major && a.Minor == b.Minor && a.Patch < b.Patch)
+            if (a.Minor > b.Minor)
+                return false;
+
+            if (a.Patch < b.Patch)
                 return true;
+            if (a.Patch > b.Patch)
+                return false;
+
             return a.PreRelease < b.PreRelease;
         }
         public static bool operator >(SemVersion a, SemVersion b)
         {
             if (a.Major > b.Major)
                 return true;
-            if (a.Major == b.Major && a.Minor > b.Minor)
+            if (a.Major < b.Major)
+                return false;
+
+            if (a.Minor > b.Minor)
                 return true;
-            if (a.Major == b.Major && a.Minor == b.Minor && a.Patch > b.Patch)
+            if (a.Minor < b.Minor)
+                return false;
+
+            if (a.Patch > b.Patch)
                 return true;
+            if (a.Patch < b.Patch)
+                return false;
+
             return a.PreRelease > b.PreRelease;
         }
 

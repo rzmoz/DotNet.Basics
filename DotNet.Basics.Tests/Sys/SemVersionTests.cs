@@ -251,11 +251,22 @@ namespace DotNet.Basics.Tests.Sys
         }
 
         [Fact]
+        public void Operators_LargerSmallerThan_VersionsAreComparedCorrectly()
+        {
+            var lower = new SemVersion("v3.0.0-rc.1");
+            var upper = new SemVersion("v3.2.0-beta.1.0");
+
+            (lower < upper).Should().BeTrue();
+            (lower > upper).Should().BeFalse();
+            (lower == upper).Should().BeFalse();
+        }
+
+        [Fact]
         public void MaxMin_Equality_VersionsCanBeOrderedInCollection()
         {
-            var min = new SemVersion(1, 0, 0);
-            var middle = new SemVersion(2, 1, 0);
-            var max = new SemVersion(3, 0, 0);
+            var min = new SemVersion("v3.0.0-rc.1");
+            var middle = new SemVersion("v3.0.0-rc.5");
+            var max = new SemVersion("v3.2.0-beta.1.0");
 
             var list = new List<SemVersion> { min, middle, max };
 
