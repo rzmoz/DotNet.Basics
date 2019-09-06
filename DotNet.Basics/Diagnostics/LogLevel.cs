@@ -8,7 +8,6 @@
         Success = 3,
         Warning = 4,
         Error = 5,
-        Critical = 6,
-        None = 7
+        Critical = 6
     }
 }

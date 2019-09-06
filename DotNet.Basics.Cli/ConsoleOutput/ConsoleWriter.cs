@@ -1,5 +1,6 @@
 ﻿using System;
 using DotNet.Basics.Diagnostics;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Cli.ConsoleOutput
 {
@@ -12,5 +13,10 @@ namespace DotNet.Basics.Cli.ConsoleOutput
             Write(LogLevel.Info,
                 $"[{name.Highlight()} {@event} in {duration.ToString("hh\\:mm\\:ss").Highlight()}]".WithGutter());
         };
+
+        protected virtual string ToOutputString(LogLevel level)
+        {
+            return $"{level.ToName().ToUpperInvariant()}";
+        }
     }
 }

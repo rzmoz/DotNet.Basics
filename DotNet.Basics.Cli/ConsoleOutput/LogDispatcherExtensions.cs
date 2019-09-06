@@ -12,26 +12,40 @@ namespace DotNet.Basics.Cli.ConsoleOutput
         /// </summary>
         /// <param name="log"></param>
         /// <param name="consoleTheme"></param>
-        public static void AddFirstSupportedConsole(this ILogDispatcher log, ConsoleTheme consoleTheme = null)
+        public static ILogDispatcher AddFirstSupportedConsole(this ILogDispatcher log, ConsoleTheme consoleTheme = null)
         {
-            var SYSTEM_TEAMFOUNDATIONSERVERURI = Environment.GetEnvironmentVariable("SYSTEM_TEAMFOUNDATIONSERVERURI");
-            if (SYSTEM_TEAMFOUNDATIONSERVERURI != null && SYSTEM_TEAMFOUNDATIONSERVERURI.Contains("visualstudio.com", StringComparison.InvariantCultureIgnoreCase))
-            {
-                log.AddDiagnosticsTarget(new AzureDevOpsConsoleWriter());
-                log.Verbose($"{typeof(AzureDevOpsConsoleWriter).Name} diagnostics target added");
-                return;
-            }
+            if (AzureDevOpsConsoleWriter.EnvironmentIsAzureDevOpsHostedAgent())
+                return log.AddAzureDevOpsConsole();
+            if (AnsiConsoleWriter.IsSupported)
+                return log.AddAnsiConsole(consoleTheme, false);
+            return log.AddSystemConsole();
+        }
 
+        public static ILogDispatcher AddAzureDevOpsConsole(this ILogDispatcher log)
+        {
+            return AddDiagnosticsTarget(log, new AzureDevOpsConsoleWriter());
+        }
+        public static ILogDispatcher AddAnsiConsole(this ILogDispatcher log, ConsoleTheme consoleTheme = null, bool logIfNotSupported = true)
+        {
             var ansiConsole = new AnsiConsoleWriter(consoleTheme);
-            if (ansiConsole.ConsoleModeProperlySet)
-            {
-                log.AddDiagnosticsTarget(ansiConsole);
-                log.Verbose($"{typeof(AnsiConsoleWriter).Name} diagnostics target added");
-                return;
-            }
+            if (AnsiConsoleWriter.IsSupported)
+                return AddDiagnosticsTarget(log, ansiConsole);
+            if (logIfNotSupported)
+                log.Critical($"{nameof(AnsiConsoleWriter)} is not supported. This means that this environment does not support this ANSI console so it was NOT added as a diagnostics target!!");
+            return log;
+        }
+        public static ILogDispatcher AddSystemConsole(this ILogDispatcher log)
+        {
+            return AddDiagnosticsTarget(log, new SystemConsoleWriter());
+        }
 
-            log.AddDiagnosticsTarget(new SystemConsoleWriter());
-            log.Verbose($"{typeof(SystemConsoleWriter).Name} diagnostics target added");
+        public static ILogDispatcher AddDiagnosticsTarget(ILogDispatcher log, IDiagnosticsTarget target)
+        {
+            if (log == null) throw new ArgumentNullException(nameof(log));
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            log.AddDiagnosticsTarget(target);
+            log.Verbose($"{target.GetType().Name} diagnostics target added");
+            return log;
         }
     }
 }

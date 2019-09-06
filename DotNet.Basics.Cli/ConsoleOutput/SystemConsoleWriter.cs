@@ -9,7 +9,7 @@ namespace DotNet.Basics.Cli.ConsoleOutput
         public override void Write(LogLevel level, string message, Exception e = null)
         {
             var outputBuilder = new StringBuilder();
-            outputBuilder.Append($"[{level.ToOutputString()}]");
+            outputBuilder.Append($"[{ToOutputString(level)}]");
             outputBuilder.Append(" ");
             outputBuilder.Append($"{message}\r\n{e}");
             var output = outputBuilder.ToString().StripHighlight();

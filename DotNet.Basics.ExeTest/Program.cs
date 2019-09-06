@@ -12,7 +12,7 @@ namespace DotNet.Basics.ExeTest
         {
             args.PauseIfDebug();
             var cliHost = new CliHostBuilder(args, mappings => mappings.Add("lorem", "ipsum"))
-                .WithLogging(config=>config.AddDiagnosticsTarget(new AzureDevOpsConsoleWriter()))
+                .WithLogging(config=>config.AddFirstSupportedConsole())
                 .Build();
 
             return await cliHost.RunAsync("MyTask", (config, log) =>

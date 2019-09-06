@@ -18,6 +18,14 @@ namespace DotNet.Basics.Cli.ConsoleOutput
             Console.Write(output);
         }
 
+        public static bool EnvironmentIsAzureDevOpsHostedAgent()
+        {
+            var SYSTEM_TEAMFOUNDATIONSERVERURI = Environment.GetEnvironmentVariable("SYSTEM_TEAMFOUNDATIONSERVERURI");
+            return SYSTEM_TEAMFOUNDATIONSERVERURI != null &&
+                   SYSTEM_TEAMFOUNDATIONSERVERURI.Contains("visualstudio.com",
+                       StringComparison.InvariantCultureIgnoreCase);
+        }
+
         private static string OutputColorPrefix(LogLevel level)
         {
             switch (level)
@@ -35,8 +43,6 @@ namespace DotNet.Basics.Cli.ConsoleOutput
                 case LogLevel.Error:
                 case LogLevel.Critical:
                     return "##vso[task.logissue type=error;]";
-                case LogLevel.None:
-                    return string.Empty;
                 default:
                     return string.Empty;
             }

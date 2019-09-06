@@ -10,8 +10,8 @@ namespace DotNet.Basics.Cli.ConsoleOutput
             Verbose = new ConsoleFormat(Color.DarkSlateGray, Color.Empty, Color.DarkGray),
             Debug = new ConsoleFormat(Color.DarkCyan, Color.Empty, Color.DarkGray),
             Information = new ConsoleFormat(Color.White, Color.Empty, Color.Cyan),
-            Success = new ConsoleFormat(Color.Green, Color.Empty, Color.LightGreen),
-            Warning = new ConsoleFormat(Color.Yellow, Color.Empty, Color.DarkOrange),
+            Success = new ConsoleFormat(Color.LawnGreen, Color.Empty, Color.White, Color.DarkGreen),
+            Warning = new ConsoleFormat(Color.Yellow, Color.Empty,Color.Black, Color.DarkOrange),
             Error = new ConsoleFormat(Color.Red, Color.Empty, Color.Red, Color.Black),
             Critical = new ConsoleFormat(Color.White, Color.DarkRed, Color.White, Color.Black)
         };

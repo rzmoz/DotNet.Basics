@@ -31,32 +31,27 @@ namespace DotNet.Basics.Cli.ConsoleOutput
         public AnsiConsoleWriter(ConsoleTheme consoleTheme = null)
         {
             _consoleTheme = consoleTheme ?? ConsoleTheme.Default;
-
-            var iStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
-            if (!GetConsoleMode(iStdOut, out uint outConsoleMode))
-            {
-                Console.WriteLine("failed to get output console mode");
-                return;
-            }
-
-            outConsoleMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING | DISABLE_NEWLINE_AUTO_RETURN;
-            if (!SetConsoleMode(iStdOut, outConsoleMode))
-            {
-                Console.WriteLine($"failed to set output console mode, error code: {GetLastError()}");
-                return;
-            }
-
-            ConsoleModeProperlySet = true;
         }
 
-        public bool ConsoleModeProperlySet { get; }
+        public static bool IsSupported
+        {
+            get
+            {
+                var iStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+                if (!GetConsoleMode(iStdOut, out uint outConsoleMode))
+                    return false;
+
+                outConsoleMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING | DISABLE_NEWLINE_AUTO_RETURN;
+                return SetConsoleMode(iStdOut, outConsoleMode);
+            }
+        }
 
         private string WriteOutput(LogLevel level, string message, Exception e = null)
         {
             var format = _consoleTheme.Get(level);
 
             var outputBuilder = new StringBuilder();
-            outputBuilder.Append($"[{level.ToOutputString()}]".AnsiColorize(format));
+            outputBuilder.Append($"[{ToOutputString(level)}]".AnsiColorize(format));
             outputBuilder.Append(" ");
             outputBuilder.Append($"{message.AnsiColorize(format)}\r\n{e?.ToString().AnsiColorize(_gutterColor)}");
             return outputBuilder.ToString();
