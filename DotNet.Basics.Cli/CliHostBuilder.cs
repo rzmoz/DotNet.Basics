@@ -66,7 +66,7 @@ namespace DotNet.Basics.Cli
 
             if (log.HasListeners == false)
                 log.AddFirstSupportedConsole();
-            
+
             return log;
         }
 
@@ -82,15 +82,15 @@ namespace DotNet.Basics.Cli
         {
             if (_switchMappings.Any())
             {
-                log.Debug($"Args switch mappings:");
+                log.Verbose($"Args aliases:");
                 foreach (var entry in _switchMappings)
-                    log.Debug($"{entry.Key} => {entry.Value}");
+                    log.Verbose($"{entry.Key} => {ArgsExtensions.MicrosoftExtensionsArgsSwitch}{entry.Value}");
             }
 
             var configForEnvironments = new ConfigurationBuilder().AddCommandLine(args, _switchMappings.ToDictionary()).Build();
             var environments = configForEnvironments.Environments();
 
-            log.Verbose($"Environments: {environments.JoinString()}");
+            log.Verbose($"Environments: {environments.JoinString().Highlight()}");
 
             //configure configuration sources
             log.Verbose($"Reading config from appSettings.json");
