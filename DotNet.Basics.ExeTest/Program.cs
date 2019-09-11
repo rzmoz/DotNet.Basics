@@ -20,7 +20,7 @@ namespace DotNet.Basics.ExeTest
                 var script = "EXIT 200";
                 var result = PowerShellCli.RunScript(script, log);
 
-                return Task.CompletedTask;
+                return Task.FromResult(200);
             }).ConfigureAwait(false);
         }
     }

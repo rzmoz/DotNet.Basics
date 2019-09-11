@@ -26,7 +26,7 @@ namespace DotNet.Basics.Cli
         public IReadOnlyCollection<string> Environments => Config.Environments();
         public bool Verbose { get; }
 
-        public virtual async Task<int> RunAsync(string name, Func<IConfigurationRoot, ILogDispatcher, Task> asyncAction, CliHostOptions options = null)
+        public virtual async Task<int> RunAsync(string name, Func<IConfigurationRoot, ILogDispatcher, Task<int>> asyncAction, CliHostOptions options = null)
         {
             if (asyncAction == null) throw new ArgumentNullException(nameof(asyncAction));
             if (options == null)
@@ -34,13 +34,13 @@ namespace DotNet.Basics.Cli
             try
             {
                 LongRunningOperations.Init(Log, options.LongRunningOperationsPingInterval);
-
+                var exitCode = int.MinValue;
                 await LongRunningOperations.StartAsync(name, async () =>
                 {
-                    await asyncAction.Invoke(Config, Log).ConfigureAwait(false);
+                    exitCode = await asyncAction.Invoke(Config, Log).ConfigureAwait(false);
                 }).ConfigureAwait(false);
 
-                return 0;
+                return exitCode;
             }
             catch (CliException e)
             {
