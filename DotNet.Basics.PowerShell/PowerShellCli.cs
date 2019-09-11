@@ -39,7 +39,7 @@ namespace DotNet.Basics.PowerShell
 
             if (ps.HadErrors)
             {
-                throw new RemoteException($"{"PowerShell scripts failed:".Highlight()}\r\n{ps.Streams.Error.Select(e => e.Exception.Message).JoinString("\r\n")}");
+                throw new RemoteException($"{"PowerShell script failed:".Highlight()}\r\n{ps.Streams.Error.Select(e => e.Exception.Message).JoinString("\r\n")}");
             }
 
             return passThru?.Select(o => o.BaseObject).ToArray();
