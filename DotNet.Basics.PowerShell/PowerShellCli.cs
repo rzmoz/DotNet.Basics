@@ -46,13 +46,26 @@ namespace DotNet.Basics.PowerShell
                 };
 
                 var passThru = ps.Invoke();
+                /*
+                var hasErrors = false;
+                foreach (var error in ps.Streams.Error)
+                {
+                    hasErrors = true;
+
+                }
 
                 if (ps.Streams.Error.Any())
                 {
+
+
+
                     if (ps.Streams.Error.Count == 1)
                         throw ps.Streams.Error.First().Exception;
                     throw new AggregateException(ps.Streams.Error.Select(e => e.Exception));
-                }
+                }*/
+
+
+                log.Information($"Error count: {ps.Streams.Error.Count}");
                 return passThru?.Select(o => o.BaseObject).ToArray();
             }
         }

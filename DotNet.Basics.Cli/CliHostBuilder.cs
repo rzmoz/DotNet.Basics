@@ -16,10 +16,12 @@ namespace DotNet.Basics.Cli
         private readonly IList<Action<ILogDispatcher>> _customLogging = new List<Action<ILogDispatcher>>();
         private Func<ILogDispatcher> _logDispatcherFactory;
         private readonly AppInfo _appInfo;
+        private readonly bool _verboseIsSet;
 
         public CliHostBuilder(string[] args, Action<ArgsSwitchMappings> customSwitchMappings = null, Type classThatContainStaticVoidMain = null)
         {
             _args = args;
+            _verboseIsSet = _args.IsSet("verbose", false);
             _switchMappings = new ArgsSwitchMappings(customSwitchMappings);
             _appInfo = new AppInfo(classThatContainStaticVoidMain);
         }
@@ -49,7 +51,11 @@ namespace DotNet.Basics.Cli
             if (build == null) throw new ArgumentNullException(nameof(build));
 
             var log = InitLogging();
-            log.Information($@"Initializing {_appInfo.ToString().Highlight()} with args {_args.JoinString(" ").Highlight()}");
+
+            var appInfo = $@"Initializing {_appInfo.ToString().Highlight()}";
+            if (_verboseIsSet)
+                appInfo += $@" with args {_args.JoinString(" ").Highlight()}";
+            log.Information(appInfo);
             var args = InitArgs(_args);
             var configRoot = InitConfiguration(args, log);
 
@@ -59,7 +65,8 @@ namespace DotNet.Basics.Cli
         protected virtual ILogDispatcher InitLogging()
         {
             var log = _logDispatcherFactory?.Invoke() ?? new LogDispatcher();
-            log.Verbose($"Log Dispatcher <{log.GetType().Name}> initialized");
+            if (_verboseIsSet)
+                log.Verbose($"Log Dispatcher <{log.GetType().Name}> initialized");
 
             foreach (var apply in _customLogging)
                 apply?.Invoke(log);
@@ -80,7 +87,8 @@ namespace DotNet.Basics.Cli
 
         protected virtual IConfigurationRoot InitConfiguration(string[] args, ILogDispatcher log)
         {
-            if (_switchMappings.Any())
+
+            if (_verboseIsSet && _switchMappings.Any())
             {
                 log.Verbose($"Args aliases:");
                 foreach (var entry in _switchMappings)
@@ -90,10 +98,12 @@ namespace DotNet.Basics.Cli
             var configForEnvironments = new ConfigurationBuilder().AddCommandLine(args, _switchMappings.ToDictionary()).Build();
             var environments = configForEnvironments.Environments();
 
-            log.Verbose($"Environments: {environments.JoinString().Highlight()}");
+            if (_verboseIsSet)
+                log.Verbose($"Environments: {environments.JoinString().Highlight()}");
 
             //configure configuration sources
-            log.Verbose($"Reading config from appSettings.json");
+            if (_verboseIsSet)
+                log.Verbose($"Reading config from appSettings.json");
 
             //add default config file
             _customConfiguration.Add(config => config.AddJsonFile("appSettings.json", true, false));
@@ -104,15 +114,18 @@ namespace DotNet.Basics.Cli
             foreach (var configurationAction in _customConfiguration)
                 configurationAction?.Invoke(configBuilder);
 
-            if (_args.Any())
+            if (_verboseIsSet && _args.Any())
                 log.Verbose("Reading config from args");
             configBuilder.AddCommandLine(args, _switchMappings.ToDictionary());
 
             var configRoot = configBuilder.Build();
 
-            log.Verbose($"Configuration root initialized with:");
-            foreach (var entry in configRoot.AsEnumerable(false))
-                log.Verbose($"  [\"{entry.Key}\"] = {entry.Value}");
+            if (_verboseIsSet)
+            {
+                log.Verbose($"Configuration root initialized with:");
+                foreach (var entry in configRoot.AsEnumerable(false))
+                    log.Verbose($"  [\"{entry.Key}\"] = {entry.Value}");
+            }
 
             return configRoot;
         }

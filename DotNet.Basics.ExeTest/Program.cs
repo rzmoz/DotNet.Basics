@@ -1,8 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using DotNet.Basics.Cli;
 using DotNet.Basics.Cli.ConsoleOutput;
-using DotNet.Basics.Diagnostics;
+using DotNet.Basics.PowerShell;
 
 namespace DotNet.Basics.ExeTest
 {
@@ -17,10 +16,8 @@ namespace DotNet.Basics.ExeTest
 
             return await cliHost.RunAsync("MyTask", (config, log) =>
             {
-                foreach (LogLevel level in (LogLevel[]) Enum.GetValues(typeof(LogLevel)))
-                {
-                    cliHost.Log.Write(level, $"{level } {"highlight me".Highlight()} end of string");
-                }
+                PowerShellCli.Run(
+                    @"& C:\Projects\hs-sc9\scripts\Solution.PostBuild.Callback.ps1 -slnDir C:\Projects\hs-sc9 -artifactsDir C:\Projects\hs-sc9\.releaseArtifacts");
 
                 return Task.CompletedTask;
             }).ConfigureAwait(false);
