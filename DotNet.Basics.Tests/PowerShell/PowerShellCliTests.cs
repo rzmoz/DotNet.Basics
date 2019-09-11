@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DotNet.Basics.Diagnostics;
@@ -22,8 +23,13 @@ namespace DotNet.Basics.Tests.PowerShell
         [Fact]
         public void RunFileInConsole_FileNotFound_ExceptionIsThrown()
         {
-            Action action = () => PowerShellCli.RunFileInConsole("SOME_PATH_THAT_DOES_NOT_EXIST.ps1");
-            action.Should().Throw<FileNotFoundException>();
+            var path = "SOME_PATH_THAT_DOES_NOT_EXIST.ps1";
+
+            var errors = new List<string>();
+
+            var exitCode = PowerShellCli.RunFileInConsole(path, writeError: error => errors.Add(error));
+            exitCode.Should().Be(-196608);
+            errors.Single().Should().Be($"The argument '{path}' to the -File parameter does not exist. Provide the path to an existing '.ps1' file as an argument to the -File parameter.");
         }
 
         [Fact]

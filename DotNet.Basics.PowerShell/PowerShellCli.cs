@@ -1,7 +1,6 @@
-﻿using System.IO;
+﻿using System;
 using System.Linq;
 using System.Management.Automation;
-using System.Text;
 using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
 
@@ -11,21 +10,9 @@ namespace DotNet.Basics.PowerShell
     {
         private const string _bypassExecutionPolicy = "Set-ExecutionPolicy Bypass -Scope Process";
 
-        public static int RunFileInConsole(string fileArgs, ILogDispatcher log = null)
+        public static int RunFileInConsole(string fileArgs, Action<string> writeOutput = null, Action<string> writeError = null)
         {
-            if (log == null)
-                log = new VoidLogger();
-
-            var errors = new StringBuilder();
-
-            var exitCode = CmdPrompt.Run($"PowerShell -ExecutionPolicy bypass -NonInteractive -NoProfile -file {fileArgs}", log.Information, error => { errors.AppendLine(error); log.Error(error); });
-            if (exitCode == -196608)
-                throw new FileNotFoundException(fileArgs);
-
-            if (errors.Length > 0)
-                throw new PowerShellException(errors.ToString(), exitCode);
-
-            return exitCode;
+            return CmdPrompt.Run($"PowerShell -ExecutionPolicy bypass -NonInteractive -NoProfile -file {fileArgs}", writeOutput, writeError);
         }
 
         public static object[] RunCmdlet(PowerShellCmdlet cmdLet, ILogDispatcher log = null)
