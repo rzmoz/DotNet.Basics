@@ -1,6 +1,8 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
+using System.IO;
+using System.Linq;
 using DotNet.Basics.Diagnostics;
+using DotNet.Basics.IO;
 using DotNet.Basics.PowerShell;
 using FluentAssertions;
 using Xunit;
@@ -18,11 +20,31 @@ namespace DotNet.Basics.Tests.PowerShell
         }
 
         [Fact]
+        public void RunFileInConsole_FileNotFound_ExceptionIsThrown()
+        {
+            Action action = () => PowerShellCli.RunFileInConsole("SOME_PATH_THAT_DOES_NOT_EXIST.ps1");
+            action.Should().Throw<FileNotFoundException>();
+        }
+
+        [Fact]
+        public void RunFileInConsole_ExecuteFile_ExitCodeIsCorrect()
+        {
+            WithTestRoot(testRoot =>
+            {
+                var scriptPath = testRoot.ToFile(@"PowerShell", "PsFile.ps1").FullName();
+
+                var result = PowerShellCli.RunFileInConsole(scriptPath);
+
+                result.Should().Be(42);
+            });
+        }
+
+        [Fact]
         public void RunScript_ExecuteScript_HelloWorldIsOutputted()
         {
             var script = $@"""{_greeting}""";
 
-            var result = PowerShellCli.Run(new[] {script});
+            var result = PowerShellCli.RunScript(script);
 
             result.Single().ToString().Should().Be(_greeting);
         }
@@ -35,7 +57,7 @@ namespace DotNet.Basics.Tests.PowerShell
             log.MessageLogged += (lvl, msg, e) => captured += msg;
             log.MessageLogged += (lvl, msg, e) => Output.WriteLine(msg);
 
-            var result = PowerShellCli.Run(log, _writeGreetingToHost);
+            var result = PowerShellCli.RunScript(_writeGreetingToHost, log);
 
             captured.Should().Be(_greeting);
         }

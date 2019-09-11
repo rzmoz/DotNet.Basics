@@ -30,7 +30,7 @@ namespace DotNet.Basics.IO
 
         public DirPath InstallDir { get; }
 
-        public (string Input, int ExitCode) RunFromCmd(string fileName, params string[] args)
+        public int RunFromCmd(string fileName, params string[] args)
         {
             Install();
             var argString = args.Aggregate(string.Empty, (current, param) => current + $" {param}");

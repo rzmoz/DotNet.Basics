@@ -4,8 +4,11 @@ namespace DotNet.Basics.Diagnostics
 {
     public class VoidLogger : ILogDispatcher
     {
+#pragma warning disable 67
         public event LogDispatcher.MessageLoggedEventHandler MessageLogged;
         public event LogDispatcher.TimingLoggedEventHandler TimingLogged;
+#pragma warning restore 67
+
         public bool HasListeners { get; } = false;
 
         public void AddDiagnosticsTarget(IDiagnosticsTarget target)

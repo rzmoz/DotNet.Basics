@@ -26,7 +26,7 @@ namespace DotNet.Basics.Tests.PowerShell
                 dir.EnumeratePaths().Count().Should().Be(2);
 
                 //act
-                PowerShellCli.Run(new RemoveItemCmdlet($@"{dir.FullName()}\*"));
+                PowerShellCli.RunCmdlet(new RemoveItemCmdlet($@"{dir.FullName()}\*"));
 
                 //assert
                 dir.EnumerateDirectories().Count().Should().Be(0);
@@ -48,7 +48,7 @@ namespace DotNet.Basics.Tests.PowerShell
                 dir.EnumerateFiles().Count().Should().Be(4);
 
                 //act
-                PowerShellCli.Run(new RemoveItemCmdlet($@"{dir.FullName()}/Testa.*.txt").WithForce().WithRecurse());
+                PowerShellCli.RunCmdlet(new RemoveItemCmdlet($@"{dir.FullName()}/Testa.*.txt").WithForce().WithRecurse());
 
                 //assert
                 dir.EnumerateFiles().Count().Should().Be(2);

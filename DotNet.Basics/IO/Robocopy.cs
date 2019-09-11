@@ -28,8 +28,8 @@ namespace DotNet.Basics.IO
             if (string.IsNullOrWhiteSpace(filesToCopy) == false)
                 command += $" \"{filesToCopy}\" ";
             command += options ?? string.Empty;
-            var result = CmdPrompt.Run(command, writeOutput, writeError);
-            return new RobocopyStatus(result.ExitCode);
+            var exitCode = CmdPrompt.Run(command, writeOutput, writeError);
+            return new RobocopyStatus(exitCode);
         }
 
         /// <summary>

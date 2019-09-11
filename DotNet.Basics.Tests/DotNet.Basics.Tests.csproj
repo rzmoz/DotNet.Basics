@@ -41,6 +41,9 @@
     <None Update="DotNet.Basics.Tests.NetCore.EchoOut.runtimeconfig.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="PowerShell\PsFile.ps1">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="SevenZip\myArchive.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

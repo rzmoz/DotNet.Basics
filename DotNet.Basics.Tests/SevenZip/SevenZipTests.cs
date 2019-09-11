@@ -123,8 +123,8 @@ namespace DotNet.Basics.Tests.SevenZip
 
                 //act
 
-                var result = _sevenZip.ExtractToDirectory(_sourceArchive.FullName(), targetDir.FullName());
-                Output.WriteLine($"ExtractToDirectory input: {result.Input}");
+                var exitCode = _sevenZip.ExtractToDirectory(_sourceArchive.FullName(), targetDir.FullName());
+                Output.WriteLine($"ExtractToDirectory input: {exitCode}");
                 targetDir.Exists().Should().BeTrue($"Exists:{targetDir.FullName()}");
                 targetDir.ToDir().EnumeratePaths().Count().Should().Be(1);
                 targetFile.Exists().Should().BeTrue($"Exists:{targetDir.FullName()}");

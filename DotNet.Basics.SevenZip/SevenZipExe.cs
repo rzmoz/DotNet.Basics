@@ -22,7 +22,7 @@ namespace DotNet.Basics.SevenZip
                 .WithStream("7zxa.dll", _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7zxa.dll"));
         }
 
-        public (string Input, int ExitCode) ExtractToDirectory(string archivePath, string targetDirPath)
+        public int ExtractToDirectory(string archivePath, string targetDirPath)
         {
             if (File.Exists(archivePath) == false)
                 throw new IOException($"Archive not found: {archivePath}");
@@ -31,7 +31,7 @@ namespace DotNet.Basics.SevenZip
             return ExecuteSevenZip("x", $"\"{archivePath}\"", $"\"-o{targetDirPath.ToDir().FullName()}\"", "*", "-r", "aoa");
         }
 
-        public (string Input, int ExitCode) CreateFromDirectory(string sourceDirPath, string archivePath, bool overwrite = false)
+        public int CreateFromDirectory(string sourceDirPath, string archivePath, bool overwrite = false)
         {
             if (overwrite == false && archivePath.ToFile().Exists())
                 throw new IOException($"Target archive path already exists: {archivePath}. Set overwrite to true to ignore");
@@ -40,7 +40,7 @@ namespace DotNet.Basics.SevenZip
             return ExecuteSevenZip("a", $"\"{archivePath}\"", $"\"{sourceDirPath.ToDir().FullName()}\\*\"", "-tzip", "-mx3", "-mmt");
         }
 
-        public (string Input, int ExitCode) ExecuteSevenZip(string command, params string[] @params)
+        public int ExecuteSevenZip(string command, params string[] @params)
         {
             var allArgs = new List<string>();
             allArgs.Add(command);
