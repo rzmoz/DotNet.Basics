@@ -2,7 +2,7 @@
 
 namespace DotNet.Basics.Diagnostics
 {
-    public class VoidLogger : ILogDispatcher
+    public class NullLogger : ILogDispatcher
     {
 #pragma warning disable 67
         public event LogDispatcher.MessageLoggedEventHandler MessageLogged;

@@ -23,7 +23,7 @@ namespace DotNet.Basics.PowerShell
         public static object[] RunScript(string script, ILogDispatcher log = null)
         {
             if (log == null)
-                log = new VoidLogger();
+                log = LogDispatcher.NullLogger;
             var ps = System.Management.Automation.PowerShell.Create();
             ps.AddScript(_bypassExecutionPolicy);
             ps.AddScript(script);

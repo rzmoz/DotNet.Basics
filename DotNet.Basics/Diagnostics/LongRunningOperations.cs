@@ -20,7 +20,7 @@ namespace DotNet.Basics.Diagnostics
 
         public static void Init(ILogDispatcher log, TimeSpan pingInterval)
         {
-            _log = log ?? new VoidLogger();
+            _log = log ?? LogDispatcher.NullLogger;
 
             if (pingInterval > TimeSpan.Zero)
             {

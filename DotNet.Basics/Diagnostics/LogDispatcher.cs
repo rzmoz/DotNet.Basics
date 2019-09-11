@@ -13,6 +13,11 @@ namespace DotNet.Basics.Diagnostics
         public event TimingLoggedEventHandler TimingLogged;
         public bool HasListeners => MessageLogged != null || TimingLogged != null;
 
+        /// <summary>
+        /// Logs to nothing
+        /// </summary>
+        public static ILogDispatcher NullLogger{ get; } = new NullLogger();
+
         private readonly ConcurrentStack<string> _context;
 
         public string Context { get; }
