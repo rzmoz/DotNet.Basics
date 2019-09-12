@@ -10,6 +10,20 @@ namespace DotNet.Basics.Tests.Cli
     public class CliHostTests
     {
         [Fact]
+        public void IsSet_Flag_FlagIsSet()
+        {
+            var flag = "myFlag";
+            var paramWithValue = "myKey";
+            var args = new[] { $"-{flag}", $"-{paramWithValue}", "SomeValue" };
+
+            var host = new CliHostBuilder(args).Build();
+
+            host.IsSet(flag).Should().BeTrue();
+            host.IsSet(paramWithValue).Should().BeTrue();
+            host.IsSet("SOME_FLAG_THAT_IS_NOT_SET").Should().BeFalse();
+        }
+
+        [Fact]
         public void Verbose_NotSet_VerboseIsFalse()
         {
             var args = new[] { "something" };

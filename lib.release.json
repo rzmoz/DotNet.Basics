@@ -16,7 +16,7 @@
     {
       "name": "DotNet.Basics.Cli",
       "version": "10.0.0",
-      "prerelease": "beta.2.6"
+      "prerelease": "beta.2.7"
     },
     {
       "name": "DotNet.Basics.Net.Http",

@@ -24,7 +24,7 @@ namespace DotNet.Basics.Tests.Cli
         {
             var value = "myValue";
             string[] args = { $"-{nameof(TestCliHost.MySetting)}", value };
-            
+
             var host = new CliHostBuilder(args)
                 .BuildCustomHost((args, config, log) => new TestCliHost(args, config, log));
 
@@ -68,7 +68,7 @@ namespace DotNet.Basics.Tests.Cli
         public void IsSet_Flag_IsFound(string arg, string flag, bool isSet)
         {
             var args = new[] { arg.EnsurePrefix("-") };
-            args.IsSet(flag).Should().Be(isSet);
+            args.IsSet(flag, true).Should().Be(isSet);
         }
 
         [Theory]

@@ -94,7 +94,7 @@ namespace DotNet.Basics.Cli
                 yield return IsSetValue;
         }
 
-        public static bool IsSet(this string[] args, string key, bool firstCharIsShortKey = true, StringComparison stringComparison = StringComparison.OrdinalIgnoreCase)
+        public static bool IsSet(this IReadOnlyList<string> args, string key, bool firstCharIsShortKey = false, StringComparison stringComparison = StringComparison.OrdinalIgnoreCase)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (key.Length < 0)
@@ -107,7 +107,7 @@ namespace DotNet.Basics.Cli
             return false;
         }
 
-        private static bool IsSet(this string[] args, string key, StringComparison stringComparison = StringComparison.OrdinalIgnoreCase)
+        private static bool IsSet(this IReadOnlyList<string> args, string key, StringComparison stringComparison = StringComparison.OrdinalIgnoreCase)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (key.Length < 0)
