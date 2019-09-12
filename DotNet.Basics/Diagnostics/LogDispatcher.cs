@@ -74,11 +74,11 @@ namespace DotNet.Basics.Diagnostics
         {
             Write(LogLevel.Debug, message, e);
         }
-        public void Information(string message)
+        public void Info(string message)
         {
-            Information(message, null);
+            Info(message, null);
         }
-        public void Information(string message, Exception e)
+        public void Info(string message, Exception e)
         {
             Write(LogLevel.Info, message, e);
         }
@@ -121,6 +121,11 @@ namespace DotNet.Basics.Diagnostics
         public virtual void Write(LogLevel level, string message, Exception e)
         {
             MessageLogged?.Invoke(level, $"{Context}{message}", e);
+        }
+
+        public void Timing(LogLevel level, string name, string @event)
+        {
+            Timing(level, name, @event, TimeSpan.MinValue);
         }
 
         public void Timing(LogLevel level, string name, string @event, TimeSpan duration)

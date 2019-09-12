@@ -51,6 +51,7 @@ namespace DotNet.Basics.Diagnostics
             var operation = new LongRunningOperation(name);
             try
             {
+                _log.Timing(LogLevel.Debug, operation.Name, "starting", TimeSpan.MinValue);
                 _operations.TryAdd(operation.Id, operation);
                 await action.Invoke().ConfigureAwait(false);
                 _log.Timing(LogLevel.Success, operation.Name, "finished", operation.DurationNow);

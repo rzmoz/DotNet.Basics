@@ -25,9 +25,9 @@ namespace DotNet.Basics.Diagnostics
         { }
         public void Debug(string message, Exception e)
         { }
-        public void Information(string message)
+        public void Info(string message)
         { }
-        public void Information(string message, Exception e)
+        public void Info(string message, Exception e)
         { }
         public void Success(string message)
         { }
@@ -48,6 +48,8 @@ namespace DotNet.Basics.Diagnostics
         public void Write(LogLevel level, string message)
         { }
         public void Write(LogLevel level, string message, Exception e)
+        { }
+        public void Timing(LogLevel level, string name, string @event)
         { }
         public void Timing(LogLevel level, string name, string @event, TimeSpan duration)
         { }

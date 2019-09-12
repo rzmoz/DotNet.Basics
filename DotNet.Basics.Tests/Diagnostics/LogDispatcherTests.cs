@@ -20,7 +20,7 @@ namespace DotNet.Basics.Tests.Diagnostics
             outerLog.MessageLogged += (lvl, msg, e) => { messageReceived = msg; };
 
             //act
-            innerLog.Information(message);
+            innerLog.Info(message);
 
             messageReceived.Should().Be($"{context1} / {context2} / {message}");
         }

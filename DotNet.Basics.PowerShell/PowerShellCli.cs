@@ -30,8 +30,8 @@ namespace DotNet.Basics.PowerShell
 
             ps.Streams.Progress.DataAdded += (col, e) => log.Verbose($"{((PSDataCollection<ProgressRecord>)col).Last().Activity} : {((PSDataCollection<ProgressRecord>)col).Last().PercentComplete}/100");
             ps.Streams.Verbose.DataAdded += (col, e) => log.Verbose(((PSDataCollection<VerboseRecord>)col).Last().Message);
-            ps.Streams.Debug.DataAdded += (col, e) => log.Information(((PSDataCollection<DebugRecord>)col).Last().Message);
-            ps.Streams.Information.DataAdded += (col, e) => log.Information(((PSDataCollection<InformationRecord>)col).Last().ToString());
+            ps.Streams.Debug.DataAdded += (col, e) => log.Info(((PSDataCollection<DebugRecord>)col).Last().Message);
+            ps.Streams.Information.DataAdded += (col, e) => log.Info(((PSDataCollection<InformationRecord>)col).Last().ToString());
             ps.Streams.Warning.DataAdded += (col, e) => log.Warning(((PSDataCollection<WarningRecord>)col).Last().Message);
             ps.Streams.Error.DataAdded += (col, e) => log.Error(((PSDataCollection<ErrorRecord>)col).Last().Exception.Message);
 

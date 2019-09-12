@@ -55,7 +55,7 @@ namespace DotNet.Basics.Cli
             var appInfo = $@"Initializing {_appInfo.ToString().Highlight()}";
             if (_verboseIsSet)
                 appInfo += $@" with args {_args.JoinString(" ").Highlight()}";
-            log.Information(appInfo);
+            log.Info(appInfo);
             var args = InitArgs(_args);
             var configRoot = InitConfiguration(args, log);
 
