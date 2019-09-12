@@ -14,9 +14,9 @@ namespace DotNet.Basics.SevenZip
         private readonly FileApplication _sevenZipApp;
         private const string _entryFileName = "7za.exe";
 
-        public SevenZipExe(DirPath installDir, Action<string> writeOutput = null, Action<string> writeError = null)
+        public SevenZipExe(Action<string> writeOutput = null, Action<string> writeError = null)
         {
-            _sevenZipApp = new FileApplication(installDir.ToDir("7Zip"), writeOutput, writeError)
+            _sevenZipApp = new FileApplication("7Zip", writeOutput, writeError)
                 .WithStream(_entryFileName, _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.exe"))
                 .WithStream("7za.dll", _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.dll"))
                 .WithStream("7zxa.dll", _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7zxa.dll"));
@@ -33,12 +33,12 @@ namespace DotNet.Basics.SevenZip
 
         public int CreateZipFromDirectory(string sourceDirPath, string archivePath, bool overwrite = false)
         {
-            return CreateFromDirectory(sourceDirPath, archivePath.EnsureSuffix(".zip"), "zip", overwrite);
+            return CreateFromDirectory(sourceDirPath, archivePath.TrimEnd('\\').EnsureSuffix(".zip"), "zip", overwrite);
         }
 
         public int Create7zFromDirectory(string sourceDirPath, string archivePath, bool overwrite = false)
         {
-            return CreateFromDirectory(sourceDirPath, archivePath.EnsureSuffix(".7z"), "7z", overwrite);
+            return CreateFromDirectory(sourceDirPath, archivePath.TrimEnd('\\').EnsureSuffix(".7z"), "7z", overwrite);
         }
 
         private int CreateFromDirectory(string sourceDirPath, string archivePath, string archiveType, bool overwrite = false)

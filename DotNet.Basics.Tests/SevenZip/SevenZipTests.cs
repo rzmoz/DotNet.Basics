@@ -21,7 +21,7 @@ namespace DotNet.Basics.Tests.SevenZip
         {
             WithTestRoot(testRoot =>
             {
-                _sevenZip = new SevenZipExe(testRoot, o => Output.WriteLine(o));
+                _sevenZip = new SevenZipExe(o => Output.WriteLine(o));
                 _sourceArchive = testRoot.ToFile("SevenZip", "myArchive.zip");
             });
         }
