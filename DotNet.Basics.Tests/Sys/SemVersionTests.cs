@@ -15,8 +15,9 @@ namespace DotNet.Basics.Tests.Sys
         private const int _patch = 232;
         private const string _preRelease = "rc.1";
         private const string _metaData = "sdfkjsh.fs.jkhf++djkhf";
-        private const string _semver10String = "10.701.232";
-        private const string _fullSemver20String = _semver10String + "-" + _preRelease + "+" + _metaData;
+        private const string _fileVerString = "10.701.232";
+        private const string _semver10String = "10.701.232-beta.25.43";
+        private const string _fullSemver20String = _fileVerString + "-" + _preRelease + "+" + _metaData;
 
         [Fact]
         public void Serialize_SystemTextJson_IsSerialized()
@@ -96,14 +97,14 @@ namespace DotNet.Basics.Tests.Sys
             semVer.Major.Should().Be(_major);
             semVer.Minor.Should().Be(_minor);
             semVer.Patch.Should().Be(_patch);
-            semVer.PreRelease.ToString().Should().BeEmpty();
+            semVer.PreRelease.ToString().Should().Be("beta.25.43");
             semVer.Metadata.Should().BeEmpty();
         }
         [Fact]
-        public void Ctor_SemVer10_VersionIsParsed()
+        public void Ctor_FileVer_VersionIsParsed()
         {
             //act
-            var semVer = new SemVersion(_semver10String);
+            var semVer = new SemVersion(_fileVerString);
 
             //assert
             semVer.Major.Should().Be(_major);
@@ -114,10 +115,24 @@ namespace DotNet.Basics.Tests.Sys
         }
 
         [Fact]
+        public void Ctor_SemVer10_VersionIsParsed()
+        {
+            //act
+            var semVer = new SemVersion(_semver10String);
+
+            //assert
+            semVer.Major.Should().Be(_major);
+            semVer.Minor.Should().Be(_minor);
+            semVer.Patch.Should().Be(_patch);
+            semVer.PreRelease.ToString().Should().Be("beta.25.43");
+            semVer.Metadata.Should().BeEmpty();
+        }
+
+        [Fact]
         public void Ctor_SemVer20WoPreReleaseWithMetadata_VersionIsParsed()
         {
             //act
-            var semVer = new SemVersion($"{_semver10String}+{_metaData}");
+            var semVer = new SemVersion($"{_fileVerString}+{_metaData}");
 
             //assert
             semVer.Major.Should().Be(_major);

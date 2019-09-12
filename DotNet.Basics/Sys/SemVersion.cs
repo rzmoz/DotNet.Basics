@@ -39,15 +39,24 @@ namespace DotNet.Basics.Sys
         public SemVersionPreRelease PreRelease { get; set; }
         public string Metadata { get; set; }
 
-        public string SemVer10String => $"{Major}.{Minor}.{Patch}";
+        public string FileVerString => $"{Major}.{Minor}.{Patch}";
+
+        public string SemVer10String
+        {
+            get
+            {
+                var semVer10String = FileVerString;
+                if (PreRelease.Any)
+                    semVer10String += $"{SemVersionLexer.PreReleaseSeparator}{PreRelease}";
+                return semVer10String;
+            }
+        }
 
         public string SemVer20String
         {
             get
             {
                 var semVer20String = SemVer10String;
-                if (PreRelease.Any)
-                    semVer20String += $"{SemVersionLexer.PreReleaseSeparator}{PreRelease}";
                 if (IsNullOrWhiteSpace(Metadata) == false)
                     semVer20String += $"{SemVersionLexer.MetadataSeparator}{Metadata.TrimStart(SemVersionLexer.MetadataSeparator)}";
                 return semVer20String;
