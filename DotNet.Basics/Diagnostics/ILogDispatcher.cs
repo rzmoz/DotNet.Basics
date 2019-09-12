@@ -23,6 +23,6 @@ namespace DotNet.Basics.Diagnostics
         void Critical(string message, Exception e);
         void Write(LogLevel level, string message);
         void Write(LogLevel level, string message, Exception e);
-        void Timing(string name, string @event, TimeSpan duration);
+        void Timing(LogLevel level, string name, string @event, TimeSpan duration);
     }
 }

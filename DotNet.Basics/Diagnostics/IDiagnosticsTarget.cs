@@ -5,6 +5,6 @@ namespace DotNet.Basics.Diagnostics
     public interface IDiagnosticsTarget
     {
         Action<LogLevel, string, Exception> LogTarget { get; }
-        Action<string, string, TimeSpan> TimingTarget { get; }
+        Action<LogLevel, string, string, TimeSpan> TimingTarget { get; }
     }
 }

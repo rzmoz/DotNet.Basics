@@ -53,11 +53,11 @@ namespace DotNet.Basics.Diagnostics
             {
                 _operations.TryAdd(operation.Id, operation);
                 await action.Invoke().ConfigureAwait(false);
-                _log.Timing(operation.Name, "finished", operation.DurationNow);
+                _log.Timing(LogLevel.Success, operation.Name, "finished", operation.DurationNow);
             }
             catch (Exception e)
             {
-                _log.Timing($"{operation.Name}", $"FAILED: {e.Message}", operation.DurationNow);
+                _log.Timing(LogLevel.Error, $"{operation.Name}", $"FAILED: {e.Message}", operation.DurationNow);
                 throw;
             }
             finally

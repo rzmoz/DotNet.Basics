@@ -8,7 +8,7 @@ namespace DotNet.Basics.Diagnostics
     public class LogDispatcher : ILogDispatcher
     {
         public delegate void MessageLoggedEventHandler(LogLevel level, string message, Exception e);
-        public delegate void TimingLoggedEventHandler(string name, string @event, TimeSpan duration);
+        public delegate void TimingLoggedEventHandler(LogLevel level, string name, string @event, TimeSpan duration);
         public event MessageLoggedEventHandler MessageLogged;
         public event TimingLoggedEventHandler TimingLogged;
         public bool HasListeners => MessageLogged != null || TimingLogged != null;
@@ -16,7 +16,7 @@ namespace DotNet.Basics.Diagnostics
         /// <summary>
         /// Logs to nothing
         /// </summary>
-        public static ILogDispatcher NullLogger{ get; } = new NullLogger();
+        public static ILogDispatcher NullLogger { get; } = new NullLogger();
 
         private readonly ConcurrentStack<string> _context;
 
@@ -52,7 +52,7 @@ namespace DotNet.Basics.Diagnostics
             if (floatMessageLogged)
             {
                 newLogger.MessageLogged += (lvl, msg, e) => MessageLogged?.Invoke(lvl, msg, e);
-                newLogger.TimingLogged += (name, @event, duration) => TimingLogged?.Invoke(name, @event, duration);
+                newLogger.TimingLogged += (lvl, name, @event, duration) => TimingLogged?.Invoke(lvl, name, @event, duration);
             }
 
             return newLogger;
@@ -90,7 +90,6 @@ namespace DotNet.Basics.Diagnostics
         {
             Write(LogLevel.Success, message, e);
         }
-
         public void Warning(string message)
         {
             Warning(message, null);
@@ -123,9 +122,10 @@ namespace DotNet.Basics.Diagnostics
         {
             MessageLogged?.Invoke(level, $"{Context}{message}", e);
         }
-        public virtual void Timing(string name, string @event, TimeSpan duration)
+
+        public void Timing(LogLevel level, string name, string @event, TimeSpan duration)
         {
-            TimingLogged?.Invoke(name, @event, duration);
+            TimingLogged?.Invoke(level, name, @event, duration);
         }
 
         public override string ToString()

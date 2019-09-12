@@ -26,9 +26,9 @@ namespace DotNet.Basics.Tasks
 
         public string Name { get; }
 
-        protected virtual void FireTimingLogged(string name, string @event, TimeSpan duration)
+        protected virtual void FireTimingLogged(LogLevel level, string name, string @event, TimeSpan duration)
         {
-            TimingLogged?.Invoke(name, @event, duration);
+            TimingLogged?.Invoke(level, name, @event, duration);
         }
 
         protected virtual void FireMessageLogged(LogLevel level, string message, Exception e)
@@ -117,9 +117,9 @@ namespace DotNet.Basics.Tasks
             }
         }
 
-        protected override void FireTimingLogged(string name, string @event, TimeSpan duration)
+        protected override void FireTimingLogged(LogLevel level, string name, string @event, TimeSpan duration)
         {
-            _log.Timing(name, @event, duration);
+            _log.Timing(level, name, @event, duration);
         }
         protected override void FireMessageLogged(LogLevel level, string message, Exception e)
         {
