@@ -17,10 +17,11 @@ namespace DotNet.Basics.ExeTest
 
             return await cliHost.RunAsync("MyTask", (config, log) =>
             {
-                
-                //var result = PowerShellCli.RunScript(script, log);
+                var currentDir = typeof(Program).Assembly.Location.ToFile().Directory;
 
-                return Task.FromResult(200);
+                var file = currentDir.ToFile("Wrapper.ps1");
+                var result = PowerShellCli.RunFileInConsole(file.FullName(), log.Debug, log.Error);
+                return Task.FromResult(result);
             }).ConfigureAwait(false);
         }
     }
