@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
@@ -33,7 +32,7 @@ namespace DotNet.Basics.IO
         public int RunFromCmd(string fileName, params string[] args)
         {
             Install();
-            var argString = args.Aggregate(string.Empty, (current, param) => current + $" {param}");
+            var argString = args.JoinString(" ");
 
             var file = InstallDir.ToFile(fileName);
             if (file.Exists() == false)

@@ -41,7 +41,7 @@
     {
       "name": "DotNet.Basics.SevenZip",
       "version": "19.00.0",
-      "prerelease": "beta.2.0"
+      "prerelease": "beta.2.1"
     }
   ],
   "tests": [

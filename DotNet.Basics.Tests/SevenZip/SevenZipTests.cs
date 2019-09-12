@@ -37,9 +37,9 @@ namespace DotNet.Basics.Tests.SevenZip
                 targetPath.Exists().Should().BeTrue();
 
                 //act
-                Action action = () => _sevenZip.CreateFromDirectory("mySource", targetPath.FullName(), false);
+                Action action = () => _sevenZip.CreateZipFromDirectory("mySource", targetPath.FullName(), false);
 
-                action.Should().Throw<System.IO.IOException>();
+                action.Should().Throw<IOException>();
             });
 
         }
@@ -56,26 +56,50 @@ namespace DotNet.Basics.Tests.SevenZip
 
                 dummyFile.WriteAllText(dummyContent);
 
-                var targetZip = testDir.ToFile("CreateFromDirectory_Zip_ContentIsZipped", "myArchive.zip");
-                targetZip.DeleteIfExists();
+                var targetArchive = testDir.ToFile("CreateFromDirectory_Zip_ContentIsZipped", "myArchive.zip");
+                targetArchive.DeleteIfExists();
 
-                targetZip.Exists().Should().BeFalse();
+                targetArchive.Exists().Should().BeFalse();
 
                 //act
-                _sevenZip.CreateFromDirectory(sourceDir.FullName(), targetZip.FullName());
+                _sevenZip.CreateZipFromDirectory(sourceDir.FullName(), targetArchive.FullName());
 
-                targetZip.Exists().Should().BeTrue($"Exists:{targetZip.FullName()}");
-                using (var archive = ZipFile.OpenRead(targetZip.FullName()))
+                targetArchive.Exists().Should().BeTrue($"Exists:{targetArchive.FullName()}");
+                using (var archive = ZipFile.OpenRead(targetArchive.FullName()))
                 {
                     archive.Entries.Count.Should().Be(1);
 
                     using (var stream = archive.Entries.Single().Open())
-                    using (var reader = new System.IO.StreamReader(stream, Encoding.UTF8))
+                    using (var reader = new StreamReader(stream, Encoding.UTF8))
                     {
                         var read = reader.ReadToEnd();
                         read.Should().Be(dummyContent);
                     }
                 }
+            });
+        }
+
+        [Fact]
+        public void CreateFromDirectory_7z_ContentIsZipped()
+        {
+            ArrangeActAssertPaths(testDir =>
+            {
+                //arrange
+                var sourceDir = testDir.ToDir("CreateFromDirectory_7z_ContentIsZipped", "source");
+                var dummyFile = sourceDir.ToFile("myFile.txt");
+                var dummyContent = "dummyContent";
+
+                dummyFile.WriteAllText(dummyContent);
+
+                var targetArchive = testDir.ToFile("CreateFromDirectory_7z_ContentIsZipped", "myArchive.7z");
+                targetArchive.DeleteIfExists();
+
+                targetArchive.Exists().Should().BeFalse();
+
+                //act
+                _sevenZip.Create7zFromDirectory(sourceDir.FullName(), targetArchive.FullName());
+
+                targetArchive.Exists().Should().BeTrue($"Exists:{targetArchive.FullName()}");
             });
         }
 

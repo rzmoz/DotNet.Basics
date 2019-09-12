@@ -28,23 +28,37 @@ namespace DotNet.Basics.SevenZip
                 throw new IOException($"Archive not found: {archivePath}");
             if (Directory.Exists(targetDirPath))
                 throw new IOException($"Target dir already exists at: {targetDirPath}");
-            return ExecuteSevenZip("x", $"\"{archivePath}\"", $"\"-o{targetDirPath.ToDir().FullName()}\"", "*", "-r", "aoa");
+            return SevenZipCmd("x", $"\"{archivePath}\"", $"\"-o{targetDirPath.ToDir().FullName()}\"", "*", "-r", "aoa");
         }
 
-        public int CreateFromDirectory(string sourceDirPath, string archivePath, bool overwrite = false)
+        public int CreateZipFromDirectory(string sourceDirPath, string archivePath, bool overwrite = false)
         {
-            if (overwrite == false && archivePath.ToFile().Exists())
+            return CreateFromDirectory(sourceDirPath, archivePath.EnsureSuffix(".zip"), "zip", overwrite);
+        }
+
+        public int Create7zFromDirectory(string sourceDirPath, string archivePath, bool overwrite = false)
+        {
+            return CreateFromDirectory(sourceDirPath, archivePath.EnsureSuffix(".7z"), "7z", overwrite);
+        }
+
+        private int CreateFromDirectory(string sourceDirPath, string archivePath, string archiveType, bool overwrite = false)
+        {
+            if (Directory.Exists(sourceDirPath) == false)
+                throw new DirectoryNotFoundException(sourceDirPath);
+            if (overwrite)
+                archivePath.ToFile().DeleteIfExists();
+            else if (archivePath.ToFile().Exists())
                 throw new IOException($"Target archive path already exists: {archivePath}. Set overwrite to true to ignore");
-
-            archivePath.ToFile().DeleteIfExists();
-            return ExecuteSevenZip("a", $"\"{archivePath}\"", $"\"{sourceDirPath.ToDir().FullName()}\\*\"", "-tzip", "-mx3", "-mmt");
+            return SevenZipCmd("a", $"\"{archivePath}\"", $"\"{sourceDirPath.ToDir().FullName()}\\*\"", $"-t{archiveType}", $"-mx7", "-mmt");
         }
 
-        public int ExecuteSevenZip(string command, params string[] @params)
+        public int SevenZipCmd(string command, params string[] switches)
         {
-            var allArgs = new List<string>();
-            allArgs.Add(command);
-            allArgs.AddRange(@params);
+            var allArgs = new List<string>
+            {
+                command
+            };
+            allArgs.AddRange(switches);
             allArgs.Add("-y");
             return _sevenZipApp.RunFromCmd(_entryFileName, allArgs.ToArray());
         }
