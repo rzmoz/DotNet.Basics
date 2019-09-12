@@ -11,12 +11,11 @@ namespace DotNet.Basics.Sys
             if (path == null) throw new ArgumentNullException(nameof(path));
             var si = new ProcessStartInfo(path, args?.ToString() ?? string.Empty)
             {
-                WindowStyle = ProcessWindowStyle.Hidden,
                 RedirectStandardInput = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
-                CreateNoWindow = false
+                CreateNoWindow = true
             };
 
             try

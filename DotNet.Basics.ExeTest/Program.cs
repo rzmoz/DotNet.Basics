@@ -17,7 +17,7 @@ namespace DotNet.Basics.ExeTest
 
             return await cliHost.RunAsync("MyTask", (config, log) =>
             {
-                var script = "EXIT 200";
+                var script = @"C:\Projects\hs-sc9\scripts\Solution.PostBuild.Callback.ps1 -slnDir C:\Projects\hs-sc9\scripts -artifactsDir C:\Projects\hs-sc9\.releaseArtifacts";
                 var result = PowerShellCli.RunScript(script, log);
 
                 return Task.FromResult(200);

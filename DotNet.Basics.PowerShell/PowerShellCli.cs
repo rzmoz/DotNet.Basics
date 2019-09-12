@@ -12,7 +12,7 @@ namespace DotNet.Basics.PowerShell
 
         public static int RunFileInConsole(string fileArgs, Action<string> writeOutput = null, Action<string> writeError = null)
         {
-            return CmdPrompt.Run($"PowerShell -ExecutionPolicy bypass -NonInteractive -NoProfile -file {fileArgs}", writeOutput, writeError);
+            return CmdPrompt.Run($"PowerShell -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -File {fileArgs}", writeOutput, writeError);
         }
 
         public static object[] RunCmdlet(PowerShellCmdlet cmdLet, ILogDispatcher log = null)
