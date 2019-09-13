@@ -20,24 +20,26 @@ namespace DotNet.Basics.Sys
 
             try
             {
-                using var process = new Process { StartInfo = si };
-                if (writeOutput != null)
-                    process.OutputDataReceived += (sender, data) =>
-                    {
-                        if (data.Data != null) { writeOutput.Invoke(data.Data); }
-                    };
-                if (writeError != null)
-                    process.ErrorDataReceived += (sender, data) =>
-                    {
-                        if (data.Data != null) { writeError.Invoke(data.Data); }
-                    };
-                process.Start();
-                writeOutput?.Invoke($"Process [{process.ProcessName} | {process.Id}] started: {path} {args}");
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-                process.WaitForExit();
-                writeOutput?.Invoke($"Process [{process.ProcessName} | {process.Id}] exited with code: {process.ExitCode}");
-                return process.ExitCode;
+                using (var process = new Process {StartInfo = si})
+                {
+                    if (writeOutput != null)
+                        process.OutputDataReceived += (sender, data) =>
+                        {
+                            if (data.Data != null) { writeOutput.Invoke(data.Data); }
+                        };
+                    if (writeError != null)
+                        process.ErrorDataReceived += (sender, data) =>
+                        {
+                            if (data.Data != null) { writeError.Invoke(data.Data); }
+                        };
+                    process.Start();
+                    writeOutput?.Invoke($"Process [{process.ProcessName} | {process.Id}] started: {path} {args}");
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+                    process.WaitForExit();
+                    writeOutput?.Invoke($"Process [{process.ProcessName} | {process.Id}] exited with code: {process.ExitCode}");
+                    return process.ExitCode;
+                }
             }
             catch (Win32Exception e)
             {

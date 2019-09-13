@@ -35,7 +35,7 @@ namespace DotNet.Basics.Cli
             foreach (var arg in args)
             {
                 if (previousWasEnvironmentsKey)
-                    yield return arg.Split('|', StringSplitOptions.RemoveEmptyEntries).Select(arg => arg.Trim(' ').ToTitleCase()).Distinct(StringComparer.InvariantCultureIgnoreCase).JoinString(); //return distinct environments
+                    yield return arg.Split('|').Select(env=> env.Trim(' ').ToTitleCase()).Distinct(StringComparer.InvariantCultureIgnoreCase).JoinString(); //return distinct environments
                 else
                     yield return arg;
 

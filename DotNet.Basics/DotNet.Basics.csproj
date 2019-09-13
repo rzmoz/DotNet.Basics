@@ -1,9 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
-    <PackageLicenseUrl></PackageLicenseUrl>
-    <PackageProjectUrl>
-    </PackageProjectUrl>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Description>Syntactical sugar and fluent syntax for a few selected .NET operations</Description>
     <Authors>rzmoz</Authors>
     <Product />
@@ -14,4 +11,7 @@
     <FileVersion>0.0.0</FileVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="4.6.0-preview9.19421.4" />
+  </ItemGroup>
 </Project>

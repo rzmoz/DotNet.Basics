@@ -22,8 +22,7 @@ namespace DotNet.Basics.Cli.ConsoleOutput
         {
             var SYSTEM_TEAMFOUNDATIONSERVERURI = Environment.GetEnvironmentVariable("SYSTEM_TEAMFOUNDATIONSERVERURI");
             return SYSTEM_TEAMFOUNDATIONSERVERURI != null &&
-                   SYSTEM_TEAMFOUNDATIONSERVERURI.Contains("visualstudio.com",
-                       StringComparison.InvariantCultureIgnoreCase);
+                   SYSTEM_TEAMFOUNDATIONSERVERURI.ToLowerInvariant().Contains("visualstudio.com");
         }
 
         private static string OutputColorPrefix(LogLevel level)
