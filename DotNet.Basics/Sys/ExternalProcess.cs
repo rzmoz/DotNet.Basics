@@ -20,24 +20,26 @@ namespace DotNet.Basics.Sys
 
             try
             {
-                using (var process = new Process {StartInfo = si})
+                using (var process = new Process { StartInfo = si })
                 {
+                    var processId = process.Id;
                     if (writeOutput != null)
                         process.OutputDataReceived += (sender, data) =>
                         {
-                            if (data.Data != null) { writeOutput.Invoke(data.Data); }
+                            if (data.Data != null) { writeOutput.Invoke($"[{processId }] {data.Data}"); }
                         };
                     if (writeError != null)
                         process.ErrorDataReceived += (sender, data) =>
                         {
-                            if (data.Data != null) { writeError.Invoke(data.Data); }
+                            if (data.Data != null) { writeError.Invoke($"[{processId }] {data.Data}"); }
                         };
+
+                    writeOutput?.Invoke($"[{processId}] Process <{process.ProcessName}> starting: {path} {args}");
                     process.Start();
-                    writeOutput?.Invoke($"Process [{process.ProcessName} | {process.Id}] started: {path} {args}");
                     process.BeginOutputReadLine();
                     process.BeginErrorReadLine();
                     process.WaitForExit();
-                    writeOutput?.Invoke($"Process [{process.ProcessName} | {process.Id}] exited with code: {process.ExitCode}");
+                    writeOutput?.Invoke($"[{processId}] Process <{process.ProcessName}> Exit Code: {process.ExitCode}");
                     return process.ExitCode;
                 }
             }
