@@ -10,9 +10,9 @@ namespace DotNet.Basics.PowerShell
     {
         private const string _bypassExecutionPolicy = "Set-ExecutionPolicy Bypass -Scope Process";
 
-        public static int RunFileInConsole(string fileArgs, Action<string> writeOutput = null, Action<string> writeError = null)
+        public static int RunFileInConsole(string fileArgs, Action<string> writeOutput = null, Action<string> writeError = null, Action<string> writeDebug = null)
         {
-            return CmdPrompt.Run($"PowerShell -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -File {fileArgs}", writeOutput, writeError);
+            return CmdPrompt.Run($"PowerShell -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -File {fileArgs}", writeOutput, writeError, writeDebug);
         }
 
         public static object[] RunCmdlet(PowerShellCmdlet cmdLet, ILogDispatcher log = null)

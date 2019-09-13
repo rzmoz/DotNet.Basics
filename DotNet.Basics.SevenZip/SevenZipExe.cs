@@ -14,9 +14,9 @@ namespace DotNet.Basics.SevenZip
         private readonly FileApplication _sevenZipApp;
         private const string _entryFileName = "7za.exe";
 
-        public SevenZipExe(Action<string> writeOutput = null, Action<string> writeError = null)
+        public SevenZipExe(Action<string> writeOutput = null, Action<string> writeError = null, Action<string> writeDebug = null)
         {
-            _sevenZipApp = new FileApplication("7Zip", writeOutput, writeError)
+            _sevenZipApp = new FileApplication("7Zip", writeOutput, writeError, writeDebug)
                 .WithStream(_entryFileName, _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.exe"))
                 .WithStream("7za.dll", _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7za.dll"))
                 .WithStream("7zxa.dll", _sevenZipAssembly.GetManifestResourceStream("DotNet.Basics.SevenZip.7zxa.dll"));

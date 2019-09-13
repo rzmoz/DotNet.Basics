@@ -29,7 +29,7 @@ namespace DotNet.Basics.Tests.PowerShell
 
             var exitCode = PowerShellCli.RunFileInConsole(path, writeError: error => errors.Add(error));
             exitCode.Should().Be(-196608);
-            errors.Single().Should().Be($"The argument '{path}' to the -File parameter does not exist. Provide the path to an existing '.ps1' file as an argument to the -File parameter.");
+            errors.Single().Should().EndWith($"The argument '{path}' to the -File parameter does not exist. Provide the path to an existing '.ps1' file as an argument to the -File parameter.");
         }
 
         [Fact]

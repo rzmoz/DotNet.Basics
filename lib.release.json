@@ -6,7 +6,7 @@
     {
       "name": "DotNet.Basics",
       "version": "10.0.0",
-      "prerelease": "beta.4.0"
+      "prerelease": "beta.4.1"
     },
     {
       "name": "DotNet.Basics.Autofac",
@@ -16,7 +16,7 @@
     {
       "name": "DotNet.Basics.Cli",
       "version": "10.0.0",
-      "prerelease": "beta.3.0"
+      "prerelease": "beta.3.1"
     },
     {
       "name": "DotNet.Basics.Net.Http",
@@ -31,7 +31,7 @@
     {
       "name": "DotNet.Basics.PowerShell",
       "version": "7.0.0",
-      "prerelease": "beta.3.0"
+      "prerelease": "beta.3.1"
     },
     {
       "name": "DotNet.Basics.SeriLog",
@@ -41,7 +41,7 @@
     {
       "name": "DotNet.Basics.SevenZip",
       "version": "19.00.0",
-      "prerelease": "beta.3.0"
+      "prerelease": "beta.3.1"
     }
   ],
   "tests": [
