@@ -8,7 +8,7 @@ namespace DotNet.Basics.Sys
     {
         public override SemVersion Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return new SemVersion(reader.GetString());
+            return SemVersion.Parse(reader.GetString());
         }
 
         public override void Write(Utf8JsonWriter writer, SemVersion value, JsonSerializerOptions options)

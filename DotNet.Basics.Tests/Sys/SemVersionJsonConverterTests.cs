@@ -7,30 +7,31 @@ namespace DotNet.Basics.Tests.Sys
 {
     public class SemVersionJsonConverterTests
     {
+        private const string _rawJson = @"""1.0.3-beta.1.2\u002BHelloWorld""";
+        private const string _rawVersion = @"1.0.3-beta.1.2+HelloWorld";
+
         [Fact]
         public void Convert_Serialize_PathIsSerialized()
         {
-            var rawVersion = @"1.0.3-beta.1.2+HelloWorld";
-            var semVer = new SemVersion(rawVersion);
+            var semVer = new SemVersion(_rawVersion);
 
             var json = JsonSerializer.Serialize(semVer, new JsonSerializerOptions
             {
                 Converters = { new SemVersionJsonConverter() }
             });
 
-            json.Should().Be($@"""{rawVersion.Replace("\\", "\\\\")}""");
+            json.Should().Be(_rawJson);
         }
 
         [Fact]
         public void Convert_Deserialize_PathIsDeserialized()
         {
-            var rawVersion = @"1.0.3-beta.1.2+HelloWorld";
-            var version = JsonSerializer.Deserialize<SemVersion>($@"""{rawVersion.Replace("\\", "\\\\")}""", new JsonSerializerOptions
+            var version = JsonSerializer.Deserialize<SemVersion>(_rawJson, new JsonSerializerOptions
             {
                 Converters = { new SemVersionJsonConverter() }
             });
 
-            version.SemVer20String.Should().Be(rawVersion);
+            version.SemVer20String.Should().Be(_rawVersion);
         }
     }
 }
