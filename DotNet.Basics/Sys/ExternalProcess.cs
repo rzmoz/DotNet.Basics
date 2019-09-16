@@ -22,20 +22,18 @@ namespace DotNet.Basics.Sys
             {
                 using (var process = new Process { StartInfo = si })
                 {
-                    var processId = 0;
                     if (writeOutput != null)
                         process.OutputDataReceived += (sender, data) =>
                         {
-                            if (data.Data != null) { writeOutput.Invoke($"[{processId}] {data.Data}"); }
+                            if (data.Data != null) { writeOutput.Invoke(data.Data); }
                         };
                     if (writeError != null)
                         process.ErrorDataReceived += (sender, data) =>
                         {
-                            if (data.Data != null) { writeError.Invoke($"[{processId}] {data.Data}"); }
+                            if (data.Data != null) { writeError.Invoke(data.Data); }
                         };
 
                     process.Start();
-                    processId = process.Id;
                     writeDebug?.Invoke($"[{process.Id}] Process <{process.ProcessName}> starting: {path} {args}");
                     process.BeginOutputReadLine();
                     process.BeginErrorReadLine();
