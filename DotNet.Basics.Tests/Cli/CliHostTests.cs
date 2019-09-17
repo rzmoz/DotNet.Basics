@@ -10,6 +10,20 @@ namespace DotNet.Basics.Tests.Cli
     public class CliHostTests
     {
         [Fact]
+        public void HasValue_CheckIsSet_Flag_FlagIsSet()
+        {
+            var flagWithValue = "myFlagWithValue";
+            var flagWoValue = "myFlagWoValue";
+
+            var args = new[] { $"-{flagWoValue}", $"-{flagWithValue}", "SomeValue" };
+
+            var host = new CliHostBuilder(args).Build();
+
+            host.HasValue(flagWoValue).Should().BeFalse();
+            host.HasValue(flagWithValue).Should().BeTrue();
+        }
+
+        [Fact]
         public void IsSet_Flag_FlagIsSet()
         {
             var flag = "myFlag";

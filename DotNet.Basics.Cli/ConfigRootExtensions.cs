@@ -11,5 +11,14 @@ namespace DotNet.Basics.Cli
         {
             return config[ArgsExtensions.EnvironmentsKey]?.Split('|') ?? _emptyList;
         }
+
+        public static bool IsSet(this IConfigurationRoot config,string key)
+        {
+            return config[key] != null;
+        }
+        public static bool HasValue(this IConfigurationRoot config, string key)
+        {
+            return string.IsNullOrWhiteSpace(config[key]) == false && config[key] != ArgsExtensions.IsSetValue;
+        }
     }
 }

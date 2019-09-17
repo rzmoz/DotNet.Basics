@@ -12,5 +12,8 @@ namespace DotNet.Basics.Cli
         IReadOnlyList<string> Args { get; }
         IConfigurationRoot Config { get; }
         IReadOnlyCollection<string> Environments { get; }
+
+        bool IsSet(string key);
+        bool HasValue(string key);
     }
 }

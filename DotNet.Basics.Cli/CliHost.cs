@@ -26,14 +26,15 @@ namespace DotNet.Basics.Cli
         public IReadOnlyCollection<string> Environments => Config.Environments();
         public bool Verbose { get; }
 
-        public bool IsSet(string key) => Config[key] != null || Args.IsSet(key);
+        public bool IsSet(string key) => Config.IsSet(key) || Args.IsSet(key);
+        public bool HasValue(string key) => Config.HasValue(key);
 
         public virtual async Task<int> RunAsync(string name, Func<ICliConfiguration, ILogDispatcher, Task<int>> asyncAction, CliHostOptions options = null)
         {
             if (asyncAction == null) throw new ArgumentNullException(nameof(asyncAction));
             if (options == null)
                 options = new CliHostOptions();
-            
+
             try
             {
                 LongRunningOperations.Init(Log, options.LongRunningOperationsPingInterval);

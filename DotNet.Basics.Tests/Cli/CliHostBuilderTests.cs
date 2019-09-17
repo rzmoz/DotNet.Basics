@@ -13,8 +13,7 @@ namespace DotNet.Basics.Tests.Cli
             var value = "myValue";
             string[] args = { $"-{nameof(TestCliHost.MySetting)}", value };
 
-            var host = new CliHostBuilder(args)
-                .Build();
+            var host = new CliHostBuilder(args).Build();
 
             host[nameof(TestCliHost.MySetting)].Should().Be(value);
         }

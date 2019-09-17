@@ -9,7 +9,7 @@ namespace DotNet.Basics.Cli
     public static class ArgsExtensions
     {
         public static readonly char[] ConfigurationSwitchFlags = { DefaultArgsSwitch, '/' };
-        public const string IsSetValue = "IsSet";
+        public const string IsSetValue = "___IsSet___";
 
         public const char DefaultArgsSwitch = '-';
         public const string MicrosoftExtensionsArgsSwitch = "--";
