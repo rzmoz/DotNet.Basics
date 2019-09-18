@@ -41,6 +41,16 @@ namespace DotNet.Basics.Tests.Sys
         }
 
         [Fact]
+        public void ToSemVersion_Construction_SemVersionIsConstructed()
+        {
+            //act
+            var semVer = _fullSemver20String.ToSemVersion();
+
+            //assert
+            semVer.SemVer20String.Should().Be(_fullSemver20String);
+        }
+
+        [Fact]
         public void Deserialization_Newtonsoft_StringIsDeserialized()
         {
             var jsonStr = @"{""Major"":10,""Minor"":701,""Patch"":232,""PreRelease"":{""Identifiers"":[{""Identifier"":""rc"",""IsNumeric"":false},{""Identifier"":""1"",""IsNumeric"":true}]},""Metadata"":""sdfkjsh.fs.jkhf++djkhf"",""SemVer10String"":""10.701.232"",""SemVer20String"":""10.701.232-rc.1+sdfkjsh.fs.jkhf++djkhf""}";
@@ -56,7 +66,7 @@ namespace DotNet.Basics.Tests.Sys
         public void ToSemver20String_ToString_StringIsFormatted(string semVer20String)
         {
             //act
-            var semVer = new SemVersion(semVer20String);
+            var semVer = semVer20String.ToSemVersion();
 
             //assert
             semVer.SemVer20String.Should().Be(semVer20String);
