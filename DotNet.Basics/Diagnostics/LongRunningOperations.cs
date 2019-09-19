@@ -30,7 +30,7 @@ namespace DotNet.Basics.Diagnostics
                     Enabled = true
                 };
                 _timer.Elapsed += _timer_Elapsed;
-                _log.Verbose($"Long running operations initialized with ping feedback: {pingInterval:hh\\:mm\\:ss}");
+                _log.Verbose($"Long running operations initialized with ping feedback: {$"{pingInterval:hh\\:mm\\:ss}".Highlight()}");
             }
         }
 

@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using DotNet.Basics.Cli;
 using DotNet.Basics.Cli.ConsoleOutput;
-using DotNet.Basics.IO;
-using DotNet.Basics.PowerShell;
+using DotNet.Basics.Diagnostics;
 
 namespace DotNet.Basics.ExeTest
 {
@@ -17,12 +17,14 @@ namespace DotNet.Basics.ExeTest
 
             return await cliHost.RunAsync("MyTask", (config, log) =>
             {
-                var currentDir = typeof(Program).Assembly.Location.ToFile().Directory;
-
-                var file = currentDir.ToFile("Wrapper.ps1");
-                var result = PowerShellCli.RunFileInConsole(file.FullName(), log.Debug, log.Error);
-                return Task.FromResult(result);
+                foreach (LogLevel level in (LogLevel[])Enum.GetValues(typeof(LogLevel)))
+                {
+                    cliHost.Log.Write(level, $"{level}: Hello {"World!".Highlight()}");
+                    cliHost.Log.Write(level, "");
+                }
+                return Task.FromResult(0);
             }).ConfigureAwait(false);
         }
     }
 }
+

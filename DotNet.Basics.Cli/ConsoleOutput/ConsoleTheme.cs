@@ -7,13 +7,13 @@ namespace DotNet.Basics.Cli.ConsoleOutput
     {
         public static ConsoleTheme Default { get; } = new ConsoleTheme
         {
-            Verbose = new ConsoleFormat(Color.DarkSlateGray, Color.Empty, Color.DarkGray),
-            Debug = new ConsoleFormat(Color.DarkCyan, Color.Empty, Color.DarkGray),
-            Information = new ConsoleFormat(Color.White, Color.Empty, Color.Cyan),
-            Success = new ConsoleFormat(Color.Green, Color.Empty, Color.White),
-            Warning = new ConsoleFormat(Color.Yellow, Color.Empty,Color.Black, Color.DarkOrange),
-            Error = new ConsoleFormat(Color.Red, Color.Empty, Color.Red, Color.Black),
-            Critical = new ConsoleFormat(Color.White, Color.DarkRed, Color.White, Color.Black)
+            Verbose = new ConsoleFormat(Color.DarkSlateGray, Color.Empty, Color.Gray),
+            Debug = new ConsoleFormat(Color.DarkCyan, Color.Empty, Color.DarkTurquoise),
+            Information = new ConsoleFormat(Color.White, Color.Empty, Color.Violet),
+            Success = new ConsoleFormat(Color.Green, Color.Empty, Color.LightGreen),
+            Warning = new ConsoleFormat(Color.DarkOrange, Color.Empty, Color.Yellow),
+            Error = new ConsoleFormat(Color.Red, Color.Empty, Color.White, Color.DarkRed),
+            Critical = new ConsoleFormat(Color.White, Color.DarkRed, Color.Red, Color.Black)
         };
 
         public ConsoleFormat Verbose { get; set; } = ConsoleFormat.Empty;
