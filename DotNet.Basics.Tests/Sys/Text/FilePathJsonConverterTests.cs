@@ -1,10 +1,10 @@
-﻿using System.Text.Json;
-using DotNet.Basics.IO;
+﻿using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
+using DotNet.Basics.Sys.Text;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Sys
+namespace DotNet.Basics.Tests.Sys.Text
 {
     public class FilePathJsonConverterTests
     {
@@ -14,10 +14,7 @@ namespace DotNet.Basics.Tests.Sys
             var rawPath = @"c:\my\file.txt";
             var file = rawPath.ToFile();
 
-            var json = JsonSerializer.Serialize(file, new JsonSerializerOptions
-            {
-                Converters = { new FilePathJsonConverter() }
-            });
+            var json = file.SerializeToJson();
 
             json.Should().Be($@"""{rawPath.Replace("\\", "\\\\")}""");
         }
@@ -26,10 +23,7 @@ namespace DotNet.Basics.Tests.Sys
         public void Convert_Deserialize_PathIsDeserialized()
         {
             var rawPath = @"c:\my\file.txt";
-            var path = JsonSerializer.Deserialize<FilePath>($@"""{rawPath.Replace("\\", "\\\\")}""", new JsonSerializerOptions
-            {
-                Converters = { new FilePathJsonConverter() }
-            });
+            var path = $@"""{rawPath.Replace("\\", "\\\\")}""".DeserializeJson<FilePath>();
 
             path.RawPath.Should().Be(rawPath);
         }

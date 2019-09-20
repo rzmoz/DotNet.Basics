@@ -1,10 +1,10 @@
-﻿using System.Text.Json;
-using DotNet.Basics.IO;
+﻿using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
+using DotNet.Basics.Sys.Text;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Sys
+namespace DotNet.Basics.Tests.Sys.Text
 {
     public class DirPathJsonConverterTests
     {
@@ -14,10 +14,7 @@ namespace DotNet.Basics.Tests.Sys
             var rawPath = @"c:\my\path\";
             var dir = rawPath.ToDir();
 
-            var json = JsonSerializer.Serialize(dir, new JsonSerializerOptions
-            {
-                Converters = { new DirPathJsonConverter() }
-            });
+            var json = dir.SerializeToJson();
 
             json.Should().Be($@"""{rawPath.Replace("\\", "\\\\")}""");
         }
@@ -26,10 +23,7 @@ namespace DotNet.Basics.Tests.Sys
         public void Convert_Deserialize_PathIsDeserialized()
         {
             var rawPath = @"c:\my\path\";
-            var path = JsonSerializer.Deserialize<DirPath>($@"""{rawPath.Replace("\\", "\\\\")}""", new JsonSerializerOptions
-            {
-                Converters = { new DirPathJsonConverter() }
-            });
+            var path = $@"""{rawPath.Replace("\\", "\\\\")}""".DeserializeJson<DirPath>();
 
             path.RawPath.Should().Be(rawPath);
         }

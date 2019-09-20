@@ -1,9 +1,9 @@
-﻿using System.Text.Json;
-using DotNet.Basics.Sys;
+﻿using DotNet.Basics.Sys;
+using DotNet.Basics.Sys.Text;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Sys
+namespace DotNet.Basics.Tests.Sys.Text
 {
     public class SemVersionJsonConverterTests
     {
@@ -15,10 +15,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             var semVer = new SemVersion(_rawVersion);
 
-            var json = JsonSerializer.Serialize(semVer, new JsonSerializerOptions
-            {
-                Converters = { new SemVersionJsonConverter() }
-            });
+            var json = semVer.SerializeToJson();
 
             json.Should().Be(_rawJson);
         }
@@ -26,10 +23,7 @@ namespace DotNet.Basics.Tests.Sys
         [Fact]
         public void Convert_Deserialize_PathIsDeserialized()
         {
-            var version = JsonSerializer.Deserialize<SemVersion>(_rawJson, new JsonSerializerOptions
-            {
-                Converters = { new SemVersionJsonConverter() }
-            });
+            var version = _rawJson.DeserializeJson<SemVersion>();
 
             version.SemVer20String.Should().Be(_rawVersion);
         }

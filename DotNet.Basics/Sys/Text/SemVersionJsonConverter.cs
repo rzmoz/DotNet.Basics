@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace DotNet.Basics.Sys
+namespace DotNet.Basics.Sys.Text
 {
     public class SemVersionJsonConverter : JsonConverter<SemVersion>
     {

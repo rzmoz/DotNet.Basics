@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using DotNet.Basics.IO;
 
-namespace DotNet.Basics.Sys
+namespace DotNet.Basics.Sys.Text
 {
     public class DirPathJsonConverter : JsonConverter<DirPath>
     {
