@@ -19,8 +19,6 @@ namespace DotNet.Basics.Diagnostics
         void Warning(string message, Exception e);
         void Error(string message);
         void Error(string message, Exception e);
-        void Critical(string message);
-        void Critical(string message, Exception e);
         void Write(LogLevel level, string message);
         void Write(LogLevel level, string message, Exception e);
         void Timing(LogLevel level, string name, string @event);

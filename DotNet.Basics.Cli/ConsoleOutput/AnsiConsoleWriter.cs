@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using DotNet.Basics.Diagnostics;
 
 namespace DotNet.Basics.Cli.ConsoleOutput
 {
     public class AnsiConsoleWriter : ConsoleWriter
     {
-        private readonly object _syncRoot = new object();
         private readonly ConsoleTheme _consoleTheme;
         private static readonly AnsiForegroundColor _gutterColor = new AnsiForegroundColor(Color.DarkGray);
 
@@ -46,26 +44,10 @@ namespace DotNet.Basics.Cli.ConsoleOutput
             }
         }
 
-        private string WriteOutput(LogLevel level, string message, Exception e = null)
+        protected override string FormatLogOutput(LogLevel level, string message, Exception e = null)
         {
             var format = _consoleTheme.Get(level);
-
-            var outputBuilder = new StringBuilder();
-            outputBuilder.Append($"[{ToOutputString(level)}]".AnsiColorize(format));
-            outputBuilder.Append(" ");
-            outputBuilder.Append($"{message.AnsiColorize(format)}\r\n{e?.ToString().AnsiColorize(_gutterColor)}");
-            return outputBuilder.ToString();
-        }
-
-
-        public override void Write(LogLevel level, string message, Exception e = null)
-        {
-            lock (_syncRoot)
-            {
-                var output = WriteOutput(level, message, e);
-                Console.Out.Write(output);
-                Console.Out.Flush();
-            }
+            return base.FormatLogOutput(level, message, e).AnsiColorize(format);
         }
     }
 }

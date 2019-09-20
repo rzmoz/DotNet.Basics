@@ -1,21 +1,13 @@
 ﻿using System;
-using System.Text;
 using DotNet.Basics.Diagnostics;
 
 namespace DotNet.Basics.Cli.ConsoleOutput
 {
     public class AzureDevOpsConsoleWriter : ConsoleWriter
     {
-        public override void Write(LogLevel level, string message, Exception e = null)
+        protected override string FormatLogLevel(LogLevel level)
         {
-            var outputBuilder = new StringBuilder();
-            outputBuilder.Append($"{OutputColorPrefix(level)} ");
-            outputBuilder.Append($"{message}");
-            if (!(e is CliException exception && exception.LogOptions == LogOptions.ExcludeStackTrace))
-                outputBuilder.Append($"\r\n{e}");
-            var output = outputBuilder.ToString().StripHighlight();
-
-            Console.Write(output);
+            return OutputColorPrefix(level);
         }
 
         public static bool EnvironmentIsAzureDevOpsHostedAgent()
@@ -29,9 +21,9 @@ namespace DotNet.Basics.Cli.ConsoleOutput
         {
             switch (level)
             {
-                case LogLevel.Verbose:
+                case LogLevel.Vrb:
                     return "##[command]";
-                case LogLevel.Debug:
+                case LogLevel.Dbg:
                     return "##[debug]";
                 case LogLevel.Info:
                     return string.Empty;
@@ -40,7 +32,6 @@ namespace DotNet.Basics.Cli.ConsoleOutput
                 case LogLevel.Warning:
                     return "##vso[task.logissue type=warning;]";
                 case LogLevel.Error:
-                case LogLevel.Critical:
                     return "##vso[task.logissue type=error;]";
                 default:
                     return string.Empty;

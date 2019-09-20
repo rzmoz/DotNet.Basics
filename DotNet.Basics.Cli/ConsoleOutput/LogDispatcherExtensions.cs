@@ -31,7 +31,7 @@ namespace DotNet.Basics.Cli.ConsoleOutput
             if (AnsiConsoleWriter.IsSupported)
                 return AddDiagnosticsTarget(log, ansiConsole);
             if (logIfNotSupported)
-                log.Critical($"{nameof(AnsiConsoleWriter)} is not supported. This means that this environment does not support this ANSI console so it was NOT added as a diagnostics target!!");
+                log.Error($"{nameof(AnsiConsoleWriter)} is not supported. This means that this environment does not support this ANSI console so it was NOT added as a diagnostics target!!");
             return log;
         }
         public static ILogDispatcher AddSystemConsole(this ILogDispatcher log)

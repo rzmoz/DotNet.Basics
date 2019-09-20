@@ -38,13 +38,10 @@ namespace DotNet.Basics.Cli
             try
             {
                 LongRunningOperations.Init(Log, options.LongRunningOperationsPingInterval);
-                var exitCode = int.MinValue;
-                await LongRunningOperations.StartAsync(name, async () =>
-                {
-                    exitCode = await asyncAction.Invoke(this, Log).ConfigureAwait(false);
-                }).ConfigureAwait(false);
 
-                return exitCode;
+                return await LongRunningOperations.StartAsync(name, async () =>
+                    await asyncAction.Invoke(this, Log).ConfigureAwait(false))
+                    .ConfigureAwait(false);
             }
             catch (CliException e)
             {

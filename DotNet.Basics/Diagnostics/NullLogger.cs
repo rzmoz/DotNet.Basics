@@ -41,10 +41,6 @@ namespace DotNet.Basics.Diagnostics
         { }
         public void Error(string message, Exception e)
         { }
-        public void Critical(string message)
-        { }
-        public void Critical(string message, Exception e)
-        { }
         public void Write(LogLevel level, string message)
         { }
         public void Write(LogLevel level, string message, Exception e)

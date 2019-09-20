@@ -12,8 +12,7 @@ namespace DotNet.Basics.Cli.ConsoleOutput
             Information = new ConsoleFormat(Color.White, Color.Empty, Color.Violet),
             Success = new ConsoleFormat(Color.Green, Color.Empty, Color.LightGreen),
             Warning = new ConsoleFormat(Color.DarkOrange, Color.Empty, Color.Yellow),
-            Error = new ConsoleFormat(Color.Red, Color.Empty, Color.White, Color.DarkRed),
-            Critical = new ConsoleFormat(Color.White, Color.DarkRed, Color.Red, Color.Black)
+            Error = new ConsoleFormat(Color.Red, Color.Empty, Color.White, Color.DarkRed)
         };
 
         public ConsoleFormat Verbose { get; set; } = ConsoleFormat.Empty;
@@ -22,15 +21,14 @@ namespace DotNet.Basics.Cli.ConsoleOutput
         public ConsoleFormat Success { get; set; } = ConsoleFormat.Empty;
         public ConsoleFormat Warning { get; set; } = ConsoleFormat.Empty;
         public ConsoleFormat Error { get; set; } = ConsoleFormat.Empty;
-        public ConsoleFormat Critical { get; set; } = ConsoleFormat.Empty;
 
         public ConsoleFormat Get(LogLevel level)
         {
             switch (level)
             {
-                case LogLevel.Verbose:
+                case LogLevel.Vrb:
                     return Verbose;
-                case LogLevel.Debug:
+                case LogLevel.Dbg:
                     return Debug;
                 case LogLevel.Info:
                     return Information;
@@ -40,8 +38,6 @@ namespace DotNet.Basics.Cli.ConsoleOutput
                     return Warning;
                 case LogLevel.Error:
                     return Error;
-                case LogLevel.Critical:
-                    return Critical;
                 default:
                     return ConsoleFormat.Empty;
             }

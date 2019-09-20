@@ -47,7 +47,7 @@ namespace DotNet.Basics.Tests.Cli
             host.Verbose.Should().BeFalse();
         }
         [Theory]
-        [InlineData("Verbose")]//spelled on point
+        [InlineData("Vrb")]//spelled on point
         [InlineData("verbose")]//all lower case
         [InlineData("VERBOSE")]//all upper case
         [InlineData("vErBOSe")]//mixed casing
