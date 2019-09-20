@@ -13,7 +13,6 @@ namespace DotNet.Basics.Cli
             Args = args ?? throw new ArgumentNullException(nameof(args));
             Config = config ?? throw new ArgumentNullException(nameof(config));
             Log = log;
-            Verbose = config[nameof(Verbose)] != null;
         }
 
         public string this[string key, int index] => this[key] ?? this[index];
@@ -24,7 +23,6 @@ namespace DotNet.Basics.Cli
         public IConfigurationRoot Config { get; }
         public ILogDispatcher Log { get; }
         public IReadOnlyCollection<string> Environments => Config.Environments();
-        public bool Verbose { get; }
 
         public bool IsSet(string key) => Config.IsSet(key) || Args.IsSet(key);
         public bool HasValue(string key) => Config.HasValue(key);

@@ -38,29 +38,6 @@ namespace DotNet.Basics.Tests.Cli
         }
 
         [Fact]
-        public void Verbose_NotSet_VerboseIsFalse()
-        {
-            var args = new[] { "something" };
-
-            var host = new CliHostBuilder(args).Build();
-
-            host.Verbose.Should().BeFalse();
-        }
-        [Theory]
-        [InlineData("Vrb")]//spelled on point
-        [InlineData("verbose")]//all lower case
-        [InlineData("VERBOSE")]//all upper case
-        [InlineData("vErBOSe")]//mixed casing
-        public void Verbose_IsSet_VerboseIsTrue(string arg)
-        {
-            var args = new[] { $"-{arg}" };
-
-            var host = new CliHostBuilder(args).Build();
-
-            host.Verbose.Should().BeTrue();
-        }
-
-        [Fact]
         public void Configuration_AppSettingsJson_ConfigurationIsEnvironmentSpecific()
         {
             var environment = "test";
