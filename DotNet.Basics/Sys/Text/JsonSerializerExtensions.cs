@@ -25,9 +25,9 @@ namespace DotNet.Basics.Sys.Text
             updateOptions?.Invoke(options);
             return JsonSerializer.Serialize(value, options);
         }
-        public static TValue DeserializeJson<TValue>(this string json, bool writeIndented = false, Action<JsonSerializerOptions> updateOptions = null)
+        public static TValue DeserializeJson<TValue>(this string json, Action<JsonSerializerOptions> updateOptions = null)
         {
-            var options = GetJsonSerializerOptions(writeIndented);
+            var options = GetJsonSerializerOptions(false);
             updateOptions?.Invoke(options);
             return JsonSerializer.Deserialize<TValue>(json, options);
         }
