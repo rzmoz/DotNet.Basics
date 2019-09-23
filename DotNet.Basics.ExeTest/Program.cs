@@ -22,7 +22,7 @@ namespace DotNet.Basics.ExeTest
 
             return await cliHost.RunAsync("MyTask", async (config, log) =>
             {
-                var levels = (IEnumerable<LogLevel>)Enum.GetValues(typeof(LogLevel));
+                var levels = (ICollection<LogLevel>)Enum.GetValues(typeof(LogLevel));
                 await levels.ForEachParallelAsync(async level =>
                 {
                     await LongRunningOperations.StartAsync(level.ToName(), async () =>
