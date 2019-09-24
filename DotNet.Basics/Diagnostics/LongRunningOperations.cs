@@ -48,11 +48,11 @@ namespace DotNet.Basics.Diagnostics
             if (_operations.Any() == false)
                 return;
 
-            var message = $"{nameof(LongRunningOperations)}:\r\n".WithGutter();
+            var message = string.Empty;
             foreach (var operation in _operations.Values.OrderBy(o => o.StartTime))
-                message += $"[ {operation.Name.Highlight()} has been running for {operation.DurationNowFormatted.Highlight()} ]\r\n".WithGutter();
+                message += $"[ {operation.Name.Highlight()} has been running for {operation.DurationNowFormatted.Highlight()} ]\r\n";
 
-            _log.Verbose(message);
+            _log.Verbose(message.WithGutter());
         }
 
         public static async Task<int> StartAsync(string name, Func<Task<int>> action)

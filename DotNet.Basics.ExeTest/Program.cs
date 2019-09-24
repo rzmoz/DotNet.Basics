@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DotNet.Basics.Cli;
 using DotNet.Basics.Cli.ConsoleOutput;
@@ -27,10 +28,12 @@ namespace DotNet.Basics.ExeTest
                 {
                     await LongRunningOperations.StartAsync(level.ToName(), async () =>
                     {
-                        cliHost.Log.Write(level, $"{level}: Hello {"World!".Highlight()}");
-                        cliHost.Log.Write(level, string.Empty);
+                        var someLongText = Enumerable.Range(0, 5).Select(i => $"lorem ipsum {i}").JoinString("\r\n");
 
-                        throw new ApplicationException(level.ToName());
+
+                        log.Info(someLongText.WithGutter());
+
+                        await Task.Delay(3.Seconds()).ConfigureAwait(false);
                         return 0;
 
                     }).ConfigureAwait(false);

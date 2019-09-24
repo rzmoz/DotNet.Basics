@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Diagnostics
@@ -23,7 +23,9 @@ namespace DotNet.Basics.Diagnostics
         }
         public static string WithIndent(this string msg, int indent = 4)
         {
-            var indentString = string.Join("", Enumerable.Range(0, indent).Select(r => " ").ToArray());
+            var indentString = new string(' ', indent);
+            if (msg.Contains("\r\n"))
+                msg = Environment.NewLine + msg;
             return indentString + msg.Replace("\r\n", $"\r\n{indentString}");
         }
     }
