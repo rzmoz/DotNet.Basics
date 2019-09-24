@@ -72,7 +72,6 @@ namespace DotNet.Basics.Diagnostics
             catch (Exception e)
             {
                 _log.Timing(LogLevel.Error, $"{operation.Name}", $"FAILED with exception: {e.Message}", operation.DurationNow);
-                _log.Error(e.Message, e);
                 throw;
             }
             finally
