@@ -13,6 +13,17 @@ namespace DotNet.Basics.Tests.IO
         public PathInfoExtensionsTests(ITestOutputHelper output) : base(output)
         { }
 
+        [Theory]
+        [InlineData(@"inetpub\dir", false)] // relative path
+        [InlineData(@"c:\inetpub", true)] //absolute path
+        [InlineData(@"\\myServer\some\dir", true)]//UNC path
+        public void IsRooted_Detection_DetectsIfPathIsRooted(string path, bool expected)
+        {
+            var asPath = path.ToPath();
+
+            asPath.IsRooted().Should().Be(expected, path);
+        }
+
         [Fact]
         public void DeleteIfExists_DirExists_DirIsDeleted()
         {

@@ -7,6 +7,26 @@ namespace DotNet.Basics.Tests.Sys
 {
     public class PathInfoTests
     {
+        [Theory]
+        [InlineData(@"http://localhost/dir")]
+        public void RawPath_SlashSeparator_SeparatorIsKept(string path)
+        {
+            //def path separator
+            var pi = path.ToPath();
+            pi.RawPath.Should().Be(path);
+        }
+
+        [Fact]
+        public void UriScheme_Detection_SchemeIsKept()
+        {
+            var uriScheme = "http://";
+            var host = "localhost.com/";
+            var subPath = "my/dir/";
+            var url = uriScheme.ToPath(host, subPath);
+
+            url.RawPath.Should().Be($"{uriScheme}{host}{subPath}");
+        }
+
         [Fact]
         public void Directory_TypeIsFile_DirIsParent()
         {
@@ -184,7 +204,7 @@ namespace DotNet.Basics.Tests.Sys
         [InlineData("myFolder\\", "file.txt", PathType.Dir)]//backslash dir remains when file added
         [InlineData("myfile", "dir//", PathType.File)]//slash file remains when dir added - should throw exception?
         [InlineData("myfile.txt", "file.txt", PathType.File)]//slash file remains when dir added - should throw exception?
-        public void Add_KeepIsFolder_IsFolderIsUnchagedRegardlesOfSegmentsAdded(string root, string newSegment, PathType pathType)
+        public void Add_KeepIsFolder_IsFolderIsUnchangedRegardlessOfSegmentsAdded(string root, string newSegment, PathType pathType)
         {
             var path = root.ToPath();
 
@@ -215,7 +235,8 @@ namespace DotNet.Basics.Tests.Sys
         [InlineData(null, new[] { @"c:", "my", "folder" }, 3)]
         public void Tokenize_CleanSegments_SegmentsAreCombinedAndCleaned(string path, string[] segments, int expectedNumOfSegments)
         {
-            var splitSegments = PathInfo.Tokenize(path, segments);
+            var flattened = PathInfo.Flatten(path, segments);
+            var splitSegments = PathInfo.Tokenize(flattened);
             splitSegments.Count.Should().Be(expectedNumOfSegments);
         }
     }
