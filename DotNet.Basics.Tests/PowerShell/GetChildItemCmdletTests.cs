@@ -17,7 +17,7 @@ namespace DotNet.Basics.Tests.PowerShell
         [Fact]
         public void GetChildItem_WithFilter_FilteredItemsAreFound()
         {
-            ArrangeActAssertPaths(async dir =>
+            ArrangeActAssertPaths(dir =>
             {
                 dir.ToFile("Testa.myFile1.txt").WriteAllText("nothing1");
                 var file1Name = dir.ToFile("Testa.myFile1.json").WriteAllText("nothing1").FullName();
@@ -28,11 +28,13 @@ namespace DotNet.Basics.Tests.PowerShell
                 var result = PowerShellCli.RunCmdlet(new GetChildItemCmdlet(dir.FullName()).WithFilter("*.json").WithRecurse());
 
                 //assert
-                var parsedResult = result.Select(path => path.ToString()).ToList();
+                var parsedResult = result.Select(path => path.ToString().ToLowerInvariant()).OrderByDescending(p => p).ToList();
+
                 parsedResult.Count.Should().Be(2);
-                parsedResult.Should().Contain(file1Name);
-                parsedResult.Should().Contain(file2Name);
+                parsedResult.First().Should().Be(file1Name.ToLowerInvariant());
+                parsedResult.Last().Should().Be(file2Name.ToLowerInvariant());
             });
         }
     }
 }
+

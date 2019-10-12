@@ -14,10 +14,10 @@ namespace DotNet.Basics.Tests.Serilog
         [Fact]
         public void ToSeriLogEventLevel_Conversion_LevelIsConvertedFromMicrosoftExtensionLogLevel()
         {
-            LogLevel.None.ToSeriLogEventLevel().Should().Be(LogEventLevel.Verbose);
-            LogLevel.Trace.ToSeriLogEventLevel().Should().Be(LogEventLevel.Verbose);
+            LogLevel.None.ToSeriLogEventLevel().Should().Be(LogEventLevel.Vrb);
+            LogLevel.Trace.ToSeriLogEventLevel().Should().Be(LogEventLevel.Vrb);
             LogLevel.Debug.ToSeriLogEventLevel().Should().Be(LogEventLevel.Debug);
-            LogLevel.Information.ToSeriLogEventLevel().Should().Be(LogEventLevel.Information);
+            LogLevel.Info.ToSeriLogEventLevel().Should().Be(LogEventLevel.Info);
             LogLevel.Warning.ToSeriLogEventLevel().Should().Be(LogEventLevel.Warning);
             LogLevel.Error.ToSeriLogEventLevel().Should().Be(LogEventLevel.Error);
             LogLevel.Critical.ToSeriLogEventLevel().Should().Be(LogEventLevel.Fatal);

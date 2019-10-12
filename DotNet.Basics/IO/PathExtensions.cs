@@ -25,7 +25,8 @@ namespace DotNet.Basics.IO
         {
             if (pathType == PathType.Unknown)
             {
-                var cleanedSegments = PathInfo.Flatten(path, pathType, segments);
+                var flattened = PathInfo.Flatten(path, segments);
+                var cleanedSegments = PathInfo.Flatten(pathType, flattened);
                 if (string.IsNullOrWhiteSpace(cleanedSegments) == false)
                 {
                     var fullName = Path.GetFullPath(cleanedSegments);
@@ -94,6 +95,11 @@ namespace DotNet.Basics.IO
         public static T Add<T>(this T pi, params string[] segments) where T : PathInfo
         {
             return pi.RawPath.ToPath(pi.PathType, segments) as T;
+        }
+
+        public static bool IsRooted(this PathInfo pi)
+        {
+            return Path.IsPathRooted(pi.RawPath);
         }
     }
 }

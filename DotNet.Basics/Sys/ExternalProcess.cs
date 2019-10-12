@@ -6,7 +6,7 @@ namespace DotNet.Basics.Sys
 {
     public static class ExternalProcess
     {
-        public static (string Input, int ExitCode) Run(string path, object args = null, Action<string> writeOutput = null, Action<string> writeError = null, bool useShellExecute = false)
+        public static int Run(string path, object args = null, Action<string> writeOutput = null, Action<string> writeError = null, Action<string> writeDebug = null)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
             var si = new ProcessStartInfo(path, args?.ToString() ?? string.Empty)
@@ -14,7 +14,7 @@ namespace DotNet.Basics.Sys
                 RedirectStandardInput = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
-                UseShellExecute = useShellExecute,
+                UseShellExecute = false,
                 CreateNoWindow = true
             };
 
@@ -32,13 +32,15 @@ namespace DotNet.Basics.Sys
                         {
                             if (data.Data != null) { writeError.Invoke(data.Data); }
                         };
+
                     process.Start();
-                    writeOutput?.Invoke($"Process [{process.ProcessName} | {process.Id}] started: {path} {args}");
+                    writeDebug?.Invoke($"[{process.Id}] Process <{process.ProcessName}> starting: {path} {args}");
                     process.BeginOutputReadLine();
                     process.BeginErrorReadLine();
                     process.WaitForExit();
-                    writeOutput?.Invoke($"Process [{process.ProcessName} | {process.Id}] exited with code: {process.ExitCode}");
-                    return ($"{path} {args}", process.ExitCode);
+                    writeDebug?.Invoke($"[{process.Id}] Process <{process.ProcessName}> Exit Code: {process.ExitCode}");
+
+                    return process.ExitCode;
                 }
             }
             catch (Win32Exception e)

@@ -2,12 +2,18 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DotNet.Basics.Collections;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace DotNet.Basics.Sys
 {
     public abstract class PathInfo
     {
+        private const string _uriSchemePattern = @"^([a-zA-Z]+://)";
+        private static readonly Regex _uriSchemeRegex = new Regex(_uriSchemePattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private const string _uncDetector = @"\\";
+
         private static readonly char[] _separatorDetectors = { PathSeparator.Backslash, PathSeparator.Slash };
 
         protected PathInfo(string path, params string[] segments)
@@ -23,40 +29,62 @@ namespace DotNet.Basics.Sys
             if (path == null)
                 path = string.Empty;
 
-            Separator = pathSeparator != PathSeparator.Unknown ? pathSeparator : DetectPathSeparator(path, segments);
+            var flattened = Flatten(path, segments);
 
-            //Clean segments
-            Segments = Tokenize(path, segments);
+            //detect path characteristics
+            Separator = pathSeparator != PathSeparator.Unknown ? pathSeparator : DetectPathSeparator(flattened);
+
+            var isUnc = false;
+            string uriScheme = null;
+
+            if (flattened.Any())
+            {
+                isUnc = flattened.First().StartsWith(_uncDetector);
+                var uriMatch = _uriSchemeRegex.Match(flattened.First());
+                if (uriMatch.Success)
+                    uriScheme = uriMatch.Groups[0].Value;
+            }
+            //Clean and tokenize segments
+            Segments = Tokenize(flattened);
             PathType = pathType == PathType.Unknown ? DetectPathType(path, segments) : pathType;
 
-            //Set rawpath
-            RawPath = Flatten(null, PathType, Segments.ToArray());
+            //Set raw path
+            RawPath = Flatten(PathType, flattened);
             RawPath = OverridePathSeparator(RawPath, Separator);
+            if (isUnc)
+                RawPath = RawPath.EnsurePrefix(_uncDetector);
+            else if (uriScheme != null)
+                RawPath = RawPath.RemovePrefix(uriScheme.TrimEnd('/')).TrimStart('/').EnsurePrefix(uriScheme);
 
             //set name
             Name = Path.GetFileName(RawPath.RemoveSuffix(Separator));
-            NameWoExtension = Path.GetFileNameWithoutExtension(Name);
-            Extension = Path.GetExtension(Name);
-
-            Parent = Segments.Count <= 1 ? null : new DirPath(null, Segments.Take(Segments.Count - 1).ToArray());
-            Directory = PathType == PathType.File ? Parent : (DirPath)this;
         }
 
         public string RawPath { get; }
         public string Name { get; }
-        public string NameWoExtension { get; }
-        public string Extension { get; }
+
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public string NameWoExtension => Path.GetFileNameWithoutExtension(Name);
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public string Extension => Path.GetExtension(Name);
+
         public PathType PathType { get; }
 
-        public DirPath Parent { get; }
-        public DirPath Directory { get; }
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public DirPath Parent => Segments.Count <= 1 ? null : new DirPath(null, Segments.Take(Segments.Count - 1).ToArray());
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public DirPath Directory => PathType == PathType.File ? Parent : (DirPath)this;
+
         public char Separator { get; }
         public IReadOnlyCollection<string> Segments;
 
-        public static IReadOnlyCollection<string> Tokenize(string path, params string[] segments)
+        public static List<string> Tokenize(ICollection<string> segments)
         {
             var tokens = new List<string>();
-            tokens.AddRange(Tokenize(path));
             foreach (var segment in segments)
                 tokens.AddRange(Tokenize(segment));
             return tokens;
@@ -73,6 +101,25 @@ namespace DotNet.Basics.Sys
                 .Where(seg => string.IsNullOrWhiteSpace(seg) == false);
         }
 
+        public static IList<string> Flatten(string path, ICollection<string> segments)
+        {
+            var asOne = new List<string>();
+            if (string.IsNullOrWhiteSpace(path) == false)
+                asOne.Add(path);
+            asOne.AddRange(segments.Where(seg => string.IsNullOrWhiteSpace(seg) == false));
+            return asOne;
+        }
+
+        public static string Flatten(PathType pathType, ICollection<string> segments)
+        {
+            var tokenized = Tokenize(segments);
+            var separator = DetectPathSeparator(tokenized);
+            var flattened = tokenized.JoinString(separator.ToString());
+            if (pathType == PathType.Dir)
+                flattened = flattened.EnsureSuffix(separator);
+            return flattened;
+        }
+
         private static string OverridePathSeparator(string path, char separator)
         {
             //conform separators
@@ -81,16 +128,6 @@ namespace DotNet.Basics.Sys
             path = path.Replace(PathSeparator.Unknown, separator);
 
             return path;
-        }
-
-        public static string Flatten(string path, PathType pathType, params string[] segments)
-        {
-            var tokenized = Tokenize(path, segments);
-            var separator = DetectPathSeparator(path, segments);
-            var flattened = string.Join(separator.ToString(), tokenized);
-            if (pathType == PathType.Dir)
-                flattened = flattened.EnsureSuffix(separator);
-            return flattened;
         }
 
         public static PathType DetectPathType(string path, string[] segments)
@@ -107,10 +144,10 @@ namespace DotNet.Basics.Sys
             return PathType.File;
         }
 
-        private static char DetectPathSeparator(string path, IEnumerable<string> segments)
+        private static char DetectPathSeparator(IEnumerable<string> segments)
         {
             //auto detect supported separators
-            foreach (var segment in path.ToEnumerable(segments))
+            foreach (var segment in segments)
             {
                 if (segment == null)
                     continue;
@@ -143,7 +180,7 @@ namespace DotNet.Basics.Sys
 
         public override int GetHashCode()
         {
-            throw new NotImplementedException();
+            return RawPath.GetHashCode();
         }
     }
 }

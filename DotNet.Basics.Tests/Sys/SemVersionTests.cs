@@ -1,29 +1,72 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DotNet.Basics.Sys;
 using FluentAssertions;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
 {
     public class SemVersionTests
     {
-        private static readonly int _major = 10;
-        private static readonly int _minor = 701;
-        private static readonly int _patch = 232;
-        private static readonly string _preRelease = "rc.1";
-        private static readonly string _metaData = "sdfkjsh.fs.jkhf++djkhf";
-        private static readonly string _semver10String = $"{_major}.{_minor}.{_patch}";
-        private static readonly string _fullSemver20String = $"{_major}.{_minor}.{_patch}-{_preRelease}+{_metaData}";
+        private const int _major = 10;
+        private const int _minor = 701;
+        private const int _patch = 232;
+        private const string _preRelease = "rc.1";
+        private const string _metaData = "sdfkjsh.fs.jkhf++djkhf";
+        private const string _fileVerString = "10.701.232";
+        private const string _semver10String = "10.701.232-beta.25.43";
+        private const string _fullSemver20String = _fileVerString + "-" + _preRelease + "+" + _metaData;
+
+        [Fact]
+        public void Serialize_SystemTextJson_IsSerialized()
+        {
+
+            var obj = new SemVersion(_fullSemver20String);
+
+            Action action = () => System.Text.Json.JsonSerializer.Serialize(obj);
+
+            action.Should().NotThrow();
+        }
+
+        [Fact]
+        public void Serialize_NewtonSoft_IsSerialized()
+        {
+            var obj = new SemVersion(_fullSemver20String);
+            string jsonStr;
+            Action action = () => jsonStr = JsonConvert.SerializeObject(obj);
+
+            action.Should().NotThrow();
+        }
+
+        [Fact]
+        public void ToSemVersion_Construction_SemVersionIsConstructed()
+        {
+            //act
+            var semVer = _fullSemver20String.ToSemVersion();
+
+            //assert
+            semVer.SemVer20String.Should().Be(_fullSemver20String);
+        }
+
+        [Fact]
+        public void Deserialization_Newtonsoft_StringIsDeserialized()
+        {
+            var jsonStr = @"{""Major"":10,""Minor"":701,""Patch"":232,""PreRelease"":{""Identifiers"":[{""Identifier"":""rc"",""IsNumeric"":false},{""Identifier"":""1"",""IsNumeric"":true}]},""Metadata"":""sdfkjsh.fs.jkhf++djkhf"",""SemVer10String"":""10.701.232"",""SemVer20String"":""10.701.232-rc.1+sdfkjsh.fs.jkhf++djkhf""}";
+            var obj = JsonConvert.DeserializeObject<SemVersion>(jsonStr);
+            obj.SemVer20String.Should().Be(_fullSemver20String);
+        }
+
 
         [Theory]
-        [InlineData("1.0.5-rc.1+555")]//full string
+        [InlineData(_fullSemver20String)]//full string
         [InlineData("1.0.5+555")]//wo preRelease
         [InlineData("1.0.5-rc.111")]//wo metadata
         public void ToSemver20String_ToString_StringIsFormatted(string semVer20String)
         {
             //act
-            var semVer = new SemVersion(semVer20String);
+            var semVer = semVer20String.ToSemVersion();
 
             //assert
             semVer.SemVer20String.Should().Be(semVer20String);
@@ -64,14 +107,14 @@ namespace DotNet.Basics.Tests.Sys
             semVer.Major.Should().Be(_major);
             semVer.Minor.Should().Be(_minor);
             semVer.Patch.Should().Be(_patch);
-            semVer.PreRelease.ToString().Should().BeEmpty();
+            semVer.PreRelease.ToString().Should().Be("beta.25.43");
             semVer.Metadata.Should().BeEmpty();
         }
         [Fact]
-        public void Ctor_SemVer10_VersionIsParsed()
+        public void Ctor_FileVer_VersionIsParsed()
         {
             //act
-            var semVer = new SemVersion(_semver10String);
+            var semVer = new SemVersion(_fileVerString);
 
             //assert
             semVer.Major.Should().Be(_major);
@@ -82,10 +125,24 @@ namespace DotNet.Basics.Tests.Sys
         }
 
         [Fact]
+        public void Ctor_SemVer10_VersionIsParsed()
+        {
+            //act
+            var semVer = new SemVersion(_semver10String);
+
+            //assert
+            semVer.Major.Should().Be(_major);
+            semVer.Minor.Should().Be(_minor);
+            semVer.Patch.Should().Be(_patch);
+            semVer.PreRelease.ToString().Should().Be("beta.25.43");
+            semVer.Metadata.Should().BeEmpty();
+        }
+
+        [Fact]
         public void Ctor_SemVer20WoPreReleaseWithMetadata_VersionIsParsed()
         {
             //act
-            var semVer = new SemVersion($"{_semver10String}+{_metaData}");
+            var semVer = new SemVersion($"{_fileVerString}+{_metaData}");
 
             //assert
             semVer.Major.Should().Be(_major);
@@ -151,6 +208,7 @@ namespace DotNet.Basics.Tests.Sys
             (alpha2 < rc).Should().BeTrue();
 
             //smaller than - false
+#pragma warning disable 1718
             (alpha1 < alpha1).Should().BeFalse();
             (alpha2 < alpha1).Should().BeFalse();
             (beta1 < alpha1).Should().BeFalse();
@@ -218,11 +276,22 @@ namespace DotNet.Basics.Tests.Sys
         }
 
         [Fact]
+        public void Operators_LargerSmallerThan_VersionsAreComparedCorrectly()
+        {
+            var lower = new SemVersion("v3.0.0-rc.1");
+            var upper = new SemVersion("v3.2.0-beta.1.0");
+
+            (lower < upper).Should().BeTrue();
+            (lower > upper).Should().BeFalse();
+            (lower == upper).Should().BeFalse();
+        }
+
+        [Fact]
         public void MaxMin_Equality_VersionsCanBeOrderedInCollection()
         {
-            var min = new SemVersion(1, 0, 0);
-            var middle = new SemVersion(2, 1, 0);
-            var max = new SemVersion(3, 0, 0);
+            var min = new SemVersion("v3.0.0-rc.1");
+            var middle = new SemVersion("v3.0.0-rc.5");
+            var max = new SemVersion("v3.2.0-beta.1.0");
 
             var list = new List<SemVersion> { min, middle, max };
 

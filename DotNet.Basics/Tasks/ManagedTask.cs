@@ -3,8 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
-using Microsoft.Extensions.Logging;
-using ILogger = DotNet.Basics.Diagnostics.ILogger;
 
 namespace DotNet.Basics.Tasks
 {
@@ -16,6 +14,8 @@ namespace DotNet.Basics.Tasks
         public event TaskStartedEventHandler Started;
         public event TaskEndedEventHandler Ended;
         public event LogDispatcher.MessageLoggedEventHandler MessageLogged;
+        public event LogDispatcher.TimingLoggedEventHandler TimingLogged;
+        public bool HasListeners => MessageLogged != null || TimingLogged != null;
 
         protected ManagedTask(string name = null, params string[] removeSuffixes)
         {
@@ -26,6 +26,10 @@ namespace DotNet.Basics.Tasks
 
         public string Name { get; }
 
+        protected virtual void FireTimingLogged(LogLevel level, string name, string @event, TimeSpan duration)
+        {
+            TimingLogged?.Invoke(level, name, @event, duration);
+        }
 
         protected virtual void FireMessageLogged(LogLevel level, string message, Exception e)
         {
@@ -87,6 +91,7 @@ namespace DotNet.Basics.Tasks
             _task = task ?? throw new ArgumentNullException(nameof(task));
             _log = new LogDispatcher().InContext(Name);
             _log.MessageLogged += base.FireMessageLogged;
+            _log.TimingLogged += base.FireTimingLogged;
         }
 
         public Task<T> RunAsync(T args)
@@ -112,6 +117,10 @@ namespace DotNet.Basics.Tasks
             }
         }
 
+        protected override void FireTimingLogged(LogLevel level, string name, string @event, TimeSpan duration)
+        {
+            _log.Timing(level, name, @event, duration);
+        }
         protected override void FireMessageLogged(LogLevel level, string message, Exception e)
         {
             _log.Write(level, message, e);

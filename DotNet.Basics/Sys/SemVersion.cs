@@ -1,11 +1,14 @@
 ﻿using System;
-using System.Linq;
 using static System.String;
 
 namespace DotNet.Basics.Sys
 {
     public class SemVersion : IComparable<SemVersion>
     {
+        public SemVersion()
+            : this(Empty)
+        { }
+
         public SemVersion(object semVer)
             : this(semVer?.ToString())
         { }
@@ -36,15 +39,24 @@ namespace DotNet.Basics.Sys
         public SemVersionPreRelease PreRelease { get; set; }
         public string Metadata { get; set; }
 
-        public string SemVer10String => $"{Major}.{Minor}.{Patch}";
+        public string FileVerString => $"{Major}.{Minor}.{Patch}";
+
+        public string SemVer10String
+        {
+            get
+            {
+                var semVer10String = FileVerString;
+                if (PreRelease.Any)
+                    semVer10String += $"{SemVersionLexer.PreReleaseSeparator}{PreRelease}";
+                return semVer10String;
+            }
+        }
 
         public string SemVer20String
         {
             get
             {
                 var semVer20String = SemVer10String;
-                if (PreRelease.Any)
-                    semVer20String += $"{SemVersionLexer.PreReleaseSeparator}{PreRelease}";
                 if (IsNullOrWhiteSpace(Metadata) == false)
                     semVer20String += $"{SemVersionLexer.MetadataSeparator}{Metadata.TrimStart(SemVersionLexer.MetadataSeparator)}";
                 return semVer20String;
@@ -86,20 +98,38 @@ namespace DotNet.Basics.Sys
         {
             if (a.Major < b.Major)
                 return true;
-            if (a.Major == b.Major && a.Minor < b.Minor)
+            if (a.Major > b.Major)
+                return false;
+
+            if (a.Minor < b.Minor)
                 return true;
-            if (a.Major == b.Major && a.Minor == b.Minor && a.Patch < b.Patch)
+            if (a.Minor > b.Minor)
+                return false;
+
+            if (a.Patch < b.Patch)
                 return true;
+            if (a.Patch > b.Patch)
+                return false;
+
             return a.PreRelease < b.PreRelease;
         }
         public static bool operator >(SemVersion a, SemVersion b)
         {
             if (a.Major > b.Major)
                 return true;
-            if (a.Major == b.Major && a.Minor > b.Minor)
+            if (a.Major < b.Major)
+                return false;
+
+            if (a.Minor > b.Minor)
                 return true;
-            if (a.Major == b.Major && a.Minor == b.Minor && a.Patch > b.Patch)
+            if (a.Minor < b.Minor)
+                return false;
+
+            if (a.Patch > b.Patch)
                 return true;
+            if (a.Patch < b.Patch)
+                return false;
+
             return a.PreRelease > b.PreRelease;
         }
 

@@ -4,7 +4,7 @@
     <Description>Syntactical sugar for bootstrapping IServiceCollection and IServiceProvider with Autofac</Description>
     <PackageProjectUrl>
     </PackageProjectUrl>
-    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
     <Authors>rzmoz</Authors>
     <Company />
     <Product />
@@ -13,6 +13,7 @@
     <AssemblyVersion>0.0.0</AssemblyVersion>
     <FileVersion>0.0.0</FileVersion>
     <PackageReleaseNotes>https://github.com/autofac/Autofac</PackageReleaseNotes>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>  
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.4" />

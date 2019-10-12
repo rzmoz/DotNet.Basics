@@ -1,12 +1,46 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using DotNet.Basics.Sys;
 using FluentAssertions;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
 {
     public class SemVersionPreReleaseTests
     {
+        private static readonly string _testPreReleaseString = "alpha.1";
+
+        [Fact]
+        public void Serialize_SystemTextJson_IsSerialized()
+        {
+
+            var obj = new SemVersionPreRelease(_testPreReleaseString);
+
+            Action action = () => System.Text.Json.JsonSerializer.Serialize(obj);
+
+            action.Should().NotThrow();
+        }
+
+        [Fact]
+        public void Serialize_NewtonSoft_IsSerialized()
+        {
+            var obj = new SemVersionPreRelease(_testPreReleaseString);
+            string jsonStr;
+            Action action = () => jsonStr = JsonConvert.SerializeObject(obj);
+
+            action.Should().NotThrow();
+        }
+
+        [Fact]
+        public void Deserialization_NewtonSoft_StringIsDeserialized()
+        {
+            var jsonStr = @"{""Identifiers"":[{""Identifier"":""alpha"",""IsNumeric"":false},{""Identifier"":""1"",""IsNumeric"":true}],""HashBase"":""alpha.1""}";
+            var obj = JsonConvert.DeserializeObject<SemVersionPreRelease>(jsonStr);
+            obj.ToString().Should().Be(_testPreReleaseString);
+        }
+
+
         [Fact]
         public void PreRelease_Precedence_VersionsAreOrderedByPreReleaseAlphabetically()
         {
@@ -23,6 +57,7 @@ namespace DotNet.Basics.Tests.Sys
             (alpha2 < rc).Should().BeTrue();
 
             //smaller than - false
+#pragma warning disable 1718
             (alpha1 < alpha1).Should().BeFalse();
             (alpha2 < alpha1).Should().BeFalse();
             (beta1 < alpha1).Should().BeFalse();
@@ -60,7 +95,7 @@ namespace DotNet.Basics.Tests.Sys
         public void Comparison_Empty_SomePreReleaseIsAlwaysLowerThanNoPreRelease()
         {
             var somePr = new SemVersionPreRelease("alpha.1");
-            var emptyPr = new SemVersionPreRelease();
+            var emptyPr = new SemVersionPreRelease("");
 
             (emptyPr > somePr).Should().BeTrue();
             (somePr < emptyPr).Should().BeTrue();

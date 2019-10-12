@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Management.Automation;
-using DotNet.Basics.Collections;
 using DotNet.Basics.Diagnostics;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.PowerShell
 {
@@ -10,43 +10,39 @@ namespace DotNet.Basics.PowerShell
     {
         private const string _bypassExecutionPolicy = "Set-ExecutionPolicy Bypass -Scope Process";
 
+        public static int RunFileInConsole(string fileArgs, Action<string> writeOutput = null, Action<string> writeError = null, Action<string> writeDebug = null)
+        {
+            return CmdPrompt.Run($"PowerShell -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -File {fileArgs}", writeOutput, writeError, writeDebug);
+        }
+
         public static object[] RunCmdlet(PowerShellCmdlet cmdLet, ILogDispatcher log = null)
         {
-            return RunScript(log, cmdLet.ToString());
+            return RunScript(cmdLet.ToString(), log);
         }
 
-        public static object[] RunScript(params string[] scripts)
+        public static object[] RunScript(string script, ILogDispatcher log = null)
         {
-            return RunScript(new VoidLogger(), scripts);
-        }
+            if (log == null)
+                log = LogDispatcher.NullLogger;
+            var ps = System.Management.Automation.PowerShell.Create();
+            ps.AddScript(_bypassExecutionPolicy);
+            ps.AddScript(script);
 
-        public static object[] RunScript(ILogDispatcher log, params string[] scripts)
-        {
+            ps.Streams.Progress.DataAdded += (col, e) => log.Verbose($"{((PSDataCollection<ProgressRecord>)col).Last().Activity} : {((PSDataCollection<ProgressRecord>)col).Last().PercentComplete}/100");
+            ps.Streams.Verbose.DataAdded += (col, e) => log.Verbose(((PSDataCollection<VerboseRecord>)col).Last().Message);
+            ps.Streams.Debug.DataAdded += (col, e) => log.Info(((PSDataCollection<DebugRecord>)col).Last().Message);
+            ps.Streams.Information.DataAdded += (col, e) => log.Info(((PSDataCollection<InformationRecord>)col).Last().ToString());
+            ps.Streams.Warning.DataAdded += (col, e) => log.Warning(((PSDataCollection<WarningRecord>)col).Last().Message);
+            ps.Streams.Error.DataAdded += (col, e) => log.Error(((PSDataCollection<ErrorRecord>)col).Last().Exception.Message);
 
-            using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
+            var passThru = ps.Invoke();
+
+            if (ps.HadErrors)
             {
-                ps.AddScript(_bypassExecutionPolicy);
-                foreach (var script in scripts)
-                    ps.AddScript(script);
-
-                ps.Streams.Progress.DataAdded += (col, e) => ((PSDataCollection<ProgressRecord>)col).ForEach(rec => log?.Verbose($"{rec.Activity} : {rec.PercentComplete}/100"));
-                ps.Streams.Verbose.DataAdded += (col, e) => ((PSDataCollection<VerboseRecord>)col).ForEach(rec => log?.Verbose(rec.Message));
-                ps.Streams.Debug.DataAdded += (col, e) => ((PSDataCollection<DebugRecord>)col).ForEach(rec => log?.Debug(rec.Message)); ;
-                ps.Streams.Information.DataAdded += (col, e) => ((PSDataCollection<InformationRecord>)col).ForEach(rec => log?.Information(rec.ToString())); ;
-                ps.Streams.Warning.DataAdded += (col, e) => ((PSDataCollection<WarningRecord>)col).ForEach(rec => log?.Warning(rec.Message)); ;
-                ps.Streams.Error.DataAdded += (col, e) => ((PSDataCollection<ErrorRecord>)col).ForEach(rec => log?.Error($"{rec.ErrorDetails.Message}\r\n{rec.ScriptStackTrace}", rec.Exception));
-
-                var passThru= ps.Invoke();
-                
-                if (ps.Streams.Error.Any())
-                {
-                    if (ps.Streams.Error.Count == 1)
-                        throw ps.Streams.Error.Single().Exception;
-                    throw new AggregateException(ps.Streams.Error.Select(e => e.Exception ?? new CmdletInvocationException(e.ErrorDetails.ToString())));
-                }
-
-                return passThru?.Select(o => o.BaseObject).ToArray();
+                throw new RemoteException($"{"PowerShell script failed:".Highlight()}\r\n{ps.Streams.Error.Select(e => e.Exception.Message).JoinString("\r\n")}");
             }
+
+            return passThru?.Select(o => o.BaseObject).ToArray();
         }
     }
 }

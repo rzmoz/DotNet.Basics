@@ -22,30 +22,80 @@ namespace DotNet.Basics.Collections
             return source.Any(predicate);
         }
 
-        public static void ForEachParallel<T>(this IEnumerable<T> col, Action<T> forEachAction)
+        public static ICollection<T> ForEachParallel<T>(this IEnumerable<T> col, Action<T> forEachAction)
         {
-            Parallel.ForEach(col, forEachAction);
+            if (forEachAction == null) throw new ArgumentNullException(nameof(forEachAction));
+            var list = col.ToList();
+            Parallel.ForEach(list, forEachAction);
+            return list;
         }
-        public static TK[] ForEachParallel<T, TK>(this IEnumerable<T> col, Func<T, TK> forEachAction)
+        public static ICollection<TK> ForEachParallel<T, TK>(this IEnumerable<T> col, Func<T, TK> forEachFunc)
         {
+            if (forEachFunc == null) throw new ArgumentNullException(nameof(forEachFunc));
             var results = new ConcurrentStack<TK>();
-            Parallel.ForEach(col, item => results.Push(forEachAction.Invoke(item)));
-            return results.ToArray();
+            Parallel.ForEach(col, item => results.Push(forEachFunc.Invoke(item)));
+            return results.ToList();
         }
 
-        public static Task ForEachParallelAsync<T>(this IEnumerable<T> col, Func<T, Task> forEachAction)
+        public static async Task<ICollection<T>> ForEachParallelAsync<T>(this IEnumerable<T> col, Func<T, Task> forEachAction)
         {
-            return Task.WhenAll(col.Select(forEachAction));
-        }
-        public static Task<TK[]> ForEachParallelAsync<T, TK>(this IEnumerable<T> col, Func<T, Task<TK>> forEachAction)
-        {
-            return Task.WhenAll(col.Select(forEachAction));
+            var list = col.ToList();
+            if (forEachAction == null)
+                return list;
+            await Task.WhenAll(list.Select(forEachAction)).ConfigureAwait(false);
+            return list;
         }
 
-        public static void ForEach<T>(this IEnumerable<T> col, Action<T> forEachAction)
+        public static Task<TK[]> ForEachParallelAsync<T, TK>(this IEnumerable<T> col, Func<T, Task<TK>> forEachFunc)
         {
+            if (forEachFunc == null) throw new ArgumentNullException(nameof(forEachFunc));
+            return Task.WhenAll(col.Select(forEachFunc));
+        }
+
+        public static ICollection<T> ForEach<T>(this IEnumerable<T> col, Action<T> forEachAction)
+        {
+            if (forEachAction == null) throw new ArgumentNullException(nameof(forEachAction));
+            
+            var list = col.ToList();
+            foreach (var item in list)
+                forEachAction.Invoke(item);
+            return list;
+        }
+
+        public static ICollection<TK> ForEach<T, TK>(this IEnumerable<T> col, Func<T, TK> forEachFunc)
+        {
+            if (forEachFunc == null) throw new ArgumentNullException(nameof(forEachFunc));
+
+            var results = new List<TK>();
+
             foreach (var item in col)
-                forEachAction?.Invoke(item);
+                results.Add(forEachFunc.Invoke(item));
+            return results;
+        }
+
+        public static async Task<ICollection<T>> ForEachAsync<T>(this IEnumerable<T> col, Func<T, Task> forEachAction)
+        {
+            if (forEachAction == null) throw new ArgumentNullException(nameof(forEachAction));
+
+            var list = col.ToList();
+
+            foreach (var item in list)
+                await forEachAction.Invoke(item).ConfigureAwait(false);
+            return list;
+        }
+
+        public static async Task<ICollection<TK>> ForEachAsync<T, TK>(this IEnumerable<T> col, Func<T, Task<TK>> forEachFunc)
+        {
+            if (forEachFunc == null) throw new ArgumentNullException(nameof(forEachFunc));
+
+            var results = new List<TK>();
+
+            foreach (var item in col)
+            {
+                var result = await forEachFunc.Invoke(item).ConfigureAwait(false);
+                results.Add(result);
+            }
+            return results;
         }
 
         public static IEnumerable<T> ToEnumerable<T>(this T t)

@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DotNet.Basics.Collections;
-using DotNet.Basics.Sys;
 using FluentAssertions;
-using NSubstitute;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Collections
 {
     public class CollectionExtensionsTests
-    {        
+    {
         [Fact]
         public void None_EmptyList_NoneFound()
         {
@@ -38,54 +37,130 @@ namespace DotNet.Basics.Tests.Collections
             const int expected = 1;
 
             var ones = new[] { expected, expected, expected, expected, expected, expected };
-            
+
             ones.Contains(o => o == expected).Should().BeTrue();
             ones.Contains(o => o != expected).Should().BeFalse();
         }
 
         [Fact]
-        public void ParallelForEachAsync_ParallelExecution_AllTasksAreInvokedAndAwaited()
+        public void ForEachParallel_ApplyAction_ActionIsAppliedToAllElements()
         {
-            var ones = Enumerable.Repeat(1, 101).ToArray();
-            var results = new List<int>();
+            var range = GetTestRange();
 
-            var singleTaskDuration = 1.Seconds();//keep small to avoid long running tests but also, make it big enough to ensure tasks are run in parallel
-            /*
-            var profiler = new Profiler();
-            profiler.Start();
+            var results = range.ForEachParallel(test => test.IncreaseValue());
 
-            await ones.ParallelForEachAsync(async i =>
-            {
-                results.Add(i + 1);
-                await Task.Delay(singleTaskDuration);
-            });
-
-            profiler.Stop();
-
-            //assert all tasks were run
-            results.Count.Should().Be(ones.Length);
-            foreach (var result in results)
-                result.Should().Be(2);
-
-            //assert they were run in parallel
-            profiler.Duration.Should().BeCloseTo(6.Seconds(), 5500);*/
+            results.All(result => result.Value == 1).Should().BeTrue();
         }
-
 
         [Fact]
-        public void ForEach_Action_ActionIsAppliedToAllElementsInCol()
+        public void ForEachParallel_ApplyFunc_FuncIsAppliedToAllElements()
         {
-            var range = Enumerable.Range(1, 10).ToList();
-            var test = Substitute.For<ITest>();
+            var range = GetTestRange();
 
-            range.ForEach(one => test.Test());
+            var results = range.ForEachParallel(test =>
+            {
+                test.IncreaseValue();
+                return test.Value;
+            });
 
-            test.Received(range.Count());
+            results.All(result => result == 1).Should().BeTrue();
         }
 
-        public interface ITest
+        [Fact]
+        public async Task ForEachParallelAsync_ApplyAction_ActionIsAppliedToAllElements()
         {
-            void Test();
+            var range = GetTestRange();
+
+            var results = await range.ForEachParallelAsync(test =>
+            {
+                test.IncreaseValue();
+                return Task.CompletedTask;
+            }).ConfigureAwait(false);
+
+            results.All(result => result.Value == 1).Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task ForEachParallelAsync_ApplyFunc_FuncIsAppliedToAllElements()
+        {
+            var range = GetTestRange();
+
+            var results = await range.ForEachParallelAsync(test =>
+            {
+                test.IncreaseValue();
+                return Task.FromResult(test.Value);
+            }).ConfigureAwait(false);
+
+            results.All(result => result == 1).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ForEach_ApplyAction_ActionIsAppliedToAllElements()
+        {
+            var range = GetTestRange();
+
+            var results = range.ForEach(test => test.IncreaseValue());
+
+            results.All(result => result.Value == 1).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ForEach_ApplyFunc_FuncIsAppliedToAllElements()
+        {
+            var range = GetTestRange();
+
+            var results = range.ForEach(test =>
+            {
+                test.IncreaseValue();
+                return test.Value;
+            });
+
+            results.All(result => result == 1).Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task ForEachAsync_ApplyAction_ActionIsAppliedToAllElements()
+        {
+            var range = GetTestRange();
+
+            var results = await range.ForEachAsync(test =>
+            {
+                test.IncreaseValue();
+                return Task.CompletedTask;
+            });
+
+            results.All(result => result.Value == 1).Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task ForEachAsync_ApplyFunc_FuncIsAppliedToAllElements()
+        {
+            var range = GetTestRange();
+
+            var results = await range.ForEachAsync(test =>
+            {
+                test.IncreaseValue();
+                return Task.FromResult(test.Value);
+            }).ConfigureAwait(false);
+
+            results.All(result => result == 1).Should().BeTrue();
+        }
+
+        private ICollection<ForEachTest> GetTestRange()
+        {
+            var testRange = Enumerable.Range(1, 10).Select(i => new ForEachTest()).ToList();
+            testRange.All(test => test.Value == 0).Should().BeTrue();
+            return testRange;
+        }
+
+        public class ForEachTest
+        {
+            public int Value { get; private set; }
+
+            public void IncreaseValue()
+            {
+                Value++;
+            }
         }
     }
 }

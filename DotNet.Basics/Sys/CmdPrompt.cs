@@ -4,9 +4,9 @@ namespace DotNet.Basics.Sys
 {
     public static class CmdPrompt
     {
-        public static (string Input, int ExitCode) Run(string commandString, Action<string> writeOutput = null, Action<string> writeError = null)
+        public static int Run(string commandString, Action<string> writeOutput = null, Action<string> writeError = null, Action<string> writeDebug = null)
         {
-            return ExternalProcess.Run("cmd.exe", $"/c {commandString}", writeOutput: writeOutput, writeError: writeError);
+            return ExternalProcess.Run("cmd.exe", $"/c {commandString}", writeOutput, writeError, writeDebug);
         }
     }
 }

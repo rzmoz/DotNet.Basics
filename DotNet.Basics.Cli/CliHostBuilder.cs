@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using DotNet.Basics.Cli.ConsoleOutput;
+using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
 using Microsoft.Extensions.Configuration;
 
@@ -7,50 +10,124 @@ namespace DotNet.Basics.Cli
 {
     public class CliHostBuilder
     {
-        public const char DefaultArgsSwitch = '-';
-        public const string MicrosoftExtensionsArgsSwitch = "--";
-        public SwitchMappings SwitchMappings { get; } = new SwitchMappings();
+        private readonly string[] _args;
+        private readonly ArgsSwitchMappings _switchMappings;
+        private readonly IList<Action<IConfigurationBuilder>> _customConfiguration = new List<Action<IConfigurationBuilder>>();
+        private readonly IList<Action<ILogDispatcher>> _customLogging = new List<Action<ILogDispatcher>>();
+        private Func<ILogDispatcher> _logDispatcherFactory;
+        private readonly AppInfo _appInfo;
+        private readonly bool _verboseIsSet;
 
-        public CliHostBuilder WithSwitchMappings(Func<SwitchMappings> switchMappings)
+        public CliHostBuilder(string[] args, Action<ArgsSwitchMappings> customSwitchMappings = null, Type classThatContainStaticVoidMain = null)
         {
-            SwitchMappings.AddRange(switchMappings?.Invoke());
+            _args = args;
+            _verboseIsSet = _args.IsSet("verbose", false);
+            _switchMappings = new ArgsSwitchMappings(customSwitchMappings);
+            _appInfo = new AppInfo(classThatContainStaticVoidMain);
+        }
+
+        public CliHostBuilder SetLogDispatcherFactory(Func<ILogDispatcher> logDispatcherFactory)
+        {
+            _logDispatcherFactory = logDispatcherFactory;
+            return this;
+        }
+        public CliHostBuilder WithLogging(Action<ILogDispatcher> configureLogging)
+        {
+            _customLogging.Add(configureLogging);
+            return this;
+        }
+        public CliHostBuilder WithConfiguration(Action<IConfigurationBuilder> configureConfiguration)
+        {
+            _customConfiguration.Add(configureConfiguration);
             return this;
         }
 
-        public CliHostBuilder WithColoredConsoleAndSystemConsoleAsFallback(ConsoleTheme consoleTheme = null)
+        public CliHost Build()
         {
-            IConsoleWriter console = new ColoredConsoleWriter(consoleTheme);
-            if (((ColoredConsoleWriter)console).ConsoleModeProperlySet == false)
-                console = new SystemConsoleWriter();
+            return BuildCustomHost((args, config, log) => new CliHost(args, config, log));
+        }
+        public virtual T BuildCustomHost<T>(Func<string[], IConfigurationRoot, ILogDispatcher, T> build) where T : CliHost
+        {
+            if (build == null) throw new ArgumentNullException(nameof(build));
 
-            Diagnostics.Log.Logger.MessageLogged += console.Write;
-            return this;
+            var log = InitLogging();
+
+            var appInfo = $@"Initializing {_appInfo.ToString().Highlight()}";
+            if (_verboseIsSet)
+                appInfo += $@" with args {_args.JoinString(" ").Highlight()}";
+            log.Info(appInfo);
+            var args = InitArgs(_args);
+            var configRoot = InitConfiguration(args, log);
+
+            return build(_args, configRoot, log);
         }
 
-        public CliHostBuilder WithSystemConsole()
+        protected virtual ILogDispatcher InitLogging()
         {
-            var systemConsole = new SystemConsoleWriter();
-            Diagnostics.Log.Logger.MessageLogged += systemConsole.Write;
-            return this;
+            var log = _logDispatcherFactory?.Invoke() ?? new LogDispatcher();
+            if (_verboseIsSet)
+                log.Verbose($"Log Dispatcher <{log.GetType().Name}> initialized");
+
+            foreach (var apply in _customLogging)
+                apply?.Invoke(log);
+
+            if (log.HasListeners == false)
+                log.AddFirstSupportedConsole();
+
+            return log;
         }
 
-        public CliHost Build(string[] args, Action<IConfigurationBuilder> add = null)
+        protected virtual string[] InitArgs(string[] args)
         {
-            var configArgs = args.Select(a =>
+            return args.CleanArgsForCli()
+                       .EnsureFlagsHaveValue()
+                       .EnsureEnvironmentsAreDistinct()
+                       .ToArray();
+        }
+
+        protected virtual IConfigurationRoot InitConfiguration(string[] args, ILogDispatcher log)
+        {
+
+            if (_verboseIsSet && _switchMappings.Any())
             {
-                if (a.StartsWith(DefaultArgsSwitch.ToString()))
-                    a = a.TrimStart(DefaultArgsSwitch).EnsurePrefix(MicrosoftExtensionsArgsSwitch);
-                return a;
-            }).ToArray();
+                log.Verbose($"Args aliases:");
+                foreach (var entry in _switchMappings)
+                    log.Verbose($"{entry.Key} => {ArgsExtensions.MicrosoftExtensionsArgsSwitch}{entry.Value}");
+            }
 
-            var configBuilder = new ConfigurationBuilder()
-                .AddCommandLine(configArgs, SwitchMappings.ToDictionary());
+            var configForEnvironments = new ConfigurationBuilder().AddCommandLine(args, _switchMappings.ToDictionary()).Build();
+            var environments = configForEnvironments.Environments();
 
-            add?.Invoke(configBuilder);
+            if (_verboseIsSet)
+                log.Verbose($"Environments: {environments.JoinString().Highlight()}");
 
-            var config = configBuilder.Build();
+            //configure configuration sources
+            if (_verboseIsSet)
+                log.Verbose($"Reading config from appSettings.json");
 
-            return new CliHost(args, config, Diagnostics.Log.Logger);
+            //add default config file
+            _customConfiguration.Add(config => config.AddJsonFile("appSettings.json", true, false));
+            foreach (var env in environments)//add environment specific configs
+                _customConfiguration.Add(config => config.AddJsonFile($"appSettings.{env}.json", true, false));
+
+            var configBuilder = new ConfigurationBuilder();
+            foreach (var configurationAction in _customConfiguration)
+                configurationAction?.Invoke(configBuilder);
+
+            if (_verboseIsSet && _args.Any())
+                log.Verbose("Reading config from args");
+            configBuilder.AddCommandLine(args, _switchMappings.ToDictionary());
+
+            var configRoot = configBuilder.Build();
+
+            if (_verboseIsSet)
+            {
+                log.Verbose($"Configuration root initialized with:");
+                foreach (var entry in configRoot.AsEnumerable(false))
+                    log.Verbose($"  [\"{entry.Key}\"] = {entry.Value}");
+            }
+
+            return configRoot;
         }
     }
 }
