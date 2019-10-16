@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DotNet.Basics.IO
 {
@@ -31,12 +32,17 @@ namespace DotNet.Basics.IO
 
         public RobocopyStatus(int exitCode)
         {
-            if (exitCode < 0 || exitCode > 16)
-                exitCode = 16;//set to serious error if exit code is not understood
             ExitCode = exitCode;
-            Failed = ExitCode >= 8;
-            StatusMessage = _statusMessages[exitCode];
+            Failed = ExitCode >= 8 || ExitCode < 0;
 
+            try
+            {
+                StatusMessage = _statusMessages[exitCode];
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                StatusMessage = $"ERROR. Unknown exit code: {exitCode}. See log for details";
+            }
         }
 
         public int ExitCode { get; }
