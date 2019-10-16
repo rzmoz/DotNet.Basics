@@ -6,7 +6,7 @@
     {
       "name": "DotNet.Basics",
       "version": "10.0.0",
-      "prerelease": "beta.5.0"
+      "prerelease": ""
     },
     {
       "name": "DotNet.Basics.Autofac",
@@ -16,17 +16,17 @@
     {
       "name": "DotNet.Basics.Cli",
       "version": "10.0.0",
-      "prerelease": "beta.3.4"
+      "prerelease": ""
     },
     {
       "name": "DotNet.Basics.Net.Http",
       "version": "10.0.0",
-      "prerelease": "beta.1.0"
+      "prerelease": ""
     },
     {
       "name": "DotNet.Basics.Pipelines",
       "version": "10.0.0",
-      "prerelease": "beta.1.1"
+      "prerelease": ""
     },
     {
       "name": "DotNet.Basics.PowerShell",
@@ -36,7 +36,7 @@
     {
       "name": "DotNet.Basics.SevenZip",
       "version": "19.00.0",
-      "prerelease": "beta.3.1"
+      "prerelease": ""
     }
   ],
   "tests": [
