@@ -12,6 +12,6 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.Text.Json" Version="4.6.0-preview9.19421.4" />
+    <PackageReference Include="System.Text.Json" Version="4.6.0" />
   </ItemGroup>
 </Project>
