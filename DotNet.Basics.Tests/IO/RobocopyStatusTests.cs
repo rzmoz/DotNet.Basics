@@ -25,11 +25,11 @@ namespace DotNet.Basics.Tests.IO
         [InlineData(14, true)]
         [InlineData(15, true)]
         [InlineData(16, true)]
-        public void Failed_FailedWhen8OrLarger_FailedIsRight(int statusCode, bool expectedSuccess)
+        public void Failed_FailedWhen8OrLarger_FailedIsRight(int statusCode, bool expectedFailed)
         {
             var status = new RobocopyStatus(statusCode);
 
-            status.Failed.Should().Be(expectedSuccess);
+            status.Failed.Should().Be(expectedFailed);
         }
 
         [Theory]
@@ -39,8 +39,10 @@ namespace DotNet.Basics.Tests.IO
         {
             var status = new RobocopyStatus(statusCode);
 
-            status.ExitCode.Should().Be(16);
+            //and should not throw exceptions
+            status.ExitCode.Should().Be(statusCode);
             status.Failed.Should().BeTrue();
+            
         }
     }
 }

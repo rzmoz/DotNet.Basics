@@ -16,7 +16,23 @@ namespace DotNet.Basics.Cli.ConsoleOutput
 
         protected virtual string FormatLogLevel(LogLevel level)
         {
-            return $"[{level.ToName().ToUpperInvariant()}]";
+            switch (level)
+            {
+                case LogLevel.Verbose:
+                    return "VRB";
+                case LogLevel.Debug:
+                    return "DBG";
+                case LogLevel.Info:
+                    return "INF";
+                case LogLevel.Success:
+                    return "SUC";
+                case LogLevel.Warning:
+                    return "WRN";
+                case LogLevel.Error:
+                    return "ERR";
+                default:
+                    return $"[{level.ToName().ToUpperInvariant()}]";
+            }
         }
 
         protected virtual string FormatMessage(string message, Exception e = null)

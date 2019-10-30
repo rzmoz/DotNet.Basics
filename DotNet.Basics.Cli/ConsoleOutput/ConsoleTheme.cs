@@ -26,9 +26,9 @@ namespace DotNet.Basics.Cli.ConsoleOutput
         {
             switch (level)
             {
-                case LogLevel.Vrb:
+                case LogLevel.Verbose:
                     return Verbose;
-                case LogLevel.Dbg:
+                case LogLevel.Debug:
                     return Debug;
                 case LogLevel.Info:
                     return Information;

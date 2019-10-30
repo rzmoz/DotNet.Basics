@@ -31,7 +31,7 @@ namespace DotNet.Basics.IO
             try
             {
                 //try get lock handle
-                var lockAcquired = Repeat.Task(() =>
+                return Repeat.Task(() =>
                 {
                     _lockHandle = File.Create(_lockDir.ToFile(Name).FullName(), 128, FileOptions.DeleteOnClose);
                 }).WithOptions(o =>
@@ -40,8 +40,6 @@ namespace DotNet.Basics.IO
                     o.RetryDelay = 1.Seconds();
                     o.MuteExceptions.Add<IOException>();
                 }).UntilNoExceptions();
-
-                return lockAcquired;
             }
             catch (Exception)
             {
@@ -52,8 +50,14 @@ namespace DotNet.Basics.IO
 
         public void Dispose()
         {
-            _lockHandle?.Dispose();
-            _lockHandle = null;
+            try
+            {
+                _lockHandle?.Dispose();
+            }
+            finally
+            {
+                _lockHandle = null;
+            }
         }
     }
 }

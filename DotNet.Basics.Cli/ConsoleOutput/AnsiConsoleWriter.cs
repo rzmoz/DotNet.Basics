@@ -8,7 +8,6 @@ namespace DotNet.Basics.Cli.ConsoleOutput
     public class AnsiConsoleWriter : ConsoleWriter
     {
         private readonly ConsoleTheme _consoleTheme;
-        private static readonly AnsiForegroundColor _gutterColor = new AnsiForegroundColor(Color.DarkGray);
 
         private const int STD_OUTPUT_HANDLE = -11;
         private const uint ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
