@@ -63,7 +63,7 @@ namespace DotNet.Basics.Diagnostics
             try
             {
                 if (_operations.TryAdd(operation.Id, operation))
-                    _log.Timing(LogLevel.Dbg, operation.Name, "starting", TimeSpan.MinValue);
+                    _log.Timing(LogLevel.Debug, operation.Name, "starting", TimeSpan.MinValue);
                 else
                     _log.Error($"Failed to start {operation.Name} with Id: {operation.Id}");
                 exitCode = await action.Invoke().ConfigureAwait(false);

@@ -64,7 +64,7 @@ namespace DotNet.Basics.Diagnostics
         }
         public void Verbose(string message, Exception e)
         {
-            Write(LogLevel.Vrb, message, e);
+            Write(LogLevel.Verbose, message, e);
         }
         public void Debug(string message)
         {
@@ -72,7 +72,7 @@ namespace DotNet.Basics.Diagnostics
         }
         public void Debug(string message, Exception e)
         {
-            Write(LogLevel.Dbg, message, e);
+            Write(LogLevel.Debug, message, e);
         }
         public void Info(string message)
         {
