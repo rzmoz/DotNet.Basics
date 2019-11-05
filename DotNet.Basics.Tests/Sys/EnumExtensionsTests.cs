@@ -9,7 +9,7 @@ namespace DotNet.Basics.Tests.Sys
     public class EnumExtensionsTests
     {
         [Fact]
-        public void ToName_ParseRightType_NameIsPArsedNotNumValue()
+        public void ToName_ParseRightType_NameIsParsedNotNumValue()
         {
             var result = TestEnum.This.ToName();
 
@@ -21,6 +21,13 @@ namespace DotNet.Basics.Tests.Sys
         {
             var @enum = "This".ToEnum<TestEnum>();
             @enum.Should().Be(TestEnum.This);
+        }
+
+        [Fact]
+        public void ToEnum_DefaultValue_EnumIsNotParsed()
+        {
+            var @enum = "LoremIpsumValueIsNotInEnum".ToEnum<TestEnum>(TestEnum.That);
+            @enum.Should().Be(TestEnum.That);
         }
 
         [Fact]

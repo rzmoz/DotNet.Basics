@@ -8,6 +8,36 @@ namespace DotNet.Basics.Cli.ConsoleOutput
     {
         protected object SyncRoot { get; } = new object();
         private const string _space = " ";
+        
+        public virtual void Write(LogLevel level, string message, Exception e = null)
+        {
+            lock (SyncRoot)
+            {
+                var output = FormatLogOutput(level, message, e).StripHighlight();
+
+                if (level < LogLevel.Error)
+                    WriteOutput(output);
+                else
+                    WriteError(output);
+                Console.Out.Flush();
+            }
+        }
+
+        public Action<LogLevel, string, Exception> LogTarget => Write;
+        public Action<LogLevel, string, string, TimeSpan> TimingTarget => (level, name, @event, duration) =>
+        {
+            var durationString = duration > TimeSpan.MinValue ? $" in {duration.ToString("hh\\:mm\\:ss").Highlight()}" : string.Empty;
+            Write(level, $"[{name.Highlight()} {@event}{durationString}]".WithGutter());
+        };
+
+        protected virtual void WriteOutput(string output)
+        {
+            Console.Out.Write(output);
+        }
+        protected virtual void WriteError(string output)
+        {
+            Console.Error.Write(output);
+        }
 
         protected virtual string FormatLogOutput(LogLevel level, string message, Exception e = null)
         {
@@ -45,26 +75,5 @@ namespace DotNet.Basics.Cli.ConsoleOutput
                 ? e.ToString()
                 : $"{message}\r\n{e}";
         }
-
-        public virtual void Write(LogLevel level, string message, Exception e = null)
-        {
-            lock (SyncRoot)
-            {
-                var output = FormatLogOutput(level, message, e).StripHighlight();
-
-                if (level < LogLevel.Error)
-                    Console.Out.Write(output);
-                else
-                    Console.Error.Write(output);
-                Console.Out.Flush();
-            }
-        }
-
-        public Action<LogLevel, string, Exception> LogTarget => Write;
-        public Action<LogLevel, string, string, TimeSpan> TimingTarget => (level, name, @event, duration) =>
-        {
-            var durationString = duration > TimeSpan.MinValue ? $" in {duration.ToString("hh\\:mm\\:ss").Highlight()}" : string.Empty;
-            Write(level, $"[{name.Highlight()} {@event}{durationString}]".WithGutter());
-        };
     }
 }

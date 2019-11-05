@@ -11,38 +11,52 @@ namespace DotNet.Basics.Tests.Sys
         const string _str = "myStr";
         const string _prefix = "myPrefix";
         const string _suffix = "myPostfix";
-        
+
         [Fact]
-        public void FixCarriageReturn_NoCarriageReturnNewline_NothingChanges()
+        public void EnsureNewlineHasCarriageReturn_NoCarriageReturnNewline_NothingChanges()
         {
             var source = "LoremIpsum";
 
-            var output = source.FixCarriageReturn();
+            var output = source.EnsureNewlineHasCarriageReturn();
 
             output.Length.Should().Be(source.Length);
             output.Should().Be(source);
         }
 
         [Fact]
-        public void FixCarriageReturn_CarriageReturnNewlineAlready_NothingChanges()
+        public void EnsureNewlineHasCarriageReturn_CarriageReturnNewlineAlready_NothingChanges()
         {
             var source = "LoremIpsum\r\nTempo";
 
-            var output = source.FixCarriageReturn();
+            var output = source.EnsureNewlineHasCarriageReturn();
 
             output.Length.Should().Be(source.Length);
             output.Should().Be(source);
         }
 
         [Fact]
-        public void FixCarriageReturn_NewlineButNoCarriageReturn_CarriageReturnFixed()
+        public void EnsureNewlineHasCarriageReturn_NewlineButNoCarriageReturn_CarriageReturnFixed()
         {
             var source = "LoremIpsum\nTempo";
 
-            var output = source.FixCarriageReturn();
+            var output = source.EnsureNewlineHasCarriageReturn();
 
-            output.Length.Should().Be(source.Length+1);
+            output.Length.Should().Be(source.Length + 1);
             output.Should().NotBe(source);
+        }
+
+        [Fact]
+        public void ToMultiLine_Split_StringIsSplintIntoLines()
+        {
+            var line1 = "lorem";
+            var line2 = "ipsum";
+            var @string = $"{line1}{Environment.NewLine}{line2}";
+
+            var multiline = @string.ToMultiLine();
+
+            multiline.Length.Should().Be(2);
+            multiline.First().Should().Be(line1);
+            multiline.Last().Should().Be(line2);
         }
 
         [Fact]
@@ -207,7 +221,7 @@ namespace DotNet.Basics.Tests.Sys
         public void RemoveSuffix_WhenSuffixIsEmpty_SuffixIsRemoved(string suffix)
         {
             var str = "HelloWorld!";
-            var woSuffix= str.RemoveSuffix(suffix);
+            var woSuffix = str.RemoveSuffix(suffix);
 
             woSuffix.Should().Be(str);
         }

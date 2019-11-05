@@ -4,12 +4,16 @@ using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace DotNet.Basics.Sys
 {
     public static class StringExtensions
     {
-        public static string FixCarriageReturn(this string source)
+        private const string _newlinePattern = @"\r\n|\r|\n";
+        private static readonly Regex _newlineRegex = new Regex(_newlinePattern, RegexOptions.Compiled);
+
+        public static string EnsureNewlineHasCarriageReturn(this string source)
         {
             if (source == null)
                 return null;
@@ -19,6 +23,10 @@ namespace DotNet.Basics.Sys
                 return source.Replace("\n", "\r\n");
 
             return source;
+        }
+        public static string[] ToMultiLine(this string source)
+        {
+            return source == null ? null : _newlineRegex.Split(source);
         }
         public static string JoinString(this IEnumerable<string> source, string separator = "|")
         {

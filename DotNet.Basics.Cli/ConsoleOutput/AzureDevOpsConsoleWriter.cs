@@ -1,13 +1,22 @@
 ﻿using System;
+using DotNet.Basics.Collections;
 using DotNet.Basics.Diagnostics;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Cli.ConsoleOutput
 {
     public class AzureDevOpsConsoleWriter : ConsoleWriter
     {
+        
+
         protected override string FormatLogLevel(LogLevel level)
         {
             return OutputColorPrefix(level);
+        }
+
+        protected override void WriteOutput(string output)
+        {
+            output.ToMultiLine().ForEach(line => Console.Out.Write(line));
         }
 
         public static bool EnvironmentIsAzureDevOpsHostedAgent()

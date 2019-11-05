@@ -69,7 +69,7 @@ namespace DotNet.Basics.IO
         {
             try
             {
-                return File.ReadAllText(fp.FullName()).FixCarriageReturn();
+                return File.ReadAllText(fp.FullName()).EnsureNewlineHasCarriageReturn();
             }
             catch (DirectoryNotFoundException)
             {
