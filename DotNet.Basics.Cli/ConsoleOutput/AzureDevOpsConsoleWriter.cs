@@ -7,16 +7,32 @@ namespace DotNet.Basics.Cli.ConsoleOutput
 {
     public class AzureDevOpsConsoleWriter : ConsoleWriter
     {
-        
-
         protected override string FormatLogLevel(LogLevel level)
         {
             return OutputColorPrefix(level);
         }
 
-        protected override void WriteOutput(string output)
+        public override void Write(LogLevel level, string message, Exception e = null)
         {
-            output.ToMultiLine().ForEach(line => Console.Out.Write(line));
+            lock (SyncRoot)
+            {
+                var console = level < LogLevel.Error ? Console.Out : Console.Error;
+
+                message.ToMultiLine()
+                    .ForEach(line =>
+                    {
+                        var output = FormatLogOutput(level, line).StripHighlight();
+                        console.Write(output);
+                        console.Flush();
+                    });
+
+                if (e != null)
+                {
+                    var output = FormatLogOutput(level, null, e).StripHighlight();
+                    console.Write(output);
+                    console.Flush();
+                }
+            }
         }
 
         public static bool EnvironmentIsAzureDevOpsHostedAgent()

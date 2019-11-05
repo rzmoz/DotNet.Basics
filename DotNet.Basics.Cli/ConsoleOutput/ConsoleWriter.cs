@@ -16,9 +16,9 @@ namespace DotNet.Basics.Cli.ConsoleOutput
                 var output = FormatLogOutput(level, message, e).StripHighlight();
 
                 if (level < LogLevel.Error)
-                    WriteOutput(output);
+                    Console.Out.Write(output);
                 else
-                    WriteError(output);
+                    Console.Error.Write(output);
                 Console.Out.Flush();
             }
         }
@@ -29,15 +29,6 @@ namespace DotNet.Basics.Cli.ConsoleOutput
             var durationString = duration > TimeSpan.MinValue ? $" in {duration.ToString("hh\\:mm\\:ss").Highlight()}" : string.Empty;
             Write(level, $"[{name.Highlight()} {@event}{durationString}]".WithGutter());
         };
-
-        protected virtual void WriteOutput(string output)
-        {
-            Console.Out.Write(output);
-        }
-        protected virtual void WriteError(string output)
-        {
-            Console.Error.Write(output);
-        }
 
         protected virtual string FormatLogOutput(LogLevel level, string message, Exception e = null)
         {
