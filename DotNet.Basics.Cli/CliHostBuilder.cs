@@ -87,7 +87,6 @@ namespace DotNet.Basics.Cli
 
         protected virtual IConfigurationRoot InitConfiguration(string[] args, ILogDispatcher log)
         {
-
             if (_verboseIsSet && _switchMappings.Any())
             {
                 log.Verbose($"Args aliases:");

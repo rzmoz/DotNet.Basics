@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DotNet.Basics.Diagnostics;
+using DotNet.Basics.Sys;
 using Microsoft.Extensions.Configuration;
 
 namespace DotNet.Basics.Cli
@@ -27,15 +28,17 @@ namespace DotNet.Basics.Cli
         public bool IsSet(string key) => Config.IsSet(key) || Args.IsSet(key);
         public bool HasValue(string key) => Config.HasValue(key);
 
-        public virtual async Task<int> RunAsync(string name, Func<ICliConfiguration, ILogDispatcher, Task<int>> asyncAction, CliHostOptions options = null)
+        public virtual Task<int> RunAsync(string name, Func<ICliConfiguration, ILogDispatcher, Task<int>> asyncAction)
+        {
+            return RunAsync(name, asyncAction, 1.Minutes());
+        }
+        public virtual async Task<int> RunAsync(string name, Func<ICliConfiguration, ILogDispatcher, Task<int>> asyncAction, TimeSpan longRunningOperationsPingInterval)
         {
             if (asyncAction == null) throw new ArgumentNullException(nameof(asyncAction));
-            if (options == null)
-                options = new CliHostOptions();
 
             try
             {
-                LongRunningOperations.Init(Log, options.LongRunningOperationsPingInterval);
+                LongRunningOperations.Init(Log, longRunningOperationsPingInterval);
 
                 return await LongRunningOperations.StartAsync(name, async () =>
                     await asyncAction.Invoke(this, Log).ConfigureAwait(false))
@@ -43,13 +46,13 @@ namespace DotNet.Basics.Cli
             }
             catch (CliException e)
             {
-                options.LogOnCliException?.Invoke(e, Log);
-                return options.ReturnCodeOnError;
+                Log.Error(e.Message.Highlight(), e.LogOptions == LogOptions.IncludeStackTrace ? e : null);
+                return e.ExitCode;
             }
             catch (Exception e)
             {
-                options.LogOnException?.Invoke(e, Log);
-                return options.ReturnCodeOnError;
+                Log.Error(e.Message.Highlight(), e);
+                return 500;
             }
         }
     }

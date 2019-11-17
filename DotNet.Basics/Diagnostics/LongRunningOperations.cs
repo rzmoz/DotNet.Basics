@@ -34,7 +34,7 @@ namespace DotNet.Basics.Diagnostics
                 Enabled = true
             };
             _timer.Elapsed += _timer_Elapsed;
-            _log.Verbose($"Long running operations initialized with ping feedback: {$"{pingInterval:hh\\:mm\\:ss}".Highlight()}");
+            _log.Verbose($"Long running operations initialized with ping interval: {$"{pingInterval:hh\\:mm\\:ss}".Highlight()}");
         }
 
         public static void Init(ILogDispatcher log, TimeSpan pingInterval)
