@@ -23,21 +23,8 @@ namespace DotNet.Basics.ExeTest
 
             return await cliHost.RunAsync("MyTask", async (config, log) =>
             {
-                var levels = (ICollection<LogLevel>)Enum.GetValues(typeof(LogLevel));
-                await levels.ForEachParallelAsync(async level =>
-                {
-                    await LongRunningOperations.StartAsync(level.ToName(), async () =>
-                    {
-                        var someLongText = Enumerable.Range(0, 5).Select(i => $"lorem ipsum {i}").JoinString("\r\n");
+                log.Raw("Hello World!");
 
-
-                        log.Info(someLongText.WithGutter());
-
-                        await Task.Delay(3.Seconds()).ConfigureAwait(false);
-                        return 0;
-
-                    }).ConfigureAwait(false);
-                }).ConfigureAwait(false);
                 return 0;
             }).ConfigureAwait(false);
         }

@@ -7,6 +7,8 @@ namespace DotNet.Basics.Diagnostics
         void AddDiagnosticsTarget(IDiagnosticsTarget target);
 
         ILogDispatcher InContext(string context, bool floatMessageLogged = true);
+        void Raw(string message);
+        void Raw(string message, Exception e);
         void Verbose(string message);
         void Verbose(string message, Exception e);
         void Debug(string message);

@@ -8,7 +8,7 @@ namespace DotNet.Basics.Cli.ConsoleOutput
     {
         protected object SyncRoot { get; } = new object();
         private const string _space = " ";
-        
+
         public virtual void Write(LogLevel level, string message, Exception e = null)
         {
             lock (SyncRoot)
@@ -32,27 +32,29 @@ namespace DotNet.Basics.Cli.ConsoleOutput
 
         protected virtual string FormatLogOutput(LogLevel level, string message, Exception e = null)
         {
-            return FormatLogLevel(level) + _space + FormatMessage(message, e) + Environment.NewLine;
+            return (FormatLogLevel(level) + FormatMessage(message, e) + Environment.NewLine);
         }
 
         protected virtual string FormatLogLevel(LogLevel level)
         {
             switch (level)
             {
+                case LogLevel.Raw:
+                    return string.Empty;
                 case LogLevel.Verbose:
-                    return "VRB";
+                    return "VRB" + _space;
                 case LogLevel.Debug:
-                    return "DBG";
+                    return "DBG" + _space;
                 case LogLevel.Info:
-                    return "INF";
+                    return "INF" + _space;
                 case LogLevel.Success:
-                    return "SUC";
+                    return "SUC" + _space;
                 case LogLevel.Warning:
-                    return "WRN";
+                    return "WRN" + _space;
                 case LogLevel.Error:
-                    return "ERR";
+                    return "ERR" + _space;
                 default:
-                    return $"[{level.ToName().ToUpperInvariant()}]";
+                    return $"[{level.ToName().ToUpperInvariant()}]" + _space;
             }
         }
 

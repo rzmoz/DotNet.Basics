@@ -7,6 +7,7 @@ namespace DotNet.Basics.Cli.ConsoleOutput
     {
         public static ConsoleTheme Default { get; } = new ConsoleTheme
         {
+            Raw = new ConsoleFormat(),
             Verbose = new ConsoleFormat(Color.DarkSlateGray, Color.Empty, Color.Gray),
             Debug = new ConsoleFormat(Color.DarkCyan, Color.Empty, Color.DarkTurquoise),
             Information = new ConsoleFormat(Color.White, Color.Empty, Color.Violet),
@@ -15,6 +16,7 @@ namespace DotNet.Basics.Cli.ConsoleOutput
             Error = new ConsoleFormat(Color.Red, Color.Empty, Color.White, Color.DarkRed)
         };
 
+        public ConsoleFormat Raw { get; set; } = ConsoleFormat.Empty;
         public ConsoleFormat Verbose { get; set; } = ConsoleFormat.Empty;
         public ConsoleFormat Debug { get; set; } = ConsoleFormat.Empty;
         public ConsoleFormat Information { get; set; } = ConsoleFormat.Empty;
@@ -26,6 +28,8 @@ namespace DotNet.Basics.Cli.ConsoleOutput
         {
             switch (level)
             {
+                case LogLevel.Raw:
+                    return Raw;
                 case LogLevel.Verbose:
                     return Verbose;
                 case LogLevel.Debug:

@@ -17,6 +17,10 @@ namespace DotNet.Basics.Diagnostics
         {
             return this;
         }
+        public void Raw(string message)
+        { }
+        public void Raw(string message, Exception e)
+        { }
         public void Verbose(string message)
         { }
         public void Verbose(string message, Exception e)

@@ -57,7 +57,14 @@ namespace DotNet.Basics.Diagnostics
 
             return newLogger;
         }
-
+        public void Raw(string message)
+        {
+            Raw(message, null);
+        }
+        public void Raw(string message, Exception e)
+        {
+            Write(LogLevel.Raw, message, e);
+        }
         public void Verbose(string message)
         {
             Verbose(message, null);
