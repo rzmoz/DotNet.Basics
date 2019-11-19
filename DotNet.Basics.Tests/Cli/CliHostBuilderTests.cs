@@ -1,4 +1,6 @@
 ﻿using DotNet.Basics.Cli;
+using DotNet.Basics.Diagnostics;
+using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using FluentAssertions;
 using Xunit;
@@ -16,6 +18,38 @@ namespace DotNet.Basics.Tests.Cli
             var host = new CliHostBuilder(args).Build();
 
             host[nameof(TestCliHost.MySetting)].Should().Be(value);
+        }
+
+        [Fact]
+        public void Build_HydratorArgs_ArePassed()
+        {
+            var keyValue = "myValue";
+            var boolValue = true;
+            var enumValue = LogLevel.Info;
+            var dirPathValue = "c:\\myDir".ToDir();
+            var filePathValue = "c:\\myPath".ToFile();
+            var stringListValue = "Hello|World!";
+
+            string[] args =
+            {
+                $"-{nameof(TestArgs.Key)}", keyValue, 
+                $"-{nameof(TestArgs.Boolean)}", boolValue.ToString(), 
+                $"-{nameof(TestArgs.Enum)}", enumValue.ToName(), 
+                $"-{nameof(TestArgs.DirPath)}", dirPathValue.RawPath, 
+                $"-{nameof(TestArgs.FilePath)}", filePathValue.RawPath,
+                $"-{nameof(TestArgs.StringList)}", stringListValue,
+            };
+
+            var host = new CliHostBuilder(args)
+                .WithArgsHydrator((config, log) => new ArgsHydrateFromConfigVisitor(config, log))
+                .Build((config, log) => new TestArgs());
+
+            host.Args.Key.Should().Be(keyValue);
+            host.Args.Boolean.Should().Be(boolValue);
+            host.Args.Enum.Should().Be(enumValue);
+            host.Args.DirPath.Should().Be(dirPathValue);
+            host.Args.FilePath.Should().Be(filePathValue);
+            host.Args.StringList.Count.Should().Be(2);
         }
 
 
@@ -104,11 +138,6 @@ namespace DotNet.Basics.Tests.Cli
             var cliArgs = new CliHostBuilder(args).Build();
 
             cliArgs[1].Should().Be(pos1);
-        }
-
-        public class TestArgs
-        {
-            public string Key { get; set; }
         }
     }
 }

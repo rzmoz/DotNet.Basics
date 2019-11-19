@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace DotNet.Basics.Cli
 {
-    public class CliHost<T> : ICliConfiguration
+    public class CliHost<T> : ICliHost<T>
     {
         public CliHost(T args, string[] rawArgs, IConfigurationRoot config, ILogDispatcher log)
         {
@@ -58,6 +58,7 @@ namespace DotNet.Basics.Cli
             }
         }
 
+        
     }
     public class CliHost : CliHost<string[]>
     {

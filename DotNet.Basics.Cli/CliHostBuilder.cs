@@ -17,6 +17,7 @@ namespace DotNet.Basics.Cli
         private Func<ILogDispatcher> _logDispatcherFactory;
         private readonly AppInfo _appInfo;
         private readonly bool _verboseIsSet;
+        private Func<ICliConfiguration, ILogDispatcher, ArgsHydrateFromConfigVisitor> _argsHydrateVisitor = null;
 
         public CliHostBuilder(string[] rawArgs, Type classThatContainStaticVoidMain = null)
         {
@@ -24,6 +25,12 @@ namespace DotNet.Basics.Cli
             _verboseIsSet = _rawArgs.IsSet("verbose", false);
             _switchMappings = new ArgsSwitchMappings();
             _appInfo = new AppInfo(classThatContainStaticVoidMain);
+        }
+
+        public CliHostBuilder WithArgsHydrator(Func<ICliConfiguration, ILogDispatcher, ArgsHydrateFromConfigVisitor> getArgsHydrateVisitor)
+        {
+            _argsHydrateVisitor = getArgsHydrateVisitor;
+            return this;
         }
 
         public CliHostBuilder WithArgsSwitchMappings(Action<ArgsSwitchMappings> customSwitchMappings = null)
@@ -50,18 +57,22 @@ namespace DotNet.Basics.Cli
 
         public CliHost Build()
         {
-            return BuildCustomHost((config, log) => new CliHost(_rawArgs, config, log));
+            return BuildCustomHost<CliHost, string[]>((config, log) => new CliHost(_rawArgs, config, log));
         }
         public CliHost<T> Build<T>(Func<IConfigurationRoot, ILogDispatcher, T> buildArgs)
         {
-            return BuildCustomHost((config, log) =>
-            {
-                var args = buildArgs(config, log);
-                return new CliHost<T>(args, _rawArgs, config, log);
-            });
+            return BuildCustomHost<CliHost<T>, T>((config, log) =>
+             {
+                 var args = buildArgs(config, log);
+                 return new CliHost<T>(args, _rawArgs, config, log);
+             });
         }
 
-        public virtual T BuildCustomHost<T>(Func<IConfigurationRoot, ILogDispatcher, T> build)
+        public virtual T BuildCustomHost<T>(Func<IConfigurationRoot, ILogDispatcher, T> build) where T : ICliHost<string[]>
+        {
+            return BuildCustomHost<T, string[]>(build);
+        }
+        public virtual T BuildCustomHost<T, TK>(Func<IConfigurationRoot, ILogDispatcher, T> build) where T : ICliHost<TK>
         {
             if (build == null) throw new ArgumentNullException(nameof(build));
 
@@ -74,7 +85,15 @@ namespace DotNet.Basics.Cli
             var args = InitArgs(_rawArgs);
             var configRoot = InitConfiguration(args, log);
 
-            return build(configRoot, log);
+
+            var host = build(configRoot, log);
+            if (_argsHydrateVisitor != null)
+            {
+                var argsHydrator = _argsHydrateVisitor.Invoke(host, log);
+                argsHydrator.HydrateFromConfig(host.Args);
+            }
+
+            return host;
         }
 
         protected virtual ILogDispatcher InitLogging()

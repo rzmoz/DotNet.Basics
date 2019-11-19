@@ -13,7 +13,7 @@ namespace DotNet.Basics.Sys
             : this(semVer?.ToString())
         { }
         public SemVersion(string semVer)
-        : this(Parse(semVer))
+        : this(Parse(semVer ?? "0.0.0"))
         { }
         public SemVersion(SemVersion semVer)
             : this(semVer.Major, semVer.Minor, semVer.Patch, semVer.PreRelease, semVer.Metadata)
