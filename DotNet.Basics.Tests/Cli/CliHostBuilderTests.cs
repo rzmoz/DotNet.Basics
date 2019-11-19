@@ -18,6 +18,17 @@ namespace DotNet.Basics.Tests.Cli
             host[nameof(TestCliHost.MySetting)].Should().Be(value);
         }
 
+
+        [Fact]
+        public void Build_CustomArgs_ArgsArePassed()
+        {
+            var value = "helloWorld!";
+            var host = new CliHostBuilder(new string[0])
+                .Build((config, log) => new TestArgs { Key = value });
+
+            host.Args.Key.Should().Be(value);
+        }
+
         [Fact]
         public void BuildCustomHost_Args_ArePassed()
         {
@@ -25,7 +36,7 @@ namespace DotNet.Basics.Tests.Cli
             string[] args = { $"-{nameof(TestCliHost.MySetting)}", value };
 
             var host = new CliHostBuilder(args)
-                .BuildCustomHost((args, config, log) => new TestCliHost(args, config, log));
+                .BuildCustomHost((config, log) => new TestCliHost(args, config, log));
 
             host.MySetting.Should().Be(value);
         }
@@ -93,6 +104,11 @@ namespace DotNet.Basics.Tests.Cli
             var cliArgs = new CliHostBuilder(args).Build();
 
             cliArgs[1].Should().Be(pos1);
+        }
+
+        public class TestArgs
+        {
+            public string Key { get; set; }
         }
     }
 }

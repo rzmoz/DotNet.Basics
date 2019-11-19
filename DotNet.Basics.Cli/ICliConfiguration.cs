@@ -9,7 +9,7 @@ namespace DotNet.Basics.Cli
         string this[string key] { get; }
         string this[int index] { get; }
 
-        IReadOnlyList<string> Args { get; }
+        IReadOnlyList<string> RawArgs { get; }
         IConfigurationRoot Config { get; }
         IReadOnlyCollection<string> Environments { get; }
 

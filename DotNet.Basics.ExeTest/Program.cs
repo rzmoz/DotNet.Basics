@@ -18,7 +18,7 @@ namespace DotNet.Basics.ExeTest
 
             LongRunningOperations.Init(1.Seconds());
 
-            return await cliHost.RunAsync("MyTask", async (config, log) =>
+            return await cliHost.RunAsync("MyTask", async (arg, config, log) =>
             {
                 log.Raw("Hello World!");
 

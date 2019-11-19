@@ -10,7 +10,7 @@ namespace DotNet.Basics.Cli
 {
     public class CliHostBuilder
     {
-        private readonly string[] _args;
+        private readonly string[] _rawArgs;
         private readonly ArgsSwitchMappings _switchMappings;
         private readonly IList<Action<IConfigurationBuilder>> _customConfiguration = new List<Action<IConfigurationBuilder>>();
         private readonly IList<Action<ILogDispatcher>> _customLogging = new List<Action<ILogDispatcher>>();
@@ -18,10 +18,10 @@ namespace DotNet.Basics.Cli
         private readonly AppInfo _appInfo;
         private readonly bool _verboseIsSet;
 
-        public CliHostBuilder(string[] args, Type classThatContainStaticVoidMain = null)
+        public CliHostBuilder(string[] rawArgs, Type classThatContainStaticVoidMain = null)
         {
-            _args = args;
-            _verboseIsSet = _args.IsSet("verbose", false);
+            _rawArgs = rawArgs;
+            _verboseIsSet = _rawArgs.IsSet("verbose", false);
             _switchMappings = new ArgsSwitchMappings();
             _appInfo = new AppInfo(classThatContainStaticVoidMain);
         }
@@ -50,9 +50,18 @@ namespace DotNet.Basics.Cli
 
         public CliHost Build()
         {
-            return BuildCustomHost((args, config, log) => new CliHost(args, config, log));
+            return BuildCustomHost((config, log) => new CliHost(_rawArgs, config, log));
         }
-        public virtual T BuildCustomHost<T>(Func<string[], IConfigurationRoot, ILogDispatcher, T> build) where T : CliHost
+        public CliHost<T> Build<T>(Func<IConfigurationRoot, ILogDispatcher, T> buildArgs)
+        {
+            return BuildCustomHost((config, log) =>
+            {
+                var args = buildArgs(config, log);
+                return new CliHost<T>(args, _rawArgs, config, log);
+            });
+        }
+
+        public virtual T BuildCustomHost<T>(Func<IConfigurationRoot, ILogDispatcher, T> build)
         {
             if (build == null) throw new ArgumentNullException(nameof(build));
 
@@ -60,12 +69,12 @@ namespace DotNet.Basics.Cli
 
             var appInfo = $@"Initializing {_appInfo.ToString().Highlight()}";
             if (_verboseIsSet)
-                appInfo += $@" with args {_args.JoinString(" ").Highlight()}";
+                appInfo += $@" with args {_rawArgs.JoinString(" ").Highlight()}";
             log.Info(appInfo);
-            var args = InitArgs(_args);
+            var args = InitArgs(_rawArgs);
             var configRoot = InitConfiguration(args, log);
 
-            return build(_args, configRoot, log);
+            return build(configRoot, log);
         }
 
         protected virtual ILogDispatcher InitLogging()
@@ -119,7 +128,7 @@ namespace DotNet.Basics.Cli
             foreach (var configurationAction in _customConfiguration)
                 configurationAction?.Invoke(configBuilder);
 
-            if (_verboseIsSet && _args.Any())
+            if (_verboseIsSet && _rawArgs.Any())
                 log.Verbose("Reading config from args");
             configBuilder.AddCommandLine(args, _switchMappings.ToDictionary());
 
