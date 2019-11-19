@@ -60,9 +60,4 @@ namespace DotNet.Basics.Cli
 
         
     }
-    public class CliHost : CliHost<string[]>
-    {
-        public CliHost(string[] rawArgs, IConfigurationRoot config, ILogDispatcher log) : base(rawArgs, rawArgs, config, log)
-        { }
-    }
 }

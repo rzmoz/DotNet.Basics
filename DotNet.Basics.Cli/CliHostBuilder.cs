@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace DotNet.Basics.Cli
 {
-    public class CliHostBuilder
+    public class CliHostBuilder<T> where T : new()
     {
         private readonly string[] _rawArgs;
         private readonly ArgsSwitchMappings _switchMappings;
@@ -17,62 +17,56 @@ namespace DotNet.Basics.Cli
         private Func<ILogDispatcher> _logDispatcherFactory;
         private readonly AppInfo _appInfo;
         private readonly bool _verboseIsSet;
-        private Func<ICliConfiguration, ILogDispatcher, ArgsHydrateFromConfigVisitor> _argsHydrateVisitor = null;
+        private readonly IList<Func<IArgsHydrator<T>>> _getArgsHydrators = new List<Func<IArgsHydrator<T>>>();
 
-        public CliHostBuilder(string[] rawArgs, Type classThatContainStaticVoidMain = null)
+        public CliHostBuilder(string[] rawArgs, Type classThatContainStaticVoidMain = null, bool hydrateArgsFromConfig = true)
         {
             _rawArgs = rawArgs;
             _verboseIsSet = _rawArgs.IsSet("verbose", false);
             _switchMappings = new ArgsSwitchMappings();
             _appInfo = new AppInfo(classThatContainStaticVoidMain);
+            if (hydrateArgsFromConfig)
+                WithArgsHydrator(() => new ArgsFromConfigHydrator<T>());
         }
 
-        public CliHostBuilder WithArgsHydrator(Func<ICliConfiguration, ILogDispatcher, ArgsHydrateFromConfigVisitor> getArgsHydrateVisitor)
+        public CliHostBuilder<T> WithArgsHydrator(Func<IArgsHydrator<T>> getArgsHydrator)
         {
-            _argsHydrateVisitor = getArgsHydrateVisitor;
+            if (getArgsHydrator == null) throw new ArgumentNullException(nameof(getArgsHydrator));
+            _getArgsHydrators.Add(getArgsHydrator);
             return this;
         }
 
-        public CliHostBuilder WithArgsSwitchMappings(Action<ArgsSwitchMappings> customSwitchMappings = null)
+        public CliHostBuilder<T> WithArgsSwitchMappings(Action<ArgsSwitchMappings> customSwitchMappings = null)
         {
             customSwitchMappings?.Invoke(_switchMappings);
             return this;
         }
 
-        public CliHostBuilder SetLogDispatcherFactory(Func<ILogDispatcher> logDispatcherFactory)
+        public CliHostBuilder<T> SetLogDispatcherFactory(Func<ILogDispatcher> logDispatcherFactory)
         {
             _logDispatcherFactory = logDispatcherFactory;
             return this;
         }
-        public CliHostBuilder WithLogging(Action<ILogDispatcher> configureLogging)
+        public CliHostBuilder<T> WithLogging(Action<ILogDispatcher> configureLogging)
         {
             _customLogging.Add(configureLogging);
             return this;
         }
-        public CliHostBuilder WithConfiguration(Action<IConfigurationBuilder> configureConfiguration)
+        public CliHostBuilder<T> WithConfiguration(Action<IConfigurationBuilder> configureConfiguration)
         {
             _customConfiguration.Add(configureConfiguration);
             return this;
         }
 
-        public CliHost Build()
+        public CliHost<T> Build()
         {
-            return BuildCustomHost<CliHost, string[]>((config, log) => new CliHost(_rawArgs, config, log));
-        }
-        public CliHost<T> Build<T>(Func<IConfigurationRoot, ILogDispatcher, T> buildArgs)
-        {
-            return BuildCustomHost<CliHost<T>, T>((config, log) =>
+            return BuildCustomHost((config, log) =>
              {
-                 var args = buildArgs(config, log);
+                 var args = new T();
                  return new CliHost<T>(args, _rawArgs, config, log);
              });
         }
-
-        public virtual T BuildCustomHost<T>(Func<IConfigurationRoot, ILogDispatcher, T> build) where T : ICliHost<string[]>
-        {
-            return BuildCustomHost<T, string[]>(build);
-        }
-        public virtual T BuildCustomHost<T, TK>(Func<IConfigurationRoot, ILogDispatcher, T> build) where T : ICliHost<TK>
+        public virtual THost BuildCustomHost<THost>(Func<IConfigurationRoot, ILogDispatcher, THost> build) where THost : ICliHost<T>
         {
             if (build == null) throw new ArgumentNullException(nameof(build));
 
@@ -82,17 +76,15 @@ namespace DotNet.Basics.Cli
             if (_verboseIsSet)
                 appInfo += $@" with args {_rawArgs.JoinString(" ").Highlight()}";
             log.Info(appInfo);
-            var args = InitArgs(_rawArgs);
-            var configRoot = InitConfiguration(args, log);
-
+            var rawArgs = InitRawArgs(_rawArgs);
+            var configRoot = InitConfiguration(rawArgs, log);
 
             var host = build(configRoot, log);
-            if (_argsHydrateVisitor != null)
+            foreach (var getArgsHydrator in _getArgsHydrators)
             {
-                var argsHydrator = _argsHydrateVisitor.Invoke(host, log);
-                argsHydrator.HydrateFromConfig(host.Args);
+                var argsHydrator = getArgsHydrator.Invoke();
+                argsHydrator.Hydrate(host, host.Args, log);
             }
-
             return host;
         }
 
@@ -111,7 +103,7 @@ namespace DotNet.Basics.Cli
             return log;
         }
 
-        protected virtual string[] InitArgs(string[] args)
+        protected virtual string[] InitRawArgs(string[] args)
         {
             return args.CleanArgsForCli()
                        .EnsureFlagsHaveValue()

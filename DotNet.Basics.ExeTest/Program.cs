@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using DotNet.Basics.Cli;
 using DotNet.Basics.Cli.ConsoleOutput;
 using DotNet.Basics.Diagnostics;
@@ -11,18 +12,18 @@ namespace DotNet.Basics.ExeTest
         static async Task<int> Main(string[] args)
         {
             args.PauseIfDebug();
-            var cliHost = new CliHostBuilder(args)
+            var cliHost = new CliHostBuilder<EventArgs>(args)
                 .WithArgsSwitchMappings(mappings => mappings.Add("lorem", "ipsum"))
                 .WithLogging(config => config.AddFirstSupportedConsole())
                 .Build();
 
             LongRunningOperations.Init(1.Seconds());
 
-            return await cliHost.RunAsync("MyTask", async (arg, config, log) =>
+            return await cliHost.RunAsync("MyTask", (arg, config, log) =>
             {
                 log.Raw("Hello World!");
 
-                return 0;
+                return Task.FromResult(0);
             }).ConfigureAwait(false);
         }
     }
