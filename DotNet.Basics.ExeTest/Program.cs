@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using DotNet.Basics.Cli;
 using DotNet.Basics.Cli.ConsoleOutput;
-using DotNet.Basics.Collections;
 using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
 
@@ -15,7 +11,8 @@ namespace DotNet.Basics.ExeTest
         static async Task<int> Main(string[] args)
         {
             args.PauseIfDebug();
-            var cliHost = new CliHostBuilder(args, mappings => mappings.Add("lorem", "ipsum"))
+            var cliHost = new CliHostBuilder(args)
+                .WithArgsSwitchMappings(mappings => mappings.Add("lorem", "ipsum"))
                 .WithLogging(config => config.AddFirstSupportedConsole())
                 .Build();
 

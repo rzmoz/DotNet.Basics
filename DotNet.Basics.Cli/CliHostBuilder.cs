@@ -18,12 +18,18 @@ namespace DotNet.Basics.Cli
         private readonly AppInfo _appInfo;
         private readonly bool _verboseIsSet;
 
-        public CliHostBuilder(string[] args, Action<ArgsSwitchMappings> customSwitchMappings = null, Type classThatContainStaticVoidMain = null)
+        public CliHostBuilder(string[] args, Type classThatContainStaticVoidMain = null)
         {
             _args = args;
             _verboseIsSet = _args.IsSet("verbose", false);
-            _switchMappings = new ArgsSwitchMappings(customSwitchMappings);
+            _switchMappings = new ArgsSwitchMappings();
             _appInfo = new AppInfo(classThatContainStaticVoidMain);
+        }
+
+        public CliHostBuilder WithArgsSwitchMappings(Action<ArgsSwitchMappings> customSwitchMappings = null)
+        {
+            customSwitchMappings?.Invoke(_switchMappings);
+            return this;
         }
 
         public CliHostBuilder SetLogDispatcherFactory(Func<ILogDispatcher> logDispatcherFactory)

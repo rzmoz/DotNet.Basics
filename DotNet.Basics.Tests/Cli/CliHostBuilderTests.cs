@@ -40,7 +40,8 @@ namespace DotNet.Basics.Tests.Cli
             var inputArgs = new[] { $"--{argsKey}", value };
 
 
-            var args = new CliHostBuilder(inputArgs, mappings =>
+            var args = new CliHostBuilder(inputArgs)
+                .WithArgsSwitchMappings(mappings =>
                 {
                     mappings.Add(argsKey, mainKey);
                 })
