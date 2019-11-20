@@ -17,7 +17,7 @@ namespace DotNet.Basics.Tests.Cli
 
             var args = new[] { $"-{flagWoValue}", $"-{flagWithValue}", "SomeValue" };
 
-            var host = new CliHostBuilder<EventArgs>(args).Build();
+            var host = new CliHostBuilder(args).Build();
 
             host.HasValue(flagWoValue).Should().BeFalse();
             host.HasValue(flagWithValue).Should().BeTrue();
@@ -30,7 +30,7 @@ namespace DotNet.Basics.Tests.Cli
             var paramWithValue = "myKey";
             var args = new[] { $"-{flag}", $"-{paramWithValue}", "SomeValue" };
 
-            var host = new CliHostBuilder<EventArgs>(args).Build();
+            var host = new CliHostBuilder(args).Build();
 
             host.IsSet(flag).Should().BeTrue();
             host.IsSet(paramWithValue).Should().BeTrue();
@@ -43,7 +43,7 @@ namespace DotNet.Basics.Tests.Cli
             var environment = "test";
             var args = new[] { "-envs", environment };//should make config look for appsettings.test.json
 
-            var host = new CliHostBuilder<EventArgs>(args).Build();
+            var host = new CliHostBuilder(args).Build();
 
             host.Environments.Contains(environment, StringComparer.InvariantCultureIgnoreCase).Should().BeTrue();
             host["settingFrom"].Should().Be("appSettings.test.json");
@@ -59,7 +59,7 @@ namespace DotNet.Basics.Tests.Cli
 
             var args = new[] { "-envs", $"{environment1}|{environment2}|{environment3}" };
 
-            var host = new CliHostBuilder<EventArgs>(args).Build();
+            var host = new CliHostBuilder(args).Build();
 
             //order must be kept
             host.Environments.First().Should().Be(environment1.ToTitleCase());

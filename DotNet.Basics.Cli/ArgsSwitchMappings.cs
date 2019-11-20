@@ -11,9 +11,6 @@ namespace DotNet.Basics.Cli
 
         public ArgsSwitchMappings(Action<ArgsSwitchMappings> addSwitchMappings = null)
         {
-            Add("env", ArgsExtensions.EnvironmentsKey);
-            Add("envs", ArgsExtensions.EnvironmentsKey);
-            Add("environment", ArgsExtensions.EnvironmentsKey);
             addSwitchMappings?.Invoke(this);
         }
 

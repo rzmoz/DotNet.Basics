@@ -1,14 +1,14 @@
-﻿using System;
-using DotNet.Basics.Cli;
-using DotNet.Basics.Diagnostics;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 
 namespace DotNet.Basics.Tests.Cli
 {
-    public class TestCliHost : CliHost<TestArgs>
+    public class TestCliHost
     {
-        public TestCliHost(TestArgs args, string[] rawArgs, IConfigurationRoot config, ILogDispatcher log) : base(args, rawArgs, config, log)
-        { }
-        public string MySetting => base[nameof(MySetting)];
+        public TestCliHost(IConfigurationRoot config)
+        {
+            MySetting = config[nameof(MySetting)];
+        }
+
+        public string MySetting { get; }
     }
 }

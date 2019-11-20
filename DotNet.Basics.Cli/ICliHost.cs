@@ -1,7 +1,12 @@
-﻿namespace DotNet.Basics.Cli
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using DotNet.Basics.Diagnostics;
+
+namespace DotNet.Basics.Cli
 {
-    public interface ICliHost<out T> : ICliConfiguration
+    public interface ICliHost : ICliConfiguration
     {
-        T Args { get; }
+        ILogDispatcher Log { get; }
     }
 }

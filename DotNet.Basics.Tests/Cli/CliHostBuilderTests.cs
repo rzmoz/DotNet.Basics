@@ -1,5 +1,4 @@
-﻿using System;
-using DotNet.Basics.Cli;
+﻿using DotNet.Basics.Cli;
 using DotNet.Basics.Diagnostics;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
@@ -13,11 +12,12 @@ namespace DotNet.Basics.Tests.Cli
         [Fact]
         public void Build_Args_ArePassed()
         {
+            var shortKey = "ms";
             var value = "myValue";
-            string[] args = { $"-{nameof(TestCliHost.MySetting)}", value };
+            string[] args = { $"-{shortKey}", value };
 
-            var host = new CliHostBuilder<TestArgs>(args)
-                .Build();
+            var host = new CliHostBuilder(args)
+                .Build<TestArgs>(mappings => mappings.Add(shortKey, nameof(TestCliHost.MySetting)));
 
             host[nameof(TestCliHost.MySetting)].Should().Be(value);
         }
@@ -41,9 +41,10 @@ namespace DotNet.Basics.Tests.Cli
                 $"-{nameof(TestArgs.FilePath)}", filePathValue.RawPath,
                 $"-{nameof(TestArgs.StringList)}", stringListValue,
             };
-
-            var host = new CliHostBuilder<TestArgs>(args)
-                .Build();
+            
+            //act
+            var host = new CliHostBuilder(args)
+                .Build(() => new AutoFromConfigHydrator<TestArgs>());
 
             host.Args.Key.Should().Be(keyValue);
             host.Args.Boolean.Should().Be(boolValue);
@@ -53,26 +54,14 @@ namespace DotNet.Basics.Tests.Cli
             host.Args.StringList.Count.Should().Be(2);
         }
 
-
-        [Fact]
-        public void Ctor_AutoHydrateArgsFromConfig_ArgsAreHydrated()
-        {
-            var value = "HelloWorld!";
-            string[] args = { $"-{nameof(TestArgs.Key)}", value };
-            var host = new CliHostBuilder<TestArgs>(args)
-                .Build();
-
-            host.Args.Key.Should().Be(value);
-        }
-
         [Fact]
         public void BuildCustomHost_Args_ArePassed()
         {
             var value = "myValue";
             string[] args = { $"-{nameof(TestCliHost.MySetting)}", value };
 
-            var host = new CliHostBuilder<TestArgs>(args)
-                .BuildCustomHost((config, log) => new TestCliHost(new TestArgs(), args, config, log));
+            var host = new CliHostBuilder(args)
+                .BuildCustomHost((config, log) => new TestCliHost(config));
 
             host.MySetting.Should().Be(value);
         }
@@ -87,12 +76,11 @@ namespace DotNet.Basics.Tests.Cli
             var inputArgs = new[] { $"--{argsKey}", value };
 
 
-            var args = new CliHostBuilder<EventArgs>(inputArgs)
-                .WithArgsSwitchMappings(mappings =>
+            var args = new CliHostBuilder(inputArgs)
+                .Build(mappings =>
                 {
                     mappings.Add(argsKey, mainKey);
-                })
-                .Build();
+                });
 
             args[mainKey].Should().Be(value);
         }
@@ -103,7 +91,7 @@ namespace DotNet.Basics.Tests.Cli
         {
             var args = new[] { value };
 
-            var cliArgs = new CliHostBuilder<EventArgs>(args).Build();
+            var cliArgs = new CliHostBuilder(args).Build();
             cliArgs[key].Should().BeNull();//key not set
             cliArgs[key, 0].Should().Be(value);//found by position
         }
@@ -124,7 +112,7 @@ namespace DotNet.Basics.Tests.Cli
         {
             var args = new[] { key.EnsurePrefix("-"), value };
 
-            var cliArgs = new CliHostBuilder<EventArgs>(args).Build();
+            var cliArgs = new CliHostBuilder(args).Build();
 
             args.IsSet(key).Should().BeTrue();
             cliArgs.Config[key].Should().NotBeNull();
@@ -137,7 +125,7 @@ namespace DotNet.Basics.Tests.Cli
             var pos1 = "HelloWorld!";
             var args = new[] { "pos0", pos1, "pos2" };
 
-            var cliArgs = new CliHostBuilder<EventArgs>(args).Build();
+            var cliArgs = new CliHostBuilder(args).Build();
 
             cliArgs[1].Should().Be(pos1);
         }

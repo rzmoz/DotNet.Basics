@@ -7,34 +7,43 @@ using Microsoft.Extensions.Configuration;
 
 namespace DotNet.Basics.Cli
 {
-    public class CliHost<T> : ICliHost<T>
+    public class CliHost<T> : CliHost
     {
-        public CliHost(T args, string[] rawArgs, IConfigurationRoot config, ILogDispatcher log)
+        public CliHost(T args, ICliHost host) : base(host.CliArgs, host.Config, host.Log)
         {
             Args = args;
-            RawArgs = rawArgs ?? throw new ArgumentNullException(nameof(rawArgs));
+        }
+
+        public T Args { get; }
+    }
+
+    public class CliHost : ICliHost
+    {
+        public CliHost(IReadOnlyList<string> cliArgs, IConfigurationRoot config, ILogDispatcher log)
+        {
+            CliArgs = cliArgs ?? throw new ArgumentNullException(nameof(cliArgs));
             Config = config ?? throw new ArgumentNullException(nameof(config));
             Log = log ?? LogDispatcher.NullLogger;
         }
 
         public string this[string key, int index] => this[key] ?? this[index];
         public string this[string key] => Config[key];
-        public string this[int index] => index < RawArgs.Count ? RawArgs[index] : null;
+        public string this[int index] => index < CliArgs.Count ? CliArgs[index] : null;
 
-        public T Args { get; }
-        public IReadOnlyList<string> RawArgs { get; }
+        public IReadOnlyList<string> CliArgs { get; }
         public IConfigurationRoot Config { get; }
-        public ILogDispatcher Log { get; }
         public IReadOnlyCollection<string> Environments => Config.Environments();
 
-        public bool IsSet(string key) => Config.IsSet(key) || RawArgs.IsSet(key);
+        public ILogDispatcher Log { get; }
+
+        public bool IsSet(string key) => Config.IsSet(key) || CliArgs.IsSet(key);
         public bool HasValue(string key) => Config.HasValue(key);
 
-        public virtual Task<int> RunAsync(string name, Func<T, ICliConfiguration, ILogDispatcher, Task<int>> asyncAction)
+        public virtual Task<int> RunAsync(string name, Func<ICliConfiguration, ILogDispatcher, Task<int>> asyncAction)
         {
             return RunAsync(name, asyncAction, 1.Minutes());
         }
-        public virtual async Task<int> RunAsync(string name, Func<T, ICliConfiguration, ILogDispatcher, Task<int>> asyncAction, TimeSpan longRunningOperationsPingInterval)
+        public virtual async Task<int> RunAsync(string name, Func<ICliConfiguration, ILogDispatcher, Task<int>> asyncAction, TimeSpan longRunningOperationsPingInterval)
         {
             if (asyncAction == null) throw new ArgumentNullException(nameof(asyncAction));
 
@@ -43,7 +52,7 @@ namespace DotNet.Basics.Cli
                 LongRunningOperations.Init(Log, longRunningOperationsPingInterval);
 
                 return await LongRunningOperations.StartAsync(name, async () =>
-                        await asyncAction.Invoke(Args, this, Log).ConfigureAwait(false))
+                        await asyncAction.Invoke(this, Log).ConfigureAwait(false))
                     .ConfigureAwait(false);
             }
             catch (CliException e)
@@ -57,7 +66,5 @@ namespace DotNet.Basics.Cli
                 return 500;
             }
         }
-
-        
     }
 }

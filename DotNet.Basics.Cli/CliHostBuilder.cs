@@ -8,65 +8,42 @@ using Microsoft.Extensions.Configuration;
 
 namespace DotNet.Basics.Cli
 {
-    public class CliHostBuilder<T> where T : new()
+    public class CliHostBuilder
     {
-        private readonly string[] _rawArgs;
-        private readonly ArgsSwitchMappings _switchMappings;
+        private readonly string[] _cliArgs;
         private readonly IList<Action<IConfigurationBuilder>> _customConfiguration = new List<Action<IConfigurationBuilder>>();
         private readonly IList<Action<ILogDispatcher>> _customLogging = new List<Action<ILogDispatcher>>();
         private Func<ILogDispatcher> _logDispatcherFactory;
         private readonly AppInfo _appInfo;
         private readonly bool _verboseIsSet;
-        private readonly IList<Func<IArgsHydrator<T>>> _getArgsHydrators = new List<Func<IArgsHydrator<T>>>();
 
-        public CliHostBuilder(string[] rawArgs, Type classThatContainStaticVoidMain = null, bool hydrateArgsFromConfig = true)
+        public CliHostBuilder(string[] cliArgs, Type classThatContainStaticVoidMain = null)
         {
-            _rawArgs = rawArgs;
-            _verboseIsSet = _rawArgs.IsSet("verbose", false);
-            _switchMappings = new ArgsSwitchMappings();
+            _cliArgs = cliArgs;
+            _verboseIsSet = _cliArgs.IsSet("verbose", false);
             _appInfo = new AppInfo(classThatContainStaticVoidMain);
-            if (hydrateArgsFromConfig)
-                WithArgsHydrator(() => new ArgsFromConfigHydrator<T>());
         }
-
-        public CliHostBuilder<T> WithArgsHydrator(Func<IArgsHydrator<T>> getArgsHydrator)
-        {
-            if (getArgsHydrator == null) throw new ArgumentNullException(nameof(getArgsHydrator));
-            _getArgsHydrators.Add(getArgsHydrator);
-            return this;
-        }
-
-        public CliHostBuilder<T> WithArgsSwitchMappings(Action<ArgsSwitchMappings> customSwitchMappings = null)
-        {
-            customSwitchMappings?.Invoke(_switchMappings);
-            return this;
-        }
-
-        public CliHostBuilder<T> SetLogDispatcherFactory(Func<ILogDispatcher> logDispatcherFactory)
+        public CliHostBuilder SetLogDispatcherFactory(Func<ILogDispatcher> logDispatcherFactory)
         {
             _logDispatcherFactory = logDispatcherFactory;
             return this;
         }
-        public CliHostBuilder<T> WithLogging(Action<ILogDispatcher> configureLogging)
+        public CliHostBuilder WithLogging(Action<ILogDispatcher> configureLogging)
         {
             _customLogging.Add(configureLogging);
             return this;
         }
-        public CliHostBuilder<T> WithConfiguration(Action<IConfigurationBuilder> configureConfiguration)
+        public CliHostBuilder WithConfiguration(Action<IConfigurationBuilder> configureConfiguration)
         {
             _customConfiguration.Add(configureConfiguration);
             return this;
         }
 
-        public CliHost<T> Build()
+        public CliHost Build(Action<ArgsSwitchMappings> customSwitchMappings = null)
         {
-            return BuildCustomHost((config, log) =>
-             {
-                 var args = new T();
-                 return new CliHost<T>(args, _rawArgs, config, log);
-             });
+            return BuildCustomHost((config, log) => new CliHost(_cliArgs, config, log), customSwitchMappings);
         }
-        public virtual THost BuildCustomHost<THost>(Func<IConfigurationRoot, ILogDispatcher, THost> build) where THost : ICliHost<T>
+        public virtual THost BuildCustomHost<THost>(Func<IConfigurationRoot, ILogDispatcher, THost> build, Action<ArgsSwitchMappings> customSwitchMappings = null)
         {
             if (build == null) throw new ArgumentNullException(nameof(build));
 
@@ -74,18 +51,11 @@ namespace DotNet.Basics.Cli
 
             var appInfo = $@"Initializing {_appInfo.ToString().Highlight()}";
             if (_verboseIsSet)
-                appInfo += $@" with args {_rawArgs.JoinString(" ").Highlight()}";
+                appInfo += $@" with args {_cliArgs.JoinString(" ").Highlight()}";
             log.Info(appInfo);
-            var rawArgs = InitRawArgs(_rawArgs);
-            var configRoot = InitConfiguration(rawArgs, log);
-
-            var host = build(configRoot, log);
-            foreach (var getArgsHydrator in _getArgsHydrators)
-            {
-                var argsHydrator = getArgsHydrator.Invoke();
-                argsHydrator.Hydrate(host, host.Args, log);
-            }
-            return host;
+            var rawArgs = InitRawArgs(_cliArgs);
+            var configRoot = InitConfiguration(rawArgs, log, customSwitchMappings);
+            return build(configRoot, log);
         }
 
         protected virtual ILogDispatcher InitLogging()
@@ -111,16 +81,25 @@ namespace DotNet.Basics.Cli
                        .ToArray();
         }
 
-        protected virtual IConfigurationRoot InitConfiguration(string[] args, ILogDispatcher log)
+        protected virtual IConfigurationRoot InitConfiguration(string[] args, ILogDispatcher log, Action<ArgsSwitchMappings> customSwitchMappings)
         {
-            if (_verboseIsSet && _switchMappings.Any())
+
+            var switchMappings = new ArgsSwitchMappings(mappings =>
+            {
+                mappings.Add("env", ArgsExtensions.EnvironmentsKey);
+                mappings.Add("envs", ArgsExtensions.EnvironmentsKey);
+                mappings.Add("environment", ArgsExtensions.EnvironmentsKey);
+            });
+            customSwitchMappings?.Invoke(switchMappings);
+
+            if (_verboseIsSet)
             {
                 log.Verbose($"Args aliases:");
-                foreach (var entry in _switchMappings)
+                foreach (var entry in switchMappings)
                     log.Verbose($"{entry.Key} => {ArgsExtensions.MicrosoftExtensionsArgsSwitch}{entry.Value}");
             }
 
-            var configForEnvironments = new ConfigurationBuilder().AddCommandLine(args, _switchMappings.ToDictionary()).Build();
+            var configForEnvironments = new ConfigurationBuilder().AddCommandLine(args, switchMappings.ToDictionary()).Build();
             var environments = configForEnvironments.Environments();
 
             if (_verboseIsSet)
@@ -139,9 +118,9 @@ namespace DotNet.Basics.Cli
             foreach (var configurationAction in _customConfiguration)
                 configurationAction?.Invoke(configBuilder);
 
-            if (_verboseIsSet && _rawArgs.Any())
+            if (_verboseIsSet && _cliArgs.Any())
                 log.Verbose("Reading config from args");
-            configBuilder.AddCommandLine(args, _switchMappings.ToDictionary());
+            configBuilder.AddCommandLine(args, switchMappings.ToDictionary());
 
             var configRoot = configBuilder.Build();
 

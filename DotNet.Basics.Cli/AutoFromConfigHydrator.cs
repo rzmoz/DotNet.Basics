@@ -9,11 +9,11 @@ using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Cli
 {
-    public class ArgsFromConfigHydrator<T> : IArgsHydrator<T>
+    public class AutoFromConfigHydrator<T> : IArgsHydrator<T>
     {
         private readonly char[] _splitListChar;
 
-        public ArgsFromConfigHydrator(params char[] splitListChar)
+        public AutoFromConfigHydrator(params char[] splitListChar)
         {
             _splitListChar = splitListChar.Length > 0 ? splitListChar : new[] { '|' };
         }

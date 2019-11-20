@@ -12,14 +12,13 @@ namespace DotNet.Basics.ExeTest
         static async Task<int> Main(string[] args)
         {
             args.PauseIfDebug();
-            var cliHost = new CliHostBuilder<EventArgs>(args)
-                .WithArgsSwitchMappings(mappings => mappings.Add("lorem", "ipsum"))
+            var cliHost = new CliHostBuilder(args)
                 .WithLogging(config => config.AddFirstSupportedConsole())
-                .Build();
+                .Build(mappings => mappings.Add("lorem", "ipsum"));
 
             LongRunningOperations.Init(1.Seconds());
 
-            return await cliHost.RunAsync("MyTask", (arg, config, log) =>
+            return await cliHost.RunAsync("MyTask", (config, log) =>
             {
                 log.Raw("Hello World!");
 
