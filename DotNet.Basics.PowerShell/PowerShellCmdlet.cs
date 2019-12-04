@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Management.Automation;
 
 namespace DotNet.Basics.PowerShell
 {
@@ -22,12 +21,7 @@ namespace DotNet.Basics.PowerShell
         {
             return WithParam(new KeyValuePair<string, object>(name, value));
         }
-
-        public PowerShellCmdlet WithErrorAction(ActionPreference errorAction)
-        {
-            return WithParam(nameof(errorAction), errorAction);
-        }
-
+        
         public PowerShellCmdlet WithForce(bool force = true)
         {
             return force ? WithParam(nameof(force)) : this;

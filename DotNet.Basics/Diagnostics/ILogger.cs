@@ -4,7 +4,7 @@ namespace DotNet.Basics.Diagnostics
 {
     public interface ILogger : ILogDispatcher
     {
-        void AddDiagnosticsTarget(ILogTarget target);
+        ILogger AddLogTarget(ILogTarget target);
 
         ILogger InContext(string context, bool floatMessageLogged = true);
         void Raw(string message);

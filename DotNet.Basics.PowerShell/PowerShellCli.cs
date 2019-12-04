@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Linq;
-using System.Management.Automation;
+
 using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
 
@@ -22,6 +21,7 @@ namespace DotNet.Basics.PowerShell
 
         public static object[] RunScript(string script, ILogger log = null)
         {
+            /*
             if (log == null)
                 log = Logger.NullLogger;
             var ps = System.Management.Automation.PowerShell.Create();
@@ -42,7 +42,8 @@ namespace DotNet.Basics.PowerShell
                 throw new RemoteException($"{"PowerShell script failed:".Highlight()}\r\n{ps.Streams.Error.Select(e => e.Exception.Message).JoinString("\r\n")}");
             }
 
-            return passThru?.Select(o => o.BaseObject).ToArray();
+            return passThru?.Select(o => o.BaseObject).ToArray();*/
+            throw new NotImplementedException();
         }
     }
 }

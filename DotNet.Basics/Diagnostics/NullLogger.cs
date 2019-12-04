@@ -11,8 +11,11 @@ namespace DotNet.Basics.Diagnostics
 
         public bool HasListeners { get; } = false;
 
-        public void AddDiagnosticsTarget(ILogTarget target)
-        { }
+        public ILogger AddLogTarget(ILogTarget target)
+        {
+            return this;
+        }
+
         public ILogger InContext(string context, bool floatMessageLogged = true)
         {
             return this;

@@ -43,7 +43,7 @@ namespace DotNet.Basics.Cli.ConsoleOutput
         {
             if (log == null) throw new ArgumentNullException(nameof(log));
             if (target == null) throw new ArgumentNullException(nameof(target));
-            log.AddDiagnosticsTarget(target);
+            log.AddLogTarget(target);
             log.Verbose($"{target.GetType().Name} diagnostics target added");
             return log;
         }

@@ -35,13 +35,14 @@ namespace DotNet.Basics.Diagnostics
                 Context = string.Empty;
         }
 
-        public void AddDiagnosticsTarget(ILogTarget target)
+        public ILogger AddLogTarget(ILogTarget target)
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (target.LogTarget != null)
                 MessageLogged += target.LogTarget.Invoke;
             if (target.TimingTarget != null)
                 TimingLogged += target.TimingTarget.Invoke;
+            return this;
         }
 
         public virtual ILogger InContext(string context, bool floatMessageLogged = true)
