@@ -12,8 +12,8 @@ namespace DotNet.Basics.Cli
     {
         private readonly string[] _cliArgs;
         private readonly IList<Action<IConfigurationBuilder>> _customConfiguration = new List<Action<IConfigurationBuilder>>();
-        private readonly IList<Action<ILogDispatcher>> _customLogging = new List<Action<ILogDispatcher>>();
-        private Func<ILogDispatcher> _logDispatcherFactory;
+        private readonly IList<Action<ILogger>> _customLogging = new List<Action<ILogger>>();
+        private Func<ILogger> _logDispatcherFactory;
         private readonly AppInfo _appInfo;
         private readonly bool _verboseIsSet;
 
@@ -23,12 +23,12 @@ namespace DotNet.Basics.Cli
             _verboseIsSet = _cliArgs.IsSet("verbose", false);
             _appInfo = new AppInfo(classThatContainStaticVoidMain);
         }
-        public CliHostBuilder SetLogDispatcherFactory(Func<ILogDispatcher> logDispatcherFactory)
+        public CliHostBuilder SetLogDispatcherFactory(Func<ILogger> logDispatcherFactory)
         {
             _logDispatcherFactory = logDispatcherFactory;
             return this;
         }
-        public CliHostBuilder WithLogging(Action<ILogDispatcher> configureLogging)
+        public CliHostBuilder WithLogging(Action<ILogger> configureLogging)
         {
             _customLogging.Add(configureLogging);
             return this;
@@ -43,7 +43,7 @@ namespace DotNet.Basics.Cli
         {
             return BuildCustomHost((config, log) => new CliHost(_cliArgs, config, log), customSwitchMappings);
         }
-        public virtual THost BuildCustomHost<THost>(Func<IConfigurationRoot, ILogDispatcher, THost> build, Action<ArgsSwitchMappings> customSwitchMappings = null)
+        public virtual THost BuildCustomHost<THost>(Func<IConfigurationRoot, ILogger, THost> build, Action<ArgsSwitchMappings> customSwitchMappings = null)
         {
             if (build == null) throw new ArgumentNullException(nameof(build));
 
@@ -58,9 +58,9 @@ namespace DotNet.Basics.Cli
             return build(configRoot, log);
         }
 
-        protected virtual ILogDispatcher InitLogging()
+        protected virtual ILogger InitLogging()
         {
-            var log = _logDispatcherFactory?.Invoke() ?? new LogDispatcher();
+            var log = _logDispatcherFactory?.Invoke() ?? new Logger();
             if (_verboseIsSet)
                 log.Verbose($"Log Dispatcher <{log.GetType().Name}> initialized");
 
@@ -81,7 +81,7 @@ namespace DotNet.Basics.Cli
                        .ToArray();
         }
 
-        protected virtual IConfigurationRoot InitConfiguration(string[] args, ILogDispatcher log, Action<ArgsSwitchMappings> customSwitchMappings)
+        protected virtual IConfigurationRoot InitConfiguration(string[] args, ILogger log, Action<ArgsSwitchMappings> customSwitchMappings)
         {
 
             var switchMappings = new ArgsSwitchMappings(mappings =>

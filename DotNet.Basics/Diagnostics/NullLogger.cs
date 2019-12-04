@@ -2,18 +2,18 @@
 
 namespace DotNet.Basics.Diagnostics
 {
-    public class NullLogger : ILogDispatcher
+    public class NullLogger : ILogger
     {
 #pragma warning disable 67
-        public event LogDispatcher.MessageLoggedEventHandler MessageLogged;
-        public event LogDispatcher.TimingLoggedEventHandler TimingLogged;
+        public event Logger.MessageLoggedEventHandler MessageLogged;
+        public event Logger.TimingLoggedEventHandler TimingLogged;
 #pragma warning restore 67
 
         public bool HasListeners { get; } = false;
 
-        public void AddDiagnosticsTarget(IDiagnosticsTarget target)
+        public void AddDiagnosticsTarget(ILogTarget target)
         { }
-        public ILogDispatcher InContext(string context, bool floatMessageLogged = true)
+        public ILogger InContext(string context, bool floatMessageLogged = true)
         {
             return this;
         }

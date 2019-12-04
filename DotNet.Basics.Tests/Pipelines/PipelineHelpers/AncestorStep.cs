@@ -7,7 +7,7 @@ namespace DotNet.Basics.Tests.Pipelines.PipelineHelpers
 {
     public class AncestorStep : PipelineStep<AncestorArgs>
     {
-        protected override Task RunImpAsync(AncestorArgs args, ILogDispatcher log, CancellationToken ct)
+        protected override Task RunImpAsync(AncestorArgs args, ILogger log, CancellationToken ct)
         {
             args.AncestorUpdated = true;
             return Task.CompletedTask;

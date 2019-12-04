@@ -19,11 +19,11 @@ namespace DotNet.Basics.Cli
 
     public class CliHost : ICliHost
     {
-        public CliHost(IReadOnlyList<string> cliArgs, IConfigurationRoot config, ILogDispatcher log)
+        public CliHost(IReadOnlyList<string> cliArgs, IConfigurationRoot config, ILogger log)
         {
             CliArgs = cliArgs ?? throw new ArgumentNullException(nameof(cliArgs));
             Config = config ?? throw new ArgumentNullException(nameof(config));
-            Log = log ?? LogDispatcher.NullLogger;
+            Log = log ?? Logger.NullLogger;
         }
 
         public string this[string key, int index] => this[key] ?? this[index];
@@ -34,16 +34,16 @@ namespace DotNet.Basics.Cli
         public IConfigurationRoot Config { get; }
         public IReadOnlyCollection<string> Environments => Config.Environments();
 
-        public ILogDispatcher Log { get; }
+        public ILogger Log { get; }
 
         public bool IsSet(string key) => Config.IsSet(key) || CliArgs.IsSet(key);
         public bool HasValue(string key) => Config.HasValue(key);
 
-        public virtual Task<int> RunAsync(string name, Func<ICliConfiguration, ILogDispatcher, Task<int>> asyncAction)
+        public virtual Task<int> RunAsync(string name, Func<ICliConfiguration, ILogger, Task<int>> asyncAction)
         {
             return RunAsync(name, asyncAction, 1.Minutes());
         }
-        public virtual async Task<int> RunAsync(string name, Func<ICliConfiguration, ILogDispatcher, Task<int>> asyncAction, TimeSpan longRunningOperationsPingInterval)
+        public virtual async Task<int> RunAsync(string name, Func<ICliConfiguration, ILogger, Task<int>> asyncAction, TimeSpan longRunningOperationsPingInterval)
         {
             if (asyncAction == null) throw new ArgumentNullException(nameof(asyncAction));
 

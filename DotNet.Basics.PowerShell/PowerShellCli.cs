@@ -15,15 +15,15 @@ namespace DotNet.Basics.PowerShell
             return CmdPrompt.Run($"PowerShell -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -File {fileArgs}", writeOutput, writeError, writeDebug);
         }
 
-        public static object[] RunCmdlet(PowerShellCmdlet cmdLet, ILogDispatcher log = null)
+        public static object[] RunCmdlet(PowerShellCmdlet cmdLet, ILogger log = null)
         {
             return RunScript(cmdLet.ToString(), log);
         }
 
-        public static object[] RunScript(string script, ILogDispatcher log = null)
+        public static object[] RunScript(string script, ILogger log = null)
         {
             if (log == null)
-                log = LogDispatcher.NullLogger;
+                log = Logger.NullLogger;
             var ps = System.Management.Automation.PowerShell.Create();
             ps.AddScript(_bypassExecutionPolicy);
             ps.AddScript(script);

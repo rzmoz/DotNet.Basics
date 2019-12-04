@@ -59,7 +59,7 @@ namespace DotNet.Basics.Tests.PowerShell
         public void RunScript_WriteToHost_OutputToHostIsCaptured()
         {
             var captured = string.Empty;
-            var log = new LogDispatcher();
+            var log = new Logger();
             log.MessageLogged += (lvl, msg, e) => captured += msg;
             log.MessageLogged += (lvl, msg, e) => Output.WriteLine(msg);
 

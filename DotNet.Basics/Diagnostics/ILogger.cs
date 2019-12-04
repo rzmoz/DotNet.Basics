@@ -1,9 +1,29 @@
-﻿namespace DotNet.Basics.Diagnostics
+﻿using System;
+
+namespace DotNet.Basics.Diagnostics
 {
-    public interface ILogger
+    public interface ILogger : ILogDispatcher
     {
-        event LogDispatcher.MessageLoggedEventHandler MessageLogged;
-        event LogDispatcher.TimingLoggedEventHandler TimingLogged;
-        bool HasListeners { get; }
+        void AddDiagnosticsTarget(ILogTarget target);
+
+        ILogger InContext(string context, bool floatMessageLogged = true);
+        void Raw(string message);
+        void Raw(string message, Exception e);
+        void Verbose(string message);
+        void Verbose(string message, Exception e);
+        void Debug(string message);
+        void Debug(string message, Exception e);
+        void Info(string message);
+        void Info(string message, Exception e);
+        void Success(string message);
+        void Success(string message, Exception e);
+        void Warning(string message);
+        void Warning(string message, Exception e);
+        void Error(string message);
+        void Error(string message, Exception e);
+        void Write(LogLevel level, string message);
+        void Write(LogLevel level, string message, Exception e);
+        void Timing(LogLevel level, string name, string @event);
+        void Timing(LogLevel level, string name, string @event, TimeSpan duration);
     }
 }

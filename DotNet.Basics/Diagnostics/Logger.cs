@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DotNet.Basics.Diagnostics
 {
-    public class LogDispatcher : ILogDispatcher
+    public class Logger : ILogger
     {
         public delegate void MessageLoggedEventHandler(LogLevel level, string message, Exception e);
         public delegate void TimingLoggedEventHandler(LogLevel level, string name, string @event, TimeSpan duration);
@@ -16,17 +16,17 @@ namespace DotNet.Basics.Diagnostics
         /// <summary>
         /// Logs to nothing
         /// </summary>
-        public static ILogDispatcher NullLogger { get; } = new NullLogger();
+        public static ILogger NullLogger { get; } = new NullLogger();
 
         private readonly ConcurrentStack<string> _context;
 
         public string Context { get; }
 
-        public LogDispatcher(IEnumerable<string> context)
+        public Logger(IEnumerable<string> context)
         : this((context ?? new string[0]).ToArray())
         {
         }
-        public LogDispatcher(params string[] context)
+        public Logger(params string[] context)
         {
             _context = new ConcurrentStack<string>(context);
             if (_context.Any())
@@ -35,7 +35,7 @@ namespace DotNet.Basics.Diagnostics
                 Context = string.Empty;
         }
 
-        public void AddDiagnosticsTarget(IDiagnosticsTarget target)
+        public void AddDiagnosticsTarget(ILogTarget target)
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (target.LogTarget != null)
@@ -44,11 +44,11 @@ namespace DotNet.Basics.Diagnostics
                 TimingLogged += target.TimingTarget.Invoke;
         }
 
-        public virtual ILogDispatcher InContext(string context, bool floatMessageLogged = true)
+        public virtual ILogger InContext(string context, bool floatMessageLogged = true)
         {
             var newLogger = string.IsNullOrWhiteSpace(context)
-                ? new LogDispatcher(_context)
-                : new LogDispatcher(_context.Append(context));
+                ? new Logger(_context)
+                : new Logger(_context.Append(context));
             if (floatMessageLogged)
             {
                 newLogger.MessageLogged += (lvl, msg, e) => MessageLogged?.Invoke(lvl, msg, e);

@@ -9,7 +9,7 @@ namespace DotNet.Basics.Diagnostics
 {
     public static class LongRunningOperations
     {
-        private static ILogDispatcher _log = LogDispatcher.NullLogger;
+        private static ILogger _log = Logger.NullLogger;
         private static readonly ConcurrentDictionary<string, LongRunningOperation> _operations = new ConcurrentDictionary<string, LongRunningOperation>();
         private static Timer _timer;
 
@@ -18,9 +18,9 @@ namespace DotNet.Basics.Diagnostics
             Init(1.Minutes());
         }
 
-        public static void Init(ILogDispatcher log)
+        public static void Init(ILogger log)
         {
-            _log = log ?? LogDispatcher.NullLogger;
+            _log = log ?? Logger.NullLogger;
         }
         public static void Init(TimeSpan pingInterval)
         {
@@ -37,7 +37,7 @@ namespace DotNet.Basics.Diagnostics
             _log.Verbose($"Long running operations initialized with ping interval: {$"{pingInterval:hh\\:mm\\:ss}".Highlight()}");
         }
 
-        public static void Init(ILogDispatcher log, TimeSpan pingInterval)
+        public static void Init(ILogger log, TimeSpan pingInterval)
         {
             Init(log);
             Init(pingInterval);

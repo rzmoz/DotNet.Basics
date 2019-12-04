@@ -18,12 +18,12 @@ namespace DotNet.Basics.Cli
             _splitListChar = splitListChar.Length > 0 ? splitListChar : new[] { '|' };
         }
 
-        public virtual T Hydrate(ICliConfiguration config, T args, ILogDispatcher log = null)
+        public virtual T Hydrate(ICliConfiguration config, T args, ILogger log = null)
         {
-            return AutoHydrateFromConfig(config, args, log ?? LogDispatcher.NullLogger);
+            return AutoHydrateFromConfig(config, args, log ?? Logger.NullLogger);
         }
 
-        protected virtual T AutoHydrateFromConfig(ICliConfiguration config, T args, ILogDispatcher log)
+        protected virtual T AutoHydrateFromConfig(ICliConfiguration config, T args, ILogger log)
         {
             args.GetType().GetProperties(BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance).ForEachParallel(p =>
                 {
@@ -32,7 +32,7 @@ namespace DotNet.Basics.Cli
             return args;
         }
 
-        protected virtual void SetValueFromConfig(ICliConfiguration config, T args, PropertyInfo p, ILogDispatcher log)
+        protected virtual void SetValueFromConfig(ICliConfiguration config, T args, PropertyInfo p, ILogger log)
         {
             Func<string, object> valueConversion = null;
 

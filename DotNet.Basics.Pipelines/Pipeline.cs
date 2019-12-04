@@ -14,7 +14,7 @@ namespace DotNet.Basics.Pipelines
     {
         private readonly Func<IServiceProvider> _getServiceProvider;
         private readonly ConcurrentQueue<ManagedTask<T>> _tasks;
-        private readonly Func<T, ILogDispatcher, CancellationToken, Task> _innerRun;
+        private readonly Func<T, ILogger, CancellationToken, Task> _innerRun;
 
         public Pipeline(string name = null, Invoke invoke = Invoke.Sequential)
             : this(null, name, invoke)
@@ -77,25 +77,25 @@ namespace DotNet.Basics.Pipelines
             return this;
         }
 
-        public Pipeline<T> AddStep(Action<T, ILogDispatcher, CancellationToken> task)
+        public Pipeline<T> AddStep(Action<T, ILogger, CancellationToken> task)
         {
             var mt = new ManagedTask<T>(task, "Step");
             return AddStep(mt);
         }
 
-        public Pipeline<T> AddStep(string name, Action<T, ILogDispatcher, CancellationToken> task)
+        public Pipeline<T> AddStep(string name, Action<T, ILogger, CancellationToken> task)
         {
             var mt = new ManagedTask<T>(name, task, "Step");
             return AddStep(mt);
         }
 
-        public Pipeline<T> AddStep(Func<T, ILogDispatcher, CancellationToken, Task> task)
+        public Pipeline<T> AddStep(Func<T, ILogger, CancellationToken, Task> task)
         {
             var mt = new ManagedTask<T>(task, "Step");
             return AddStep(mt);
         }
 
-        public Pipeline<T> AddStep(string name, Func<T, ILogDispatcher, CancellationToken, Task> task)
+        public Pipeline<T> AddStep(string name, Func<T, ILogger, CancellationToken, Task> task)
         {
             var mt = new ManagedTask<T>(name, task, "Step");
             return AddStep(mt);
@@ -108,17 +108,17 @@ namespace DotNet.Basics.Pipelines
             return this;
         }
 
-        public Pipeline<T> AddBlock(params Func<T, ILogDispatcher, CancellationToken, Task>[] tasks)
+        public Pipeline<T> AddBlock(params Func<T, ILogger, CancellationToken, Task>[] tasks)
         {
             return AddBlock(null, tasks);
         }
 
-        public Pipeline<T> AddBlock(string name, params Func<T, ILogDispatcher, CancellationToken, Task>[] tasks)
+        public Pipeline<T> AddBlock(string name, params Func<T, ILogger, CancellationToken, Task>[] tasks)
         {
             return AddBlock(name, Invoke.Parallel, tasks);
         }
 
-        public Pipeline<T> AddBlock(string name, Invoke invoke = Invoke.Parallel, params Func<T, ILogDispatcher, CancellationToken, Task>[] tasks)
+        public Pipeline<T> AddBlock(string name, Invoke invoke = Invoke.Parallel, params Func<T, ILogger, CancellationToken, Task>[] tasks)
         {
             var count = _tasks.Count(s => s.GetType() == typeof(Pipeline<>));
             var block = new Pipeline<T>(_getServiceProvider, name ?? $"Block {count}", invoke);
@@ -129,12 +129,12 @@ namespace DotNet.Basics.Pipelines
             return block;
         }
 
-        protected override Task InnerRunAsync(T args, ILogDispatcher log, CancellationToken ct)
+        protected override Task InnerRunAsync(T args, ILogger log, CancellationToken ct)
         {
             return _innerRun(args, log, ct);
         }
 
-        protected Task InnerParallelRunAsync(T args, ILogDispatcher log, CancellationToken ct)
+        protected Task InnerParallelRunAsync(T args, ILogger log, CancellationToken ct)
         {
             if (ct.IsCancellationRequested)
                 return Task.CompletedTask;
@@ -142,7 +142,7 @@ namespace DotNet.Basics.Pipelines
             return Task.WhenAll(tasks);
         }
 
-        protected async Task InnerSequentialRunAsync(T args, ILogDispatcher log, CancellationToken ct)
+        protected async Task InnerSequentialRunAsync(T args, ILogger log, CancellationToken ct)
         {
             foreach (var task in Tasks)
             {

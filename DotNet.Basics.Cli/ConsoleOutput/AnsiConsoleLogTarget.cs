@@ -4,7 +4,7 @@ using DotNet.Basics.Diagnostics;
 
 namespace DotNet.Basics.Cli.ConsoleOutput
 {
-    public class AnsiConsoleWriter : ConsoleWriter
+    public class AnsiConsoleLogTarget : ConsoleLogTarget
     {
         private readonly ConsoleTheme _consoleTheme;
 
@@ -24,7 +24,7 @@ namespace DotNet.Basics.Cli.ConsoleOutput
         [DllImport("kernel32.dll")]
         public static extern uint GetLastError();
 
-        public AnsiConsoleWriter(ConsoleTheme consoleTheme = null)
+        public AnsiConsoleLogTarget(ConsoleTheme consoleTheme = null)
         {
             _consoleTheme = consoleTheme ?? ConsoleTheme.Default;
         }

@@ -13,7 +13,7 @@ namespace DotNet.Basics.Tests.Diagnostics
             var context2 = "context2";
             var message = "my Message";
 
-            ILogDispatcher outerLog = new LogDispatcher();
+            ILogger outerLog = new Logger();
             var innerLog = outerLog.InContext(context1).InContext(context2);
             var messageReceived = string.Empty;
 

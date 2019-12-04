@@ -7,6 +7,6 @@ namespace DotNet.Basics.Cli
 {
     public interface ICliHost : ICliConfiguration
     {
-        ILogDispatcher Log { get; }
+        ILogger Log { get; }
     }
 }

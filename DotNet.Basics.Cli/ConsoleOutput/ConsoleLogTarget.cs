@@ -4,7 +4,7 @@ using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Cli.ConsoleOutput
 {
-    public abstract class ConsoleWriter : IDiagnosticsTarget
+    public abstract class ConsoleLogTarget : ILogTarget
     {
         protected object SyncRoot { get; } = new object();
         private const string _space = " ";

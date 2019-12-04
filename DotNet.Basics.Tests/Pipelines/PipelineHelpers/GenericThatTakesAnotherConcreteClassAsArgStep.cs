@@ -14,7 +14,7 @@ namespace DotNet.Basics.Tests.Pipelines.PipelineHelpers
             _argStepDependsOn = argStepDependsOn;
         }
 
-        protected override Task RunImpAsync(T args, ILogDispatcher log, CancellationToken ct)
+        protected override Task RunImpAsync(T args, ILogger log, CancellationToken ct)
         {
             return Task.CompletedTask;
         }

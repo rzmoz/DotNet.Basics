@@ -4,6 +4,6 @@ namespace DotNet.Basics.Cli
 {
     public interface IArgsHydrator<T>
     {
-        T Hydrate(ICliConfiguration config, T args, ILogDispatcher log = null);
+        T Hydrate(ICliConfiguration config, T args, ILogger log = null);
     }
 }

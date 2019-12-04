@@ -5,7 +5,7 @@ using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Cli.ConsoleOutput
 {
-    public class AzureDevOpsConsoleWriter : ConsoleWriter
+    public class AzureDevOpsConsoleLogTarget : ConsoleLogTarget
     {
         protected override string FormatLogLevel(LogLevel level)
         {
