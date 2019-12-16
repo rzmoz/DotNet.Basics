@@ -30,8 +30,8 @@
     },
     {
       "name": "DotNet.Basics.PowerShell",
-      "version": "7.0.0",
-      "prerelease": "beta.6.0"
+      "version": "6.2.4",
+      "prerelease": ""
     },
     {
       "name": "DotNet.Basics.SevenZip",

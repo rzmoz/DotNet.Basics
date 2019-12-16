@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <Authors>rzmoz</Authors>
     <Company />
     <Product />
-    <Description>SDK for invoking Powershell Core from .NET (https://github.com/PowerShell/PowerShell)</Description>
+    <Description>Base cmdlet and extensions for Powershell Core Bineary Libraries</Description>
     <PackageLicenseUrl></PackageLicenseUrl>
     <RepositoryUrl>https://github.com/rzmoz/DotNet.Basics</RepositoryUrl>    
     <Version>0.0.0</Version>
@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.0.0-preview.6" />
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>

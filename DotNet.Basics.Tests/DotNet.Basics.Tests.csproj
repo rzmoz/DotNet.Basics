@@ -22,7 +22,6 @@
     <ProjectReference Include="..\DotNet.Basics.Cli\DotNet.Basics.Cli.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Net.Http\DotNet.Basics.Net.Http.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Pipelines\DotNet.Basics.Pipelines.csproj" />
-    <ProjectReference Include="..\DotNet.Basics.PowerShell\DotNet.Basics.PowerShell.csproj" />
     <ProjectReference Include="..\DotNet.Basics.SevenZip\DotNet.Basics.SevenZip.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Tests.NetCore.EchoOut\DotNet.Basics.Tests.NetCore.EchoOut.csproj" />
     <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />
@@ -39,9 +38,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="DotNet.Basics.Tests.NetCore.EchoOut.runtimeconfig.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="PowerShell\PsFile.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="SevenZip\myArchive.zip">

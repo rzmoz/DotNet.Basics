@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DotNet.Basics.Cli\DotNet.Basics.Cli.csproj" />
-    <ProjectReference Include="..\DotNet.Basics.PowerShell\DotNet.Basics.PowerShell.csproj" />
   </ItemGroup>
 
   <ItemGroup>
