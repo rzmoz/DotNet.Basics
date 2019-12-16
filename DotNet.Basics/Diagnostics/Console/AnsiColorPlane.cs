@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.Cli.ConsoleOutput
+﻿namespace DotNet.Basics.Diagnostics.Console
 {
     public enum AnsiColorPlane
     {

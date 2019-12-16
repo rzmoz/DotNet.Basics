@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using DotNet.Basics.Diagnostics;
 
-namespace DotNet.Basics.Cli.ConsoleOutput
+namespace DotNet.Basics.Diagnostics.Console
 {
     public class AnsiConsoleLogTarget : ConsoleLogTarget
     {

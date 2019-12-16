@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using DotNet.Basics.Diagnostics;
 
-namespace DotNet.Basics.Cli.ConsoleOutput
+namespace DotNet.Basics.Diagnostics.Console
 {
     public class ConsoleTheme
     {

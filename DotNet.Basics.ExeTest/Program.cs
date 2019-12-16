@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using DotNet.Basics.Cli;
-using DotNet.Basics.Cli.ConsoleOutput;
+using DotNet.Basics.Diagnostics.Console;
 using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
 

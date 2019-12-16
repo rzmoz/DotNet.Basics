@@ -1,7 +1,8 @@
 ﻿using System.Drawing;
 using System.Text;
+using DotNet.Basics.Diagnostics.Console;
 
-namespace DotNet.Basics.Cli.ConsoleOutput
+namespace DotNet.Basics.Diagnostics.Console
 {
     public class AnsiForegroundColor : AnsiColor
     {

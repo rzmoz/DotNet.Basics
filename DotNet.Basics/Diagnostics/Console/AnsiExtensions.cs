@@ -1,8 +1,9 @@
 ﻿using System.Linq;
 using System.Text;
 using DotNet.Basics.Diagnostics;
+using DotNet.Basics.Diagnostics.Console;
 
-namespace DotNet.Basics.Cli.ConsoleOutput
+namespace DotNet.Basics.Diagnostics.Console
 {
     public static class AnsiExtensions
     {

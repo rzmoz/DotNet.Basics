@@ -1,8 +1,7 @@
 ﻿using System;
-using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
 
-namespace DotNet.Basics.Cli.ConsoleOutput
+namespace DotNet.Basics.Diagnostics.Console
 {
     public abstract class ConsoleLogTarget : ILogTarget
     {
@@ -16,10 +15,10 @@ namespace DotNet.Basics.Cli.ConsoleOutput
                 var output = FormatLogOutput(level, message, e).StripHighlight();
 
                 if (level < LogLevel.Error)
-                    Console.Out.Write(output);
+                    System.Console.Out.Write(output);
                 else
-                    Console.Error.Write(output);
-                Console.Out.Flush();
+                    System.Console.Error.Write(output);
+                System.Console.Out.Flush();
             }
         }
 
@@ -60,7 +59,7 @@ namespace DotNet.Basics.Cli.ConsoleOutput
 
         protected virtual string FormatMessage(string message, Exception e = null)
         {
-            if (e == null || e is CliException cli && cli.LogOptions == LogOptions.ExcludeStackTrace)
+            if (e == null || e is IConsoleException cli && cli.ConsoleLogOptions == ConsoleLogOptions.ExcludeStackTrace)
                 return message;
 
             var exceptionMessage = e.ToString();

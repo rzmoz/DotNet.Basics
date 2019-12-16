@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DotNet.Basics.Diagnostics;
+using DotNet.Basics.Diagnostics.Console;
 using DotNet.Basics.Sys;
 using Microsoft.Extensions.Configuration;
 
@@ -57,7 +58,7 @@ namespace DotNet.Basics.Cli
             }
             catch (CliException e)
             {
-                Log.Error(e.Message.Highlight(), e.LogOptions == LogOptions.IncludeStackTrace ? e : null);
+                Log.Error(e.Message.Highlight(), e.ConsoleLogOptions == ConsoleLogOptions.IncludeStackTrace ? e : null);
                 return e.ExitCode;
             }
             catch (Exception e)

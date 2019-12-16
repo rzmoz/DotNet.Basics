@@ -3,7 +3,7 @@ using DotNet.Basics.Collections;
 using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
 
-namespace DotNet.Basics.Cli.ConsoleOutput
+namespace DotNet.Basics.Diagnostics.Console
 {
     public class AzureDevOpsConsoleLogTarget : ConsoleLogTarget
     {
@@ -16,7 +16,7 @@ namespace DotNet.Basics.Cli.ConsoleOutput
         {
             lock (SyncRoot)
             {
-                var console = level < LogLevel.Error ? Console.Out : Console.Error;
+                var console = level < LogLevel.Error ? System.Console.Out : System.Console.Error;
 
                 message.ToMultiLine()
                     .ForEach(line =>

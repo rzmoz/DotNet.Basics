@@ -1,7 +1,7 @@
 ﻿using System;
 using DotNet.Basics.Diagnostics;
 
-namespace DotNet.Basics.Cli.ConsoleOutput
+namespace DotNet.Basics.Diagnostics.Console
 {
     public static class LoggerExtensions
     {
