@@ -38,7 +38,6 @@ namespace DotNet.Basics.Cli
             _customConfiguration.Add(configureConfiguration);
             return this;
         }
-
         public CliHost Build(Action<ArgsSwitchMappings> customSwitchMappings = null)
         {
             return BuildCustomHost((config, log) => new CliHost(_cliArgs, config, log), customSwitchMappings);

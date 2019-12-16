@@ -8,18 +8,25 @@ namespace DotNet.Basics.Cli
     {
         public static CliHost<T> Build<T>(this CliHostBuilder hostBuilder, params Func<IArgsHydrator<T>>[] getHydrators) where T : new()
         {
-            return Build<T>(hostBuilder, () => new T(), null, getHydrators);
+            return Build<T>(hostBuilder, () => new T(), null, true, getHydrators);
         }
-        public static CliHost<T> Build<T>(this CliHostBuilder hostBuilder, Action<ArgsSwitchMappings> customSwitchMappings, params Func<IArgsHydrator<T>>[] getHydrators) where T : new()
+        public static CliHost<T> Build<T>(this CliHostBuilder hostBuilder, bool autoFillArgs = true, params Func<IArgsHydrator<T>>[] getHydrators) where T : new()
         {
-            return Build<T>(hostBuilder, () => new T(), customSwitchMappings, getHydrators);
+            return Build<T>(hostBuilder, () => new T(), null, autoFillArgs, getHydrators);
         }
-        public static CliHost<T> Build<T>(this CliHostBuilder hostBuilder, Func<T> getArgs, Action<ArgsSwitchMappings> customSwitchMappings, params Func<IArgsHydrator<T>>[] getHydrators) where T : new()
+        public static CliHost<T> Build<T>(this CliHostBuilder hostBuilder, Action<ArgsSwitchMappings> customSwitchMappings, bool autoFillArgs = true, params Func<IArgsHydrator<T>>[] getHydrators) where T : new()
+        {
+            return Build<T>(hostBuilder, () => new T(), customSwitchMappings, autoFillArgs, getHydrators);
+        }
+        public static CliHost<T> Build<T>(this CliHostBuilder hostBuilder, Func<T> getArgs, Action<ArgsSwitchMappings> customSwitchMappings, bool autoFillArgs = true, params Func<IArgsHydrator<T>>[] getHydrators) where T : new()
         {
             if (hostBuilder == null) throw new ArgumentNullException(nameof(hostBuilder));
             if (getArgs == null) throw new ArgumentNullException(nameof(getArgs));
             var args = getArgs();
             var defaultHost = hostBuilder.Build(customSwitchMappings);
+            if (autoFillArgs)
+                getHydrators = getHydrators.Append(() => new AutoFromConfigHydrator<T>()).ToArray();
+
             getHydrators
                 .Select(get => get.Invoke())
                 .ForEach(hydrator => hydrator.Hydrate(defaultHost, args, defaultHost.Log));
