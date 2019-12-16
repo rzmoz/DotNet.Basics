@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DotNet.Basics.Collections;
 
@@ -24,12 +25,13 @@ namespace DotNet.Basics.Cli
             if (getArgs == null) throw new ArgumentNullException(nameof(getArgs));
             var args = getArgs();
             var defaultHost = hostBuilder.Build(customSwitchMappings);
-            if (autoFillArgs)
-                getHydrators = getHydrators.Append(() => new AutoFromConfigHydrator<T>()).ToArray();
 
-            getHydrators
-                .Select(get => get.Invoke())
-                .ForEach(hydrator => hydrator.Hydrate(defaultHost, args, defaultHost.Log));
+            var hydrators = new List<IArgsHydrator<T>>();
+            if (autoFillArgs)
+                hydrators.Add(new AutoFromConfigHydrator<T>());//must before custom hydrators
+            hydrators.AddRange(getHydrators.Select(get => get.Invoke()));
+
+            hydrators.ForEach(hydrator => hydrator.Hydrate(defaultHost, args, defaultHost.Log));
             return new CliHost<T>(args, defaultHost);
         }
     }
