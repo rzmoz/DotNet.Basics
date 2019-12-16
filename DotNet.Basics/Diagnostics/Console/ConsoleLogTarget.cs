@@ -8,26 +8,29 @@ namespace DotNet.Basics.Diagnostics.Console
         protected object SyncRoot { get; } = new object();
         private const string _space = " ";
 
-        public virtual void Write(LogLevel level, string message, Exception e = null)
-        {
-            lock (SyncRoot)
-            {
-                var output = FormatLogOutput(level, message, e).StripHighlight();
-
-                if (level < LogLevel.Error)
-                    System.Console.Out.Write(output);
-                else
-                    System.Console.Error.Write(output);
-                System.Console.Out.Flush();
-            }
-        }
-
         public Action<LogLevel, string, Exception> LogTarget => Write;
         public Action<LogLevel, string, string, TimeSpan> TimingTarget => (level, name, @event, duration) =>
         {
             var durationString = duration > TimeSpan.MinValue ? $" in {duration.ToString("hh\\:mm\\:ss").Highlight()}" : string.Empty;
             Write(level, $"[{name.Highlight()} {@event}{durationString}]".WithGutter());
         };
+
+        public virtual void Write(LogLevel level, string message, Exception e = null)
+        {
+            var output = FormatLogOutput(level, message, e);
+            WriteFormattedOutput(level, output);
+        }
+        public virtual void WriteFormattedOutput(LogLevel level, string formattedOutput)
+        {
+            lock (SyncRoot)
+            {
+                if (level < LogLevel.Error)
+                    System.Console.Out.Write(formattedOutput);
+                else
+                    System.Console.Error.Write(formattedOutput);
+                System.Console.Out.Flush();
+            }
+        }
 
         protected virtual string FormatLogOutput(LogLevel level, string message, Exception e = null)
         {
