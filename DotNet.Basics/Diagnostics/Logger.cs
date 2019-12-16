@@ -12,9 +12,11 @@ namespace DotNet.Basics.Diagnostics
         public event MessageLoggedEventHandler MessageLogged;
         public event TimingLoggedEventHandler TimingLogged;
         public bool HasListeners => MessageLogged != null || TimingLogged != null;
+        
+        public static ILogger Default { get; } = new Logger();
 
         /// <summary>
-        /// Logs to nothing
+        /// Logs to nothing and doesn't raise events
         /// </summary>
         public static ILogger NullLogger { get; } = new NullLogger();
 
