@@ -22,12 +22,6 @@ namespace DotNet.Basics.PowerShell
             Log.Verbose($"Processing Cmdlet {CmdletName} started");
         }
 
-        protected override void ProcessRecord()
-        {
-            base.ProcessRecord();
-            Log.Verbose($"Processing Record started");
-        }
-
         /// <summary>
         /// Add to the end of your method if you override since it contains profiling code that should embrace all execution paths in derived cmdlet
         /// </summary>

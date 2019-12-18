@@ -5,7 +5,7 @@ using DotNet.Basics.Diagnostics.Console;
 
 namespace DotNet.Basics.PowerShell
 {
-    public class CmdletLogTarget : ConsoleLogTarget
+    public class CmdletLogTarget : AnsiConsoleLogTarget
     {
         private readonly Cmdlet _cmdlet;
 
@@ -17,18 +17,21 @@ namespace DotNet.Basics.PowerShell
         public override void Write(LogLevel level, string message, Exception e = null)
         {
             var output = base.FormatLogOutput(level, message, e);
-            base.WriteFormattedOutput(level, output);
+
             switch (level)
             {
                 case LogLevel.Warning:
-                    _cmdlet.WriteWarning(output);
+                    _cmdlet.WriteWarning(output.StripHighlight());
                     break;
                 case LogLevel.Error:
                     _cmdlet.WriteError(new ErrorRecord(
-                        e ?? new Exception(message),
+                        e ?? new Exception(message.StripHighlight()),
                         null,
                         ErrorCategory.NotSpecified,
-                        message));
+                        message.StripHighlight()));
+                    break;
+                default:
+                    base.WriteFormattedOutput(level, output);
                     break;
             }
         }
