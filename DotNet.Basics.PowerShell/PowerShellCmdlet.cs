@@ -3,9 +3,9 @@ using DotNet.Basics.Diagnostics;
 
 namespace DotNet.Basics.PowerShell
 {
-    public class PSCmdlet : Cmdlet
+    public class PowerShellCmdlet : PSCmdlet
     {
-        protected PSCmdlet(string cmdletName = null)
+        protected PowerShellCmdlet(string cmdletName = null)
         {
             CmdletName = cmdletName ?? GetType().Name;
             Log = new Logger(CmdletName);
