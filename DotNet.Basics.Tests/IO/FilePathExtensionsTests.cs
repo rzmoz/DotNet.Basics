@@ -13,6 +13,25 @@ namespace DotNet.Basics.Tests.IO
         public FilePathExtensionsTests(ITestOutputHelper output) : base(output)
         { }
 
+        [Fact]
+        public void ToFile_PathIsNull_NullIsReturned()
+        {
+            string nullPath = null;
+
+            var actual = nullPath.ToFile();
+
+            actual.Should().BeNull();
+        }
+        [Fact]
+        public void ToFile_PathIsEmpty_NullIsReturned()
+        {
+            string emptyPath = string.Empty;
+            
+            var actual = emptyPath.ToFile();
+
+            actual.Should().BeNull();
+        }
+
         [Theory]
         [InlineData(true)]
         [InlineData(false)]

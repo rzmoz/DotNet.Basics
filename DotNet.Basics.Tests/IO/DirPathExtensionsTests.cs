@@ -54,6 +54,24 @@ namespace DotNet.Basics.Tests.IO
             });
         }
 
+        [Fact]
+        public void ToDir_PathIsNull_NullIsReturned()
+        {
+            string nullPath = null;
+
+            var actual = nullPath.ToDir();
+
+            actual.Should().BeNull();
+        }
+        [Fact]
+        public void ToDir_PathIsEmpty_NullIsReturned()
+        {
+            string emptyPath = string.Empty;
+
+            var actual = emptyPath.ToDir();
+
+            actual.Should().BeNull();
+        }
 
         [Fact]
         public void ToDir_CombineToDir_FullNameIsCorrect()

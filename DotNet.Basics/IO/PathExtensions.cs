@@ -67,7 +67,7 @@ namespace DotNet.Basics.IO
 
         public static DirPath ToDir(this string path, char pathSeparator, params string[] segments)
         {
-            return new DirPath(path, pathSeparator, segments);
+            return string.IsNullOrEmpty(path) ? null : new DirPath(path, pathSeparator, segments);
         }
 
         //ToFile
@@ -88,7 +88,7 @@ namespace DotNet.Basics.IO
 
         public static FilePath ToFile(this string path, char pathSeparator, params string[] segments)
         {
-            return new FilePath(path, pathSeparator, segments);
+            return string.IsNullOrEmpty(path) ? null : new FilePath(path, pathSeparator, segments);
         }
 
         //Common

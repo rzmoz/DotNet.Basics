@@ -72,7 +72,6 @@ namespace DotNet.Basics.Tests.Sys
         [InlineData("SomeDir\\MyFile.txt", "MyFile")]//has extension
         [InlineData("SomeDir\\MyFile", "MyFile")]//no extension
         [InlineData("SomeDir\\.txt", "")]//only extension
-        [InlineData(null, "")]//name is null
         public void NameWoExtension_WithoutExtension_NameIsRight(string name, string nameWoExtensions)
         {
             var file = name.ToFile();
@@ -83,7 +82,6 @@ namespace DotNet.Basics.Tests.Sys
         [InlineData("SomeDir\\MyFile.txt", ".txt")]//has extension
         [InlineData("SomeDir\\MyFile", "")]//no extension
         [InlineData("SomeDir\\.txt", ".txt")]//only extension
-        [InlineData(null, "")]//name is null
         public void Extension_Extension_ExtensionsIsRight(string name, string extension)
         {
             var file = name.ToFile();
