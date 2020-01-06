@@ -1,6 +1,9 @@
-﻿using System.Management.Automation;
+﻿using System.Diagnostics;
+using System.Management.Automation;
 using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Diagnostics.Console;
+using DotNet.Basics.IO;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.PowerShell
 {
@@ -22,6 +25,17 @@ namespace DotNet.Basics.PowerShell
 
         public string CmdletName { get; }
 
+        protected DirPath Location => SessionState.Path.CurrentFileSystemLocation.Path.ToDir();
+
         protected ILogger Log { get; }
+
+        protected void PauseForDebug(SwitchParameter param)
+        {
+            if (param.IsPresent)
+            {
+                Log.Raw($"Paused for attaching debugger. Process name: {Process.GetCurrentProcess().ProcessName} | PID: {Process.GetCurrentProcess().Id}. Press [ENTER] to continue..");
+                Host.UI.ReadLine();
+            }
+        }
     }
 }
