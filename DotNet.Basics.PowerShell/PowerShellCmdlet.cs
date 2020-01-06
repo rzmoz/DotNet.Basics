@@ -24,18 +24,26 @@ namespace DotNet.Basics.PowerShell
         }
 
         public string CmdletName { get; }
-
         protected DirPath Location => SessionState.Path.CurrentFileSystemLocation.Path.ToDir();
-
         protected ILogger Log { get; }
 
-        protected void PauseForDebug(SwitchParameter param)
+        [Parameter]
+        [Alias("d")]
+        public SwitchParameter PauseForDebugger { get; set; }
+
+        protected void PauseForDebug()
         {
-            if (param.IsPresent)
+            if (MyInvocation.BoundParameters.ContainsKey("Debug") || PauseForDebugger.IsPresent)
             {
                 Log.Raw($"Paused for attaching debugger. Process name: {Process.GetCurrentProcess().ProcessName} | PID: {Process.GetCurrentProcess().Id}. Press [ENTER] to continue..");
                 Host.UI.ReadLine();
             }
+        }
+
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            PauseForDebug();
         }
     }
 }
