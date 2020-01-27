@@ -7,23 +7,17 @@ namespace DotNet.Basics.IO
 {
     public class FileApplication
     {
-        private readonly Action<string> _writeOutput;
-        private readonly Action<string> _writeError;
-        private readonly Action<string> _writeDebug;
         private const string _installingHandleName = "installing.dat";
         private const string _installedHandleName = "installed.dat";
         private readonly FilePath _installedHandle;
         private readonly IList<Action> _installActions;
 
-        public FileApplication(string appName, Action<string> writeOutput = null, Action<string> writeError = null, Action<string> writeDebug = null)
-            : this(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).ToDir(appName), writeOutput, writeError, writeDebug)
+        public FileApplication(string appName)
+            : this(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).ToDir(appName))
         { }
 
-        public FileApplication(DirPath installDir, Action<string> writeOutput = null, Action<string> writeError = null, Action<string> writeDebug = null)
+        public FileApplication(DirPath installDir)
         {
-            _writeOutput = writeOutput;
-            _writeError = writeError;
-            _writeDebug = writeDebug;
             InstallDir = installDir ?? throw new ArgumentNullException(nameof(installDir));
             _installedHandle = installDir.ToFile(_installedHandleName);
             _installActions = new List<Action>();
@@ -31,7 +25,7 @@ namespace DotNet.Basics.IO
 
         public DirPath InstallDir { get; }
 
-        public int RunFromCmd(string fileName, params string[] args)
+        public int RunFromCmd(string fileName, IEnumerable<string> args, Action<string> writeOutput = null, Action<string> writeError = null, Action<string> writeDebug = null)
         {
             Install();
             var argString = args.JoinString(" ");
@@ -40,7 +34,13 @@ namespace DotNet.Basics.IO
             if (file.Exists() == false)
                 throw new FileNotFoundException(file.FullName());
 
-            return CmdPrompt.Run($"{file.FullName()} {argString}", _writeOutput, _writeError, _writeDebug);
+            return CmdPrompt.Run($"{file.FullName()} {argString}", writeOutput, writeError, writeDebug);
+        }
+
+        public FileApplication WithStream<T>(string fileName, Action<FilePath> postInstallAction = null)
+        {
+            var stream = typeof(T).Assembly.GetManifestResourceStream(typeof(T), fileName);
+            return WithStream(fileName, stream, true, postInstallAction);
         }
 
         public FileApplication WithStream(string filename, Stream content, Action<FilePath> postInstallAction = null)

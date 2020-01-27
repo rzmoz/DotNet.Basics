@@ -6,7 +6,7 @@
   "releases": [
     {
       "name": "DotNet.Basics",
-      "version": "10.4.4",
+      "version": "10.4.6",
       "prerelease": ""
     },
     {
@@ -36,7 +36,7 @@
     },
     {
       "name": "DotNet.Basics.SevenZip",
-      "version": "19.00.1",
+      "version": "19.00.3",
       "prerelease": ""
     }
   ],
