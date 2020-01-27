@@ -13,8 +13,6 @@ namespace DotNet.Basics.Diagnostics
         public event TimingLoggedEventHandler TimingLogged;
         public bool HasListeners => MessageLogged != null || TimingLogged != null;
         
-        public static ILogger Default { get; } = new Logger();
-
         /// <summary>
         /// Logs to nothing and doesn't raise events
         /// </summary>
@@ -122,7 +120,7 @@ namespace DotNet.Basics.Diagnostics
         }
         public virtual void Write(LogLevel level, string message, Exception e)
         {
-            MessageLogged?.Invoke(level, $"{Context}{message}", e);
+            MessageLogged?.Invoke(level, level == LogLevel.Raw ? message : $"{Context}{message}", e);
         }
 
         public void Timing(LogLevel level, string name, string @event)
