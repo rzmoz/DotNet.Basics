@@ -6,12 +6,14 @@ namespace DotNet.Basics.Sys
 {
     public static class EnumExtensions
     {
+        /// <exception cref="System.ArgumentException">Thrown when input is not parsed.</exception>
         public static T ToEnum<T>(this string enumValue, bool ignoreCase = true) where T : struct
         {
             if (!typeof(T).IsEnum) throw new NotSupportedException($"{typeof(T).FullName} is not an Enum");
             return (T)Enum.Parse(typeof(T), enumValue, ignoreCase);
         }
 
+        /// <exception cref="System.ArgumentException">Thrown when input is not parsed.</exception>
         public static T ToEnum<T>(this string enumValue, T defaultValueIfNotParsed, bool ignoreCase = true) where T : struct
         {
             if (!typeof(T).IsEnum) throw new NotSupportedException($"{typeof(T).FullName} is not an Enum");
