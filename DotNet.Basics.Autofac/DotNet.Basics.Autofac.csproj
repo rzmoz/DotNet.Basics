@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <Description>Syntactical sugar for bootstrapping IServiceCollection and IServiceProvider with Autofac</Description>
     <PackageProjectUrl>
     </PackageProjectUrl>
