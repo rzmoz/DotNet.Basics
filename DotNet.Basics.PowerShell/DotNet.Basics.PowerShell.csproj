@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Authors>rzmoz</Authors>
     <Company />
     <Product />
@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.2.3" />
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
