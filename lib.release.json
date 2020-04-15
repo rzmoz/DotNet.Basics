@@ -11,8 +11,8 @@
     },
     {
       "name": "DotNet.Basics.Autofac",
-      "version": "4.9.4",
-      "prerelease": "beta.1.0"
+      "version": "5.1.2",
+      "prerelease": ""
     },
     {
       "name": "DotNet.Basics.Cli",
@@ -27,11 +27,6 @@
     {
       "name": "DotNet.Basics.Pipelines",
       "version": "10.1.0",
-      "prerelease": ""
-    },
-    {
-      "name": "DotNet.Basics.PowerShell",
-      "version": "6.2.9",
       "prerelease": ""
     },
     {

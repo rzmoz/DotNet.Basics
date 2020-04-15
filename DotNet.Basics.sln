@@ -31,8 +31,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.ExeTest", "Do
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.Cli", "DotNet.Basics.Cli\DotNet.Basics.Cli.csproj", "{3174C69E-EE9D-4C82-8867-378763613D75}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.PowerShell", "DotNet.Basics.PowerShell\DotNet.Basics.PowerShell.csproj", "{A360E1F2-6D90-4B61-94AB-E0A46EA97595}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,10 +73,6 @@ Global
 		{3174C69E-EE9D-4C82-8867-378763613D75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3174C69E-EE9D-4C82-8867-378763613D75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3174C69E-EE9D-4C82-8867-378763613D75}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A360E1F2-6D90-4B61-94AB-E0A46EA97595}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A360E1F2-6D90-4B61-94AB-E0A46EA97595}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A360E1F2-6D90-4B61-94AB-E0A46EA97595}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A360E1F2-6D90-4B61-94AB-E0A46EA97595}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,7 +87,6 @@ Global
 		{EF8BECEB-A97E-48FE-A31D-C2502BE742EB} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
 		{F28345BB-8ABA-4B7D-869A-B776D4029719} = {8D2438BF-0158-46EE-9734-92B712CF5479}
 		{3174C69E-EE9D-4C82-8867-378763613D75} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
-		{A360E1F2-6D90-4B61-94AB-E0A46EA97595} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8CBE2111-AC24-4AFA-9537-5FD16E0BF1E5}
