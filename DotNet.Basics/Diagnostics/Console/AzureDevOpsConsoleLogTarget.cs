@@ -1,6 +1,5 @@
 ﻿using System;
 using DotNet.Basics.Collections;
-using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Diagnostics.Console
@@ -42,25 +41,16 @@ namespace DotNet.Basics.Diagnostics.Console
                    SYSTEM_TEAMFOUNDATIONSERVERURI.ToLowerInvariant().Contains("visualstudio.com");
         }
 
-        private static string OutputColorPrefix(LogLevel level)
-        {
-            switch (level)
+        private static string OutputColorPrefix(LogLevel level) =>
+            level switch
             {
-                case LogLevel.Verbose:
-                    return "##[command]";
-                case LogLevel.Debug:
-                    return "##[debug]";
-                case LogLevel.Info:
-                    return string.Empty;
-                case LogLevel.Success:
-                    return "##[section]";
-                case LogLevel.Warning:
-                    return "##vso[task.logissue type=warning;]";
-                case LogLevel.Error:
-                    return "##vso[task.logissue type=error;]";
-                default:
-                    return string.Empty;
-            }
-        }
+                LogLevel.Verbose => "##[command]",
+                LogLevel.Debug => "##[debug]",
+                LogLevel.Info => string.Empty,
+                LogLevel.Success => "##[section]",
+                LogLevel.Warning => "##vso[task.logissue type=warning;]",
+                LogLevel.Error => "##vso[task.logissue type=error;]",
+                _ => string.Empty
+            };
     }
 }

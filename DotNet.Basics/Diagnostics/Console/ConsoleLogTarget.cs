@@ -37,28 +37,19 @@ namespace DotNet.Basics.Diagnostics.Console
             return (FormatLogLevel(level) + FormatMessage(message, e) + Environment.NewLine);
         }
 
-        protected virtual string FormatLogLevel(LogLevel level)
-        {
-            switch (level)
+        protected virtual string FormatLogLevel(LogLevel level) =>
+            level switch
             {
-                case LogLevel.Raw:
-                    return string.Empty;
-                case LogLevel.Verbose:
-                    return "VRB" + _space;
-                case LogLevel.Debug:
-                    return "DBG" + _space;
-                case LogLevel.Info:
-                    return "INF" + _space;
-                case LogLevel.Success:
-                    return "SUC" + _space;
-                case LogLevel.Warning:
-                    return "WRN" + _space;
-                case LogLevel.Error:
-                    return "ERR" + _space;
-                default:
-                    return $"[{level.ToName().ToUpperInvariant()}]" + _space;
-            }
-        }
+                LogLevel.Raw => string.Empty,
+                LogLevel.Verbose => "VRB" + _space,
+                LogLevel.Debug => "DBG" + _space,
+                LogLevel.Info => "INF" + _space,
+                LogLevel.Success => "SUC" + _space,
+                LogLevel.Warning => "WRN" + _space,
+                LogLevel.Error => "ERR" + _space,
+                _ => $"[{level.ToName().ToUpperInvariant()}]" + _space
+            };
+
 
         protected virtual string FormatMessage(string message, Exception e = null)
         {

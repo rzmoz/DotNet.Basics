@@ -24,27 +24,18 @@ namespace DotNet.Basics.Diagnostics.Console
         public ConsoleFormat Warning { get; set; } = ConsoleFormat.Empty;
         public ConsoleFormat Error { get; set; } = ConsoleFormat.Empty;
 
-        public ConsoleFormat Get(LogLevel level)
-        {
-            switch (level)
+        public ConsoleFormat Get(LogLevel level) =>
+            level switch
             {
-                case LogLevel.Raw:
-                    return Raw;
-                case LogLevel.Verbose:
-                    return Verbose;
-                case LogLevel.Debug:
-                    return Debug;
-                case LogLevel.Info:
-                    return Information;
-                case LogLevel.Success:
-                    return Success;
-                case LogLevel.Warning:
-                    return Warning;
-                case LogLevel.Error:
-                    return Error;
-                default:
-                    return ConsoleFormat.Empty;
-            }
-        }
+
+                LogLevel.Raw => Raw,
+                LogLevel.Verbose => Verbose,
+                LogLevel.Debug => Debug,
+                LogLevel.Info => Information,
+                LogLevel.Success => Success,
+                LogLevel.Warning => Warning,
+                LogLevel.Error => Error,
+                _ => ConsoleFormat.Empty
+            };
     }
 }
