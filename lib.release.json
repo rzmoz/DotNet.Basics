@@ -6,7 +6,7 @@
   "releases": [
     {
       "name": "DotNet.Basics",
-      "version": "10.4.6",
+      "version": "10.4.7",
       "prerelease": ""
     },
     {
@@ -16,22 +16,22 @@
     },
     {
       "name": "DotNet.Basics.Cli",
-      "version": "10.4.2",
+      "version": "10.4.3",
       "prerelease": ""
     },
     {
       "name": "DotNet.Basics.Net.Http",
-      "version": "10.0.1",
+      "version": "10.0.2",
       "prerelease": ""
     },
     {
       "name": "DotNet.Basics.Pipelines",
-      "version": "10.1.0",
+      "version": "10.1.1",
       "prerelease": ""
     },
     {
       "name": "DotNet.Basics.SevenZip",
-      "version": "19.00.3",
+      "version": "19.00.4",
       "prerelease": ""
     }
   ],
