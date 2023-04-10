@@ -71,7 +71,7 @@ namespace DotNet.Basics.Tests.Pipelines
         }
 
         [Fact]
-        public void AddStep_StepIsNotRegisteredProperlyInContainer_ExceptionIsThrownOnRun()
+        public async Task AddStep_StepIsNotRegisteredProperlyInContainer_ExceptionIsThrownOnRun()
         {
             var pipeline = new Pipeline<EventArgs>();
 
@@ -79,7 +79,7 @@ namespace DotNet.Basics.Tests.Pipelines
 
             Func<Task> act = async () => await pipeline.RunAsync(null).ConfigureAwait(false);
 
-            act.Should().Throw<TaskNotResolvedFromServiceProviderException>();
+            await act.Should().ThrowAsync<TaskNotResolvedFromServiceProviderException>().ConfigureAwait(false);
         }
     }
 }

@@ -84,24 +84,24 @@ namespace DotNet.Basics.Tests.Pipelines
         }
 
         [Fact]
-        public void RegisterPipelineSteps_RegisterSteps_StepsAndCtorParamsAreRegisteredRecursive()
+        public async Task RegisterPipelineSteps_RegisterSteps_StepsAndCtorParamsAreRegisteredRecursive()
         {
-            AssertRegisterPipelineSteps<EventArgs>(p => { p.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(); });
+            await AssertRegisterPipelineStepsAsync<EventArgs>(p => { p.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(); }).ConfigureAwait(false);
         }
 
         [Fact]
-        public void RegisterPipelineSteps_RegisterBlock_BlocksAreRegistered()
+        public async Task RegisterPipelineSteps_RegisterBlock_BlocksAreRegistered()
         {
-            AssertRegisterPipelineSteps<EventArgs>(p => { p.AddBlock("MyBlock"); });
+            await AssertRegisterPipelineStepsAsync<EventArgs>(p => { p.AddBlock("MyBlock"); }).ConfigureAwait(false);
         }
 
         [Fact]
-        public void LazyLoad_RegisterStepsInBlock_StepsAndCtorParamsAreRegisteredRecursively()
+        public async Task LazyLoad_RegisterStepsInBlock_StepsAndCtorParamsAreRegisteredRecursively()
         {
-            AssertRegisterPipelineSteps<EventArgs>(p => { p.AddBlock("MyBlock").AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(); });
+            await AssertRegisterPipelineStepsAsync<EventArgs>(p => { p.AddBlock("MyBlock").AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>(); }).ConfigureAwait(false);
         }
 
-        private void AssertRegisterPipelineSteps<T>(Action<Pipeline<T>> addAction)
+        private async Task AssertRegisterPipelineStepsAsync<T>(Action<Pipeline<T>> addAction)
         {
             var pipeline = new Pipeline<T>(services =>
             {
@@ -118,7 +118,7 @@ namespace DotNet.Basics.Tests.Pipelines
 
             Func<Task> action = async () => await pipeline.RunAsync(default(T)).ConfigureAwait(false);
 
-            action.Should().NotThrow();
+            await action.Should().NotThrowAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -211,7 +211,7 @@ namespace DotNet.Basics.Tests.Pipelines
             stopwatch.Stop();
 
             //total timespan should be close to 1 second since tasks were run in parallel
-            stopwatch.Elapsed.Should().BeCloseTo(TimeSpan.FromSeconds(6), 5000);
+            stopwatch.Elapsed.Should().BeCloseTo(TimeSpan.FromSeconds(6), TimeSpan.FromSeconds(5));
         }
 
         [Fact]
