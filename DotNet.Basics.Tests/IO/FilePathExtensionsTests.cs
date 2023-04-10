@@ -26,7 +26,7 @@ namespace DotNet.Basics.Tests.IO
         public void ToFile_PathIsEmpty_NullIsReturned()
         {
             string emptyPath = string.Empty;
-            
+
             var actual = emptyPath.ToFile();
 
             actual.Should().BeNull();
@@ -112,6 +112,18 @@ namespace DotNet.Basics.Tests.IO
 
         }
 
+        [Fact]
+        public void ReadAllBytes_ReadBytes_BytesAreREad()
+        {
+            ArrangeActAssertPaths(testDir =>
+            {
+                TestFile1 testFile = new TestFile1(testDir);
+
+                var bytes = testFile.ReadAllBytes();
+                var content = System.Text.Encoding.UTF8.GetString(bytes );
+                content.Should().EndWithEquivalentOf("Hello World!");
+            });
+        }
         [Fact]
         public void ReadAllTextThrowIfNotExists_SilenceWhenDirNotFound_NullIsReturned()
         {

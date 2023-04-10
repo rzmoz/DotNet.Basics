@@ -65,6 +65,24 @@ namespace DotNet.Basics.IO
             File.Move(testFile, fp.FullName());
             return fp;
         }
+        public static byte[] ReadAllBytes(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
+        {
+            try
+            {
+                return File.ReadAllBytes(fp.FullName());
+            }
+            catch (DirectoryNotFoundException)
+            {
+                if (ifNotExists == IfNotExists.ThrowIoException)
+                    throw;
+            }
+            catch (FileNotFoundException)
+            {
+                if (ifNotExists == IfNotExists.ThrowIoException)
+                    throw;
+            }
+            return null;
+        }
         public static string ReadAllText(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
         {
             try
