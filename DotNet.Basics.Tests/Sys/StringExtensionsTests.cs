@@ -248,14 +248,14 @@ namespace DotNet.Basics.Tests.Sys
             output.Should().Be("PossessionSoComparisonInquietudeHeHeLorem");
         }
 
-        [Fact]
-        public void ToTitleCase()
+        [Theory]
+        [InlineData("PoSSeSsIon sO cOMParISon inquietude 123 HE1 he LOREM", "Possession So Comparison Inquietude 123 He1 He Lorem")]//normal sentence, random casing
+        [InlineData("LoremIpsum", "Lorem Ipsum")]//Camel case
+        public void ToTitleCase(string input, string expected)
         {
-            var input = "PoSSeSsIon sO cOMParISon inquietude 123 HE1 he LOREM";
-
             var output = input.ToTitleCase();
 
-            output.Should().Be("Possession So Comparison Inquietude 123 He1 He Lorem");
+            output.Should().Be(expected);
         }
     }
 }

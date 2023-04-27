@@ -49,23 +49,25 @@ namespace DotNet.Basics.Sys
             }
         }
 
-        public static string ToCamelCase(this string str, CultureInfo cultureInfo = null)
+        public static string ToCamelCase(this string str)
         {
             if (str == null)
                 throw new ArgumentNullException(nameof(str));
 
-            return str.ToTitleCase(cultureInfo).Replace(" ", "");
+            return str.ToTitleCase().Replace(" ", "");
         }
 
-        public static string ToTitleCase(this string str, CultureInfo cultureInfo = null)
+        public static string ToTitleCase(this string str)
         {
             if (str == null)
                 throw new ArgumentNullException(nameof(str));
 
+            var isCamelCase = !str.Trim(' ').Contains(" ");
             var toUpper = true;
             var output = new StringBuilder(str.Length);
-            foreach (var current in str)
+            for (var i = 0; i < str.Length; i++)
             {
+                var current = str[i];
                 if (toUpper)
                 {
                     output.Append(char.ToUpper(current));
@@ -73,6 +75,13 @@ namespace DotNet.Basics.Sys
                 }
                 else
                     output.Append(char.ToLower(current));
+
+                if (isCamelCase && i < str.Length - 1  //if camelcase and current is not last char)
+                                && char.IsLower(current) && char.IsUpper(str[i + 1]))// and current is lower and next is upper (camel case break) 
+                {
+                    current = ' ';
+                    output.Append(current);
+                }
 
                 if (current == ' ') //if space
                     toUpper = true;

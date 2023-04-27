@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Cli
@@ -35,7 +36,16 @@ namespace DotNet.Basics.Cli
             foreach (var arg in args)
             {
                 if (previousWasEnvironmentsKey)
-                    yield return arg.Split('|').Select(env=> env.Trim(' ').ToTitleCase()).Distinct(StringComparer.InvariantCultureIgnoreCase).JoinString(); //return distinct environments
+                    yield return arg.Split('|').Select(env =>
+                    {
+                        env = env.Trim(' ').ToLowerInvariant();
+                        var envBuilder = new StringBuilder(env.Length);
+                        envBuilder.Append(char.ToUpper(env[0]));
+                        if (env.Length > 1)
+                            envBuilder.Append(env.Substring(1));
+
+                        return envBuilder.ToString();
+                    }).Distinct(StringComparer.InvariantCultureIgnoreCase).JoinString(); //return distinct environments
                 else
                     yield return arg;
 
