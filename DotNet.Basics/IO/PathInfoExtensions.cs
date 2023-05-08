@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks.Repeating;
 
@@ -7,6 +9,24 @@ namespace DotNet.Basics.IO
 {
     public static class PathInfoExtensions
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="segments">Segments this path "belongs" to.</param>
+        /// <example>PathInfo("c:\my\dir\").Contains("dir","my") is true</example>
+        /// <example>PathInfo("c:\my\dir\").Contains() is false</example>
+        /// <returns></returns>
+        public static bool Contains(this PathInfo pi, params string[] segments)
+        {
+            if (segments.Length == 0)
+                return false;
+
+            var tokenizedSegments = PathInfo.Tokenize(PathInfo.Flatten(string.Empty, segments));
+            var fullNameSegments = PathInfo.Tokenize(PathInfo.Flatten(pi.FullName(), new List<string>()));
+
+            return tokenizedSegments.All(dir => fullNameSegments.Contains(dir, StringComparer.OrdinalIgnoreCase));
+        }
+
         public static string FullName(this PathInfo pi)
         {
             return Path.GetFullPath(pi.RawPath);

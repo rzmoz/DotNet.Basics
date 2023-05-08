@@ -13,6 +13,19 @@ namespace DotNet.Basics.Tests.IO
         public PathInfoExtensionsTests(ITestOutputHelper output) : base(output)
         { }
 
+        [Fact]
+        public void IsIn_Detection_DetectIfPathContainsDirs()
+        {
+            var asPath = @"c:\my\dir\".ToPath();
+
+            asPath.Contains().Should().BeFalse();
+            asPath.Contains("lorem").Should().BeFalse();
+            asPath.Contains("my", "dIr").Should().BeTrue();//in order case-insensitive
+            asPath.Contains("dir", "mY").Should().BeTrue();//out of order case-insensitive
+            asPath.Contains("my/dIr").Should().BeTrue();//combined segments slash case-insensitive
+            asPath.Contains("my\\dIr").Should().BeTrue();//combined segments back-slash case-insensitive
+        }
+
         [Theory]
         [InlineData(@"inetpub\dir", false)] // relative path
         [InlineData(@"c:\inetpub", true)] //absolute path
