@@ -16,14 +16,20 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void IsIn_Detection_DetectIfPathContainsDirs()
         {
-            var asPath = @"c:\my\dir\".ToPath();
+            var asPath = @"c:\my\dir\and\also\my\file.txt".ToPath();
 
+            //falses
             asPath.Contains().Should().BeFalse();
             asPath.Contains("lorem").Should().BeFalse();
+            asPath.Contains("Dir\\my", "and\\also").Should().BeFalse();//combined segments out of order!
+
+            //trues
             asPath.Contains("my", "dIr").Should().BeTrue();//in order case-insensitive
             asPath.Contains("dir", "mY").Should().BeTrue();//out of order case-insensitive
             asPath.Contains("my/dIr").Should().BeTrue();//combined segments slash case-insensitive
             asPath.Contains("my\\dIr").Should().BeTrue();//combined segments back-slash case-insensitive
+            asPath.Contains("my\\dir", "and\\also").Should().BeTrue();//combined segments in order!
+            asPath.Contains("y\\dir\\and\\al").Should().BeTrue();//combined segments skewed for dirs
         }
 
         [Theory]

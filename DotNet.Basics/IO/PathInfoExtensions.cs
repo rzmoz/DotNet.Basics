@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DotNet.Basics.Sys;
@@ -21,10 +20,15 @@ namespace DotNet.Basics.IO
             if (segments.Length == 0)
                 return false;
 
-            var tokenizedSegments = PathInfo.Tokenize(PathInfo.Flatten(string.Empty, segments));
-            var fullNameSegments = PathInfo.Tokenize(PathInfo.Flatten(pi.FullName(), new List<string>()));
+            var fullName = pi.FullName().Replace('/', '\\');
 
-            return tokenizedSegments.All(dir => fullNameSegments.Contains(dir, StringComparer.OrdinalIgnoreCase));
+            foreach (var segment in segments.Select(s => s.Replace('/', '\\')))
+            {
+                if (fullName.Contains(segment, StringComparison.OrdinalIgnoreCase) == false)
+                    return false;
+            }
+
+            return true;
         }
 
         public static string FullName(this PathInfo pi)
