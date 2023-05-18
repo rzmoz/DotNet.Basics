@@ -1,17 +1,16 @@
-
 {
   "nuget": {
     "source": "https://api.nuget.org/v3/index.json"
   },
   "releases": [
     {
-      "name": "DotNet.Basics",
-      "version": "10.5.3",
-      "prerelease": ""
+      "name": "D0tNet.Basics.DependencyInjection",
+      "version": "5.4.1",
+      "prerelease": "rc.2"
     },
     {
-      "name": "DotNet.Basics.Autofac",
-      "version": "7.0.1",
+      "name": "DotNet.Basics",
+      "version": "10.5.3",
       "prerelease": ""
     },
     {
@@ -34,6 +33,7 @@
       "version": "22.01.4",
       "prerelease": ""
     }
+
   ],
   "tests": [
     "DotNet.Basics.Tests"
