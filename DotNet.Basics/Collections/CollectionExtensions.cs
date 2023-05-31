@@ -8,6 +8,15 @@ namespace DotNet.Basics.Collections
 {
     public static class CollectionExtensions
     {
+        public static IEnumerable<T> Concat<T>(this T add, IEnumerable<T> source)
+        {
+            return source.Concat(add.ToEnumerable());
+        }
+        public static IEnumerable<T> Concat<T>(this IEnumerable<T> source, T add)
+        {
+            return source.Concat(add.ToEnumerable());
+        }
+
         public static bool None<TSource>(this IEnumerable<TSource> source)
         {
             return source.Any() == false;
@@ -55,7 +64,7 @@ namespace DotNet.Basics.Collections
         public static ICollection<T> ForEach<T>(this IEnumerable<T> col, Action<T> forEachAction)
         {
             if (forEachAction == null) throw new ArgumentNullException(nameof(forEachAction));
-            
+
             var list = col.ToList();
             foreach (var item in list)
                 forEachAction.Invoke(item);
@@ -101,10 +110,6 @@ namespace DotNet.Basics.Collections
         public static IEnumerable<T> ToEnumerable<T>(this T t)
         {
             yield return t;
-        }
-        public static IEnumerable<T> ToEnumerable<T>(this T t, IEnumerable<T> concat)
-        {
-            return t.ToEnumerable().Concat(concat);
         }
     }
 }
