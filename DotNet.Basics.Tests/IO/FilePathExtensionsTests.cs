@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using DotNet.Basics.IO;
+using DotNet.Basics.Sys;
 using DotNet.Basics.Tests.IO.Testa;
 using FluentAssertions;
 using Xunit;
