@@ -141,9 +141,20 @@ namespace DotNet.Basics.Tests.Sys
         [InlineData("ooIoo", "i", "X", "ooXoo")]//replacement in middle
         [InlineData("OiOiOiOiOi", "o", "P", "PiPiPiPiPi")]//multiple replacement
         [InlineData("MyString", "mystring", "newValue", "newValue")]//full string replacement
-        public void Replace_CaseInsensitive_StringIsReplaces(string orgString, string oldValue, string newValue, string expected)
+        public void Replace_CaseInsensitive_StringIsReplaced(string orgString, string oldValue, string newValue, string expected)
         {
             var replaced = orgString.Replace(oldValue, newValue, StringComparison.OrdinalIgnoreCase);
+            replaced.Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData("OiOiOiOiOi", new[] { "O", "i" }, "")]//multi remove
+        [InlineData("1MyString", new[] { "1", "2" }, "MyString")]//misses are ignored
+        [InlineData("1MyString", new[] { "My", "1String" }, "")]//ordered removal
+        [InlineData("1MyString", new[] { "1String", "My" }, "1String")]//ordered removal
+        public void Remove_MultipleRemove_EntriesAreRemoved(string orgString, string[] removes, string expected)
+        {
+            var replaced = orgString.Remove(removes);
             replaced.Should().Be(expected);
         }
 
