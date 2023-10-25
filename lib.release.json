@@ -12,12 +12,7 @@
       "name": "DotNet.Basics.Cli",
       "version": "10.4.4",
       "prerelease": ""
-    },
-    {
-      "name": "DotNet.Basics.Net.Http",
-      "version": "10.0.3",
-      "prerelease": ""
-    },
+    },    
     {
       "name": "DotNet.Basics.Pipelines",
       "version": "10.1.2",
