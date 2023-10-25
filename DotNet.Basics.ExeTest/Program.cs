@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using DotNet.Basics.Cli;
-using DotNet.Basics.Diagnostics.Console;
+using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace DotNet.Basics.ExeTest
 {
@@ -9,16 +10,17 @@ namespace DotNet.Basics.ExeTest
         static async Task<int> Main(string[] args)
         {
             args.PauseIfDebug();
-            var cliHost = new CliHostBuilder(args)
-                .WithLogging(config => config.AddFirstSupportedConsole())
-                .Build<ExeTestArgs>(mappings => mappings.Add("val", "value"));
 
-            return await cliHost.RunAsync("MyTask", (config, log) =>
+            var builder = Host.CreateApplicationBuilder().BuildManaged((_, _) =>
             {
-                log.Raw($"{nameof(ExeTestArgs.Value)}: {cliHost.Args.Value}");
+                Log.Logger.Information("Running in managed Builder");
+            });
 
-                return Task.FromResult(0);
-            }).ConfigureAwait(false);
+            return await builder.Build().RunManagedAsync(host =>
+            {
+                Log.Logger.Information("Running in managed RunAsync");
+                return host.RunAsync();
+            });
         }
     }
 }

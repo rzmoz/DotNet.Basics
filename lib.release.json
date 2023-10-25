@@ -10,12 +10,17 @@
     },
     {
       "name": "DotNet.Basics.Cli",
-      "version": "10.4.4",
+      "version": "11.0.1",
       "prerelease": ""
-    },    
+    },
     {
       "name": "DotNet.Basics.Pipelines",
       "version": "10.1.2",
+      "prerelease": ""
+    },
+    {
+      "name": "DotNet.Basics.Serilog",
+      "version": "3.0.3",
       "prerelease": ""
     },
     {
