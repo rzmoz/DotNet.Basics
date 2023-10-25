@@ -1,4 +1,4 @@
-﻿using DotNet.Basics.DependencyInjection;
+﻿using DotNet.Basics.IoC;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;

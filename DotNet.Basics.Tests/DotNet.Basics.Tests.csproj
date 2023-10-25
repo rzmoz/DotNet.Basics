@@ -18,7 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\D0tNet.Basics.DependencyInjection\D0tNet.Basics.DependencyInjection.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Cli\DotNet.Basics.Cli.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Net.Http\DotNet.Basics.Net.Http.csproj" />
     <ProjectReference Include="..\DotNet.Basics.Pipelines\DotNet.Basics.Pipelines.csproj" />

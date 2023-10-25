@@ -5,7 +5,7 @@
   "releases": [
     {
       "name": "DotNet.Basics",
-      "version": "10.5.7",
+      "version": "10.6.0",
       "prerelease": ""
     },
     {
@@ -27,11 +27,6 @@
       "name": "DotNet.Basics.SevenZip",
       "version": "22.01.4",
       "prerelease": ""
-    },
-    {
-      "name": "D0tNet.Basics.DependencyInjection",
-      "version": "5.4.1",
-      "prerelease": "rc.2"
     }
   ],
   "tests": [

@@ -1,4 +1,4 @@
-﻿using DotNet.Basics.DependencyInjection;
+﻿using DotNet.Basics.IoC;
 using SimpleInjector;
 
 namespace DotNet.Basics.Tests.DependencyInjection
