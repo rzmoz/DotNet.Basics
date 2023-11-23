@@ -14,7 +14,7 @@ namespace DotNet.Basics.Tests.Sys.Text
             var rawPath = @"c:\my\dirPath\";
             var path = rawPath.ToPath();
 
-            var json = path.SerializeToJson();
+            var json = path.ToJson();
 
             json.Should().Be($@"""{rawPath.Replace("\\", "\\\\")}""");
         }
@@ -25,7 +25,7 @@ namespace DotNet.Basics.Tests.Sys.Text
             var rawPath = @"c:\my\file.txt";
             var path = rawPath.ToPath();
 
-            var json = path.SerializeToJson();
+            var json = path.ToJson();
 
             json.Should().Be($@"""{rawPath.Replace("\\", "\\\\")}""");
         }
@@ -34,7 +34,7 @@ namespace DotNet.Basics.Tests.Sys.Text
         public void ConvertDir_Deserialize_PathIsDeserialized()
         {
             var rawPath = @"c:\my\path\";
-            var path = $@"""{rawPath.Replace("\\", "\\\\")}""".DeserializeJson<PathInfo>();
+            var path = $@"""{rawPath.Replace("\\", "\\\\")}""".FromJson<PathInfo>();
 
             path.RawPath.Should().Be(rawPath);
             path.PathType.Should().Be(PathType.Dir);
@@ -43,7 +43,7 @@ namespace DotNet.Basics.Tests.Sys.Text
         public void ConvertFile_Deserialize_PathIsDeserialized()
         {
             var rawPath = @"c:\my\file.txt";
-            var path = $@"""{rawPath.Replace("\\", "\\\\")}""".DeserializeJson<PathInfo>();
+            var path = $@"""{rawPath.Replace("\\", "\\\\")}""".FromJson<PathInfo>();
 
             path.RawPath.Should().Be(rawPath);
             path.PathType.Should().Be(PathType.File);

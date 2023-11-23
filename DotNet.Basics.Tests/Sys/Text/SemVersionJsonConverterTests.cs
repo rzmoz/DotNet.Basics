@@ -15,7 +15,7 @@ namespace DotNet.Basics.Tests.Sys.Text
         {
             var semVer = new SemVersion(_rawVersion);
 
-            var json = semVer.SerializeToJson();
+            var json = semVer.ToJson();
 
             json.Should().Be(_rawJson);
         }
@@ -23,7 +23,7 @@ namespace DotNet.Basics.Tests.Sys.Text
         [Fact]
         public void Convert_Deserialize_PathIsDeserialized()
         {
-            var version = _rawJson.DeserializeJson<SemVersion>();
+            var version = _rawJson.FromJson<SemVersion>();
 
             version.SemVer20String.Should().Be(_rawVersion);
         }

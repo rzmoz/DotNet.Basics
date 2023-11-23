@@ -9,6 +9,11 @@ namespace DotNet.Basics.Tests.Collections
     public class CaseInsensitiveDictionaryTests
     {
         [Fact]
+        public void Type_MakeReadOnly_IsCaseInsensitiveReadOnly()
+        {
+            var lst = new List<string>();
+        }
+        [Fact]
         public void Key_CaseInsensitive_ValueIsFound()
         {
             var key = "MyKeYYYYY";

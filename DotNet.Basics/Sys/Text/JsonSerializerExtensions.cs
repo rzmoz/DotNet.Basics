@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Unicode;
 
 namespace DotNet.Basics.Sys.Text
 {
@@ -16,20 +18,25 @@ namespace DotNet.Basics.Sys.Text
                 new PathInfoJsonConverter(),
                 new SemVersionJsonConverter(),
                 new JsonStringEnumConverter()
-            }
+            },
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
         };
 
-        public static string SerializeToJson<TValue>(this TValue value, bool writeIndented = false, Action<JsonSerializerOptions> updateOptions = null)
+        public static string ToJson<TValue>(this TValue value, Action<JsonSerializerOptions> options = null)
         {
-            var options = GetJsonSerializerOptions(writeIndented);
-            updateOptions?.Invoke(options);
-            return JsonSerializer.Serialize(value, options);
+            return ToJson(value, false, options);
         }
-        public static TValue DeserializeJson<TValue>(this string json, Action<JsonSerializerOptions> updateOptions = null)
+        public static string ToJson<TValue>(this TValue value, bool writeIndented, Action<JsonSerializerOptions> options = null)
         {
-            var options = GetJsonSerializerOptions(false);
-            updateOptions?.Invoke(options);
-            return JsonSerializer.Deserialize<TValue>(json, options);
+            var defOptions = GetJsonSerializerOptions(writeIndented);
+            options?.Invoke(defOptions);
+            return JsonSerializer.Serialize(value, defOptions);
+        }
+        public static TValue FromJson<TValue>(this string json, Action<JsonSerializerOptions> options = null)
+        {
+            var defOptions = GetJsonSerializerOptions(false);
+            options?.Invoke(defOptions);
+            return JsonSerializer.Deserialize<TValue>(json, defOptions);
         }
     }
 }
