@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.IO.Pipes;
 using System.Text;
 using DotNet.Basics.Sys;
 
@@ -102,11 +103,37 @@ namespace DotNet.Basics.IO
             return null;
         }
 
-        public static FileStream OpenRead(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
+        public static FileStream Create(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
         {
             try
             {
-                return File.OpenRead(fp.FullName());
+                return File.Create(fp.FullName());
+            }
+            catch (DirectoryNotFoundException)
+            {
+                if (ifNotExists == IfNotExists.ThrowIoException)
+                    throw;
+            }
+            catch (FileNotFoundException)
+            {
+                if (ifNotExists == IfNotExists.ThrowIoException)
+                    throw;
+            }
+            return null;
+        }
+        public static FileStream Create(this FilePath fp, Stream content, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
+        {
+            var fileStream = Create(fp, ifNotExists);
+            content.CopyTo(fileStream);
+            fileStream.Flush();
+            return fileStream;
+        }
+
+        public static StreamReader OpenRead(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
+        {
+            try
+            {
+                return new StreamReader(fp.FullName());
             }
             catch (DirectoryNotFoundException)
             {

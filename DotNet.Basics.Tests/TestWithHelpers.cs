@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using Xunit.Abstractions;
@@ -30,6 +31,10 @@ namespace DotNet.Basics.Tests
         {
             testRootAction?.Invoke(_testRoot);
         }
+        protected Task WithTestRootAsync(Func<DirPath, Task> testRootAction)
+        {
+            return testRootAction?.Invoke(_testRoot);
+        }
 
         protected void ArrangeActAssertPaths(Action<DirPath> arrangeActAssert)
         {
@@ -41,7 +46,7 @@ namespace DotNet.Basics.Tests
             var rootDir = _testRoot.ToDir(ClassName);
             var emptyDir = _testRoot.ToDir("__Empty");
             emptyDir.CreateIfNotExists();
-            
+
             Robocopy.Run(emptyDir.FullName(), rootDir.FullName(), "/MIR");//robust clean dir pre testing
             try
             {

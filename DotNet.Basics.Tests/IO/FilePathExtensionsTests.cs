@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tests.IO.Testa;
@@ -9,10 +10,25 @@ using Xunit.Abstractions;
 
 namespace DotNet.Basics.Tests.IO
 {
-    public class FilePathExtensionsTests : TestWithHelpers
+    public class FilePathExtensionsTests(ITestOutputHelper output) : TestWithHelpers(output)
     {
-        public FilePathExtensionsTests(ITestOutputHelper output) : base(output)
-        { }
+        [Fact]
+        public async Task CreateRead_Streams_ContentIsWrittenToDiskAndReadBackAgain()
+        {
+            await WithTestRootAsync(async dir =>
+            {
+                var expectedText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\r\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\r\n";
+
+                var testFile = dir.ToFile(Guid.NewGuid().ToString());
+                await using var textStream = expectedText.ToStream();
+                {
+                    await using var fileStream = testFile.Create(textStream);//ensure this code is executed in a separate block from read to ensure proper disposal of write operation
+                }
+
+                var observedText = await testFile.OpenRead().ReadToEndAsync();
+                observedText.Should().Be(expectedText);
+            });
+        }
 
         [Fact]
         public void ToFile_PathIsNull_NullIsReturned()
@@ -121,7 +137,7 @@ namespace DotNet.Basics.Tests.IO
                 TestFile1 testFile = new TestFile1(testDir);
 
                 var bytes = testFile.ReadAllBytes();
-                var content = System.Text.Encoding.UTF8.GetString(bytes );
+                var content = System.Text.Encoding.UTF8.GetString(bytes);
                 content.Should().EndWithEquivalentOf("Hello World!");
             });
         }
