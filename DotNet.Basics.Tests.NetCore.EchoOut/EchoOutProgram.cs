@@ -1,6 +1,4 @@
 ﻿using System;
-using DotNet.Basics.Cli;
-
 
 namespace DotNet.Basics.Tests.NetCore.EchoOut
 {
@@ -8,8 +6,6 @@ namespace DotNet.Basics.Tests.NetCore.EchoOut
     {
         static int Main(string[] args)
         {
-            args.PauseIfDebug();
-            
             try
             {
                 return int.Parse(args[0]);
