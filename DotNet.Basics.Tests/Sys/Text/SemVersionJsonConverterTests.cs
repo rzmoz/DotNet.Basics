@@ -11,7 +11,7 @@ namespace DotNet.Basics.Tests.Sys.Text
         private const string _rawVersion = @"1.0.3-beta.1.2+HelloWorld";
 
         [Fact]
-        public void Convert_Serialize_PathIsSerialized()
+        public void Convert_Serialize_SemVerIsSerialized()
         {
             var semVer = new SemVersion(_rawVersion);
 
@@ -21,9 +21,19 @@ namespace DotNet.Basics.Tests.Sys.Text
         }
 
         [Fact]
-        public void Convert_Deserialize_PathIsDeserialized()
+        public void Convert_FromJson_SemVerIsDeserialized()
         {
             var version = _rawJson.FromJson<SemVersion>();
+
+            version.SemVer20String.Should().Be(_rawVersion);
+        }
+
+        [Fact]
+        public void FromJsonStream_Semver_StreamIsDeserialized()
+        {
+            var baseType = typeof(SemVersionJsonConverterTests);
+            using var jsonStream = baseType.Assembly.GetManifestResourceStream($"{baseType.Namespace}.SemVerTest.json");
+            var version = jsonStream.FromJsonStream<SemVersion>();
 
             version.SemVer20String.Should().Be(_rawVersion);
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -37,6 +38,12 @@ namespace DotNet.Basics.Sys.Text
             var defOptions = GetJsonSerializerOptions(false);
             options?.Invoke(defOptions);
             return JsonSerializer.Deserialize<TValue>(json, defOptions);
+        }
+        public static TValue FromJsonStream<TValue>(this Stream jsonStream, Action<JsonSerializerOptions> options = null)
+        {
+            var defOptions = GetJsonSerializerOptions(false);
+            options?.Invoke(defOptions);
+            return JsonSerializer.Deserialize<TValue>(jsonStream, defOptions);
         }
     }
 }
