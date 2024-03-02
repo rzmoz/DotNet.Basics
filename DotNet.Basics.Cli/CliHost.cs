@@ -50,7 +50,7 @@ namespace DotNet.Basics.Cli
             try
             {
                 LogApplicationEvent("Initializing...");
-                PauseIfDebug();
+                PauseForDebugger();
                 run();
                 return -0;
             }
@@ -78,7 +78,8 @@ namespace DotNet.Basics.Cli
             try
             {
                 LogApplicationEvent("Initializing...");
-                PauseIfDebug();
+                if (ShouldPauseForDebugger())
+                    PauseForDebugger();
                 return await runAsync();
             }
             catch (Exception ex)
@@ -98,22 +99,20 @@ namespace DotNet.Basics.Cli
             Log.Information($">>>>>>>>>> {{serviceName}} {@event} <<<<<<<<<<", _entryNamespace);
         }
 
+        internal bool ShouldPauseForDebugger()
+        {
+            return IsDebug && !IsHeadless;
+        }
+
         private bool Is(string key)
         {
             return _args.Any(a => a.Replace("-", string.Empty).Equals(key, StringComparison.OrdinalIgnoreCase));
         }
 
-        private void PauseIfDebug()
+        public static void PauseForDebugger()
         {
-            if (IsHeadless)
-                return;
-
-            if (!IsDebug)
-                return;
-
             Console.WriteLine($"Paused for debug. DisplayName: {Process.GetCurrentProcess().ProcessName} | PID: {Process.GetCurrentProcess().Id}. Press [ENTER] to continue..");
             Console.ReadLine();
-
         }
     }
 }
