@@ -11,7 +11,7 @@ namespace DotNet.Basics.Cli
             Args = args;
             IsDebug = Is("debug");
             IsHeadless = Is("headless");
-            IsADO = Is("ado") || EnvironmentVariableExists("System.TeamProjectId") && EnvironmentVariableExists("Build.ArtifactStagingDirectory");
+            IsADO = Is("ado") || EnvironmentVariableExists("Build.ArtifactStagingDirectory");
         }
         public string[] Args { get; }
         public bool IsDebug { get; }
@@ -20,14 +20,7 @@ namespace DotNet.Basics.Cli
 
         public bool ShouldPauseForDebugger()
         {
-            if (IsHeadless)
-                return false;
-            if (IsADO)
-                return false;
-            if (!IsDebug)
-                return false;
-
-            return true;
+            return !IsHeadless && !IsADO && IsDebug;
         }
 
         public void PauseForDebugger()

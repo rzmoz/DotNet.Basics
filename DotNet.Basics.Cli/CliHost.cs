@@ -26,6 +26,10 @@ namespace DotNet.Basics.Cli
 #endif
                 return conf;
             });
+
+            Log.Verbose($"{nameof(argsSwitches.IsDebug)}: {{IsDebug}}", argsSwitches.IsDebug);
+            Log.Verbose($"{nameof(argsSwitches.IsHeadless)}: {{IsHeadless}}", argsSwitches.IsHeadless);
+            Log.Verbose($"{nameof(argsSwitches.IsADO)}: {{IsADO}}", argsSwitches.IsADO);
         }
 
         public CliHost SetGlobalLogger(Func<LoggerConfiguration, LoggerConfiguration> configureGlobal)
