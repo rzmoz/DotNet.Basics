@@ -6,17 +6,24 @@ namespace DotNet.Basics.Cli
 {
     public class ArgsConsoleSwitches
     {
-        public ArgsConsoleSwitches(string[] args)
+        public ArgsConsoleSwitches(string[] args, bool isDebug = false, bool isHeadless = false, bool isAdo = false)
         {
             Args = args;
-            IsDebug = Is("debug");
-            IsHeadless = Is("headless");
-            IsADO = Is("ado") || EnvironmentVariableExists("Build.ArtifactStagingDirectory");
+            IsDebug = Is("debug") || isDebug;
+            IsHeadless = Is("headless") || isHeadless;
+            IsADO = Is("ado") || isAdo;
         }
         public string[] Args { get; }
         public bool IsDebug { get; }
         public bool IsHeadless { get; }
         public bool IsADO { get; }
+
+        public ArgsConsoleSwitches WithTryWaitForDebugger()
+        {
+            if (ShouldPauseForDebugger())
+                PauseForDebugger();
+            return this;
+        }
 
         public bool ShouldPauseForDebugger()
         {
@@ -32,10 +39,6 @@ namespace DotNet.Basics.Cli
         private bool Is(string key)
         {
             return Args.Any(a => a.Replace("-", string.Empty).Equals(key, StringComparison.OrdinalIgnoreCase));
-        }
-        private static bool EnvironmentVariableExists(string name)
-        {
-            return !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(name));
         }
     }
 }

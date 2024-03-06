@@ -11,11 +11,9 @@ namespace DotNet.Basics.Cli
     {
         private static readonly string _entryNamespace = Assembly.GetEntryAssembly()?.GetName().Name ?? string.Empty;
 
-        public CliHost(string[] args)
+        public CliHost(string[] args, bool isDebug = false, bool isHeadless = false, bool isAdo = false)
         {
-            var argsSwitches = new ArgsConsoleSwitches(args);
-            if (argsSwitches.ShouldPauseForDebugger())
-                argsSwitches.PauseForDebugger();
+            var argsSwitches = new ArgsConsoleSwitches(args, isDebug, isHeadless, isAdo).WithTryWaitForDebugger();
 
             //init log
             SetGlobalLogger(conf =>
