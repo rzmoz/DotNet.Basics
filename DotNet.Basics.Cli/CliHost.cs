@@ -1,57 +1,53 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using DotNet.Basics.Serilog;
 using Serilog;
 using Serilog.Events;
-using Serilog.Sinks.SystemConsole.Themes;
 
 namespace DotNet.Basics.Cli
 {
     public class CliHost
     {
         private static readonly string _entryNamespace = Assembly.GetEntryAssembly()?.GetName().Name ?? string.Empty;
-        private const string _defaultSystemConsoleTemplate = "{Message:lj}{NewLine}{Exception}";
-
-        private readonly string[] _args;
-        public bool IsDebug { get; }
-        public bool IsHeadless { get; }
-        public bool IsADO { get; }
 
         public CliHost(string[] args)
         {
-            _args = args;
-            IsDebug = Is("debug");
-            IsHeadless = Is("headless");
-            IsADO = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("System.TeamProjectId"));
+            var argsSwitches = new ArgsConsoleSwitches(args);
+            if (argsSwitches.ShouldPauseForDebugger())
+                argsSwitches.PauseForDebugger();
 
             //init log
-            SetGlobalLogger(conf => conf.MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .WriteTo.Console(theme: AnsiConsoleTheme.Code, outputTemplate: _defaultSystemConsoleTemplate, restrictedToMinimumLevel: IsDebug ? LogEventLevel.Verbose : LogEventLevel.Information)
-                .WriteTo.Debug(outputTemplate: _defaultSystemConsoleTemplate, restrictedToMinimumLevel: LogEventLevel.Verbose));
+            SetGlobalLogger(conf =>
+            {
+                conf = conf.WriteTo.DevConsole(argsSwitches.IsDebug, argsSwitches.IsADO);
+#if DEBUG
+                conf = conf.WriteTo.Debug(restrictedToMinimumLevel: LogEventLevel.Verbose);
+#endif
+                return conf;
+            });
         }
 
         public CliHost SetGlobalLogger(Func<LoggerConfiguration, LoggerConfiguration> configureGlobal)
         {
-            Log.Logger = configureGlobal(new LoggerConfiguration()).CreateLogger();
+            Log.Logger = configureGlobal(new LoggerConfiguration().MinimumLevel.Verbose()).CreateLogger();
             return this;
         }
-        public void Run(Action run)
+
+        public void Run(Action<ILogger> run)
         {
-            Run(() =>
+            Run(log =>
             {
-                run();
+                run(log);
                 return 0;
             });
         }
-        public int Run(Func<int> run)
+        public int Run(Func<ILogger, int> run)
         {
             try
             {
                 LogApplicationEvent("Initializing...");
-                PauseForDebugger();
-                run();
+                run(Log.Logger);
                 return -0;
             }
             catch (Exception ex)
@@ -65,22 +61,20 @@ namespace DotNet.Basics.Cli
                 Log.CloseAndFlush();
             }
         }
-        public Task RunAsync(Func<Task> runAsync)
+        public Task RunAsync(Func<ILogger, Task> runAsync)
         {
-            return RunAsync(async () =>
+            return RunAsync(async log =>
             {
-                await runAsync().ConfigureAwait(false);
+                await runAsync(log).ConfigureAwait(false);
                 return 0;
             });
         }
-        public async Task<int> RunAsync(Func<Task<int>> runAsync)
+        public async Task<int> RunAsync(Func<ILogger, Task<int>> runAsync)
         {
             try
             {
                 LogApplicationEvent("Initializing...");
-                if (ShouldPauseForDebugger())
-                    PauseForDebugger();
-                return await runAsync();
+                return await runAsync(Log.Logger);
             }
             catch (Exception ex)
             {
@@ -97,22 +91,6 @@ namespace DotNet.Basics.Cli
         private static void LogApplicationEvent(string @event)
         {
             Log.Information($">>>>>>>>>> {{serviceName}} {@event} <<<<<<<<<<", _entryNamespace);
-        }
-
-        internal bool ShouldPauseForDebugger()
-        {
-            return IsDebug && !IsHeadless;
-        }
-
-        private bool Is(string key)
-        {
-            return _args.Any(a => a.Replace("-", string.Empty).Equals(key, StringComparison.OrdinalIgnoreCase));
-        }
-
-        public static void PauseForDebugger()
-        {
-            Console.WriteLine($"Paused for debug. DisplayName: {Process.GetCurrentProcess().ProcessName} | PID: {Process.GetCurrentProcess().Id}. Press [ENTER] to continue..");
-            Console.ReadLine();
         }
     }
 }
