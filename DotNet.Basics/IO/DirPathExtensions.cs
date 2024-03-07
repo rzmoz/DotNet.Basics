@@ -15,9 +15,9 @@ namespace DotNet.Basics.IO
             return dp.Exists() && dp.EnumeratePaths().None();
         }
 
-        public static bool CleanIfExists(this DirPath dp)
+        public static bool CleanIfExists(this DirPath dp, params string[] subFolders)
         {
-            return dp.CleanIfExists(1.Minutes());
+            return dp.Add(subFolders).CleanIfExists(20.Seconds());
         }
 
         public static bool CleanIfExists(this DirPath dp, TimeSpan timeout)
@@ -27,7 +27,7 @@ namespace DotNet.Basics.IO
 
             try
             {
-                Parallel.ForEach(dp.EnumeratePaths(), path => { path.DeleteIfExists(); });
+                Parallel.ForEach(dp.EnumeratePaths(), path => { path.DeleteIfExists(timeout); });
             }
             catch (AggregateException ae)
             {
@@ -39,12 +39,13 @@ namespace DotNet.Basics.IO
             return dp.GetPaths().Count == 0;
         }
 
-        public static DirPath CreateIfNotExists(this DirPath dp)
+        public static DirPath CreateIfNotExists(this DirPath dp, params string[] subFolders)
         {
-            if (dp.Exists() == false)
-                Directory.CreateDirectory(dp.FullName());
+            var dir = dp.Add(subFolders);
+            if (dir.Exists() == false)
+                Directory.CreateDirectory(dir.FullName());
 
-            return dp;
+            return dir;
         }
 
         public static DirPath CreateSubDir(this DirPath dp, string subDirName)

@@ -60,12 +60,12 @@ namespace DotNet.Basics.IO
 
         public static bool Exists(this PathInfo pi)
         {
-            return pi.PathType == PathType.Dir ? System.IO.Directory.Exists(pi.FullName()) : System.IO.File.Exists(pi.FullName());
+            return pi.PathType == PathType.Dir ? System.IO.Directory.Exists(pi.FullName()) : File.Exists(pi.FullName());
         }
 
         public static bool DeleteIfExists(this PathInfo pi)
         {
-            return pi.DeleteIfExists(10.Seconds());
+            return pi.DeleteIfExists(20.Seconds());
         }
 
         public static bool DeleteIfExists(this PathInfo pi, TimeSpan timeout)
@@ -78,7 +78,7 @@ namespace DotNet.Basics.IO
                     if (pi.PathType == PathType.Dir)
                         System.IO.Directory.Delete(pi.FullName(), true);
                     else
-                        System.IO.File.Delete(pi.FullName());
+                        File.Delete(pi.FullName());
                 })
                 .WithOptions(o =>
                 {

@@ -89,7 +89,25 @@ namespace DotNet.Basics.Tests.IO
         }
 
         [Fact]
-        public void CreateIfExists_CreateOptions_ExistingDirIsCleaned()
+        public void CreateIfNotExists_WithSubfolders_CombinedDirIsCreated()
+        {
+            ArrangeActAssertPaths(testDir =>
+            {
+                //arrange
+                var subFolder = testDir.Add("my-sub-folder");
+                
+                subFolder.Exists().Should().BeFalse();//not created yet
+
+                //act
+                testDir.CreateIfNotExists(subFolder.Name);
+
+                //assert
+                subFolder.Exists().Should().BeTrue();
+            });
+        }
+
+        [Fact]
+        public void CreateIfNotExists_CreateOptions_ExistingDirIsCleaned()
         {
             ArrangeActAssertPaths(testDir =>
             {
@@ -110,7 +128,7 @@ namespace DotNet.Basics.Tests.IO
         }
 
         [Fact]
-        public void CreateIfExists_CreateOptions_ExistingDirIsNotCleaned()
+        public void CreateIfNotExists_CreateOptions_ExistingDirIsNotCleaned()
         {
             ArrangeActAssertPaths(testDir =>
             {
