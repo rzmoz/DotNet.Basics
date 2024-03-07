@@ -92,7 +92,7 @@ namespace DotNet.Basics.Cli
 
         private static void LogApplicationEvent(string @event)
         {
-            Log.Information($">>>>>>>>>> {{serviceName}} {@event} <<<<<<<<<<", _entryNamespace);
+            Log.Information($">>>>>>>>>> {{serviceName}} {{event}} <<<<<<<<<<", _entryNamespace, @event);
         }
     }
 }
