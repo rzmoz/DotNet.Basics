@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.IO.Pipes;
-using System.Text;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
@@ -146,6 +144,16 @@ namespace DotNet.Basics.IO
                     throw;
             }
             return null;
+        }
+
+        /// <summary>
+        /// Opens an existing file or creates a new file for writing.
+        /// </summary>
+        /// <param name="fp"></param>
+        /// <returns></returns>
+        public static StreamWriter OpenWrite(this FilePath fp)
+        {
+            return new StreamWriter(File.OpenWrite(fp.FullName()));
         }
     }
 }
