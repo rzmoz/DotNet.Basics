@@ -127,11 +127,11 @@ namespace DotNet.Basics.IO
             return fileStream;
         }
 
-        public static StreamReader OpenRead(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
+        public static StreamReader OpenRead(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException, FileShare fileShare = FileShare.ReadWrite)
         {
             try
             {
-                return new StreamReader(fp.FullName());
+                return new StreamReader(File.Open(fp.FullName(), FileMode.Open, FileAccess.Read, fileShare));
             }
             catch (DirectoryNotFoundException)
             {
@@ -151,9 +151,9 @@ namespace DotNet.Basics.IO
         /// </summary>
         /// <param name="fp"></param>
         /// <returns></returns>
-        public static StreamWriter OpenWrite(this FilePath fp)
+        public static StreamWriter OpenWrite(this FilePath fp, FileShare fileShare = FileShare.ReadWrite)
         {
-            return new StreamWriter(File.OpenWrite(fp.FullName()));
+            return new StreamWriter(File.Open(fp.FullName(), FileMode.OpenOrCreate, FileAccess.ReadWrite, fileShare));
         }
     }
 }

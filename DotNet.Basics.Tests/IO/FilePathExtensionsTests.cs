@@ -187,6 +187,29 @@ namespace DotNet.Basics.Tests.IO
         }
 
         [Fact]
+        public void OpenWrite_MultiWrite_FileIsWrittenToMultipletimes()
+        {
+            ArrangeActAssertPaths(testDir =>
+            {
+                var file = testDir.ToFile("write-me.txt");
+
+                using var writer1 = file.OpenWrite();
+                writer1.WriteLine("line 1");
+                writer1.Flush();
+                
+                using var reader1 = file.OpenRead();
+                reader1.ReadLine().Should().Be("line 1");
+
+                using var writer2 = file.OpenWrite();
+                writer2.WriteLine("line 2");
+                writer2.Flush();
+
+                using var reader2 = file.OpenRead();
+                reader2.ReadLine().Should().Be("line 2");
+            });
+        }
+
+        [Fact]
         public void ReadAllText_ReadTextFromFile_ContentIsRead()
         {
             ArrangeActAssertPaths(testDir =>
