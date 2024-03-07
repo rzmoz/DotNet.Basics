@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,7 +13,7 @@ namespace DotNet.Basics.Pipelines
     {
         private readonly Func<IServiceProvider> _getServiceProvider;
         private readonly ConcurrentQueue<ManagedTask<T>> _tasks;
-        private readonly Func<T, ILogger, CancellationToken, Task> _innerRun;
+        private readonly Func<T, CancellationToken, Task> _innerRun;
 
         public Pipeline(string name = null, Invoke invoke = Invoke.Sequential)
             : this(null, name, invoke)
@@ -77,25 +76,25 @@ namespace DotNet.Basics.Pipelines
             return this;
         }
 
-        public Pipeline<T> AddStep(Action<T, ILogger, CancellationToken> task)
+        public Pipeline<T> AddStep(Action<T, CancellationToken> task)
         {
             var mt = new ManagedTask<T>(task, "Step");
             return AddStep(mt);
         }
 
-        public Pipeline<T> AddStep(string name, Action<T, ILogger, CancellationToken> task)
+        public Pipeline<T> AddStep(string name, Action<T, CancellationToken> task)
         {
             var mt = new ManagedTask<T>(name, task, "Step");
             return AddStep(mt);
         }
 
-        public Pipeline<T> AddStep(Func<T, ILogger, CancellationToken, Task> task)
+        public Pipeline<T> AddStep(Func<T, CancellationToken, Task> task)
         {
             var mt = new ManagedTask<T>(task, "Step");
             return AddStep(mt);
         }
 
-        public Pipeline<T> AddStep(string name, Func<T, ILogger, CancellationToken, Task> task)
+        public Pipeline<T> AddStep(string name, Func<T, CancellationToken, Task> task)
         {
             var mt = new ManagedTask<T>(name, task, "Step");
             return AddStep(mt);
@@ -108,17 +107,17 @@ namespace DotNet.Basics.Pipelines
             return this;
         }
 
-        public Pipeline<T> AddBlock(params Func<T, ILogger, CancellationToken, Task>[] tasks)
+        public Pipeline<T> AddBlock(params Func<T, CancellationToken, Task>[] tasks)
         {
             return AddBlock(null, tasks);
         }
 
-        public Pipeline<T> AddBlock(string name, params Func<T, ILogger, CancellationToken, Task>[] tasks)
+        public Pipeline<T> AddBlock(string name, params Func<T, CancellationToken, Task>[] tasks)
         {
             return AddBlock(name, Invoke.Parallel, tasks);
         }
 
-        public Pipeline<T> AddBlock(string name, Invoke invoke = Invoke.Parallel, params Func<T, ILogger, CancellationToken, Task>[] tasks)
+        public Pipeline<T> AddBlock(string name, Invoke invoke = Invoke.Parallel, params Func<T, CancellationToken, Task>[] tasks)
         {
             var count = _tasks.Count(s => s.GetType() == typeof(Pipeline<>));
             var block = new Pipeline<T>(_getServiceProvider, name ?? $"Block {count}", invoke);
@@ -129,12 +128,12 @@ namespace DotNet.Basics.Pipelines
             return block;
         }
 
-        protected override Task InnerRunAsync(T args, ILogger log, CancellationToken ct)
+        protected override Task InnerRunAsync(T args, CancellationToken ct)
         {
-            return _innerRun(args, log, ct);
+            return _innerRun(args, ct);
         }
 
-        protected Task InnerParallelRunAsync(T args, ILogger log, CancellationToken ct)
+        protected Task InnerParallelRunAsync(T args, CancellationToken ct)
         {
             if (ct.IsCancellationRequested)
                 return Task.CompletedTask;
@@ -142,7 +141,7 @@ namespace DotNet.Basics.Pipelines
             return Task.WhenAll(tasks);
         }
 
-        protected async Task InnerSequentialRunAsync(T args, ILogger log, CancellationToken ct)
+        protected async Task InnerSequentialRunAsync(T args, CancellationToken ct)
         {
             foreach (var task in Tasks)
             {
@@ -156,7 +155,6 @@ namespace DotNet.Basics.Pipelines
         {
             task.Started += FireStarted;
             task.Ended += FireEnded;
-            task.MessageLogged += FireMessageLogged;
         }
 
         private static Func<IServiceProvider> GetServiceProvider(Action<IServiceCollection> configuresServices)

@@ -107,11 +107,11 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
                     {
                         o.RetryDelay = 10.Milliseconds();
                         o.MaxTries = until;
-                        o.MuteExceptions.Add<System.IO.IOException>();
+                        o.MuteExceptions.Add<IOException>();
                         o.PingOnRetry = () => { Console.WriteLine(doCounter); };
                     })
 
-                .UntilAsync(() => Task.FromResult(false)).ConfigureAwait(false);
+                .UntilAsync(() => Task.FromResult(false));
 
             result.Should().BeFalse();
             doCounter.Should().Be(until);
@@ -153,7 +153,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
                     o.RetryDelay = 10.Milliseconds();
                     o.PingOnRetry = () => pinged++;
                 })
-                .UntilAsync(() => Task.FromResult(invoked == until)).ConfigureAwait(false);
+                .UntilAsync(() => Task.FromResult(invoked == until));
 
             invoked.Should().Be(until);
             pinged.Should().Be(until - 1);

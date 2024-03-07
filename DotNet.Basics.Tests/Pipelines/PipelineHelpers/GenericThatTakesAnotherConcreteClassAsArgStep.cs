@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Pipelines;
 
 namespace DotNet.Basics.Tests.Pipelines.PipelineHelpers
@@ -14,7 +13,7 @@ namespace DotNet.Basics.Tests.Pipelines.PipelineHelpers
             _argStepDependsOn = argStepDependsOn;
         }
 
-        protected override Task RunImpAsync(T args, ILogger log, CancellationToken ct)
+        protected override Task RunImpAsync(T args, CancellationToken ct)
         {
             return Task.CompletedTask;
         }

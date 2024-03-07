@@ -18,7 +18,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
 #pragma warning restore 1998
             {
                 counter++;
-            }).ConfigureAwait(false);
+            });
 
             counter.Should().Be(1);
         }
@@ -34,7 +34,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             {
                 counter++;
                 throw new ArgumentException("buuh");
-            }).ConfigureAwait(false);
+            });
 
             counter.Should().Be(1);
         }

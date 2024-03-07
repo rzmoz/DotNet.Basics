@@ -60,7 +60,7 @@ namespace DotNet.Basics.Tests.Pipelines
             Exception exceptionEncountered;
             try
             {
-                await pipeline.RunAsync(null).ConfigureAwait(false);
+                await pipeline.RunAsync(null);
                 exceptionEncountered = null;
             }
             catch (Exception e)
@@ -77,9 +77,9 @@ namespace DotNet.Basics.Tests.Pipelines
 
             pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
 
-            Func<Task> act = async () => await pipeline.RunAsync(null).ConfigureAwait(false);
+            Func<Task> act = async () => await pipeline.RunAsync(null);
 
-            await act.Should().ThrowAsync<TaskNotResolvedFromServiceProviderException>().ConfigureAwait(false);
+            await act.Should().ThrowAsync<TaskNotResolvedFromServiceProviderException>();
         }
     }
 }

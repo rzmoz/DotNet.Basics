@@ -16,33 +16,16 @@ namespace DotNet.Basics.Tests.Tasks
             var task = new ManagedTask<EventArgs>("MyTask");
             
             //act
-            await task.RunAsync(EventArgs.Empty).ConfigureAwait(false);
+            await task.RunAsync(EventArgs.Empty);
         }
-
-        [Fact]
-        public async Task MessagedLogged_LogMessage_MessageHasContext()
-        {
-            var taskReceived = string.Empty;
-            var message = "Hello World!";
-            var taskName = "MyTask";
-            var task = new ManagedTask<EventArgs>(taskName, (args, log, ct) => log.Debug(message));
-
-            task.MessageLogged += (lvl, msg, e) => taskReceived = msg;
-
-            //act
-            await task.RunAsync(EventArgs.Empty).ConfigureAwait(false);
-
-            //assert
-            taskReceived.Should().Be($"{taskName} / {message}");
-        }
-
+        
         [Fact]
         public async Task RunAsync_ArgsIsNull_ArgsIsNull()
         {
             string argsInput = null;
             var argsIsNull = false;
 
-            var task = new ManagedTask<string>((args, log, ct) => argsIsNull = args == null);
+            var task = new ManagedTask<string>((args, ct) => argsIsNull = args == null);
             await task.RunAsync(argsInput, CancellationToken.None);
 
             argsIsNull.Should().BeTrue();
@@ -56,12 +39,12 @@ namespace DotNet.Basics.Tests.Tasks
             var ctSource = new CancellationTokenSource();
             ctSource.Cancel();
 
-            var task = new ManagedTask<EventArgs<int>>((args, log, ct) => { args.Value = argsValue; });
+            var task = new ManagedTask<EventArgs<int>>((args, ct) => { args.Value = argsValue; });
 
             using (var monitoredTask = task.Monitor())
             {
                 //act
-                await task.RunAsync(null, ctSource.Token).ConfigureAwait(false);
+                await task.RunAsync(null, ctSource.Token);
 
                 monitoredTask.Should().Raise(nameof(task.Started));
                 monitoredTask.Should().Raise(nameof(task.Ended));
@@ -72,7 +55,7 @@ namespace DotNet.Basics.Tests.Tasks
         public async Task RunAsync_Exception_ExceptionIsCapturedInTaskEndEvent()
         {
             var exMessage = "buuh";
-            var task = new ManagedTask<EventArgs<int>>((args, log, ct) => { throw new ArgumentException(exMessage); });
+            var task = new ManagedTask<EventArgs<int>>((args, ct) => { throw new ArgumentException(exMessage); });
 
             Exception capturedException = null;
 
@@ -80,7 +63,7 @@ namespace DotNet.Basics.Tests.Tasks
 
             try
             {
-                await task.RunAsync(null).ConfigureAwait(false);
+                await task.RunAsync(null);
             }
             catch (Exception)
             {
@@ -100,7 +83,7 @@ namespace DotNet.Basics.Tests.Tasks
             var task = new ManagedTask<EventArgs>(() => taskRan = true);
 
             taskRan.Should().BeFalse();
-            await task.RunAsync(null).ConfigureAwait(false);
+            await task.RunAsync(null);
             taskRan.Should().BeTrue();
         }
         [Fact]
@@ -110,13 +93,13 @@ namespace DotNet.Basics.Tests.Tasks
 
             var task = new ManagedTask<EventArgs>(async () =>
                 {
-                    await VoidTaskAsync().ConfigureAwait(false);//ensure async execution
+                    await VoidTaskAsync();//ensure async execution
                     taskRan = true;
                 }
             );
 
             taskRan.Should().BeFalse();
-            await task.RunAsync(null).ConfigureAwait(false);
+            await task.RunAsync(null);
             taskRan.Should().BeTrue();
         }
 

@@ -87,7 +87,7 @@ namespace DotNet.Basics.Tests.Collections
             {
                 test.IncreaseValue();
                 return Task.CompletedTask;
-            }).ConfigureAwait(false);
+            });
 
             results.All(result => result.Value == 1).Should().BeTrue();
         }
@@ -101,7 +101,7 @@ namespace DotNet.Basics.Tests.Collections
             {
                 test.IncreaseValue();
                 return Task.FromResult(test.Value);
-            }).ConfigureAwait(false);
+            });
 
             results.All(result => result == 1).Should().BeTrue();
         }
@@ -153,7 +153,7 @@ namespace DotNet.Basics.Tests.Collections
             {
                 test.IncreaseValue();
                 return Task.FromResult(test.Value);
-            }).ConfigureAwait(false);
+            });
 
             results.All(result => result == 1).Should().BeTrue();
         }

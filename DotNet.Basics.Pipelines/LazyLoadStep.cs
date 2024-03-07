@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
 
@@ -35,20 +34,12 @@ namespace DotNet.Basics.Pipelines
             };
         }
 
-        protected override Task InnerRunAsync(T args, ILogger log, CancellationToken ct)
+        protected override Task InnerRunAsync(T args, CancellationToken ct)
         {
             var lazyLoadedTask = _loadTask();
-            if (lazyLoadedTask == null)
-                throw new TaskNotResolvedFromServiceProviderException(Name);
-            try
-            {
-                lazyLoadedTask.MessageLogged += log.Write;
-                return lazyLoadedTask.RunAsync(args, ct);
-            }
-            finally
-            {
-                lazyLoadedTask.MessageLogged -= log.Write;
-            }
+            return lazyLoadedTask == null
+                ? throw new TaskNotResolvedFromServiceProviderException(Name)
+                : lazyLoadedTask.RunAsync(args, ct);
         }
     }
 }
