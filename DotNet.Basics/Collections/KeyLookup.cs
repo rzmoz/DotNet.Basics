@@ -2,7 +2,7 @@
 {
     public enum KeyLookup
     {
-        CaseSensitive,
-        IgnoreCase
+        IgnoreCase,
+        CaseSensitive
     }
 }

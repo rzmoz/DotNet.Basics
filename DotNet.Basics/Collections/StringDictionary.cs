@@ -11,7 +11,7 @@ namespace DotNet.Basics.Collections
         private readonly Func<string, TK> _get;
         private readonly Func<string, string> _keyFunc;
 
-        public StringDictionary(IDictionary<string, TK> items = null, WhenKeyNotFound whenKeyNotFound = WhenKeyNotFound.ThrowException, KeyLookup keyLookup = KeyLookup.CaseSensitive)
+        public StringDictionary(IDictionary<string, TK> items = null, WhenKeyNotFound whenKeyNotFound = WhenKeyNotFound.ThrowException, KeyLookup keyLookup = KeyLookup.IgnoreCase)
         {
             _get = GetGet(whenKeyNotFound);
             _keyFunc = GetKeyFunc(keyLookup);

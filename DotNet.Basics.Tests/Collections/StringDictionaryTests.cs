@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DotNet.Basics.Collections;
+using DotNet.Basics.Sys;
 using FluentAssertions;
 using Xunit;
 
@@ -24,6 +25,23 @@ namespace DotNet.Basics.Tests.Collections
 
             outValueFromLower.Should().Be(value);
             outValueFromUpper.Should().Be(value);
+        }
+        [Fact]
+        public void Key_CaseSensitive_ValueIsNotFound()
+        {
+            var key = "MyKeYYYYY";
+
+
+            var dic = new StringDictionary<string>(keyLookup: KeyLookup.CaseSensitive)
+            {
+                [key] = Lorem.Ipsum(5000)
+            };
+            string temp;
+            Action act1 = () => temp = dic[key.ToLower()];
+            Action act2 = () => temp = dic[key.ToUpper()];
+
+            act1.Should().Throw<KeyNotFoundException>();
+            act2.Should().Throw<KeyNotFoundException>();
         }
 
         [Fact]
