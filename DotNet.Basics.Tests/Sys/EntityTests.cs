@@ -13,7 +13,11 @@ namespace DotNet.Basics.Tests.Sys
             var key = Guid.NewGuid().ToString();
             var name = Guid.NewGuid().ToString();
 
-            var ent = new Entity(name, key);
+            var ent = new Entity
+            {
+                DisplayName = name,
+                Key = key
+            };
 
             ent.Key.Should().Be(key);
             ent.DisplayName.Should().Be(name);
@@ -25,9 +29,18 @@ namespace DotNet.Basics.Tests.Sys
             var key1 = Guid.NewGuid().ToString();
             var key2 = Guid.NewGuid().ToString();
 
-            var ent1WithKey1 = new Entity(key1);
-            var ent2WithKey1 = new Entity(key1);
-            var ent3WithKey12 = new Entity(key2);
+            var ent1WithKey1 = new Entity
+            {
+                Key = key1
+            };
+            var ent2WithKey1 = new Entity
+            {
+                Key = key1
+            }; ;
+            var ent3WithKey12 = new Entity
+            {
+                Key = key2
+            }; ;
 
             ent1WithKey1.Equals(ent2WithKey1).Should().BeTrue();
             ent1WithKey1.Equals(ent3WithKey12).Should().BeFalse();
@@ -44,12 +57,11 @@ namespace DotNet.Basics.Tests.Sys
             var keyLast = "key2";
             string.Compare(keyFirst, keyLast, StringComparison.Ordinal).Should().BeLessThan(0);
 
-            var ent1 = new Entity(displayNameLast, keyFirst);
-            var ent1Duplicate = new Entity(ent1.DisplayName, ent1.Key);
-
-            var ent2 = new Entity(displayNameFirst, keyFirst) { SortOrder = -1 };
-            var ent3 = new Entity(displayNameFirst, keyFirst);
-            var ent4 = new Entity(ent1.DisplayName, keyLast);
+            var ent1 = new Entity { DisplayName = displayNameLast, Key = keyFirst };
+            var ent1Duplicate = new Entity { DisplayName = ent1.DisplayName, Key = ent1.Key };
+            var ent2 = new Entity { DisplayName = displayNameFirst, Key = keyFirst, SortOrder = -1 };
+            var ent3 = new Entity { DisplayName = displayNameFirst, Key = keyFirst };
+            var ent4 = new Entity { DisplayName = ent1.DisplayName, Key = keyLast };
 
             // ReSharper disable once PossibleUnintendedReferenceComparison
             ((ent1 != ent1Duplicate) && ent1.CompareTo(ent1Duplicate) == 0).Should().BeTrue();//same sort order, key and display name but not same object(ref)
@@ -62,7 +74,7 @@ namespace DotNet.Basics.Tests.Sys
         public void GetHashCode_UseKey_HashcodeIsBasedOnKey()
         {
             var key = Guid.NewGuid().ToString();
-            var ent = new Entity(key);
+            var ent = new Entity { Key = key };
             ent.GetHashCode().Should().Be(key.GetHashCode());
         }
     }

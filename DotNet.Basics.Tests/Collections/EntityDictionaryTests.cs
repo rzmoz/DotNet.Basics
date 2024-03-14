@@ -13,16 +13,19 @@ namespace DotNet.Basics.Tests.Collections
         {
             var entList = new EntityDictionary();
 
-            var entLast = new Entity("key1")
+            var entLast = new Entity
             {
+                Key = "key1",
                 SortOrder = 500
             };
-            var entMiddle = new Entity("key500")
+            var entMiddle = new Entity
             {
+                Key = "key500",
                 SortOrder = 150
             };
-            var entFirst = new Entity("key150")
+            var entFirst = new Entity
             {
+                Key = "key150",
                 SortOrder = 0
             };
 

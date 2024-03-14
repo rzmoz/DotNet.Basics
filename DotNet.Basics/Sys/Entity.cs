@@ -3,18 +3,11 @@ using System.Collections.Generic;
 
 namespace DotNet.Basics.Sys
 {
-    public class Entity(string displayName, string key) : IComparable<Entity>, IComparer<Entity>
+    public class Entity : IComparable<Entity>, IComparer<Entity>
     {
-        public string Key { get; } = key;
-        public string DisplayName { get; } = displayName;
+        public string Key { get; init; } = string.Empty;
+        public string DisplayName { get; init; } = string.Empty;
         public int SortOrder { get; set; }
-
-        public Entity()
-            : this(string.Empty, string.Empty)
-        { }
-        public Entity(string displayName)
-        : this(displayName, displayName.ToLowerInvariant().Replace(" ", "-"))
-        { }
 
         protected bool Equals(Entity other)
         {
