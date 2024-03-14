@@ -1,4 +1,5 @@
-﻿using DotNet.Basics.Sys;
+﻿using System;
+using DotNet.Basics.Sys;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,30 +12,48 @@ namespace DotNet.Basics.Collections
 
     public class EntityDictionary<T> : IEnumerable<T> where T : Entity
     {
-        private readonly IDictionary<string, T> _entities = new Dictionary<string, T>();
+        private readonly StringDictionary<T> _entities;
+        private readonly Func<string, T> _get;
 
-        public EntityDictionary()
+        public EntityDictionary(WhenKeyNotFound whenKeyNotFound = WhenKeyNotFound.ReturnDefault, KeyLookup keyLookup = KeyLookup.CaseSensitive)
+        : this(Array.Empty<T>(), whenKeyNotFound, keyLookup)
         { }
 
-        public EntityDictionary(IEnumerable<T> entities)
+        public EntityDictionary(IEnumerable<T> entities, WhenKeyNotFound whenKeyNotFound = WhenKeyNotFound.ReturnDefault, KeyLookup keyLookup = KeyLookup.CaseSensitive)
         {
-            _entities = entities.ToDictionary(e => e.Key);
+            _entities = new StringDictionary<T>(entities.ToDictionary(e => e.Key), whenKeyNotFound, keyLookup: keyLookup);
+            _get = GetGet(whenKeyNotFound);
+        }
+
+        private Func<string, T> GetGet(WhenKeyNotFound whenKeyNotFound)
+        {
+            return whenKeyNotFound switch
+            {
+                WhenKeyNotFound.ThrowException => key => _entities[key],
+                WhenKeyNotFound.ReturnDefault => key => ContainsKey(key) ? _entities[key] : default,
+                _ => throw new ArgumentException($"{nameof(WhenKeyNotFound)} Not supported: {whenKeyNotFound}")
+            };
         }
 
         public EntityDictionary<T> Add(params T[] entities)
         {
             foreach (var entity in entities)
-            {
                 this[entity.Key] = entity;
-            }
+
             return this;
         }
 
         public T this[string key]
         {
-            get => _entities[key];
+            get => _get(key);
             set => _entities[value.Key] = value;
         }
+
+        public bool ContainsKey(string key)
+        {
+            return _entities.ContainsKey(key);
+        }
+
         public void Clear()
         {
             _entities.Clear();

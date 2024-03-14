@@ -6,24 +6,21 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Collections
 {
-    public class CaseInsensitiveDictionaryTests
+    public class StringDictionaryTests
     {
-        [Fact]
-        public void Type_MakeReadOnly_IsCaseInsensitiveReadOnly()
-        {
-            var lst = new List<string>();
-        }
         [Fact]
         public void Key_CaseInsensitive_ValueIsFound()
         {
             var key = "MyKeYYYYY";
             var value = "sdfsdkguhsdgfkhsdgkshdg";
 
-            var dic = new CaseInsensitiveDictionary<string>();
-            dic[key] = value;
+            var dic = new StringDictionary<string>(keyLookup: KeyLookup.IgnoreCase)
+            {
+                [key] = value
+            };
 
             var outValueFromLower = dic[key.ToLower()];
-            var outValueFromUpper= dic[key.ToUpper()];
+            var outValueFromUpper = dic[key.ToUpper()];
 
             outValueFromLower.Should().Be(value);
             outValueFromUpper.Should().Be(value);
@@ -32,7 +29,7 @@ namespace DotNet.Basics.Tests.Collections
         [Fact]
         public void WhenKeyNotFound_Exception_ExceptionIsThrown()
         {
-            var dic = new CaseInsensitiveDictionary<string>();
+            var dic = new StringDictionary<string>();
             string temp;
             Action act = () => temp = dic["KeyNotFound"];
 
@@ -42,11 +39,11 @@ namespace DotNet.Basics.Tests.Collections
         [Fact]
         public void WhenKeyNotFound_Default_DefaultIsReturned()
         {
-            var dic = new CaseInsensitiveDictionary<string>(WhenKeyNotFound.ReturnDefault);
+            var dic = new StringDictionary<string>(whenKeyNotFound: WhenKeyNotFound.ReturnDefault);
 
             var temp = dic["KeyNotFound"];
 
-            temp.Should().Be(default(string));
+            temp.Should().Be(default);
         }
     }
 }
