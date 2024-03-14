@@ -12,7 +12,6 @@ namespace DotNet.Basics.Collections
     public class EntityCollection<T> : IEnumerable<T> where T : Entity
     {
         private readonly StringDictionary<T> _entities;
-        private readonly Func<string, T> _get;
 
         public EntityCollection(WhenKeyNotFound whenKeyNotFound = WhenKeyNotFound.ReturnDefault, KeyLookup keyLookup = KeyLookup.CaseSensitive)
         : this(Array.Empty<T>(), whenKeyNotFound, keyLookup)
@@ -21,17 +20,6 @@ namespace DotNet.Basics.Collections
         public EntityCollection(IEnumerable<T> entities, WhenKeyNotFound whenKeyNotFound = WhenKeyNotFound.ReturnDefault, KeyLookup keyLookup = KeyLookup.CaseSensitive)
         {
             _entities = new StringDictionary<T>(entities.ToDictionary(e => e.Key), whenKeyNotFound, keyLookup: keyLookup);
-            _get = GetGet(whenKeyNotFound);
-        }
-
-        private Func<string, T> GetGet(WhenKeyNotFound whenKeyNotFound)
-        {
-            return whenKeyNotFound switch
-            {
-                WhenKeyNotFound.ThrowException => key => _entities[key],
-                WhenKeyNotFound.ReturnDefault => key => ContainsKey(key) ? _entities[key] : default,
-                _ => throw new ArgumentException($"{nameof(WhenKeyNotFound)} Not supported: {whenKeyNotFound}")
-            };
         }
 
         public EntityCollection<T> Add(params T[] entities)
@@ -44,7 +32,7 @@ namespace DotNet.Basics.Collections
 
         public T this[string key]
         {
-            get => _get(key);
+            get => _entities[key];
             set => _entities[value.Key] = value;
         }
 

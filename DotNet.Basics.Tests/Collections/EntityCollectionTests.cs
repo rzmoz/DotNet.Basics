@@ -9,6 +9,24 @@ namespace DotNet.Basics.Tests.Collections
     public class EntityCollectionTests
     {
         [Fact]
+        public void Get_SimpleGet_EntryIsRetrieved()
+        {
+            var keys = Enumerable.Range(1, 10).Select(i => $"key{i}");
+            var entList = new EntityCollection();
+            foreach (var key in keys)
+            {
+                entList[key] = new Entity
+                {
+                    Key = key
+                };
+            }
+            var item5 = entList["key5"];
+
+            item5.Key.Should().Be("key5");
+        }
+
+
+        [Fact]
         public void Sort_Enumerator_ItemsAreSortedByCompareTo()
         {
             var entList = new EntityCollection();

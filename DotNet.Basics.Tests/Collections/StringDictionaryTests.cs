@@ -30,8 +30,7 @@ namespace DotNet.Basics.Tests.Collections
         public void Key_CaseSensitive_ValueIsNotFound()
         {
             var key = "MyKeYYYYY";
-
-
+            
             var dic = new StringDictionary<string>(keyLookup: KeyLookup.CaseSensitive)
             {
                 [key] = Lorem.Ipsum(5000)
