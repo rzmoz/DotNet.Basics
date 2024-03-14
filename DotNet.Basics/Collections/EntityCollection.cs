@@ -6,20 +6,19 @@ using System.Linq;
 
 namespace DotNet.Basics.Collections
 {
-    public class EntityDictionary : EntityDictionary<Entity>
-    {
-    }
+    public class EntityCollection : EntityCollection<Entity>
+    { }
 
-    public class EntityDictionary<T> : IEnumerable<T> where T : Entity
+    public class EntityCollection<T> : IEnumerable<T> where T : Entity
     {
         private readonly StringDictionary<T> _entities;
         private readonly Func<string, T> _get;
 
-        public EntityDictionary(WhenKeyNotFound whenKeyNotFound = WhenKeyNotFound.ReturnDefault, KeyLookup keyLookup = KeyLookup.CaseSensitive)
+        public EntityCollection(WhenKeyNotFound whenKeyNotFound = WhenKeyNotFound.ReturnDefault, KeyLookup keyLookup = KeyLookup.CaseSensitive)
         : this(Array.Empty<T>(), whenKeyNotFound, keyLookup)
         { }
 
-        public EntityDictionary(IEnumerable<T> entities, WhenKeyNotFound whenKeyNotFound = WhenKeyNotFound.ReturnDefault, KeyLookup keyLookup = KeyLookup.CaseSensitive)
+        public EntityCollection(IEnumerable<T> entities, WhenKeyNotFound whenKeyNotFound = WhenKeyNotFound.ReturnDefault, KeyLookup keyLookup = KeyLookup.CaseSensitive)
         {
             _entities = new StringDictionary<T>(entities.ToDictionary(e => e.Key), whenKeyNotFound, keyLookup: keyLookup);
             _get = GetGet(whenKeyNotFound);
@@ -35,7 +34,7 @@ namespace DotNet.Basics.Collections
             };
         }
 
-        public EntityDictionary<T> Add(params T[] entities)
+        public EntityCollection<T> Add(params T[] entities)
         {
             foreach (var entity in entities)
                 this[entity.Key] = entity;

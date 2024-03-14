@@ -6,12 +6,12 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Collections
 {
-    public class EntityDictionaryTests
+    public class EntityCollectionTests
     {
         [Fact]
         public void Sort_Enumerator_ItemsAreSortedByCompareTo()
         {
-            var entList = new EntityDictionary();
+            var entList = new EntityCollection();
 
             var entLast = new Entity
             {
@@ -42,7 +42,7 @@ namespace DotNet.Basics.Tests.Collections
         [Fact]
         public void Clear_Clear_DictionaryIsCleared()
         {
-            var entList = new EntityDictionary { new Entity() };
+            var entList = new EntityCollection { new Entity() };
 
             entList.Count.Should().BeGreaterThan(0);
 
