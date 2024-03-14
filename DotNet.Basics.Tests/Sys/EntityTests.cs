@@ -8,6 +8,29 @@ namespace DotNet.Basics.Tests.Sys
     public class EntityTests
     {
         [Fact]
+        public void Get_OverrideGetters_DescendantPropertyGettersAreInvoked()
+        {
+            var ent = new LoremIpsumGetterEntity();
+
+            ent.Key.Should().Be(Lorem.Ipsum(2));
+            ent.DisplayName.Should().Be(Lorem.Ipsum(4));
+        }
+        [Fact]
+        public void Init_OverrideSetters_DescendantPropertySettersAreInvoked()
+        {
+            var key = "all_in_lower_case";
+            var displayName = "display_name_" + key;
+            var ent = new UpperCaseEntity
+            {
+                Key = key,
+                DisplayName = displayName//trigger display name init
+            };
+
+            ent.Key.Should().Be(key.ToUpperInvariant());
+            ent.DisplayName.Should().Be(displayName.ToUpperInvariant());
+        }
+
+        [Fact]
         public void Init_SetFromInit_PropertiesAreSet()
         {
             var key = Guid.NewGuid().ToString();
@@ -76,6 +99,32 @@ namespace DotNet.Basics.Tests.Sys
             var key = Guid.NewGuid().ToString();
             var ent = new Entity { Key = key };
             ent.GetHashCode().Should().Be(key.GetHashCode());
+        }
+
+        private class LoremIpsumGetterEntity : Entity
+        {
+            protected override string GetKeyFunc(string value)
+            {
+                return Lorem.Ipsum(2);
+            }
+            
+            protected override string GetDisplayNameFunc(string value)
+            {
+                return Lorem.Ipsum(4);
+            }
+        }
+
+        private class UpperCaseEntity : Entity
+        {
+            protected override string SetKeyFunc(string value)
+            {
+                return value.ToUpperInvariant();
+            }
+
+            protected override string SetDisplayNameFunc(string value)
+            {
+                return value.ToUpperInvariant();
+            }
         }
     }
 }
