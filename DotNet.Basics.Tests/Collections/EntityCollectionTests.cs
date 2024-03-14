@@ -60,7 +60,7 @@ namespace DotNet.Basics.Tests.Collections
         [Fact]
         public void Clear_Clear_DictionaryIsCleared()
         {
-            var entList = new EntityCollection { new Entity() };
+            var entList = new EntityCollection { new Entity { Key = string.Empty } };
 
             entList.Count.Should().BeGreaterThan(0);
 

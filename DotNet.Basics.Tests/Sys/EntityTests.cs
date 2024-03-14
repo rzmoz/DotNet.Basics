@@ -52,18 +52,9 @@ namespace DotNet.Basics.Tests.Sys
             var key1 = Guid.NewGuid().ToString();
             var key2 = Guid.NewGuid().ToString();
 
-            var ent1WithKey1 = new Entity
-            {
-                Key = key1
-            };
-            var ent2WithKey1 = new Entity
-            {
-                Key = key1
-            }; ;
-            var ent3WithKey12 = new Entity
-            {
-                Key = key2
-            }; ;
+            var ent1WithKey1 = new Entity { Key = key1 };
+            var ent2WithKey1 = new Entity { Key = key1 };
+            var ent3WithKey12 = new Entity { Key = key2 };
 
             ent1WithKey1.Equals(ent2WithKey1).Should().BeTrue();
             ent1WithKey1.Equals(ent3WithKey12).Should().BeFalse();
@@ -103,28 +94,14 @@ namespace DotNet.Basics.Tests.Sys
 
         private class LoremIpsumGetterEntity : Entity
         {
-            protected override string GetKeyFunc(string value)
-            {
-                return Lorem.Ipsum(2);
-            }
-            
-            protected override string GetDisplayNameFunc(string value)
-            {
-                return Lorem.Ipsum(4);
-            }
+            public override string Key => Lorem.Ipsum(2);
+            public override string DisplayName => Lorem.Ipsum(4);
         }
 
         private class UpperCaseEntity : Entity
         {
-            protected override string SetKeyFunc(string value)
-            {
-                return value.ToUpperInvariant();
-            }
-
-            protected override string SetDisplayNameFunc(string value)
-            {
-                return value.ToUpperInvariant();
-            }
+            public override string Key => base.Key.ToUpperInvariant();
+            public override string DisplayName => base.DisplayName.ToUpperInvariant();
         }
     }
 }

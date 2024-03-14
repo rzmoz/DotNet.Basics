@@ -5,40 +5,10 @@ namespace DotNet.Basics.Sys
 {
     public class Entity : IComparable<Entity>, IComparer<Entity>
     {
-        private readonly string _innerKey = string.Empty;
-        private readonly string _innerDisplayName = string.Empty;
-
-        public string Key
-        {
-            get => GetKeyFunc(_innerKey);
-            init => _innerKey = SetKeyFunc(value);
-        }
-
-        public string DisplayName
-        {
-            get => GetDisplayNameFunc(_innerDisplayName);
-            init => _innerDisplayName = SetDisplayNameFunc(value);
-        }
-
+        public virtual string Key { get; init; }
+        public virtual string DisplayName { get; init; }
         public int SortOrder { get; set; }
-
-        protected virtual string GetKeyFunc(string value)
-        {
-            return value;
-        }
-        protected virtual string SetKeyFunc(string value)
-        {
-            return value;
-        }
-        protected virtual string SetDisplayNameFunc(string value)
-        {
-            return value;
-        }
-        protected virtual string GetDisplayNameFunc(string value)
-        {
-            return value;
-        }
-
+        
         protected bool Equals(Entity other)
         {
             return Key.Equals(other.Key);
