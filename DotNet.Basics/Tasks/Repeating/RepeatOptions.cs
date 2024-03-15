@@ -4,12 +4,7 @@ namespace DotNet.Basics.Tasks.Repeating
 {
     public sealed class RepeatOptions
     {
-        public RepeatOptions()
-        {
-            RetryDelay = TimeSpan.FromMilliseconds(250);
-        }
-
-        public TimeSpan RetryDelay { get; set; }
+        public TimeSpan RetryDelay { get; set; } = TimeSpan.FromMilliseconds(250);
 
         public int? MaxTries
         {

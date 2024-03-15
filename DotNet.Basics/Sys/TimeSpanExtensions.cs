@@ -17,7 +17,7 @@ namespace DotNet.Basics.Sys
         /// m = minutes
         /// h = hour
         /// t = ticks
-        /// unit is case insensitive
+        /// unit is case-insensitive
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
