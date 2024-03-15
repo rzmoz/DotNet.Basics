@@ -104,5 +104,10 @@ namespace DotNet.Basics.Collections
 
         public ICollection<string> Keys => _dictionary.Keys;
         public ICollection<TK> Values => _dictionary.Values;
+
+        public override string ToString()
+        {
+            return $"{nameof(Count)}: {Count}";
+        }
     }
 }
