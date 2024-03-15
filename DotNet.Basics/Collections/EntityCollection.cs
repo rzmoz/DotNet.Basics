@@ -9,7 +9,7 @@ namespace DotNet.Basics.Collections
     public class EntityCollection : EntityCollection<Entity>
     { }
 
-    public class EntityCollection<T> : IEnumerable<T> where T : Entity
+    public class EntityCollection<T> : IReadOnlyCollection<T> where T : Entity
     {
         private readonly StringDictionary<T> _entities;
 

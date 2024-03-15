@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace DotNet.Basics.Collections
 {
-    public static class StringCollectionExtensions
+    public static class EnumerableStringExtensions
     {
         public static IEnumerable<string> Whitelist(this IEnumerable<string> all, IEnumerable<string> whitelist = null, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
         {
