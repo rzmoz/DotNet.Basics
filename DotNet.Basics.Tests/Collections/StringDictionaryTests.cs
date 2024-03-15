@@ -15,7 +15,7 @@ namespace DotNet.Basics.Tests.Collections
             var key = "MyKeYYYYY";
             var value = "sdfsdkguhsdgfkhsdgkshdg";
 
-            var dic = new StringDictionary<string>(new StringDictionaryOptions<string> { KeyLookup = KeyLookup.IgnoreCase })
+            var dic = new StringDictionary<string>(KeyLookup.IgnoreCase)
             {
                 [key] = value
             };
@@ -31,7 +31,7 @@ namespace DotNet.Basics.Tests.Collections
         {
             var key = "MyKeYYYYY";
 
-            var dic = new StringDictionary<string>(new StringDictionaryOptions<string> { KeyLookup = KeyLookup.CaseSensitive })
+            var dic = new StringDictionary<string>()
             {
                 [key] = Lorem.Ipsum(5000)
             };
@@ -56,10 +56,7 @@ namespace DotNet.Basics.Tests.Collections
         [Fact]
         public void WhenKeyNotFound_Default_DefaultIsReturned()
         {
-            var dic = new StringDictionary<string>(new StringDictionaryOptions<string>
-            {
-                KeyNotFound = KeyNotFound.ReturnDefault
-            });
+            var dic = new StringDictionary<string>(keyNotFound: KeyNotFound.ReturnDefault);
 
             var temp = dic["KeyNotFound"];
 

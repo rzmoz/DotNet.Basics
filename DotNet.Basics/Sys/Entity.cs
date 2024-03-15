@@ -3,15 +3,21 @@ using System.Collections.Generic;
 
 namespace DotNet.Basics.Sys
 {
-    public class Entity(StringComparison comparison = StringComparison.Ordinal) : IComparable<Entity>, IComparer<Entity>
+    public class Entity(Func<Entity, string> getKeyFunc = null, StringComparison comparison = StringComparison.CurrentCulture) : IComparable<Entity>, IComparer<Entity>
     {
-        public virtual string Key { get; init; }
+        protected Func<Entity, string> GetKeyFunc { get; } = getKeyFunc;
+
+        public virtual string GetKey()
+        {
+            return GetKeyFunc?.Invoke(this) ?? DisplayName?.ToLowerInvariant() ?? string.Empty;
+        }
+
         public virtual string DisplayName { get; init; }
         public int SortOrder { get; set; }
 
         protected bool Equals(Entity other)
         {
-            return Key.Equals(other.Key);
+            return GetKey().Equals(other.GetKey());
         }
 
         public int Compare(Entity x, Entity y)
@@ -29,7 +35,7 @@ namespace DotNet.Basics.Sys
 
         public override int GetHashCode()
         {
-            return Key.GetHashCode();
+            return GetKey().GetHashCode();
         }
 
         public int CompareTo(Entity other)
@@ -42,12 +48,12 @@ namespace DotNet.Basics.Sys
             var displayNameComparison = string.Compare(DisplayName, other.DisplayName, comparison);
             if (displayNameComparison != 0)
                 return displayNameComparison;
-            return string.Compare(Key, other.Key, comparison);
+            return string.Compare(GetKey(), other.GetKey(), comparison);
         }
 
         public override string ToString()
         {
-            return $"{DisplayName} ({Key})";
+            return $"{DisplayName} ({GetKey()})";
         }
     }
 }

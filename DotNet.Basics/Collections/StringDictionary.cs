@@ -7,23 +7,44 @@ namespace DotNet.Basics.Collections
 {
     public class StringDictionary<TK> : IDictionary<string, TK>
     {
-        private readonly StringDictionaryOptions<TK> _options;
         private readonly Dictionary<string, TK> _dictionary;
 
-        public StringDictionary(StringDictionaryOptions<TK> options = null)
+        private readonly Func<string, string> _getKeyFunc;
+        private readonly Func<string, TK> _getValueFunc;
+
+        public StringDictionary(KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException)
+        : this(Array.Empty<KeyValuePair<string, TK>>(), keyLookup, keyNotFound)
+        { }
+        public StringDictionary(IEnumerable<KeyValuePair<string, TK>> items, KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException)
         {
-            _options = options ?? new StringDictionaryOptions<TK>();
-            _dictionary = new Dictionary<string, TK>();
+            _getValueFunc = GetValueFunc(keyNotFound);
+            _getKeyFunc = GetKeyFunc(keyLookup);
+
+            _dictionary = items.ToDictionary(i => i.Key, i => i.Value);
         }
-        public StringDictionary(IEnumerable<KeyValuePair<string, TK>> items, StringDictionaryOptions<TK> options = null)
+        private Func<string, string> GetKeyFunc(KeyLookup keyLookup)
         {
-            _options = options ?? new StringDictionaryOptions<TK>();
-            _dictionary = items?.ToDictionary(i => _options.GetKey(i.Key), i => i.Value) ?? new Dictionary<string, TK>();
+            return keyLookup switch
+            {
+                KeyLookup.IgnoreCase => key => key.ToLowerInvariant(),
+                KeyLookup.CaseSensitive => key => key,
+                _ => throw new ArgumentOutOfRangeException(nameof(keyLookup), keyLookup, null)
+            };
         }
-        public TK this[string key]
+        private Func<string, TK> GetValueFunc(KeyNotFound keyNotFound)
         {
-            get => _options.GetValue(key, _dictionary);
-            set => _options.SetValue(key, value, _dictionary);
+            return keyNotFound switch
+            {
+                KeyNotFound.ThrowException => key => _dictionary[key],
+                KeyNotFound.ReturnDefault => key => _dictionary.GetValueOrDefault(key),
+                _ => throw new ArgumentException($"{nameof(KeyNotFound)} Not supported: {keyNotFound}")
+            };
+        }
+
+        public virtual TK this[string key]
+        {
+            get => _getValueFunc(_getKeyFunc(key));
+            set => _dictionary[_getKeyFunc(key)] = value;
         }
 
         public int Count => _dictionary.Count;
@@ -31,20 +52,20 @@ namespace DotNet.Basics.Collections
 
         public void Add(string key, TK value)
         {
-            _dictionary.Add(_options.GetKey(key), value);
+            _dictionary.Add(key, value);
         }
         public void Add(KeyValuePair<string, TK> item)
         {
-            _dictionary.Add(_options.GetKey(item.Key), item.Value);
+            _dictionary.Add(_getKeyFunc(item.Key), item.Value);
         }
         public bool ContainsKey(string key)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
-            return _dictionary.ContainsKey(_options.GetKey(key));
+            return _dictionary.ContainsKey(_getKeyFunc(key));
         }
         public bool Contains(KeyValuePair<string, TK> item)
         {
-            return _dictionary.ContainsKey(_options.GetKey(item.Key));
+            return _dictionary.ContainsKey(_getKeyFunc(item.Key));
         }
 
         public void CopyTo(KeyValuePair<string, TK>[] array, int arrayIndex)
@@ -54,11 +75,11 @@ namespace DotNet.Basics.Collections
         public bool Remove(string key)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
-            return _dictionary.Remove(_options.GetKey(key));
+            return _dictionary.Remove(_getKeyFunc(key));
         }
         public bool Remove(KeyValuePair<string, TK> item)
         {
-            return _dictionary.Remove(_options.GetKey(item.Key));
+            return _dictionary.Remove(_getKeyFunc(item.Key));
         }
         public void Clear()
         {
@@ -68,7 +89,7 @@ namespace DotNet.Basics.Collections
         public bool TryGetValue(string key, out TK value)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
-            return TryGetValue(_options.GetKey(key), out value);
+            return TryGetValue(_getKeyFunc(key), out value);
         }
 
         public IEnumerator<KeyValuePair<string, TK>> GetEnumerator()

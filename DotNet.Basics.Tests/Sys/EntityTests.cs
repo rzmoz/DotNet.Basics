@@ -10,8 +10,8 @@ namespace DotNet.Basics.Tests.Sys
         [Fact]
         public void CompareTo_IgnoreCase_StringComparisonIsRespected()
         {
-            var entLowerCase = new Entity(StringComparison.OrdinalIgnoreCase) { DisplayName = Lorem.Ipsum().ToLowerInvariant() };
-            var entUpperCase = new Entity(StringComparison.OrdinalIgnoreCase) { DisplayName = Lorem.Ipsum().ToUpperInvariant() };
+            var entLowerCase = new Entity(comparison: StringComparison.InvariantCultureIgnoreCase) { DisplayName = Lorem.Ipsum().ToLowerInvariant() };
+            var entUpperCase = new Entity(comparison: StringComparison.InvariantCultureIgnoreCase) { DisplayName = Lorem.Ipsum().ToUpperInvariant() };
 
             (entLowerCase.DisplayName != entUpperCase.DisplayName).Should().BeTrue();
             entLowerCase.DisplayName.Should().Be(Lorem.Ipsum().ToLowerInvariant());
@@ -24,9 +24,9 @@ namespace DotNet.Basics.Tests.Sys
         [Fact]
         public void Get_OverrideGetters_DescendantPropertyGettersAreInvoked()
         {
-            var ent = new LoremIpsumGetterEntity();
+            var ent = new LoremIpsumGetterEntity(e => Lorem.Ipsum(2));
 
-            ent.Key.Should().Be(Lorem.Ipsum(2));
+            ent.GetKey().Should().Be(Lorem.Ipsum(2));
             ent.DisplayName.Should().Be(Lorem.Ipsum(4));
         }
         [Fact]
@@ -34,13 +34,12 @@ namespace DotNet.Basics.Tests.Sys
         {
             var key = "all_in_lower_case";
             var displayName = "display_name_" + key;
-            var ent = new UpperCaseEntity
+            var ent = new UpperCaseEntity(e => key.ToUpperInvariant())
             {
-                Key = key,
                 DisplayName = displayName//trigger display name init
             };
 
-            ent.Key.Should().Be(key.ToUpperInvariant());
+            ent.GetKey().Should().Be(key.ToUpperInvariant());
             ent.DisplayName.Should().Be(displayName.ToUpperInvariant());
         }
 
@@ -50,13 +49,12 @@ namespace DotNet.Basics.Tests.Sys
             var key = Guid.NewGuid().ToString();
             var name = Guid.NewGuid().ToString();
 
-            var ent = new Entity
+            var ent = new Entity(e => key)
             {
                 DisplayName = name,
-                Key = key
             };
 
-            ent.Key.Should().Be(key);
+            ent.GetKey().Should().Be(key);
             ent.DisplayName.Should().Be(name);
         }
 
@@ -66,9 +64,9 @@ namespace DotNet.Basics.Tests.Sys
             var key1 = Guid.NewGuid().ToString();
             var key2 = Guid.NewGuid().ToString();
 
-            var ent1WithKey1 = new Entity { Key = key1 };
-            var ent2WithKey1 = new Entity { Key = key1 };
-            var ent3WithKey12 = new Entity { Key = key2 };
+            var ent1WithKey1 = new Entity(e => key1);
+            var ent2WithKey1 = new Entity(e => key1);
+            var ent3WithKey12 = new Entity(e => key2);
 
             ent1WithKey1.Equals(ent2WithKey1).Should().BeTrue();
             ent1WithKey1.Equals(ent3WithKey12).Should().BeFalse();
@@ -85,11 +83,11 @@ namespace DotNet.Basics.Tests.Sys
             var keyLast = "key2";
             string.Compare(keyFirst, keyLast, StringComparison.Ordinal).Should().BeLessThan(0);
 
-            var ent1 = new Entity { DisplayName = displayNameLast, Key = keyFirst };
-            var ent1Duplicate = new Entity { DisplayName = ent1.DisplayName, Key = ent1.Key };
-            var ent2 = new Entity { DisplayName = displayNameFirst, Key = keyFirst, SortOrder = -1 };
-            var ent3 = new Entity { DisplayName = displayNameFirst, Key = keyFirst };
-            var ent4 = new Entity { DisplayName = ent1.DisplayName, Key = keyLast };
+            var ent1 = new Entity(e => keyFirst) { DisplayName = displayNameLast };
+            var ent1Duplicate = new Entity(e => ent1.GetKey()) { DisplayName = ent1.DisplayName };
+            var ent2 = new Entity(e => keyFirst) { DisplayName = displayNameFirst, SortOrder = -1 };
+            var ent3 = new Entity(e => keyFirst) { DisplayName = displayNameFirst };
+            var ent4 = new Entity(e => keyLast) { DisplayName = ent1.DisplayName };
 
             // ReSharper disable once PossibleUnintendedReferenceComparison
             ((ent1 != ent1Duplicate) && ent1.CompareTo(ent1Duplicate) == 0).Should().BeTrue();//same sort order, key and display name but not same object(ref)
@@ -102,19 +100,17 @@ namespace DotNet.Basics.Tests.Sys
         public void GetHashCode_UseKey_HashcodeIsBasedOnKey()
         {
             var key = Guid.NewGuid().ToString();
-            var ent = new Entity { Key = key };
+            var ent = new Entity(e => key);
             ent.GetHashCode().Should().Be(key.GetHashCode());
         }
 
-        private class LoremIpsumGetterEntity : Entity
+        private class LoremIpsumGetterEntity(Func<Entity, string> getKeyFunc = null, StringComparison comparison = StringComparison.CurrentCulture) : Entity(getKeyFunc, comparison)
         {
-            public override string Key => Lorem.Ipsum(2);
             public override string DisplayName => Lorem.Ipsum(4);
         }
 
-        private class UpperCaseEntity : Entity
+        private class UpperCaseEntity(Func<Entity, string> getKeyFunc = null, StringComparison comparison = StringComparison.CurrentCulture) : Entity(getKeyFunc, comparison)
         {
-            public override string Key => base.Key.ToUpperInvariant();
             public override string DisplayName => base.DisplayName.ToUpperInvariant();
         }
     }

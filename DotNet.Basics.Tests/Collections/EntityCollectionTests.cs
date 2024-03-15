@@ -15,14 +15,11 @@ namespace DotNet.Basics.Tests.Collections
             var entList = new EntityCollection();
             foreach (var key in keys)
             {
-                entList[key] = new Entity
-                {
-                    Key = key
-                };
+                entList[key] = new Entity(e => key);
             }
             var item5 = entList["key5"];
 
-            item5.Key.Should().Be("key5");
+            item5.GetKey().Should().Be("key5");
         }
 
 
@@ -31,19 +28,16 @@ namespace DotNet.Basics.Tests.Collections
         {
             var entList = new EntityCollection();
 
-            var entLast = new Entity
+            var entLast = new Entity(e => "key1")
             {
-                Key = "key1",
                 SortOrder = 500
             };
-            var entMiddle = new Entity
+            var entMiddle = new Entity(e => "key500")
             {
-                Key = "key500",
                 SortOrder = 150
             };
-            var entFirst = new Entity
+            var entFirst = new Entity(e => "key150")
             {
-                Key = "key150",
                 SortOrder = 0
             };
 
@@ -60,7 +54,7 @@ namespace DotNet.Basics.Tests.Collections
         [Fact]
         public void Clear_Clear_DictionaryIsCleared()
         {
-            var entList = new EntityCollection { new Entity { Key = string.Empty } };
+            var entList = new EntityCollection { new Entity() };
 
             entList.Count.Should().BeGreaterThan(0);
 
