@@ -17,7 +17,7 @@ namespace DotNet.Basics.Collections
             _keyFunc = GetKeyFunc(keyLookup);
             _dictionary = new Dictionary<string, TK>();
         }
-        public StringDictionary(IDictionary<string, TK> items, WhenKeyNotFound whenKeyNotFound = WhenKeyNotFound.ThrowException, KeyLookup keyLookup = KeyLookup.IgnoreCase)
+        public StringDictionary(IEnumerable<KeyValuePair<string, TK>> items, WhenKeyNotFound whenKeyNotFound = WhenKeyNotFound.ThrowException, KeyLookup keyLookup = KeyLookup.IgnoreCase)
         {
             _get = GetGet(whenKeyNotFound);
             _keyFunc = GetKeyFunc(keyLookup);
