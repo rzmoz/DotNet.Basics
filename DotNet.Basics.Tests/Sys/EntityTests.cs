@@ -8,6 +8,20 @@ namespace DotNet.Basics.Tests.Sys
     public class EntityTests
     {
         [Fact]
+        public void CompareTo_IgnoreCase_StringComparisonIsRespected()
+        {
+            var entLowerCase = new Entity(StringComparison.OrdinalIgnoreCase) { DisplayName = Lorem.Ipsum().ToLowerInvariant() };
+            var entUpperCase = new Entity(StringComparison.OrdinalIgnoreCase) { DisplayName = Lorem.Ipsum().ToUpperInvariant() };
+
+            (entLowerCase.DisplayName != entUpperCase.DisplayName).Should().BeTrue();
+            entLowerCase.DisplayName.Should().Be(Lorem.Ipsum().ToLowerInvariant());
+            entUpperCase.DisplayName.Should().Be(Lorem.Ipsum().ToUpperInvariant());
+
+            entLowerCase.CompareTo(entUpperCase).Should().Be(0);
+            entUpperCase.CompareTo(entLowerCase).Should().Be(0);
+        }
+
+        [Fact]
         public void Get_OverrideGetters_DescendantPropertyGettersAreInvoked()
         {
             var ent = new LoremIpsumGetterEntity();

@@ -1,5 +1,4 @@
-﻿using System;
-using DotNet.Basics.Sys;
+﻿using DotNet.Basics.Sys;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +12,12 @@ namespace DotNet.Basics.Collections
     {
         private readonly StringDictionary<T> _entities;
 
-        public EntityCollection(WhenKeyNotFound whenKeyNotFound = WhenKeyNotFound.ReturnDefault, KeyLookup keyLookup = KeyLookup.CaseSensitive)
-        : this(Array.Empty<T>(), whenKeyNotFound, keyLookup)
-        { }
+        public EntityCollection(WhenKeyNotFound whenKeyNotFound = WhenKeyNotFound.ReturnDefault, KeyLookup keyLookup = KeyLookup.IgnoreCase)
+        {
+            _entities = new StringDictionary<T>(whenKeyNotFound, keyLookup);
+        }
 
-        public EntityCollection(IEnumerable<T> entities, WhenKeyNotFound whenKeyNotFound = WhenKeyNotFound.ReturnDefault, KeyLookup keyLookup = KeyLookup.CaseSensitive)
+        public EntityCollection(IEnumerable<T> entities, WhenKeyNotFound whenKeyNotFound = WhenKeyNotFound.ReturnDefault, KeyLookup keyLookup = KeyLookup.IgnoreCase)
         {
             _entities = new StringDictionary<T>(entities.ToDictionary(e => e.Key), whenKeyNotFound, keyLookup: keyLookup);
         }

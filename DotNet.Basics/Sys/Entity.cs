@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace DotNet.Basics.Sys
 {
-    public class Entity : IComparable<Entity>, IComparer<Entity>
+    public class Entity(StringComparison comparison = StringComparison.Ordinal) : IComparable<Entity>, IComparer<Entity>
     {
         public virtual string Key { get; init; }
         public virtual string DisplayName { get; init; }
         public int SortOrder { get; set; }
-        
+
         protected bool Equals(Entity other)
         {
             return Key.Equals(other.Key);
@@ -39,10 +39,10 @@ namespace DotNet.Basics.Sys
             var sortOrderComparison = SortOrder.CompareTo(other.SortOrder);
             if (sortOrderComparison != 0)
                 return sortOrderComparison;
-            var displayNameComparison = string.Compare(DisplayName, other.DisplayName, StringComparison.Ordinal);
+            var displayNameComparison = string.Compare(DisplayName, other.DisplayName, comparison);
             if (displayNameComparison != 0)
                 return displayNameComparison;
-            return string.Compare(Key, other.Key, StringComparison.Ordinal);
+            return string.Compare(Key, other.Key, comparison);
         }
 
         public override string ToString()
