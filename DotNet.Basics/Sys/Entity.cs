@@ -15,12 +15,12 @@ namespace DotNet.Basics.Sys
         public virtual string DisplayName { get; init; }
         public int SortOrder { get; set; }
 
-        protected bool Equals(Entity other)
+        protected virtual bool Equals(Entity other)
         {
             return GetKey().Equals(other.GetKey());
         }
 
-        public int Compare(Entity x, Entity y)
+        public virtual int Compare(Entity x, Entity y)
         {
             return x.CompareTo(y);
         }

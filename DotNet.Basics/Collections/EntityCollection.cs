@@ -7,19 +7,34 @@ using System.Linq;
 namespace DotNet.Basics.Collections
 {
     public class EntityCollection : EntityCollection<Entity>
-    { }
+    {
+        public EntityCollection(KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, Func<IEnumerable<Entity>, IEnumerable<Entity>> orderBy = null)
+            : base(keyLookup, keyNotFound, orderBy)
+        {
+        }
+
+        public EntityCollection(IEnumerable<Entity> entities, KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, Func<IEnumerable<Entity>, IEnumerable<Entity>> orderBy = null)
+            : base(entities, keyLookup, keyNotFound, orderBy)
+        {
+        }
+    }
 
     public class EntityCollection<T> : IReadOnlyCollection<T> where T : Entity
     {
-        private readonly StringDictionary<T> _entities;
+        private readonly Func<IEnumerable<T>, IEnumerable<T>> _orderBy;
+        private readonly StringDictionary<T> _dictionary;
+        private List<T> _sortedList;
 
-        public EntityCollection(KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException)
-            : this(Array.Empty<T>(), keyLookup, keyNotFound)
+        public EntityCollection(KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, Func<IEnumerable<T>, IEnumerable<T>> orderBy = null)
+            : this(Array.Empty<T>(), keyLookup, keyNotFound, orderBy)
         { }
 
-        public EntityCollection(IEnumerable<T> entities, KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException)
+        public EntityCollection(IEnumerable<T> entities, KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, Func<IEnumerable<T>, IEnumerable<T>> orderBy = null)
         {
-            _entities = new StringDictionary<T>(entities.ToDictionary(e => e.GetKey()), keyLookup, keyNotFound);
+            _orderBy = orderBy;
+            _dictionary = new StringDictionary<T>(entities.ToDictionary(e => e.GetKey()), keyLookup, keyNotFound);
+            _orderBy = orderBy ?? GetDefaultSort;
+            RefreshSortedList();
         }
 
         public virtual EntityCollection<T> Add(params T[] entities)
@@ -27,9 +42,9 @@ namespace DotNet.Basics.Collections
             foreach (var entity in entities)
             {
                 entity.SortOrder = Count + 1;
-                _entities.Add(entity.GetKey(), entity);
+                _dictionary.Add(entity.GetKey(), entity);
             }
-
+            RefreshSortedList();
             return this;
         }
 
@@ -40,13 +55,14 @@ namespace DotNet.Basics.Collections
 
         public virtual T this[string key]
         {
-            get => _entities[KeyPreLookup(key)];
+            get => _dictionary[KeyPreLookup(key)];
             set
             {
-                if (_entities.TryGetValue(KeyPreLookup(key), out var existing))
+                if (_dictionary.TryGetValue(KeyPreLookup(key), out var existing))
                 {
                     value.SortOrder = existing.SortOrder;
-                    _entities[KeyPreLookup(value.GetKey())] = value;
+                    _dictionary[KeyPreLookup(value.GetKey())] = value;
+                    RefreshSortedList();
                 }
                 else
                     Add(value);
@@ -55,21 +71,32 @@ namespace DotNet.Basics.Collections
 
         public virtual bool ContainsKey(string key)
         {
-            return _entities.ContainsKey(KeyPreLookup(key));
+            return _dictionary.ContainsKey(KeyPreLookup(key));
         }
 
         public virtual void Clear()
         {
-            _entities.Clear();
+            _dictionary.Clear();
         }
 
-        public virtual int Count => _entities.Count;
+        public virtual int Count => _dictionary.Count;
+
+        protected void RefreshSortedList()
+        {
+            _sortedList = _orderBy(_dictionary.Values).ToList();
+        }
+
+        protected IEnumerable<T> GetDefaultSort(IEnumerable<T> values)
+        {
+            return values
+                .OrderBy(v => v.SortOrder)
+                .ThenBy(v => v.DisplayName)
+                .ThenBy(v => v.GetKey());
+        }
 
         public virtual IEnumerator<T> GetEnumerator()
         {
-            var sortedList = _entities.Values.ToList();
-            sortedList.Sort();
-            return sortedList.GetEnumerator();
+            return _sortedList.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DotNet.Basics.Collections;
 using DotNet.Basics.Sys;
@@ -10,19 +11,38 @@ namespace DotNet.Basics.Tests.Collections
     public class EntityCollectionTests
     {
         [Fact]
-        public void Add_SortOrder_ItemsAreAddedLastRespectingSortOrder()
+        public void Ctor_OverrideOrderBy_ItemsAreSortedByCustom()
         {
-            var keys = Enumerable.Range(1, 10).Select(i => $"key{i}");//range high to low
-            var entList = new EntityCollection();
+            var keys = Enumerable.Range(1, 10).Select(i => $"key{i}").ToList();//range high to low
+            IEnumerable<Entity> Sorting(IEnumerable<Entity> items) => items.OrderByDescending(i => i.SortOrder);//reverse sorting
+            var entList = new EntityCollection(orderBy: Sorting);
 
             //act
-            foreach (var key in keys.Reverse())
+            foreach (var key in keys)
                 entList.Add(new Entity(e => key));
 
             //assert
             var first = entList.First();
             var last = entList.Last();
             string.Compare(keys.First(), keys.Last(), StringComparison.Ordinal).Should().BeLessThan(0);//first key sorts lower than last => keys are sorted in ascending order
+            first.GetKey().Should().Be("key10");//keys are sorted respecting sort order
+            last.GetKey().Should().Be("key1");
+        }
+
+        [Fact]
+        public void Add_SortOrder_ItemsAreAddedLastRespectingSortOrder()
+        {
+            var indexes = Enumerable.Range(1, 10);//range high to low
+            var entList = new EntityCollection();
+
+            //act
+            foreach (var index in indexes.Reverse())
+                entList.Add(new Entity(e => $"key{index}"));
+
+            //assert
+            var first = entList.First();
+            var last = entList.Last();
+            indexes.First().CompareTo(indexes.Last()).Should().BeLessThan(0);//first key sorts lower than last => keys are sorted in ascending order
             first.GetKey().Should().Be("key10");//keys are sorted respecting sort order
             last.GetKey().Should().Be("key1");
         }
