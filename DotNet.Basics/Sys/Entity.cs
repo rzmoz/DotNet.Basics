@@ -7,17 +7,14 @@ namespace DotNet.Basics.Sys
     {
         protected Func<Entity, string> GetKeyFunc { get; } = getKeyFunc;
 
-        public virtual string GetKey()
-        {
-            return GetKeyFunc?.Invoke(this) ?? DisplayName?.ToLowerInvariant() ?? string.Empty;
-        }
+        public virtual string Key => GetKeyFunc?.Invoke(this) ?? DisplayName?.ToLowerInvariant() ?? string.Empty;
 
         public virtual string DisplayName { get; init; }
         public int SortOrder { get; set; }
 
         protected virtual bool Equals(Entity other)
         {
-            return GetKey().Equals(other.GetKey());
+            return Key.Equals(other.Key);
         }
 
         public virtual int Compare(Entity x, Entity y)
@@ -35,7 +32,7 @@ namespace DotNet.Basics.Sys
 
         public override int GetHashCode()
         {
-            return GetKey().GetHashCode();
+            return Key.GetHashCode();
         }
 
         public int CompareTo(Entity other)
@@ -48,12 +45,12 @@ namespace DotNet.Basics.Sys
             var displayNameComparison = string.Compare(DisplayName, other.DisplayName, comparison);
             if (displayNameComparison != 0)
                 return displayNameComparison;
-            return string.Compare(GetKey(), other.GetKey(), comparison);
+            return string.Compare(Key, other.Key, comparison);
         }
 
         public override string ToString()
         {
-            return $"{DisplayName} ({GetKey()})";
+            return $"{DisplayName} ({Key})";
         }
     }
 }

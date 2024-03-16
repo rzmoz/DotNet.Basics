@@ -32,7 +32,7 @@ namespace DotNet.Basics.Collections
         public EntityCollection(IEnumerable<T> entities, KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, Func<IEnumerable<T>, IEnumerable<T>> orderBy = null)
         {
             _orderBy = orderBy;
-            _dictionary = new StringDictionary<T>(entities.ToDictionary(e => e.GetKey()), keyLookup, keyNotFound);
+            _dictionary = new StringDictionary<T>(entities.ToDictionary(e => e.Key), keyLookup, keyNotFound);
             _orderBy = orderBy ?? GetDefaultSort;
             RefreshSortedList();
         }
@@ -42,7 +42,7 @@ namespace DotNet.Basics.Collections
             foreach (var entity in entities)
             {
                 entity.SortOrder = Count + 1;
-                _dictionary.Add(entity.GetKey(), entity);
+                _dictionary.Add(entity.Key, entity);
             }
             RefreshSortedList();
             return this;
@@ -61,7 +61,7 @@ namespace DotNet.Basics.Collections
                 if (_dictionary.TryGetValue(KeyPreLookup(key), out var existing))
                 {
                     value.SortOrder = existing.SortOrder;
-                    _dictionary[KeyPreLookup(value.GetKey())] = value;
+                    _dictionary[KeyPreLookup(value.Key)] = value;
                     RefreshSortedList();
                 }
                 else
@@ -91,7 +91,7 @@ namespace DotNet.Basics.Collections
             return values
                 .OrderBy(v => v.SortOrder)
                 .ThenBy(v => v.DisplayName)
-                .ThenBy(v => v.GetKey());
+                .ThenBy(v => v.Key);
         }
 
         public virtual IEnumerator<T> GetEnumerator()

@@ -1,9 +1,10 @@
 ﻿using DotNet.Basics.IoC;
+using DotNet.Basics.Tests.DependencyInjection;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace DotNet.Basics.Tests.DependencyInjection
+namespace DotNet.Basics.Tests.IoC
 {
     public class ContainerConfigurationExtensionsTests
     {

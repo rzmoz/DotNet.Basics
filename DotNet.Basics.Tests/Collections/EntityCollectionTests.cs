@@ -25,8 +25,8 @@ namespace DotNet.Basics.Tests.Collections
             var first = entList.First();
             var last = entList.Last();
             string.Compare(keys.First(), keys.Last(), StringComparison.Ordinal).Should().BeLessThan(0);//first key sorts lower than last => keys are sorted in ascending order
-            first.GetKey().Should().Be("key10");//keys are sorted respecting sort order
-            last.GetKey().Should().Be("key1");
+            first.Key.Should().Be("key10");//keys are sorted respecting sort order
+            last.Key.Should().Be("key1");
         }
 
         [Fact]
@@ -43,8 +43,8 @@ namespace DotNet.Basics.Tests.Collections
             var first = entList.First();
             var last = entList.Last();
             indexes.First().CompareTo(indexes.Last()).Should().BeLessThan(0);//first key sorts lower than last => keys are sorted in ascending order
-            first.GetKey().Should().Be("key10");//keys are sorted respecting sort order
-            last.GetKey().Should().Be("key1");
+            first.Key.Should().Be("key10");//keys are sorted respecting sort order
+            last.Key.Should().Be("key1");
         }
 
         [Fact]
@@ -58,7 +58,7 @@ namespace DotNet.Basics.Tests.Collections
             }
             var item5 = entList["key5"];
 
-            item5.GetKey().Should().Be("key5");
+            item5.Key.Should().Be("key5");
         }
 
 

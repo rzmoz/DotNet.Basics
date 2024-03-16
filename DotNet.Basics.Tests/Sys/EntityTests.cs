@@ -26,7 +26,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             var ent = new LoremIpsumGetterEntity(e => Lorem.Ipsum(2));
 
-            ent.GetKey().Should().Be(Lorem.Ipsum(2));
+            ent.Key.Should().Be(Lorem.Ipsum(2));
             ent.DisplayName.Should().Be(Lorem.Ipsum(4));
         }
         [Fact]
@@ -39,7 +39,7 @@ namespace DotNet.Basics.Tests.Sys
                 DisplayName = displayName//trigger display name init
             };
 
-            ent.GetKey().Should().Be(key.ToUpperInvariant());
+            ent.Key.Should().Be(key.ToUpperInvariant());
             ent.DisplayName.Should().Be(displayName.ToUpperInvariant());
         }
 
@@ -54,7 +54,7 @@ namespace DotNet.Basics.Tests.Sys
                 DisplayName = name,
             };
 
-            ent.GetKey().Should().Be(key);
+            ent.Key.Should().Be(key);
             ent.DisplayName.Should().Be(name);
         }
 
@@ -84,7 +84,7 @@ namespace DotNet.Basics.Tests.Sys
             string.Compare(keyFirst, keyLast, StringComparison.Ordinal).Should().BeLessThan(0);
 
             var ent1 = new Entity(e => keyFirst) { DisplayName = displayNameLast };
-            var ent1Duplicate = new Entity(e => ent1.GetKey()) { DisplayName = ent1.DisplayName };
+            var ent1Duplicate = new Entity(e => ent1.Key) { DisplayName = ent1.DisplayName };
             var ent2 = new Entity(e => keyFirst) { DisplayName = displayNameFirst, SortOrder = -1 };
             var ent3 = new Entity(e => keyFirst) { DisplayName = displayNameFirst };
             var ent4 = new Entity(e => keyLast) { DisplayName = ent1.DisplayName };
