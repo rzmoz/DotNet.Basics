@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using DotNet.Basics.Collections;
 using DotNet.Basics.Sys;
 using FluentAssertions;
@@ -8,6 +9,24 @@ namespace DotNet.Basics.Tests.Collections
 {
     public class EntityCollectionTests
     {
+        [Fact]
+        public void Add_SortOrder_ItemsAreAddedLastRespectingSortOrder()
+        {
+            var keys = Enumerable.Range(1, 10).Select(i => $"key{i}");//range high to low
+            var entList = new EntityCollection();
+
+            //act
+            foreach (var key in keys.Reverse())
+                entList.Add(new Entity(e => key));
+
+            //assert
+            var first = entList.First();
+            var last = entList.Last();
+            string.Compare(keys.First(), keys.Last(), StringComparison.Ordinal).Should().BeLessThan(0);//first key sorts lower than last => keys are sorted in ascending order
+            first.GetKey().Should().Be("key10");//keys are sorted respecting sort order
+            last.GetKey().Should().Be("key1");
+        }
+
         [Fact]
         public void Get_SimpleGet_EntryIsRetrieved()
         {

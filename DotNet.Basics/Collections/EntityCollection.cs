@@ -25,7 +25,11 @@ namespace DotNet.Basics.Collections
         public virtual EntityCollection<T> Add(params T[] entities)
         {
             foreach (var entity in entities)
-                this[entity.GetKey()] = entity;
+            {
+                entity.SortOrder = Count + 1;
+                _entities.Add(entity.GetKey(), entity);
+            }
+
             return this;
         }
 
@@ -37,7 +41,16 @@ namespace DotNet.Basics.Collections
         public virtual T this[string key]
         {
             get => _entities[KeyPreLookup(key)];
-            set => _entities[KeyPreLookup(value.GetKey())] = value;
+            set
+            {
+                if (_entities.TryGetValue(KeyPreLookup(key), out var existing))
+                {
+                    value.SortOrder = existing.SortOrder;
+                    _entities[KeyPreLookup(value.GetKey())] = value;
+                }
+                else
+                    Add(value);
+            }
         }
 
         public virtual bool ContainsKey(string key)
