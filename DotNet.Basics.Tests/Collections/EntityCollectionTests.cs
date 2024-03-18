@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DotNet.Basics.Collections;
@@ -60,6 +61,20 @@ namespace DotNet.Basics.Tests.Collections
 
 
         [Fact]
+        public void Index_ByIndex_EntryIsRetrieved()
+        {
+            var keys = Enumerable.Range(0, 9).Select(i => $"key{i}");
+            var entList = new EntityCollection();
+            foreach (var key in keys)
+                entList[key] = new Entity { Key = key };
+
+            //act
+            var item5 = entList[5];//get by index
+
+            item5.Key.Should().Be("key5");
+        }
+
+        [Fact]
         public void Sort_DefaultSorting_EntitiesItemsAreSortedBySortOrder()
         {
             var entList = new EntityCollection();
@@ -88,6 +103,17 @@ namespace DotNet.Basics.Tests.Collections
 
             entList.Clear();
             entList.Count.Should().Be(0);
+        }
+
+        [Theory]
+        [InlineData("my-key", true)]
+        [InlineData("my-KEY", false)]
+        [InlineData(null, false)]
+        [InlineData("", false)]
+        public void ContainsKey_CheckForKey_KeyIsDetermined(string? key, bool expected)
+        {
+            var entList = new EntityCollection { new Entity { Key = "my-key" } };
+            entList.ContainsKey(key).Should().Be(expected);
         }
 
         [Fact]

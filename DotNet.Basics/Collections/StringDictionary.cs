@@ -60,7 +60,8 @@ namespace DotNet.Basics.Collections
         }
         public bool ContainsKey(string key)
         {
-            if (key == null) throw new ArgumentNullException(nameof(key));
+            if (key == null)
+                return false;
             return _dictionary.ContainsKey(_getKeyFunc(key));
         }
         public bool Contains(KeyValuePair<string, TK> item)

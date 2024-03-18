@@ -19,7 +19,7 @@ namespace DotNet.Basics.Collections
         }
     }
 
-    public class EntityCollection<T> : IReadOnlyCollection<T> where T : Entity
+    public class EntityCollection<T> : IReadOnlyList<T> where T : Entity
     {
         private readonly Func<IEnumerable<T>, IEnumerable<T>> _orderBy;
         private readonly StringDictionary<T> _dictionary;
@@ -53,6 +53,8 @@ namespace DotNet.Basics.Collections
         {
             return key;
         }
+
+        public T this[int index] => _sortedList[index];
 
         public virtual T this[string key]
         {
