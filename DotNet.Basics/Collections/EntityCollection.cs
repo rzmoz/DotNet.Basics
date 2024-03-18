@@ -41,7 +41,8 @@ namespace DotNet.Basics.Collections
         {
             foreach (var entity in entities)
             {
-                entity.SortOrder = Count + 1;
+                if (entity.SortOrder == 0)
+                    entity.SortOrder = Count + 1;
                 _dictionary.Add(entity.Key, entity);
             }
             RefreshSortedList();

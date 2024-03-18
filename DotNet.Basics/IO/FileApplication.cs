@@ -5,25 +5,18 @@ using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
 {
-    public class FileApplication
+    public class FileApplication(DirPath installDir)
     {
         private const string _installingHandleName = "installing.dat";
         private const string _installedHandleName = "installed.dat";
-        private readonly FilePath _installedHandle;
-        private readonly IList<Action> _installActions;
+        private readonly FilePath _installedHandle = installDir.ToFile(_installedHandleName);
+        private readonly IList<Action> _installActions = new List<Action>();
 
         public FileApplication(string appName)
             : this(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).ToDir(appName))
         { }
 
-        public FileApplication(DirPath installDir)
-        {
-            InstallDir = installDir ?? throw new ArgumentNullException(nameof(installDir));
-            _installedHandle = installDir.ToFile(_installedHandleName);
-            _installActions = new List<Action>();
-        }
-
-        public DirPath InstallDir { get; }
+        public DirPath InstallDir { get; } = installDir ?? throw new ArgumentNullException(nameof(installDir));
 
         public int RunFromCmd(string fileName, IEnumerable<string> args, Action<string> writeOutput = null, Action<string> writeError = null, Action<string> writeDebug = null)
         {

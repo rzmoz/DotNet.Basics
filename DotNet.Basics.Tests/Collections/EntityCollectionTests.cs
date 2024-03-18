@@ -19,7 +19,7 @@ namespace DotNet.Basics.Tests.Collections
 
             //act
             foreach (var key in keys)
-                entList.Add(new Entity(e => key));
+                entList.Add(new Entity { Key = key });
 
             //assert
             var first = entList.First();
@@ -32,17 +32,14 @@ namespace DotNet.Basics.Tests.Collections
         [Fact]
         public void Add_SortOrder_ItemsAreAddedLastRespectingSortOrder()
         {
-            var indexes = Enumerable.Range(1, 10);//range high to low
-            var entList = new EntityCollection();
+            var entities = Enumerable.Range(1, 10).Reverse().Select(index => new Entity { Key = $"key{index}" }).ToArray();//range high to low
 
             //act
-            foreach (var index in indexes.Reverse())
-                entList.Add(new Entity(e => $"key{index}"));
+            var entList = new EntityCollection { entities };
 
             //assert
             var first = entList.First();
             var last = entList.Last();
-            indexes.First().CompareTo(indexes.Last()).Should().BeLessThan(0);//first key sorts lower than last => keys are sorted in ascending order
             first.Key.Should().Be("key10");//keys are sorted respecting sort order
             last.Key.Should().Be("key1");
         }
@@ -54,7 +51,7 @@ namespace DotNet.Basics.Tests.Collections
             var entList = new EntityCollection();
             foreach (var key in keys)
             {
-                entList[key] = new Entity(e => key);
+                entList[key] = new Entity { Key = key };
             }
             var item5 = entList["key5"];
 
@@ -63,20 +60,23 @@ namespace DotNet.Basics.Tests.Collections
 
 
         [Fact]
-        public void Sort_Enumerator_ItemsAreSortedByCompareTo()
+        public void Sort_DefaultSorting_EntitiesItemsAreSortedBySortOrder()
         {
             var entList = new EntityCollection();
 
-            var entLast = new Entity(e => "key1")
+            var entLast = new Entity
             {
+                Key = "key1",
                 SortOrder = 500
             };
-            var entMiddle = new Entity(e => "key500")
+            var entMiddle = new Entity
             {
+                Key = "key500",
                 SortOrder = 150
             };
-            var entFirst = new Entity(e => "key150")
+            var entFirst = new Entity
             {
+                Key = "key250",
                 SortOrder = 0
             };
 

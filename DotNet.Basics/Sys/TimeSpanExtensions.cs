@@ -34,7 +34,7 @@ namespace DotNet.Basics.Sys
             if (!match.Success || match.Groups.Count != 3)
                 throw new FormatException(_formatExceptionText + input);
 
-            var number = Int32.Parse(match.Groups[1].Value);
+            var number = int.Parse(match.Groups[1].Value);
             var unit = match.Groups[2].Value.ToLower();
 
             switch (unit)

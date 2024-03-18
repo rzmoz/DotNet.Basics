@@ -89,7 +89,7 @@ namespace DotNet.Basics.Collections
         public bool TryGetValue(string key, out TK value)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
-            return TryGetValue(_getKeyFunc(key), out value);
+            return _dictionary.TryGetValue(_getKeyFunc(key), out value);
         }
 
         public IEnumerator<KeyValuePair<string, TK>> GetEnumerator()
