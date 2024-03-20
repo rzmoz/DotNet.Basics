@@ -23,7 +23,7 @@ namespace DotNet.Basics.Collections
     {
         private readonly Func<IEnumerable<T>, IEnumerable<T>> _orderBy;
         private readonly StringDictionary<T> _dictionary;
-        private List<T> _sortedList;
+        private List<T> _sortedList = new();
 
         public EntityCollection(KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, Func<IEnumerable<T>, IEnumerable<T>> orderBy = null)
             : this(Array.Empty<T>(), keyLookup, keyNotFound, orderBy)
@@ -31,13 +31,18 @@ namespace DotNet.Basics.Collections
 
         public EntityCollection(IEnumerable<T> entities, KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, Func<IEnumerable<T>, IEnumerable<T>> orderBy = null)
         {
-            _orderBy = orderBy;
-            _dictionary = new StringDictionary<T>(entities.ToDictionary(e => e.Key), keyLookup, keyNotFound);
             _orderBy = orderBy ?? GetDefaultSort;
+            _dictionary = new StringDictionary<T>(keyLookup, keyNotFound);
+            Add(entities.ToArray());
             RefreshSortedList();
         }
 
-        public virtual EntityCollection<T> Add(params T[] entities)
+        public EntityCollection<T> Add(params T[] entities)
+        {
+            return InnerAdd(entities);
+        }
+
+        protected virtual EntityCollection<T> InnerAdd(params T[] entities)
         {
             foreach (var entity in entities)
             {

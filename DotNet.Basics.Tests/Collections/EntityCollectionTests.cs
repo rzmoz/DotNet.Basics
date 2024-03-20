@@ -44,6 +44,20 @@ namespace DotNet.Basics.Tests.Collections
             first.Key.Should().Be("key10");//keys are sorted respecting sort order
             last.Key.Should().Be("key1");
         }
+        [Fact]
+        public void Ctor_SortOrder_ItemsAreAddedLastRespectingSortOrder()
+        {
+            var entities = Enumerable.Range(1, 10).Reverse().Select(index => new Entity { Key = $"key{index}" }).ToArray();//range high to low
+
+            //act
+            var entList = new EntityCollection(entities);
+
+            //assert
+            var first = entList.First();
+            var last = entList.Last();
+            first.Key.Should().Be("key10");//keys are sorted respecting sort order
+            last.Key.Should().Be("key1");
+        }
 
         [Fact]
         public void Get_SimpleGet_EntryIsRetrieved()
