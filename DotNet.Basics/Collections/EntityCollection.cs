@@ -36,20 +36,29 @@ namespace DotNet.Basics.Collections
             Add(entities.ToArray());
             RefreshSortedList();
         }
-
+        public EntityCollection<T> Set(params T[] entities)
+        {
+            return InnerSet(entities);
+        }
         public EntityCollection<T> Add(params T[] entities)
         {
-            return InnerAdd(entities);
+            return InnerSet(InitSortOrder(entities, Count));
         }
 
-        protected virtual EntityCollection<T> InnerAdd(params T[] entities)
+        private static IEnumerable<T> InitSortOrder(IEnumerable<T> entities, int startIndex)
+        {
+            var sortOrder = startIndex;
+            return entities.Select(e =>
+            {
+                e.SortOrder = sortOrder++;
+                return e;
+            });
+        }
+
+        protected virtual EntityCollection<T> InnerSet(IEnumerable<T> entities)
         {
             foreach (var entity in entities)
-            {
-                if (entity.SortOrder == 0)
-                    entity.SortOrder = Count + 1;
                 _dictionary.Add(entity.Key, entity);
-            }
             RefreshSortedList();
             return this;
         }

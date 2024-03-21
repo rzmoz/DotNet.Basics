@@ -31,23 +31,32 @@ namespace DotNet.Basics.Tests.Collections
         }
 
         [Fact]
-        public void Add_SortOrder_ItemsAreAddedLastRespectingSortOrder()
+        public void Add_SortOrder_SortOrderIsOverridenWithAddedOrder()
         {
-            var entities = Enumerable.Range(1, 10).Reverse().Select(index => new Entity { Key = $"key{index}" }).ToArray();//range high to low
+            var entities = Enumerable.Range(1, 10).Reverse().Select(index => new Entity { SortOrder = index, Key = index.ToString() }).ToArray();//range high to low
+            var additionalEntities = Enumerable.Range(11, 20).Reverse().Select(index => new Entity { SortOrder = index, Key = index.ToString() }).ToArray();//range high to low
 
             //act
-            var entList = new EntityCollection { entities };
+            var entList = new EntityCollection
+            {
+                entities,
+                additionalEntities
+            };
 
             //assert
             var first = entList.First();
             var last = entList.Last();
-            first.Key.Should().Be("key10");//keys are sorted respecting sort order
-            last.Key.Should().Be("key1");
+            first.Key.Should().Be("10");//keys are sorted respecting add order
+            first.SortOrder.Should().Be(0);
+            last.Key.Should().Be("11");
+            last.SortOrder.Should().Be(entList.Count - 1);
         }
+
+
         [Fact]
-        public void Ctor_SortOrder_ItemsAreAddedLastRespectingSortOrder()
+        public void Ctor_SortOrder_SortOrderIsOverridenWithAddedOrder()
         {
-            var entities = Enumerable.Range(1, 10).Reverse().Select(index => new Entity { Key = $"key{index}" }).ToArray();//range high to low
+            var entities = Enumerable.Range(1, 10).Reverse().Select(index => new Entity { SortOrder = index, Key = index.ToString() }).ToArray();//range high to low
 
             //act
             var entList = new EntityCollection(entities);
@@ -55,8 +64,10 @@ namespace DotNet.Basics.Tests.Collections
             //assert
             var first = entList.First();
             var last = entList.Last();
-            first.Key.Should().Be("key10");//keys are sorted respecting sort order
-            last.Key.Should().Be("key1");
+            first.Key.Should().Be("10");//keys are sorted respecting add order
+            first.SortOrder.Should().Be(0);
+            last.Key.Should().Be("1");
+            last.SortOrder.Should().Be(entList.Count - 1);
         }
 
         [Fact]
@@ -89,7 +100,7 @@ namespace DotNet.Basics.Tests.Collections
         }
 
         [Fact]
-        public void Sort_DefaultSorting_EntitiesItemsAreSortedBySortOrder()
+        public void Set_RespectSortOrder_ExistingSortOrderIsKept()
         {
             var entList = new EntityCollection();
 
@@ -109,8 +120,10 @@ namespace DotNet.Basics.Tests.Collections
                 SortOrder = 0
             };
 
-            entList.Add(entLast, entFirst, entMiddle);
+            //act
+            entList.Set(entLast, entFirst, entMiddle);
 
+            //assert
             entList.First().Should().Be(entFirst);
             entList.Skip(1).Take(1).Single().Should().Be(entMiddle);
             entList.Last().Should().Be(entLast);
