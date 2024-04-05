@@ -8,6 +8,16 @@ namespace DotNet.Basics.Tests.Sys
     public class EntityTests
     {
         [Fact]
+        public void ImplicitTypeCasting_DisplayName_EntityIsCreatedWithDisplayNameSet()
+        {
+            var displayName = "Hello World!";
+
+            Entity ent = displayName;
+
+            ent.Key.Should().Be("hello-world");
+            ent.DisplayName.Should().Be(displayName);
+        }
+        [Fact]
         public void Get_OverrideGetters_DescendantPropertyGettersAreInvoked()
         {
             var ent = new LoremIpsumGetterEntity { Key = Lorem.Ipsum(2) };
@@ -22,8 +32,8 @@ namespace DotNet.Basics.Tests.Sys
             var displayName = "display_name_" + key;
             var ent = new UpperCaseEntity
             {
+                DisplayName = displayName,//trigger display name init
                 Key = key.ToUpperInvariant(),
-                DisplayName = displayName//trigger display name init
             };
 
             ent.Key.Should().Be(key.ToUpperInvariant());
@@ -38,8 +48,8 @@ namespace DotNet.Basics.Tests.Sys
 
             var ent = new Entity
             {
-                Key = key,
                 DisplayName = name,
+                Key = key
             };
 
             ent.Key.Should().Be(key);
