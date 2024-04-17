@@ -8,13 +8,13 @@ namespace DotNet.Basics.Collections
 {
     public class EntityCollection : EntityCollection<Entity>
     {
-        public EntityCollection(KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, Func<IEnumerable<Entity>, IEnumerable<Entity>> orderBy = null)
-            : base(keyLookup, keyNotFound, orderBy)
+        public EntityCollection(KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, KeyExists addKeyExists = KeyExists.ThrowException, Func<IEnumerable<Entity>, IEnumerable<Entity>> orderBy = null)
+            : base(keyLookup, keyNotFound, addKeyExists, orderBy)
         {
         }
 
-        public EntityCollection(IEnumerable<Entity> entities, KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, Func<IEnumerable<Entity>, IEnumerable<Entity>> orderBy = null)
-            : base(entities, keyLookup, keyNotFound, orderBy)
+        public EntityCollection(IEnumerable<Entity> entities, KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, KeyExists addKeyExists = KeyExists.ThrowException, Func<IEnumerable<Entity>, IEnumerable<Entity>> orderBy = null)
+            : base(entities, keyLookup, keyNotFound, addKeyExists, orderBy)
         {
         }
     }
@@ -24,43 +24,48 @@ namespace DotNet.Basics.Collections
         private readonly Func<IEnumerable<T>, IEnumerable<T>> _orderBy;
         private readonly StringDictionary<T> _dictionary;
         private List<T> _sortedList = new();
+        private readonly Action<T> _addAction;
 
-        public EntityCollection(KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, Func<IEnumerable<T>, IEnumerable<T>> orderBy = null)
-            : this(Array.Empty<T>(), keyLookup, keyNotFound, orderBy)
+        protected void AddThrowIfKeyExists(T e)
+        {
+            _dictionary.Add(e.Key, e);
+        }
+        protected void AddUpdateIfKeyExists(T e)
+        {
+            _dictionary[e.Key] = e;
+        }
+
+        public EntityCollection(KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, KeyExists addKeyExists = KeyExists.ThrowException, Func<IEnumerable<T>, IEnumerable<T>> orderBy = null)
+            : this(Array.Empty<T>(), keyLookup, keyNotFound, addKeyExists, orderBy)
         { }
 
-        public EntityCollection(IEnumerable<T> entities, KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, Func<IEnumerable<T>, IEnumerable<T>> orderBy = null)
+        public EntityCollection(IEnumerable<T> entities, KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, KeyExists addKeyExists = KeyExists.ThrowException, Func<IEnumerable<T>, IEnumerable<T>> orderBy = null)
         {
             _orderBy = orderBy ?? GetDefaultSort;
             _dictionary = new StringDictionary<T>(keyLookup, keyNotFound);
+            _addAction = addKeyExists == KeyExists.ThrowException ? AddThrowIfKeyExists : AddUpdateIfKeyExists;
             Add(entities.ToArray());
-            RefreshSortedList();
         }
         public EntityCollection<T> Set(params T[] entities)
         {
-            return InnerSet(entities);
+            foreach (var entity in entities)
+                _addAction(entity);
+            RefreshSortedList();
+            return this;
         }
         public EntityCollection<T> Add(params T[] entities)
         {
-            return InnerSet(InitSortOrder(entities, Count));
+            return Set(InitSortOrder(entities, Count));
         }
 
-        private static IEnumerable<T> InitSortOrder(IEnumerable<T> entities, int startIndex)
+        private static T[] InitSortOrder(IEnumerable<T> entities, int startIndex)
         {
             var sortOrder = startIndex;
             return entities.Select(e =>
             {
                 e.SortOrder = sortOrder++;
                 return e;
-            });
-        }
-
-        protected virtual EntityCollection<T> InnerSet(IEnumerable<T> entities)
-        {
-            foreach (var entity in entities)
-                _dictionary.Add(entity.Key, entity);
-            RefreshSortedList();
-            return this;
+            }).ToArray();
         }
 
         protected virtual string KeyPreLookup(string key)

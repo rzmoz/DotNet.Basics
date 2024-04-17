@@ -31,6 +31,57 @@ namespace DotNet.Basics.Tests.Collections
         }
 
         [Fact]
+        public void Add_KeyExists_ExceptionIsThrown()
+        {
+            var entity = new Entity
+            {
+                Key = "my-key"
+            };
+            var entList = new EntityCollection
+            {
+                entity
+            };
+
+            //act
+            Action add = () => entList.Add(entity);
+
+            //assert
+            add.Should().Throw<ArgumentException>();
+        }
+        [Fact]
+        public void Add_KeyExists_EntityIsUpdated()
+        {
+            var key = "my-key";
+            var displayname1 = "11111";
+            var displayname2 = "22222";
+
+            var entity = new Entity
+            {
+                DisplayName = displayname1,
+                Key = key,
+            };
+            var entList = new EntityCollection(addKeyExists: KeyExists.Update)
+            {
+                entity
+            };
+
+            entList.Single().DisplayName.Should().Be(displayname1);
+
+            //act
+
+            Action add = () => entList.Add(new Entity
+            {
+                DisplayName = displayname2,
+                Key = key
+            });
+
+            //assert
+            add.Should().NotThrow();
+            entList.Count.Should().Be(1);
+            entList.Single().DisplayName.Should().Be(displayname2);
+        }
+
+        [Fact]
         public void Add_SortOrder_SortOrderIsOverridenWithAddedOrder()
         {
             var entities = Enumerable.Range(1, 10).Reverse().Select(index => new Entity { SortOrder = index, Key = index.ToString() }).ToArray();//range high to low
