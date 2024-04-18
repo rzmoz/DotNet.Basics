@@ -4,18 +4,19 @@ namespace DotNet.Basics.Sys
 {
     public class Entity
     {
-        private const string _keyPattern = @"[^a-z0-9\-]";
-        private static readonly Regex _keyRegex = new(_keyPattern, RegexOptions.Compiled);
-        protected readonly string _displayName;
+        private const string _trimKeyPattern = @"[^ a-zA-Z0-0\.]";
+        private static readonly Regex _trimKeyRegex = new(_trimKeyPattern, RegexOptions.Compiled);
+        private readonly string _displayName;
 
         public virtual string Key { get; init; } = string.Empty;
+
         public virtual string DisplayName
         {
             get => _displayName;
             init
             {
-                _displayName = value;
                 Key = ToKey(value);
+                _displayName = value;
             }
         }
 
@@ -27,12 +28,12 @@ namespace DotNet.Basics.Sys
             };
         }
 
-        protected virtual string ToKey(string displayName)
-        {
-            return string.IsNullOrEmpty(displayName) ? string.Empty : _keyRegex.Replace(displayName.ToLowerInvariant().Replace(" ", "-"), string.Empty);
-        }
-
         public int SortOrder { get; set; }
+
+        protected virtual string ToKey(string value)
+        {
+            return _trimKeyRegex.Replace(value, string.Empty).ToLowerInvariant().Replace(" ", "-");
+        }
 
         protected bool Equals(Entity other)
         {

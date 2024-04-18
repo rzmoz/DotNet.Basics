@@ -1,5 +1,6 @@
 ﻿using System;
 using DotNet.Basics.Sys;
+using DotNet.Basics.Sys.Text;
 using FluentAssertions;
 using Xunit;
 
@@ -7,6 +8,24 @@ namespace DotNet.Basics.Tests.Sys
 {
     public class EntityTests
     {
+        [Fact]
+        public void Ctor_Serialization_DisplayNameAndKeyAreSerializedCorrectly()
+        {
+            //arrange
+            var ent = new Entity
+            {
+                DisplayName = "Hello World!"
+            };
+
+            //act
+            var json = ent.ToJson();
+            var deSerEnt = json.FromJson<Entity>();
+
+            //assert
+            deSerEnt.Key.Should().Be("hello-world");
+            deSerEnt.DisplayName.Should().Be(ent.DisplayName);
+        }
+
         [Fact]
         public void ImplicitTypeCasting_DisplayName_EntityIsCreatedWithDisplayNameSet()
         {
