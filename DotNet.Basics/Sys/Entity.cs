@@ -4,7 +4,7 @@ namespace DotNet.Basics.Sys
 {
     public class Entity
     {
-        private const string _trimKeyPattern = @"[^ a-zA-Z0-0\.]";
+        private const string _trimKeyPattern = @"[^ a-zA-Z0-9\.]";
         private static readonly Regex _trimKeyRegex = new(_trimKeyPattern, RegexOptions.Compiled);
         private readonly string _displayName;
 

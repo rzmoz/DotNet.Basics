@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DotNet.Basics.Collections;
 using DotNet.Basics.Sys;
+using DotNet.Basics.Sys.Text;
 using FluentAssertions;
 using Xunit;
 
@@ -11,6 +12,42 @@ namespace DotNet.Basics.Tests.Collections
 {
     public class EntityCollectionTests
     {
+        [Fact]
+        public void Anonymous_OotbSerialization_JsonSerializationWorks()
+        {
+            //arrange
+            var col = new EntityCollection { Enumerable.Range(1, 10).Select(i => new Entity
+            {
+                DisplayName = i.ToString()
+            }).ToArray()};
+
+            //act
+            var json = col.ToJson();
+            var deSerCol = json.FromJson<EntityCollection>();
+
+            //assert
+            deSerCol.Count.Should().Be(10);
+            deSerCol.First().Key.Should().Be("1");
+            deSerCol.Last().Key.Should().Be("10");
+        }
+        [Fact]
+        public void Generic_OotbSerialization_JsonSerializationWorks()
+        {
+            //arrange
+            var col = new EntityCollection<Entity> { Enumerable.Range(1, 10).Select(i => new Entity
+            {
+                DisplayName = i.ToString()
+            }).ToArray()};
+
+            //act
+            var json = col.ToJson();
+            var deSerCol = json.FromJson<EntityCollection<Entity>>();
+
+            //assert
+            deSerCol.Count.Should().Be(10);
+            deSerCol.First().Key.Should().Be("1");
+            deSerCol.Last().Key.Should().Be("10");
+        }
         [Fact]
         public void Ctor_OverrideOrderBy_ItemsAreSortedByCustom()
         {

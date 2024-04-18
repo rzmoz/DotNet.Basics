@@ -3,11 +3,14 @@ using DotNet.Basics.Sys;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace DotNet.Basics.Collections
 {
     public class EntityCollection : EntityCollection<Entity>
     {
+        [JsonConstructor]
+        public EntityCollection() { }
         public EntityCollection(KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, KeyExists addKeyExists = KeyExists.ThrowException, Func<IEnumerable<Entity>, IEnumerable<Entity>> orderBy = null)
             : base(keyLookup, keyNotFound, addKeyExists, orderBy)
         {
@@ -19,7 +22,7 @@ namespace DotNet.Basics.Collections
         }
     }
 
-    public class EntityCollection<T> : IReadOnlyList<T> where T : Entity
+    public class EntityCollection<T> : ICollection<T> where T : Entity
     {
         private readonly Func<IEnumerable<T>, IEnumerable<T>> _orderBy;
         private readonly StringDictionary<T> _dictionary;
@@ -35,6 +38,11 @@ namespace DotNet.Basics.Collections
             _dictionary[e.Key] = e;
         }
 
+        [JsonConstructor]
+        public EntityCollection()
+            : this(Array.Empty<T>())
+        { }
+
         public EntityCollection(KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, KeyExists addKeyExists = KeyExists.ThrowException, Func<IEnumerable<T>, IEnumerable<T>> orderBy = null)
             : this(Array.Empty<T>(), keyLookup, keyNotFound, addKeyExists, orderBy)
         { }
@@ -44,7 +52,7 @@ namespace DotNet.Basics.Collections
             _orderBy = orderBy ?? GetDefaultSort;
             _dictionary = new StringDictionary<T>(keyLookup, keyNotFound);
             _addAction = addKeyExists == KeyExists.ThrowException ? AddThrowIfKeyExists : AddUpdateIfKeyExists;
-            Add(entities.ToArray());
+            entities.ForEach(Add);
         }
         public EntityCollection<T> Set(params T[] entities)
         {
@@ -53,19 +61,17 @@ namespace DotNet.Basics.Collections
             RefreshSortedList();
             return this;
         }
-        public EntityCollection<T> Add(params T[] entities)
+        public EntityCollection<T> Add(T[] entities)
         {
-            return Set(InitSortOrder(entities, Count));
+            entities.ForEach(Add);
+            return this;
         }
 
-        private static T[] InitSortOrder(IEnumerable<T> entities, int startIndex)
+        public void Add(T item)
         {
-            var sortOrder = startIndex;
-            return entities.Select(e =>
-            {
-                e.SortOrder = sortOrder++;
-                return e;
-            }).ToArray();
+            if (item == null) throw new ArgumentNullException(nameof(item));
+            item.SortOrder = _dictionary.Count;
+            Set(item);
         }
 
         protected virtual string KeyPreLookup(string key)
@@ -101,13 +107,33 @@ namespace DotNet.Basics.Collections
             _dictionary.Clear();
         }
 
+        public bool Contains(T item)
+        {
+            return item != null && _dictionary.ContainsKey(item.Key);
+        }
+
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Remove(T item)
+        {
+            if (item == null)
+                return false;
+            _dictionary.Remove(item.Key);
+            RefreshSortedList();
+            return true;
+        }
+
         public virtual int Count => _dictionary.Count;
+        public bool IsReadOnly => false;
 
         public void Sort(Func<IEnumerable<T>, IEnumerable<T>> ordered)
         {
             var sorted = ordered(_dictionary.Values).ToArray();//must flush BEFORE clearing existing items!
             _dictionary.Clear();
-            Add(sorted);
+            sorted.ForEach(Add);
         }
 
         protected void RefreshSortedList()

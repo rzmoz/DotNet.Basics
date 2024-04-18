@@ -106,7 +106,7 @@ namespace DotNet.Basics.Collections
             }
             return results;
         }
-
+        
         public static IEnumerable<T> ToEnumerable<T>(this T t)
         {
             yield return t;

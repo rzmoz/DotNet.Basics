@@ -1,15 +1,13 @@
 ﻿using System;
 using System.IO;
-using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Unicode;
 
 namespace DotNet.Basics.Sys.Text
 {
     public static class JsonSerializerExtensions
     {
-        private static JsonSerializerOptions GetJsonSerializerOptions(bool writeIndented) => new JsonSerializerOptions
+        private static JsonSerializerOptions GetJsonSerializerOptions(bool writeIndented) => new()
         {
             WriteIndented = writeIndented,
             Converters =
@@ -19,8 +17,7 @@ namespace DotNet.Basics.Sys.Text
                 new PathInfoJsonConverter(),
                 new SemVersionJsonConverter(),
                 new JsonStringEnumConverter()
-            },
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+            }
         };
 
         public static string ToJson<TValue>(this TValue value, Action<JsonSerializerOptions> options = null)
