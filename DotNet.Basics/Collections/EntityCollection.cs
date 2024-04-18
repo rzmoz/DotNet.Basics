@@ -27,17 +27,8 @@ namespace DotNet.Basics.Collections
         private readonly Func<IEnumerable<T>, IEnumerable<T>> _orderBy;
         private readonly StringDictionary<T> _dictionary;
         private List<T> _sortedList = new();
-        private readonly Action<T> _addAction;
-
-        protected void AddThrowIfKeyExists(T e)
-        {
-            _dictionary.Add(e.Key, e);
-        }
-        protected void AddUpdateIfKeyExists(T e)
-        {
-            _dictionary[e.Key] = e;
-        }
-
+        private readonly Action<T> _crudAction;
+        
         [JsonConstructor]
         public EntityCollection()
             : this(Array.Empty<T>())
@@ -51,13 +42,13 @@ namespace DotNet.Basics.Collections
         {
             _orderBy = orderBy ?? GetDefaultSort;
             _dictionary = new StringDictionary<T>(keyLookup, keyNotFound);
-            _addAction = addKeyExists == KeyExists.ThrowException ? AddThrowIfKeyExists : AddUpdateIfKeyExists;
+            _crudAction = addKeyExists == KeyExists.ThrowException ? e => _dictionary.Add(e.Key, e) : e => _dictionary[e.Key] = e;
             entities.ForEach(Add);
         }
         public EntityCollection<T> Set(params T[] entities)
         {
             foreach (var entity in entities)
-                _addAction(entity);
+                _crudAction(entity);
             RefreshSortedList();
             return this;
         }
