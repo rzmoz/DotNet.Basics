@@ -13,6 +13,24 @@ namespace DotNet.Basics.Tests.Collections
     public class EntityCollectionTests
     {
         [Fact]
+        public void CopyTo_Copy_EntitiesAreCopied()
+        {
+            //arrange
+            var col = new EntityCollection { Enumerable.Range(1, 10).Select(i => new Entity
+            {
+                DisplayName = i.ToString()
+            }).ToArray()};
+            var destinationArray = new Entity[col.Count];
+
+            //act
+            col.CopyTo(destinationArray, 0);
+
+
+            //assert
+            for (var i = 0; i < col.Count; i++)//iterate on source array
+                destinationArray[i].Key.Should().Be(col[i].Key);
+        }
+        [Fact]
         public void Anonymous_OotbSerialization_JsonSerializationWorks()
         {
             //arrange

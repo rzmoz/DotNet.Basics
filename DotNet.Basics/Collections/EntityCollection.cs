@@ -28,7 +28,7 @@ namespace DotNet.Basics.Collections
         private readonly StringDictionary<T> _dictionary;
         private List<T> _sortedList = new();
         private readonly Action<T> _crudAction;
-        
+
         [JsonConstructor]
         public EntityCollection()
             : this(Array.Empty<T>())
@@ -105,7 +105,8 @@ namespace DotNet.Basics.Collections
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            foreach (var entity in _dictionary.Values)
+                array[arrayIndex++] = entity;
         }
 
         public bool Remove(T item)
