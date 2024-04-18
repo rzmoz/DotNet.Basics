@@ -182,6 +182,34 @@ namespace DotNet.Basics.Tests.Collections
             entList.Clear();
             entList.Count.Should().Be(0);
         }
+        [Fact]
+        public void Sort_SortCollection_CollectionIsSorted()
+        {
+            var ent1 = new Entity
+            {
+                Key = "1"
+            };
+            var ent2 = new Entity
+            {
+                Key = "2"
+            };
+
+            var entList = new EntityCollection
+            {
+                ent1,
+                ent2
+            };
+
+            entList.First().Key.Should().Be("1");
+            entList.Last().Key.Should().Be("2");
+
+            //act
+            entList.Sort(ents => ents.OrderByDescending(e => e.Key));
+
+            //assert
+            entList.First().Key.Should().Be("2");
+            entList.Last().Key.Should().Be("1");
+        }
 
         [Theory]
         [InlineData("my-key", true)]

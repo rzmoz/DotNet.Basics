@@ -103,6 +103,13 @@ namespace DotNet.Basics.Collections
 
         public virtual int Count => _dictionary.Count;
 
+        public void Sort(Func<IEnumerable<T>, IEnumerable<T>> ordered)
+        {
+            var sorted = ordered(_dictionary.Values).ToArray();//must flush BEFORE clearing existing items!
+            _dictionary.Clear();
+            Add(sorted);
+        }
+
         protected void RefreshSortedList()
         {
             _sortedList = _orderBy(_dictionary.Values).ToList();
@@ -124,6 +131,11 @@ namespace DotNet.Basics.Collections
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public override string ToString()
+        {
+            return $"{Count} : T is {typeof(T)}";
         }
     }
 }
