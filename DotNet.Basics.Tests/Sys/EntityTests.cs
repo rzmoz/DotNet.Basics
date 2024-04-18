@@ -14,7 +14,7 @@ namespace DotNet.Basics.Tests.Sys
             //arrange
             var ent = new Entity
             {
-                DisplayName = "Hello World!"
+                DisplayName = "Hello World!     "
             };
 
             //act
@@ -22,8 +22,8 @@ namespace DotNet.Basics.Tests.Sys
             var deSerEnt = json.FromJson<Entity>();
 
             //assert
-            deSerEnt.Key.Should().Be("hello-world");
-            deSerEnt.DisplayName.Should().Be(ent.DisplayName);
+            deSerEnt.Key.Should().Be("hello-world");//whitespaces are trimmed in keys
+            deSerEnt.DisplayName.Should().Be(ent.DisplayName);//displayname is kept as is
         }
 
         [Fact]

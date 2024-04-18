@@ -32,7 +32,7 @@ namespace DotNet.Basics.Sys
 
         protected virtual string ToKey(string value)
         {
-            return _trimKeyRegex.Replace(value, string.Empty).ToLowerInvariant().Replace(" ", "-");
+            return _trimKeyRegex.Replace(value, string.Empty).Trim().ToLowerInvariant().Replace(" ", "-");
         }
 
         protected bool Equals(Entity other)
