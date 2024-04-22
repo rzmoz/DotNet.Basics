@@ -30,6 +30,7 @@ namespace DotNet.Basics.Tests.Collections
             for (var i = 0; i < col.Count; i++)//iterate on source array
                 destinationArray[i].Key.Should().Be(col[i].Key);
         }
+
         [Fact]
         public void Anonymous_OotbSerialization_JsonSerializationWorks()
         {
@@ -237,6 +238,36 @@ namespace DotNet.Basics.Tests.Collections
             entList.Clear();
             entList.Count.Should().Be(0);
         }
+
+        [Fact]
+        public void Remove_ByKey_ItemRemoved()
+        {
+            var ent1 = new Entity
+            {
+                Key = "1"
+            };
+            var ent2 = new Entity
+            {
+                Key = "2"
+            };
+
+            var entList = new EntityCollection
+            {
+                ent1,
+                ent2
+            };
+
+            entList.Count.Should().Be(2);
+
+            //act
+            entList.Remove(ent1).Should().BeTrue();
+            entList.Count.Should().Be(1);
+            entList.Remove("2").Should().BeTrue();
+
+            //assert
+            entList.Count.Should().Be(0);
+        }
+
         [Fact]
         public void Sort_SortCollection_CollectionIsSorted()
         {

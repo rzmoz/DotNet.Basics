@@ -109,13 +109,18 @@ namespace DotNet.Basics.Collections
                 array[arrayIndex++] = entity;
         }
 
+        public bool Remove(string key)
+        {
+            if (key == null)
+                return false;
+            var removed = _dictionary.Remove(key);
+            RefreshSortedList();
+            return removed;
+        }
+
         public bool Remove(T item)
         {
-            if (item == null)
-                return false;
-            _dictionary.Remove(item.Key);
-            RefreshSortedList();
-            return true;
+            return item != null && Remove(item.Key);
         }
 
         public virtual int Count => _dictionary.Count;
