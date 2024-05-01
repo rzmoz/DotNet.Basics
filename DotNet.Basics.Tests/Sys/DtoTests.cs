@@ -6,20 +6,20 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
 {
-    public class EntityTests
+    public class DtoTests
     {
         [Fact]
         public void Ctor_Serialization_DisplayNameAndKeyAreSerializedCorrectly()
         {
             //arrange
-            var ent = new Entity
+            var ent = new Dto
             {
                 DisplayName = "Hello World!     "
             };
 
             //act
             var json = ent.ToJson();
-            var deSerEnt = json.FromJson<Entity>();
+            var deSerEnt = json.FromJson<Dto>();
 
             //assert
             deSerEnt.Key.Should().Be("hello-world");//whitespaces are trimmed in keys
@@ -31,7 +31,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             var displayName = "Hello World!";
 
-            Entity ent = displayName;
+            Dto ent = displayName;
 
             ent.Key.Should().Be("hello-world");
             ent.DisplayName.Should().Be(displayName);
@@ -39,7 +39,7 @@ namespace DotNet.Basics.Tests.Sys
         [Fact]
         public void Get_OverrideGetters_DescendantPropertyGettersAreInvoked()
         {
-            var ent = new LoremIpsumGetterEntity { Key = Lorem.Ipsum(2) };
+            var ent = new LoremIpsumGetterDto { Key = Lorem.Ipsum(2) };
 
             ent.Key.Should().Be(Lorem.Ipsum(2));
             ent.DisplayName.Should().Be(Lorem.Ipsum(4));
@@ -49,7 +49,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             var key = "all_in_lower_case";
             var displayName = "display_name_" + key;
-            var ent = new UpperCaseEntity
+            var ent = new UpperCaseDto
             {
                 DisplayName = displayName,//trigger display name init
                 Key = key.ToUpperInvariant(),
@@ -65,7 +65,7 @@ namespace DotNet.Basics.Tests.Sys
             var key = Guid.NewGuid().ToString();
             var name = Guid.NewGuid().ToString();
 
-            var ent = new Entity
+            var ent = new Dto
             {
                 DisplayName = name,
                 Key = key
@@ -81,9 +81,9 @@ namespace DotNet.Basics.Tests.Sys
             var key1 = Guid.NewGuid().ToString();
             var key2 = Guid.NewGuid().ToString();
 
-            var ent1WithKey1 = new Entity { Key = key1 };
-            var ent2WithKey1 = new Entity { Key = key1 };
-            var ent3WithKey12 = new Entity { Key = key2 };
+            var ent1WithKey1 = new Dto { Key = key1 };
+            var ent2WithKey1 = new Dto { Key = key1 };
+            var ent3WithKey12 = new Dto { Key = key2 };
 
             ent1WithKey1.Equals(ent2WithKey1).Should().BeTrue();
             ent1WithKey1.Equals(ent3WithKey12).Should().BeFalse();
@@ -94,16 +94,16 @@ namespace DotNet.Basics.Tests.Sys
         public void GetHashCode_UseKey_HashcodeIsBasedOnKey()
         {
             var key = Guid.NewGuid().ToString();
-            var ent = new Entity { Key = key };
+            var ent = new Dto { Key = key };
             ent.GetHashCode().Should().Be(key.GetHashCode());
         }
 
-        private class LoremIpsumGetterEntity : Entity
+        private class LoremIpsumGetterDto : Dto
         {
             public override string DisplayName => Lorem.Ipsum(4);
         }
 
-        private class UpperCaseEntity : Entity
+        private class UpperCaseDto : Dto
         {
             public override string DisplayName => base.DisplayName.ToUpperInvariant();
         }

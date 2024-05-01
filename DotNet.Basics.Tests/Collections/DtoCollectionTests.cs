@@ -10,17 +10,17 @@ using Xunit;
 
 namespace DotNet.Basics.Tests.Collections
 {
-    public class EntityCollectionTests
+    public class DtoCollectionTests
     {
         [Fact]
         public void CopyTo_Copy_EntitiesAreCopied()
         {
             //arrange
-            var col = new EntityCollection { Enumerable.Range(1, 10).Select(i => new Entity
+            var col = new DtoCollection<Dto> { Enumerable.Range(1, 10).Select(i => new Dto
             {
                 DisplayName = i.ToString()
             }).ToArray()};
-            var destinationArray = new Entity[col.Count];
+            var destinationArray = new Dto[col.Count];
 
             //act
             col.CopyTo(destinationArray, 0);
@@ -35,14 +35,14 @@ namespace DotNet.Basics.Tests.Collections
         public void Anonymous_OotbSerialization_JsonSerializationWorks()
         {
             //arrange
-            var col = new EntityCollection { Enumerable.Range(1, 10).Select(i => new Entity
+            var col = new DtoCollection<Dto> { Enumerable.Range(1, 10).Select(i => new Dto
             {
                 DisplayName = i.ToString()
             }).ToArray()};
 
             //act
             var json = col.ToJson();
-            var deSerCol = json.FromJson<EntityCollection>();
+            var deSerCol = json.FromJson<DtoCollection<Dto>>();
 
             //assert
             deSerCol.Count.Should().Be(10);
@@ -53,14 +53,14 @@ namespace DotNet.Basics.Tests.Collections
         public void Generic_OotbSerialization_JsonSerializationWorks()
         {
             //arrange
-            var col = new EntityCollection<Entity> { Enumerable.Range(1, 10).Select(i => new Entity
+            var col = new DtoCollection<Dto> { Enumerable.Range(1, 10).Select(i => new Dto
             {
                 DisplayName = i.ToString()
             }).ToArray()};
 
             //act
             var json = col.ToJson();
-            var deSerCol = json.FromJson<EntityCollection<Entity>>();
+            var deSerCol = json.FromJson<DtoCollection<Dto>>();
 
             //assert
             deSerCol.Count.Should().Be(10);
@@ -71,12 +71,12 @@ namespace DotNet.Basics.Tests.Collections
         public void Ctor_OverrideOrderBy_ItemsAreSortedByCustom()
         {
             var keys = Enumerable.Range(1, 10).Select(i => $"key{i}").ToList();//range high to low
-            IEnumerable<Entity> Sorting(IEnumerable<Entity> items) => items.OrderByDescending(i => i.SortOrder);//reverse sorting
-            var entList = new EntityCollection(orderBy: Sorting);
+            IEnumerable<Dto> Sorting(IEnumerable<Dto> items) => items.OrderByDescending(i => i.SortOrder);//reverse sorting
+            var entList = new DtoCollection<Dto>(orderBy: Sorting);
 
             //act
             foreach (var key in keys)
-                entList.Add(new Entity { Key = key });
+                entList.Add(new Dto { Key = key });
 
             //assert
             var first = entList.First();
@@ -89,11 +89,11 @@ namespace DotNet.Basics.Tests.Collections
         [Fact]
         public void Add_KeyExists_ExceptionIsThrown()
         {
-            var entity = new Entity
+            var entity = new Dto
             {
                 Key = "my-key"
             };
-            var entList = new EntityCollection
+            var entList = new DtoCollection<Dto>
             {
                 entity
             };
@@ -111,12 +111,12 @@ namespace DotNet.Basics.Tests.Collections
             var displayname1 = "11111";
             var displayname2 = "22222";
 
-            var entity = new Entity
+            var entity = new Dto
             {
                 DisplayName = displayname1,
                 Key = key,
             };
-            var entList = new EntityCollection(addKeyExists: KeyExists.Update)
+            var entList = new DtoCollection<Dto>(addKeyExists: KeyExists.Update)
             {
                 entity
             };
@@ -125,7 +125,7 @@ namespace DotNet.Basics.Tests.Collections
 
             //act
 
-            Action add = () => entList.Add(new Entity
+            Action add = () => entList.Add(new Dto
             {
                 DisplayName = displayname2,
                 Key = key
@@ -140,11 +140,11 @@ namespace DotNet.Basics.Tests.Collections
         [Fact]
         public void Add_SortOrder_SortOrderIsOverridenWithAddedOrder()
         {
-            var entities = Enumerable.Range(1, 10).Reverse().Select(index => new Entity { SortOrder = index, Key = index.ToString() }).ToArray();//range high to low
-            var additionalEntities = Enumerable.Range(11, 20).Reverse().Select(index => new Entity { SortOrder = index, Key = index.ToString() }).ToArray();//range high to low
+            var entities = Enumerable.Range(1, 10).Reverse().Select(index => new Dto { SortOrder = index, Key = index.ToString() }).ToArray();//range high to low
+            var additionalEntities = Enumerable.Range(11, 20).Reverse().Select(index => new Dto { SortOrder = index, Key = index.ToString() }).ToArray();//range high to low
 
             //act
-            var entList = new EntityCollection
+            var entList = new DtoCollection<Dto>
             {
                 entities,
                 additionalEntities
@@ -163,10 +163,10 @@ namespace DotNet.Basics.Tests.Collections
         [Fact]
         public void Ctor_SortOrder_SortOrderIsOverridenWithAddedOrder()
         {
-            var entities = Enumerable.Range(1, 10).Reverse().Select(index => new Entity { SortOrder = index, Key = index.ToString() }).ToArray();//range high to low
+            var entities = Enumerable.Range(1, 10).Reverse().Select(index => new Dto { SortOrder = index, Key = index.ToString() }).ToArray();//range high to low
 
             //act
-            var entList = new EntityCollection(entities);
+            var entList = new DtoCollection<Dto>(entities);
 
             //assert
             var first = entList.First();
@@ -181,10 +181,10 @@ namespace DotNet.Basics.Tests.Collections
         public void Get_SimpleGet_EntryIsRetrieved()
         {
             var keys = Enumerable.Range(1, 10).Select(i => $"key{i}");
-            var entList = new EntityCollection();
+            var entList = new DtoCollection<Dto>();
             foreach (var key in keys)
             {
-                entList[key] = new Entity { Key = key };
+                entList[key] = new Dto { Key = key };
             }
             var item5 = entList["key5"];
 
@@ -196,9 +196,9 @@ namespace DotNet.Basics.Tests.Collections
         public void Index_ByIndex_EntryIsRetrieved()
         {
             var keys = Enumerable.Range(0, 9).Select(i => $"key{i}");
-            var entList = new EntityCollection();
+            var entList = new DtoCollection<Dto>();
             foreach (var key in keys)
-                entList[key] = new Entity { Key = key };
+                entList[key] = new Dto { Key = key };
 
             //act
             var item5 = entList[5];//get by index
@@ -209,19 +209,19 @@ namespace DotNet.Basics.Tests.Collections
         [Fact]
         public void Set_RespectSortOrder_ExistingSortOrderIsKept()
         {
-            var entList = new EntityCollection();
+            var entList = new DtoCollection<Dto>();
 
-            var entLast = new Entity
+            var entLast = new Dto
             {
                 Key = "key1",
                 SortOrder = 500
             };
-            var entMiddle = new Entity
+            var entMiddle = new Dto
             {
                 Key = "key500",
                 SortOrder = 150
             };
-            var entFirst = new Entity
+            var entFirst = new Dto
             {
                 Key = "key250",
                 SortOrder = 0
@@ -242,16 +242,16 @@ namespace DotNet.Basics.Tests.Collections
         [Fact]
         public void Remove_ByKey_ItemRemoved()
         {
-            var ent1 = new Entity
+            var ent1 = new Dto
             {
                 Key = "1"
             };
-            var ent2 = new Entity
+            var ent2 = new Dto
             {
                 Key = "2"
             };
 
-            var entList = new EntityCollection
+            var entList = new DtoCollection<Dto>
             {
                 ent1,
                 ent2
@@ -271,16 +271,16 @@ namespace DotNet.Basics.Tests.Collections
         [Fact]
         public void Sort_SortCollection_CollectionIsSorted()
         {
-            var ent1 = new Entity
+            var ent1 = new Dto
             {
                 Key = "1"
             };
-            var ent2 = new Entity
+            var ent2 = new Dto
             {
                 Key = "2"
             };
 
-            var entList = new EntityCollection
+            var entList = new DtoCollection<Dto>
             {
                 ent1,
                 ent2
@@ -304,14 +304,14 @@ namespace DotNet.Basics.Tests.Collections
         [InlineData("", false)]
         public void ContainsKey_CheckForKey_KeyIsDetermined(string? key, bool expected)
         {
-            var entList = new EntityCollection { new Entity { Key = "my-key" } };
+            var entList = new DtoCollection<Dto> { new Dto { Key = "my-key" } };
             entList.ContainsKey(key).Should().Be(expected);
         }
 
         [Fact]
         public void Clear_Clear_DictionaryIsCleared()
         {
-            var entList = new EntityCollection { new Entity() };
+            var entList = new DtoCollection<Dto> { new Dto() };
 
             entList.Count.Should().BeGreaterThan(0);
 

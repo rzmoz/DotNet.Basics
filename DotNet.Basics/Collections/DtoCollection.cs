@@ -7,22 +7,7 @@ using System.Text.Json.Serialization;
 
 namespace DotNet.Basics.Collections
 {
-    public class EntityCollection : EntityCollection<Entity>
-    {
-        [JsonConstructor]
-        public EntityCollection() { }
-        public EntityCollection(KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, KeyExists addKeyExists = KeyExists.ThrowException, Func<IEnumerable<Entity>, IEnumerable<Entity>> orderBy = null)
-            : base(keyLookup, keyNotFound, addKeyExists, orderBy)
-        {
-        }
-
-        public EntityCollection(IEnumerable<Entity> entities, KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, KeyExists addKeyExists = KeyExists.ThrowException, Func<IEnumerable<Entity>, IEnumerable<Entity>> orderBy = null)
-            : base(entities, keyLookup, keyNotFound, addKeyExists, orderBy)
-        {
-        }
-    }
-
-    public class EntityCollection<T> : ICollection<T> where T : Entity
+    public class DtoCollection<T> : ICollection<T> where T : Dto
     {
         private readonly Func<IEnumerable<T>, IEnumerable<T>> _orderBy;
         private readonly StringDictionary<T> _dictionary;
@@ -30,29 +15,29 @@ namespace DotNet.Basics.Collections
         private readonly Action<T> _crudAction;
 
         [JsonConstructor]
-        public EntityCollection()
+        public DtoCollection()
             : this(Array.Empty<T>())
         { }
 
-        public EntityCollection(KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, KeyExists addKeyExists = KeyExists.ThrowException, Func<IEnumerable<T>, IEnumerable<T>> orderBy = null)
+        public DtoCollection(KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, KeyExists addKeyExists = KeyExists.ThrowException, Func<IEnumerable<T>, IEnumerable<T>> orderBy = null)
             : this(Array.Empty<T>(), keyLookup, keyNotFound, addKeyExists, orderBy)
         { }
 
-        public EntityCollection(IEnumerable<T> entities, KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, KeyExists addKeyExists = KeyExists.ThrowException, Func<IEnumerable<T>, IEnumerable<T>> orderBy = null)
+        public DtoCollection(IEnumerable<T> entities, KeyLookup keyLookup = KeyLookup.CaseSensitive, KeyNotFound keyNotFound = KeyNotFound.ThrowException, KeyExists addKeyExists = KeyExists.ThrowException, Func<IEnumerable<T>, IEnumerable<T>> orderBy = null)
         {
             _orderBy = orderBy ?? GetDefaultSort;
             _dictionary = new StringDictionary<T>(keyLookup, keyNotFound);
             _crudAction = addKeyExists == KeyExists.ThrowException ? e => _dictionary.Add(e.Key, e) : e => _dictionary[e.Key] = e;
             entities.ForEach(Add);
         }
-        public EntityCollection<T> Set(params T[] entities)
+        public DtoCollection<T> Set(params T[] entities)
         {
             foreach (var entity in entities)
                 _crudAction(entity);
             RefreshSortedList();
             return this;
         }
-        public EntityCollection<T> Add(T[] entities)
+        public DtoCollection<T> Add(T[] entities)
         {
             entities.ForEach(Add);
             return this;

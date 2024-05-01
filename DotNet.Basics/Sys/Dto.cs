@@ -2,27 +2,27 @@
 
 namespace DotNet.Basics.Sys
 {
-    public class Entity
+    public class Dto
     {
         private const string _trimKeyPattern = @"[^ a-zA-Z0-9\.]";
         private static readonly Regex _trimKeyRegex = new(_trimKeyPattern, RegexOptions.Compiled);
-        private readonly string _displayName;
+        private string _displayName;
 
-        public virtual string Key { get; init; } = string.Empty;
+        public virtual string Key { get; set; } = string.Empty;
 
         public virtual string DisplayName
         {
             get => _displayName;
-            init
+            set
             {
                 Key = ToKey(value);
                 _displayName = value;
             }
         }
 
-        public static implicit operator Entity(string displayName)
+        public static implicit operator Dto(string displayName)
         {
-            return new Entity
+            return new Dto
             {
                 DisplayName = displayName
             };
@@ -35,7 +35,7 @@ namespace DotNet.Basics.Sys
             return _trimKeyRegex.Replace(value, string.Empty).Trim().ToLowerInvariant().Replace(" ", "-");
         }
 
-        protected bool Equals(Entity other)
+        protected bool Equals(Dto other)
         {
             return Key == other.Key;
         }
@@ -45,7 +45,7 @@ namespace DotNet.Basics.Sys
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Entity)obj);
+            return Equals((Dto)obj);
         }
 
         public override int GetHashCode()
