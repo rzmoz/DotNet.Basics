@@ -14,7 +14,7 @@ namespace DotNet.Basics.Tests.Sys
             //arrange
             var ent = new Dto
             {
-                DisplayName = "Hello World!     "
+                DisplayName = "Hello/World!     ",
             };
 
             //act
@@ -22,8 +22,11 @@ namespace DotNet.Basics.Tests.Sys
             var deSerEnt = json.FromJson<Dto>();
 
             //assert
-            deSerEnt.Key.Should().Be("hello-world");//whitespaces are trimmed in keys
-            deSerEnt.DisplayName.Should().Be(ent.DisplayName);//displayname is kept as is
+            ent.DisplayName.Should().Be("Hello/World!     ");//display name is kept as is
+            ent.Key.Should().Be("hello/world!");//whitespaces are trimmed in keys
+
+            deSerEnt.DisplayName.Should().Be(ent.DisplayName);//display name is kept as is
+            deSerEnt.Key.Should().Be("hello/world!");//whitespaces are trimmed in keys
         }
 
         [Fact]
@@ -33,7 +36,7 @@ namespace DotNet.Basics.Tests.Sys
 
             Dto ent = displayName;
 
-            ent.Key.Should().Be("hello-world");
+            ent.Key.Should().Be("hello-world!");
             ent.DisplayName.Should().Be(displayName);
         }
         [Fact]

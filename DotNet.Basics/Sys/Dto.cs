@@ -1,22 +1,26 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
 
 namespace DotNet.Basics.Sys
 {
     public class Dto
     {
-        private const string _trimKeyPattern = @"[^ a-zA-Z0-9\.]";
-        private static readonly Regex _trimKeyRegex = new(_trimKeyPattern, RegexOptions.Compiled);
+        private readonly EventHandler<string> _displayNameUpdated;
+
+        public Dto()
+        {
+            _displayNameUpdated += DisplayNameUpdated;
+        }
+
         private string _displayName;
 
         public virtual string Key { get; set; } = string.Empty;
-
         public virtual string DisplayName
         {
             get => _displayName;
             set
             {
-                Key = ToKey(value);
                 _displayName = value;
+                _displayNameUpdated?.Invoke(this, _displayName);
             }
         }
 
@@ -30,9 +34,11 @@ namespace DotNet.Basics.Sys
 
         public int SortOrder { get; set; }
 
-        protected virtual string ToKey(string value)
+        protected void DisplayNameUpdated(object sender, string displayName)
         {
-            return _trimKeyRegex.Replace(value, string.Empty).Trim().ToLowerInvariant().Replace(" ", "-");
+            if (!string.IsNullOrWhiteSpace(Key))
+                return;
+            Key = displayName.Trim().ToLowerInvariant().Replace(" ", "-");
         }
 
         protected bool Equals(Dto other)
