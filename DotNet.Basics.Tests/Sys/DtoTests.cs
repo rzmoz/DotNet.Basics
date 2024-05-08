@@ -9,7 +9,7 @@ namespace DotNet.Basics.Tests.Sys
     public class DtoTests
     {
         [Fact]
-        public void PropertiesUpdated_TriggerEvents_EventsAreTriggered()
+        public void SetDisplayName_WhenKeyIsAlreadySet_KeyIsNotUpdated()
         {
             //arrange
             var displayName = Guid.NewGuid().ToString();
@@ -17,15 +17,32 @@ namespace DotNet.Basics.Tests.Sys
 
 
             //act
+            var ent = new Dto
+            {
+                Key = key,
+                DisplayName = displayName
+            };
+
+            //assert
+            ent.DisplayName.Should().Be(displayName);
+            ent.Key.Should().Be(key);
+        }
+
+        [Fact]
+        public void PropertiesUpdated_TriggerEvents_EventsAreTriggered()
+        {
+            //arrange
+            var displayName = Guid.NewGuid().ToString();
+
+            //act
             var ent = new EventDto
             {
-                DisplayName = displayName,
-                Key = key
+                DisplayName = displayName
             };
 
             //assert
             ent.UpdatedDisplayName.Should().Be(displayName);
-            ent.UpdatedKey.Should().Be(key);
+            ent.UpdatedKey.Should().Be(displayName);
         }
 
         [Fact]
@@ -135,12 +152,12 @@ namespace DotNet.Basics.Tests.Sys
             public string UpdatedDisplayName { get; set; }
             public string UpdatedKey { get; set; }
 
-            protected override void DisplayNameUpdated(string displayName)
+            protected override void PostDisplayNameSet(string displayName)
             {
                 UpdatedDisplayName = displayName;
             }
 
-            protected override void KeyUpdated(string key)
+            protected override void PostKeySet(string key)
             {
                 UpdatedKey = key;
             }

@@ -2,27 +2,16 @@
 {
     public class Dto
     {
-        private string _displayName;
         private string _key;
-
-        private delegate void StringPropertyUpdated(string value);
-
-        private event StringPropertyUpdated _displayNameUpdated;
-        private event StringPropertyUpdated _keyUpdated;
-
-        public Dto()
-        {
-            _displayNameUpdated += DisplayNameUpdated;
-            _keyUpdated += KeyUpdated;
-        }
+        private string _displayName;
 
         public virtual string Key
         {
             get => _key;
             set
             {
-                _key = value;
-                _keyUpdated?.Invoke(value);
+                _key = PreKeySet(value);
+                PostKeySet(_key);
             }
         }
 
@@ -31,8 +20,8 @@
             get => _displayName;
             set
             {
-                _displayName = value;
-                _displayNameUpdated?.Invoke(value);
+                _displayName = PreDisplayNameSet(value);
+                PostDisplayNameSet(_displayName);
             }
         }
 
@@ -46,16 +35,21 @@
 
         public int SortOrder { get; set; }
 
-        protected virtual void KeyUpdated(string key)
+        protected virtual string PreKeySet(string key)
         {
+            return key;
         }
+        protected virtual void PostKeySet(string key)
+        { }
 
-        protected virtual void DisplayNameUpdated(string displayName)
+        protected virtual string PreDisplayNameSet(string displayName)
         {
-            if (!string.IsNullOrWhiteSpace(Key))
-                return;
-            Key = displayName.Trim().ToLowerInvariant().Replace(" ", "-");
+            if (string.IsNullOrWhiteSpace(Key))
+                Key = displayName.Trim().ToLowerInvariant().Replace(" ", "-");
+            return displayName;
         }
+        protected virtual void PostDisplayNameSet(string displayName)
+        { }
 
         protected bool Equals(Dto other)
         {
