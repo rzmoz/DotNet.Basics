@@ -9,6 +9,26 @@ namespace DotNet.Basics.Tests.Sys
     public class DtoTests
     {
         [Fact]
+        public void PropertiesUpdated_TriggerEvents_EventsAreTriggered()
+        {
+            //arrange
+            var displayName = Guid.NewGuid().ToString();
+            var key = Guid.NewGuid().ToString();
+
+
+            //act
+            var ent = new EventDto
+            {
+                DisplayName = displayName,
+                Key = key
+            };
+
+            //assert
+            ent.UpdatedDisplayName.Should().Be(displayName);
+            ent.UpdatedKey.Should().Be(key);
+        }
+
+        [Fact]
         public void Ctor_Serialization_DisplayNameAndKeyAreSerializedCorrectly()
         {
             //arrange
@@ -109,6 +129,21 @@ namespace DotNet.Basics.Tests.Sys
         private class UpperCaseDto : Dto
         {
             public override string DisplayName => base.DisplayName.ToUpperInvariant();
+        }
+        private class EventDto : Dto
+        {
+            public string UpdatedDisplayName { get; set; }
+            public string UpdatedKey { get; set; }
+
+            protected override void DisplayNameUpdated(string displayName)
+            {
+                UpdatedDisplayName = displayName;
+            }
+
+            protected override void KeyUpdated(string key)
+            {
+                UpdatedKey = key;
+            }
         }
     }
 }

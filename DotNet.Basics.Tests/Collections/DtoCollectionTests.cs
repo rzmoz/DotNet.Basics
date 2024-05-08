@@ -311,7 +311,7 @@ namespace DotNet.Basics.Tests.Collections
         [Fact]
         public void Clear_Clear_DictionaryIsCleared()
         {
-            var entList = new DtoCollection<Dto> { new Dto() };
+            var entList = new DtoCollection<Dto> { new Dto { DisplayName = "Hello World!" } };
 
             entList.Count.Should().BeGreaterThan(0);
 

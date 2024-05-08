@@ -1,26 +1,38 @@
-﻿using System;
-
-namespace DotNet.Basics.Sys
+﻿namespace DotNet.Basics.Sys
 {
     public class Dto
     {
-        private readonly EventHandler<string> _displayNameUpdated;
+        private string _displayName;
+        private string _key;
+
+        private delegate void StringPropertyUpdated(string value);
+
+        private event StringPropertyUpdated _displayNameUpdated;
+        private event StringPropertyUpdated _keyUpdated;
 
         public Dto()
         {
             _displayNameUpdated += DisplayNameUpdated;
+            _keyUpdated += KeyUpdated;
         }
 
-        private string _displayName;
+        public virtual string Key
+        {
+            get => _key;
+            set
+            {
+                _key = value;
+                _keyUpdated?.Invoke(value);
+            }
+        }
 
-        public virtual string Key { get; set; } = string.Empty;
         public virtual string DisplayName
         {
             get => _displayName;
             set
             {
                 _displayName = value;
-                _displayNameUpdated?.Invoke(this, _displayName);
+                _displayNameUpdated?.Invoke(value);
             }
         }
 
@@ -34,7 +46,11 @@ namespace DotNet.Basics.Sys
 
         public int SortOrder { get; set; }
 
-        protected virtual void DisplayNameUpdated(object sender, string displayName)
+        protected virtual void KeyUpdated(string key)
+        {
+        }
+
+        protected virtual void DisplayNameUpdated(string displayName)
         {
             if (!string.IsNullOrWhiteSpace(Key))
                 return;
