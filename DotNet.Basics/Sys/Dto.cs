@@ -34,7 +34,7 @@ namespace DotNet.Basics.Sys
 
         public int SortOrder { get; set; }
 
-        protected void DisplayNameUpdated(object sender, string displayName)
+        protected virtual void DisplayNameUpdated(object sender, string displayName)
         {
             if (!string.IsNullOrWhiteSpace(Key))
                 return;
