@@ -50,22 +50,17 @@ namespace DotNet.Basics.Collections
             Set(item);
         }
 
-        protected virtual string KeyPreLookup(string key)
-        {
-            return key;
-        }
-
         public T this[int index] => _sortedList[index];
 
         public virtual T this[string key]
         {
-            get => _dictionary[KeyPreLookup(key)];
+            get => _dictionary[key];
             set
             {
-                if (_dictionary.TryGetValue(KeyPreLookup(key), out var existing))
+                if (_dictionary.TryGetValue(key, out var existing))
                 {
                     value.SortOrder = existing.SortOrder;
-                    _dictionary[KeyPreLookup(value.Key)] = value;
+                    _dictionary[value.Key] = value;
                     RefreshSortedList();
                 }
                 else
@@ -75,8 +70,11 @@ namespace DotNet.Basics.Collections
 
         public virtual bool ContainsKey(string key)
         {
-            return _dictionary.ContainsKey(KeyPreLookup(key));
+            return _dictionary.ContainsKey(key);
         }
+
+        public ICollection<string> Keys => _dictionary.Keys;
+        public ICollection<T> Values => _dictionary.Values;
 
         public virtual void Clear()
         {
