@@ -12,8 +12,8 @@ namespace DotNet.Basics.Tests.Collections
         private const string _elementElse = "myElement2";
         readonly Regex _allSearchRegex = new(".+");
         const string _allSearchPattern = "*";
-        readonly string[] _allPatternArray = _allSearchPattern.ToEnumerable().ToArray();
-        readonly string[] _all = { _elementSomething, _elementElse };
+        readonly string[] _allPatternArray = [_allSearchPattern];
+        readonly string[] _all = [_elementSomething, _elementElse];
 
         [Fact]
         public void Blacklist_Regex_WildcardsAreObeyed()

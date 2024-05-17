@@ -19,11 +19,15 @@ namespace DotNet.Basics.Collections
             if (all == null) throw new ArgumentNullException(nameof(all));
             return all.Where(element => IsWildcardMatch(element, wildCardPattern, comparison));
         }
-        public static IEnumerable<string> Whitelist(this IEnumerable<string> all, IEnumerable<string> whitelist = null, StringComparison comparison = StringComparison.CurrentCultureIgnoreCase)
+        
+        public static IEnumerable<string> Whitelist<T>(this T all, params string[] whitelist)where T:IEnumerable<string>
+        {
+            return all.Whitelist(StringComparison.CurrentCultureIgnoreCase, whitelist);
+        }
+
+        public static IEnumerable<string> Whitelist(this IEnumerable<string> all, StringComparison comparison, params string[] whitelist)
         {
             if (all == null) throw new ArgumentNullException(nameof(all));
-
-            whitelist = (whitelist ?? Enumerable.Empty<string>()).ToList();
 
             foreach (var element in all)
             {
@@ -46,11 +50,13 @@ namespace DotNet.Basics.Collections
             return all.Where(element => !IsWildcardMatch(element, wildCardPattern, comparison));
         }
 
-        public static IEnumerable<string> Blacklist(this IEnumerable<string> all, IEnumerable<string> blacklist = null, StringComparison comparison = StringComparison.CurrentCultureIgnoreCase)
+        public static IEnumerable<string> Blacklist(this IEnumerable<string> all, params string[] blacklist)
+        {
+            return all.Blacklist(StringComparison.CurrentCultureIgnoreCase, blacklist);
+        }
+        public static IEnumerable<string> Blacklist(this IEnumerable<string> all, StringComparison comparison, params string[] blacklist)
         {
             if (all == null) throw new ArgumentNullException(nameof(all));
-
-            blacklist = (blacklist ?? Enumerable.Empty<string>()).ToList();
 
             foreach (var element in all)
             {
