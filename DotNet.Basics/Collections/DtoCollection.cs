@@ -92,13 +92,11 @@ namespace DotNet.Basics.Collections
                 array[arrayIndex++] = entity;
         }
 
-        public bool Remove(string key)
+        public bool Remove(params string[] keys)
         {
-            if (key == null)
-                return false;
-            var removed = _dictionary.Remove(key);
+            var allRemoved = keys.Distinct().ForEach(key => _dictionary.Remove(key)).All(result => result);
             RefreshSortedList();
-            return removed;
+            return allRemoved;
         }
 
         public bool Remove(T item)

@@ -33,7 +33,7 @@
             };
         }
 
-        public int SortOrder { get; set; }
+        public int SortOrder { get; set; } = 0;
 
         protected virtual string PreKeySet(string key)
         {

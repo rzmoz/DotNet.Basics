@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DotNet.Basics.Collections
 {
@@ -20,7 +19,7 @@ namespace DotNet.Basics.Collections
             _getValueFunc = GetValueFunc(keyNotFound);
             _getKeyFunc = GetKeyFunc(keyLookup);
 
-            _dictionary = items.ToDictionary(i => i.Key, i => i.Value);
+            _dictionary = new Dictionary<string, TK>(items);
         }
         private Func<string, string> GetKeyFunc(KeyLookup keyLookup)
         {

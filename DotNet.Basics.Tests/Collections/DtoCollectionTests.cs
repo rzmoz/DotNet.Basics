@@ -240,6 +240,28 @@ namespace DotNet.Basics.Tests.Collections
         }
 
         [Fact]
+        public void RemoveMany_ByKey_ItemsRemoved()
+        {
+            var keys = Enumerable.Range(0, 9999).Select(i => i.ToString()).ToArray();
+
+            var col = new DtoCollection<Dto>();
+
+
+            keys.ForEach(k => col.Add(new Dto
+            {
+                Key = k
+            }));
+
+            col.Count.Should().Be(9999);
+
+            //act
+            col.Remove(keys);
+
+            //assert
+            col.Count.Should().Be(0);
+        }
+
+        [Fact]
         public void Remove_ByKey_ItemRemoved()
         {
             var ent1 = new Dto
