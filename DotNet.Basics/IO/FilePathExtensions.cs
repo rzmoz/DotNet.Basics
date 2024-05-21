@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.IO.Pipes;
+using System.Threading.Tasks;
 using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.IO
@@ -78,23 +80,17 @@ namespace DotNet.Basics.IO
             }
             return null;
         }
+
         public static string ReadAllText(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
         {
-            try
-            {
-                return File.ReadAllText(fp.FullName).EnsureNewlineHasCarriageReturn();
-            }
-            catch (DirectoryNotFoundException)
-            {
-                if (ifNotExists == IfNotExists.ThrowIoException)
-                    throw;
-            }
-            catch (FileNotFoundException)
-            {
-                if (ifNotExists == IfNotExists.ThrowIoException)
-                    throw;
-            }
-            return null;
+            using var reader = fp.OpenRead(ifNotExists, FileShare.ReadWrite | FileShare.Delete);
+            return reader?.ReadToEnd();
+        }
+
+        public static async Task<string> ReadAllTextAsync(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
+        {
+            using var reader = fp.OpenRead(ifNotExists, FileShare.ReadWrite | FileShare.Delete);
+            return await reader.ReadToEndAsync();
         }
 
         public static FileStream Create(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)

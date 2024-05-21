@@ -151,6 +151,21 @@ namespace DotNet.Basics.Tests.IO
                     content.Should().BeNull();
                 });
         }
+
+        [Fact]
+        public void ReadAllTextAsync_FileFound_ContentIsReturned()
+        {
+            ArrangeActAssertPaths(testDir =>
+            {
+                var file = testDir.ToFile("NotFOund.asd");
+                var content = Lorem.Ipsum(25);
+                file.WriteAllText(content);
+                
+                var contentFromDisk = file.ReadAllTextAsync().Result;
+                
+                contentFromDisk.Should().Be(content);
+            });
+        }
         [Fact]
         public void ReadAllTextThrowIfNotExists_SilenceWhenFileNotFound_NullIsReturned()
         {
@@ -187,7 +202,7 @@ namespace DotNet.Basics.Tests.IO
         }
 
         [Fact]
-        public void OpenWrite_MultiWrite_FileIsWrittenToMultipletimes()
+        public void OpenWrite_MultiWrite_FileIsWrittenToMultipleTimes()
         {
             ArrangeActAssertPaths(testDir =>
             {
@@ -196,7 +211,7 @@ namespace DotNet.Basics.Tests.IO
                 using var writer1 = file.OpenWrite();
                 writer1.WriteLine("line 1");
                 writer1.Flush();
-                
+
                 using var reader1 = file.OpenRead();
                 reader1.ReadLine().Should().Be("line 1");
 
