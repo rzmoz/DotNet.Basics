@@ -37,7 +37,7 @@ namespace DotNet.Basics.Tests.SevenZip
                 targetPath.Exists().Should().BeTrue();
 
                 //act
-                Action action = () => _sevenZip.CreateZipFromDirectory("mySource", targetPath.FullName(), false);
+                Action action = () => _sevenZip.CreateZipFromDirectory("mySource", targetPath.FullName, false);
 
                 action.Should().Throw<IOException>();
             });
@@ -62,10 +62,10 @@ namespace DotNet.Basics.Tests.SevenZip
                 targetArchive.Exists().Should().BeFalse();
 
                 //act
-                _sevenZip.CreateZipFromDirectory(sourceDir.FullName(), targetArchive.FullName());
+                _sevenZip.CreateZipFromDirectory(sourceDir.FullName, targetArchive.FullName);
 
-                targetArchive.Exists().Should().BeTrue($"Exists:{targetArchive.FullName()}");
-                using (var archive = ZipFile.OpenRead(targetArchive.FullName()))
+                targetArchive.Exists().Should().BeTrue($"Exists:{targetArchive.FullName}");
+                using (var archive = ZipFile.OpenRead(targetArchive.FullName))
                 {
                     archive.Entries.Count.Should().Be(1);
 
@@ -97,9 +97,9 @@ namespace DotNet.Basics.Tests.SevenZip
                 targetArchive.Exists().Should().BeFalse();
 
                 //act
-                _sevenZip.Create7zFromDirectory(sourceDir.FullName(), targetArchive.FullName());
+                _sevenZip.Create7zFromDirectory(sourceDir.FullName, targetArchive.FullName);
 
-                targetArchive.Exists().Should().BeTrue($"Exists:{targetArchive.FullName()}");
+                targetArchive.Exists().Should().BeTrue($"Exists:{targetArchive.FullName}");
             });
         }
 
@@ -112,7 +112,7 @@ namespace DotNet.Basics.Tests.SevenZip
                 var archive = testDir.ToFile(@"ExtractToDirectory_ArchiveNotFound_ExceptionIsThrown", "notExists.zip");
                 var mockTargetDir = testDir.ToDir("ExtractToDirectory_ArchiveNotFound_ExceptionIsThrown", "Mock");
                 //act
-                Action action = () => _sevenZip.ExtractToDirectory(archive.FullName(), mockTargetDir.FullName());
+                Action action = () => _sevenZip.ExtractToDirectory(archive.FullName, mockTargetDir.FullName);
                 action.Should().Throw<IOException>().And.Message.Should().StartWith("Archive not found:");
             });
         }
@@ -127,7 +127,7 @@ namespace DotNet.Basics.Tests.SevenZip
                 targetDir.CreateIfNotExists();
 
                 //act
-                Action action = () => _sevenZip.ExtractToDirectory(_sourceArchive.FullName(), targetDir.FullName());
+                Action action = () => _sevenZip.ExtractToDirectory(_sourceArchive.FullName, targetDir.FullName);
                 action.Should().Throw<IOException>().And.Message.Should().StartWith("Target dir already exists at:");
 
             });
@@ -147,11 +147,11 @@ namespace DotNet.Basics.Tests.SevenZip
 
                 //act
 
-                var exitCode = _sevenZip.ExtractToDirectory(_sourceArchive.FullName(), targetDir.FullName());
+                var exitCode = _sevenZip.ExtractToDirectory(_sourceArchive.FullName, targetDir.FullName);
                 Output.WriteLine($"ExtractToDirectory input: {exitCode}");
-                targetDir.Exists().Should().BeTrue($"Exists:{targetDir.FullName()}");
+                targetDir.Exists().Should().BeTrue($"Exists:{targetDir.FullName}");
                 targetDir.ToDir().EnumeratePaths().Count().Should().Be(1);
-                targetFile.Exists().Should().BeTrue($"Exists:{targetDir.FullName()}");
+                targetFile.Exists().Should().BeTrue($"Exists:{targetDir.FullName}");
 
                 var content = targetFile.ReadAllText();
 

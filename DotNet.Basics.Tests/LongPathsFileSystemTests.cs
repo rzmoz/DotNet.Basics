@@ -38,7 +38,7 @@ namespace DotNet.Basics.Tests
                 testDir.DeleteIfExists();
                 testDir.Exists().Should().BeFalse();
                 //act
-                Directory.CreateDirectory(testDir.FullName());
+                Directory.CreateDirectory(testDir.FullName);
                 //assert
                 testDir.Exists().Should().BeTrue();
             });
@@ -62,7 +62,7 @@ namespace DotNet.Basics.Tests
                 targetDir.DeleteIfExists();
 
                 //act
-                Directory.Move(sourceDir.FullName(), targetDir.FullName());
+                Directory.Move(sourceDir.FullName, targetDir.FullName);
                 //assert
                 sourceDir.Exists().Should().BeFalse();
                 targetDir.Add(helloDir.Name).Exists().Should().BeTrue();
@@ -88,7 +88,7 @@ namespace DotNet.Basics.Tests
                 testDir.CreateIfNotExists();
                 testDir.Exists().Should().BeTrue();
                 //act
-                Directory.Delete(testDir.FullName());
+                Directory.Delete(testDir.FullName);
                 //assert
                 testDir.Exists().Should().BeFalse();
             });
@@ -108,7 +108,7 @@ namespace DotNet.Basics.Tests
                 sourceFile.WriteAllText("blaaa");
                 targetFile.Exists().Should().BeFalse();
 
-                File.Copy(sourceFile.FullName(), targetFile.FullName(), true);
+                File.Copy(sourceFile.FullName, targetFile.FullName, true);
 
                 sourceFile.Exists().Should().BeTrue();
                 targetFile.Exists().Should().BeTrue();
@@ -126,7 +126,7 @@ namespace DotNet.Basics.Tests
                 targetFile.DeleteIfExists();
                 targetFile.Exists().Should().BeFalse();
                 targetFile.Directory().CreateIfNotExists();
-                File.Move(sourceFile.FullName(), targetFile.FullName());
+                File.Move(sourceFile.FullName, targetFile.FullName);
 
                 sourceFile.Exists().Should().BeFalse();
                 targetFile.Exists().Should().BeTrue();
@@ -144,7 +144,7 @@ namespace DotNet.Basics.Tests
 
                 testFile.Exists().Should().BeTrue();
                 //act
-                File.Delete(testFile.FullName());
+                File.Delete(testFile.FullName);
 
                 //assert
                 testFile.Exists().Should().BeFalse();
@@ -161,7 +161,7 @@ namespace DotNet.Basics.Tests
                 testFile.Exists().Should().BeTrue();
 
                 //act
-                File.Delete(testFile.FullName());
+                File.Delete(testFile.FullName);
 
                 //assert
                 testFile.Exists().Should().BeFalse();

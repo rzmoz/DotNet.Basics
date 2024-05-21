@@ -32,7 +32,7 @@ namespace DotNet.Basics.SevenZip
                 throw new IOException($"Archive not found: {archivePath}");
             if (Directory.Exists(targetDirPath))
                 throw new IOException($"Target dir already exists at: {targetDirPath}");
-            return SevenZipCmd("x", $"\"{archivePath}\"", $"\"-o{targetDirPath.ToDir().FullName()}\"", "*", "-r", "aoa");
+            return SevenZipCmd("x", $"\"{archivePath}\"", $"\"-o{targetDirPath.ToDir().FullName}\"", "*", "-r", "aoa");
         }
 
         public int CreateZipFromDirectory(string sourceDirPath, string archivePath, bool overwrite = false)
@@ -53,7 +53,7 @@ namespace DotNet.Basics.SevenZip
                 archivePath.ToFile().DeleteIfExists();
             else if (archivePath.ToFile().Exists())
                 throw new IOException($"Target archive path already exists: {archivePath}. Set overwrite to true to ignore");
-            return SevenZipCmd("a", $"\"{archivePath}\"", $"\"{sourceDirPath.ToDir().FullName()}\\*\"", $"-t{archiveType}", $"-mx7", "-mmt");
+            return SevenZipCmd("a", $"\"{archivePath}\"", $"\"{sourceDirPath.ToDir().FullName}\\*\"", $"-t{archiveType}", $"-mx7", "-mmt");
         }
 
         public int SevenZipCmd(string command, params string[] switches)

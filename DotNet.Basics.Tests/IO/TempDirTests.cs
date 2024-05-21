@@ -32,7 +32,7 @@ namespace DotNet.Basics.Tests.IO
                 {
                     using (var tempDir = td.Value)
                     {
-                        tempDir.Root.Exists().Should().BeTrue(tempDir.Root.FullName());
+                        tempDir.Root.Exists().Should().BeTrue(tempDir.Root.FullName);
                     }
                 }
             });

@@ -15,7 +15,7 @@ namespace DotNet.Basics.Tests.SevenZip
         public ZipReaderTests(ITestOutputHelper output) : base(output)
         {
             WithTestRoot(testRoot => _testSource = testRoot.ToFile("SevenZip", "NewFolder.zip"));
-            _testSource.Exists().Should().BeTrue(_testSource.FullName(), true);
+            _testSource.Exists().Should().BeTrue(_testSource.FullName, true);
         }
 
         [Theory]

@@ -47,7 +47,7 @@ namespace DotNet.Basics.Tests
             var emptyDir = _testRoot.ToDir("__Empty");
             emptyDir.CreateIfNotExists();
 
-            Robocopy.Run(emptyDir.FullName(), rootDir.FullName(), "/MIR");//robust clean dir pre testing
+            Robocopy.Run(emptyDir.FullName, rootDir.FullName, "/MIR");//robust clean dir pre testing
             try
             {
                 var testRootDir = rootDir.Add(TestPathPrefix);
@@ -56,7 +56,7 @@ namespace DotNet.Basics.Tests
             }
             finally
             {
-                Robocopy.Run(emptyDir.FullName(), rootDir.FullName(), "/MIR");//robust clean dir post testing
+                Robocopy.Run(emptyDir.FullName, rootDir.FullName, "/MIR");//robust clean dir post testing
                 rootDir.DeleteIfExists();
             }
         }

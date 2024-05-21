@@ -20,7 +20,7 @@ namespace DotNet.Basics.IO
             if (segments.Length == 0)
                 return false;
 
-            var fullName = pi.FullName().Replace('/', '\\');
+            var fullName = pi.FullName.Replace('/', '\\');
 
             foreach (var segment in segments.Select(s => s.Replace('/', '\\')))
             {
@@ -30,18 +30,13 @@ namespace DotNet.Basics.IO
 
             return true;
         }
-
-        public static string FullName(this PathInfo pi)
-        {
-            return Path.GetFullPath(pi.RawPath);
-        }
-
+        
         public static DirPath ParentFromFullName(this PathInfo pi)
         {
             if (pi == null)
                 return null;
 
-            return pi.Parent ?? new DirectoryInfo(pi.FullName()).Parent?.Name.ToDir();
+            return pi.Parent ?? new DirectoryInfo(pi.FullName).Parent?.Name.ToDir();
         }
 
         public static DirPath Directory(this PathInfo pi)
@@ -60,7 +55,7 @@ namespace DotNet.Basics.IO
 
         public static bool Exists(this PathInfo pi)
         {
-            return pi.PathType == PathType.Dir ? System.IO.Directory.Exists(pi.FullName()) : File.Exists(pi.FullName());
+            return pi.PathType == PathType.Dir ? System.IO.Directory.Exists(pi.FullName) : File.Exists(pi.FullName);
         }
 
         public static bool DeleteIfExists(this PathInfo pi)
@@ -76,9 +71,9 @@ namespace DotNet.Basics.IO
             Repeat.Task(() =>
                 {
                     if (pi.PathType == PathType.Dir)
-                        System.IO.Directory.Delete(pi.FullName(), true);
+                        System.IO.Directory.Delete(pi.FullName, true);
                     else
-                        File.Delete(pi.FullName());
+                        File.Delete(pi.FullName);
                 })
                 .WithOptions(o =>
                 {

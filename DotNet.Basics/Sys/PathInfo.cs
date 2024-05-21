@@ -69,6 +69,9 @@ namespace DotNet.Basics.Sys
         [JsonIgnore]
         [IgnoreDataMember]
         public string Extension => Path.GetExtension(Name);
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public string FullName => Path.GetFullPath(RawPath);
 
         public PathType PathType { get; }
 

@@ -235,13 +235,13 @@ namespace DotNet.Basics.Tests.IO
                 var targetFile = testDir.ToFile("target.txt");
                 targetFile.Directory().CreateIfNotExists();
                 //ensure file exists
-                File.WriteAllText(targetFile.FullName(), @"mycontent");
+                File.WriteAllText(targetFile.FullName, @"mycontent");
                 targetFile.Exists().Should().BeTrue();
 
                 //act
                 Action action = () => targetFile.WriteAllText(@"random", overwrite: false);
 
-                action.Should().Throw<IOException>().WithMessage($"Target file already exists. Set overwrite to true to ignore existing file: {targetFile.FullName()}");
+                action.Should().Throw<IOException>().WithMessage($"Target file already exists. Set overwrite to true to ignore existing file: {targetFile.FullName}");
             });
         }
 
@@ -256,14 +256,14 @@ namespace DotNet.Basics.Tests.IO
 
                 var targetFile = testDir.ToFile("target.txt");
                 targetFile.Directory().CreateIfNotExists();
-                File.WriteAllText(targetFile.FullName(), initialContent);
+                File.WriteAllText(targetFile.FullName, initialContent);
                 targetFile.Exists().Should().BeTrue();
-                File.ReadAllText(targetFile.FullName()).Should().Be(initialContent);
+                File.ReadAllText(targetFile.FullName).Should().Be(initialContent);
 
                 //act
                 targetFile.WriteAllText(updatedContent, overwrite: true);
 
-                File.ReadAllText(targetFile.FullName()).Should().Be(updatedContent);
+                File.ReadAllText(targetFile.FullName).Should().Be(updatedContent);
             });
         }
 
@@ -276,7 +276,7 @@ namespace DotNet.Basics.Tests.IO
             var targetDir = @"c:\MyPath".ToDir("subfolder1", "subfolder2");
             var targetfile = targetDir.ToFile(sourceFile.Name);
 
-            targetfile.FullName().Should().Be(@"c:\MyPath\subfolder1\subfolder2\" + fileName);
+            targetfile.FullName.Should().Be(@"c:\MyPath\subfolder1\subfolder2\" + fileName);
         }
         [Fact]
         public void ToTargetFile_SingleDirCombine_TargetFileHasNewDir()
@@ -286,7 +286,7 @@ namespace DotNet.Basics.Tests.IO
 
             var targetfile = @"c:\MyPath".ToFile(sourceFile.Name);
 
-            targetfile.FullName().Should().Be(@"c:\MyPath\myFile.temp");
+            targetfile.FullName.Should().Be(@"c:\MyPath\myFile.temp");
         }
     }
 }

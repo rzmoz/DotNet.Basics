@@ -43,7 +43,7 @@ namespace DotNet.Basics.IO
         {
             var dir = dp.Add(subFolders);
             if (dir.Exists() == false)
-                Directory.CreateDirectory(dir.FullName());
+                Directory.CreateDirectory(dir.FullName);
 
             return dir;
         }
@@ -60,8 +60,8 @@ namespace DotNet.Basics.IO
             if (dp.Exists() == false)
                 return;
 
-            var targetPath = target.FullName().ToLowerInvariant();
-            var sourcePath = dp.FullName().ToLowerInvariant();
+            var targetPath = target.FullName.ToLowerInvariant();
+            var sourcePath = dp.FullName.ToLowerInvariant();
 
             //if copy to self
             if (targetPath == sourcePath)
@@ -92,7 +92,7 @@ namespace DotNet.Basics.IO
             catch (Exception)
             {
                 //switching to more robust copying if something fails
-                Robocopy.CopyDir(dp.FullName(), target.FullName(), includeSubFolders: includeSubfolders);
+                Robocopy.CopyDir(dp.FullName, target.FullName, includeSubFolders: includeSubfolders);
             }
         }
 
@@ -110,15 +110,15 @@ namespace DotNet.Basics.IO
         }
         public static IEnumerable<DirPath> EnumerateDirectories(this DirPath dp, string searchPattern = null, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
-            return Directory.EnumerateDirectories(dp.FullName(), searchPattern ?? "*", searchOption).Select(dir => dir.ToDir());
+            return Directory.EnumerateDirectories(dp.FullName, searchPattern ?? "*", searchOption).Select(dir => dir.ToDir());
         }
         public static IEnumerable<FilePath> EnumerateFiles(this DirPath dp, string searchPattern = null, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
-            return Directory.EnumerateFiles(dp.FullName(), searchPattern ?? "*", searchOption).Select(file => file.ToFile());
+            return Directory.EnumerateFiles(dp.FullName, searchPattern ?? "*", searchOption).Select(file => file.ToFile());
         }
         public static IEnumerable<PathInfo> EnumeratePaths(this DirPath dp, string searchPattern = null, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
-            return Directory.EnumerateFileSystemEntries(dp.FullName(), searchPattern ?? "*", searchOption).Select(fse => fse.ToPath());
+            return Directory.EnumerateFileSystemEntries(dp.FullName, searchPattern ?? "*", searchOption).Select(fse => fse.ToPath());
         }
     }
 }

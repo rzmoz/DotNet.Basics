@@ -25,9 +25,9 @@ namespace DotNet.Basics.IO
 
             var file = InstallDir.ToFile(fileName);
             if (file.Exists() == false)
-                throw new FileNotFoundException(file.FullName());
+                throw new FileNotFoundException(file.FullName);
 
-            return CmdPrompt.Run($"{file.FullName()} {argString}", writeOutput, writeError, writeDebug);
+            return CmdPrompt.Run($"{file.FullName} {argString}", writeOutput, writeError, writeDebug);
         }
 
         public FileApplication WithStream<T>(string fileName, Action<FilePath> postInstallAction = null)
@@ -47,7 +47,7 @@ namespace DotNet.Basics.IO
             _installActions.Add(() =>
             {
                 target.DeleteIfExists();//we ensure file integrity if we got this far. No guarantees that corrupt files haven't been left behind by a faulty installation
-                using (var fsDst = new FileStream(target.FullName(), FileMode.Create, FileAccess.Write))
+                using (var fsDst = new FileStream(target.FullName, FileMode.Create, FileAccess.Write))
                     content.CopyTo(fsDst);
 
                 if (disposeStreamWhenDone)
@@ -77,7 +77,7 @@ namespace DotNet.Basics.IO
                     installAction();
 
                 //app installed successfully
-                File.Create(_installedHandle.FullName())?.Close();
+                File.Create(_installedHandle.FullName)?.Close();
             }
 
             return IsInstalled();

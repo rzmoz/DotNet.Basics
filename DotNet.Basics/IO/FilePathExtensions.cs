@@ -23,7 +23,7 @@ namespace DotNet.Basics.IO
             if (overwrite)
                 targetFile.DeleteIfExists();
 
-            File.Move(fp.FullName(), targetFile.FullName());
+            File.Move(fp.FullName, targetFile.FullName);
             return targetFile.Exists();
         }
 
@@ -43,32 +43,28 @@ namespace DotNet.Basics.IO
             if (target == null) throw new ArgumentNullException(nameof(target));
 
             if (fp.Exists() == false)
-                throw new FileNotFoundException(fp.FullName());
+                throw new FileNotFoundException(fp.FullName);
             if (ensureTargetDir)
                 target.Directory().CreateIfNotExists();
 
-            File.Copy(fp.FullName(), target.FullName(), overwrite);
+            File.Copy(fp.FullName, target.FullName, overwrite);
         }
 
         public static FilePath WriteAllText(this FilePath fp, string content, bool overwrite = true)
         {
             if (overwrite == false && fp.Exists())
-                throw new IOException($"Target file already exists. Set overwrite to true to ignore existing file: {fp.FullName()}");
+                throw new IOException($"Target file already exists. Set overwrite to true to ignore existing file: {fp.FullName}");
 
             fp.Directory().CreateIfNotExists();
-
-            //get filePath that's definitely not too long
-            var testFile = Path.GetTempFileName();
-            File.WriteAllText(testFile, content ?? string.Empty);
             fp.DeleteIfExists();
-            File.Move(testFile, fp.FullName());
+            File.WriteAllText(fp.FullName, content ?? string.Empty);
             return fp;
         }
         public static byte[] ReadAllBytes(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
         {
             try
             {
-                return File.ReadAllBytes(fp.FullName());
+                return File.ReadAllBytes(fp.FullName);
             }
             catch (DirectoryNotFoundException)
             {
@@ -86,7 +82,7 @@ namespace DotNet.Basics.IO
         {
             try
             {
-                return File.ReadAllText(fp.FullName()).EnsureNewlineHasCarriageReturn();
+                return File.ReadAllText(fp.FullName).EnsureNewlineHasCarriageReturn();
             }
             catch (DirectoryNotFoundException)
             {
@@ -105,7 +101,7 @@ namespace DotNet.Basics.IO
         {
             try
             {
-                return File.Create(fp.FullName());
+                return File.Create(fp.FullName);
             }
             catch (DirectoryNotFoundException)
             {
@@ -131,7 +127,7 @@ namespace DotNet.Basics.IO
         {
             try
             {
-                return new StreamReader(File.Open(fp.FullName(), FileMode.Open, FileAccess.Read, fileShare));
+                return new StreamReader(File.Open(fp.FullName, FileMode.Open, FileAccess.Read, fileShare));
             }
             catch (DirectoryNotFoundException)
             {
@@ -153,7 +149,7 @@ namespace DotNet.Basics.IO
         /// <returns></returns>
         public static StreamWriter OpenWrite(this FilePath fp, FileShare fileShare = FileShare.ReadWrite)
         {
-            return new StreamWriter(File.Open(fp.FullName(), FileMode.OpenOrCreate, FileAccess.ReadWrite, fileShare));
+            return new StreamWriter(File.Open(fp.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite, fileShare));
         }
     }
 }

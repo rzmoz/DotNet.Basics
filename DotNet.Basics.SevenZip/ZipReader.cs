@@ -72,7 +72,7 @@ namespace DotNet.Basics.SevenZip
         private ZipArchive Open()
         {
             ZipArchive archive = null;
-            Repeat.Task(() => archive = ZipFile.Open(Path.FullName(), ZipArchiveMode.Read))
+            Repeat.Task(() => archive = ZipFile.Open(Path.FullName, ZipArchiveMode.Read))
                 .WithOptions(o =>
                 {
                     o.RetryDelay = TimeSpan.FromSeconds(1);

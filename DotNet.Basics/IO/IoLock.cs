@@ -33,7 +33,7 @@ namespace DotNet.Basics.IO
                 //try get lock handle
                 return Repeat.Task(() =>
                 {
-                    _lockHandle = File.Create(_lockDir.ToFile(Name).FullName(), 128, FileOptions.DeleteOnClose);
+                    _lockHandle = File.Create(_lockDir.ToFile(Name).FullName, 128, FileOptions.DeleteOnClose);
                 }).WithOptions(o =>
                 {
                     o.MaxTries = maxTries ?? 10;

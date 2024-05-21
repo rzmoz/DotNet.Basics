@@ -42,7 +42,7 @@ namespace DotNet.Basics.IO
 
         public override string ToString()
         {
-            return $"{Root?.FullName()}";
+            return $"{Root?.FullName}";
         }
     }
 }

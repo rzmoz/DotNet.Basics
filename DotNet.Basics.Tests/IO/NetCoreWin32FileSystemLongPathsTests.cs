@@ -20,7 +20,7 @@ namespace DotNet.Basics.Tests.IO
         {
             ArrangeActAssertPaths(testDir =>
             {
-                var output = $"Current path length is {testDir.FullName().Length} : {testDir.FullName()} ";
+                var output = $"Current path length is {testDir.FullName.Length} : {testDir.FullName} ";
                 Output.WriteLine(output);
 
                 testDir.CreateSubDir("1");
@@ -29,9 +29,9 @@ namespace DotNet.Basics.Tests.IO
                 testDir.ToFile("myFile1.txt").WriteAllText("bla");
                 testDir.ToFile("myFile2.txt").WriteAllText("bla");
 
-                var paths = Directory.EnumerateFileSystemEntries(testDir.FullName(), "*", SearchOption.AllDirectories).ToList();
-                var dirs = Directory.EnumerateDirectories(testDir.FullName(), "*", SearchOption.AllDirectories).ToList();
-                var files = Directory.EnumerateFiles(testDir.FullName(), "*", SearchOption.AllDirectories).ToList();
+                var paths = Directory.EnumerateFileSystemEntries(testDir.FullName, "*", SearchOption.AllDirectories).ToList();
+                var dirs = Directory.EnumerateDirectories(testDir.FullName, "*", SearchOption.AllDirectories).ToList();
+                var files = Directory.EnumerateFiles(testDir.FullName, "*", SearchOption.AllDirectories).ToList();
 
                 paths.Count.Should().Be(5);
                 paths.Count.Should().Be(testDir.GetPaths().Count);

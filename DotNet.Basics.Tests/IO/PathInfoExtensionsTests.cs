@@ -119,7 +119,7 @@ namespace DotNet.Basics.Tests.IO
             var relativePath = "GetFullPath_CallSystemIo_PathsAreIdentical";
 
             var systemDotIoDotPath = Path.GetFullPath(relativePath);
-            var systemIoPath = relativePath.ToPath().FullName();
+            var systemIoPath = relativePath.ToPath().FullName;
 
             systemIoPath.Should().Be(systemDotIoDotPath);
         }
@@ -187,9 +187,9 @@ namespace DotNet.Basics.Tests.IO
         [InlineData("c:\\FileWithMoreThan260Chars\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm\\mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")]
         public void FullPath_LongPath_LongPathsAreSupported(string p)
         {
-            Action action = () => p.ToPath().FullName();
+            string fullName;
 
-            var temp = p.ToPath().FullName();//no exceptions are thrown
+            Action action = () => fullName=p.ToPath().FullName;
 
             action.Should().NotThrow();
         }
@@ -200,11 +200,11 @@ namespace DotNet.Basics.Tests.IO
             TestFile1 inputPath = null;
             WithTestRoot(testRoot => inputPath = new TestFile1(testRoot));
             string expectedPath = null;
-            WithTestRoot(testRoot => expectedPath = new TestFile1(testRoot).FullName());
+            WithTestRoot(testRoot => expectedPath = new TestFile1(testRoot).FullName);
 
             inputPath.Should().NotBe(expectedPath);
 
-            inputPath.FullName().ToLowerInvariant().Should().Be(expectedPath.ToLowerInvariant());
+            inputPath.FullName.ToLowerInvariant().Should().Be(expectedPath.ToLowerInvariant());
         }
     }
 }
