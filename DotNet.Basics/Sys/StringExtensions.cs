@@ -13,6 +13,16 @@ namespace DotNet.Basics.Sys
         private const string _newlinePattern = @"\r\n|\r|\n";
         private static readonly Regex _newlineRegex = new Regex(_newlinePattern, RegexOptions.Compiled);
 
+        public static string ToUpperFirstChar(this string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            Span<char> destination = stackalloc char[1];
+            input.AsSpan(0, 1).ToUpperInvariant(destination);
+            return $"{destination.ToString()}{input.AsSpan(1).ToString()}";
+        }
+
         public static string EnsureNewlineHasCarriageReturn(this string source)
         {
             if (source == null)

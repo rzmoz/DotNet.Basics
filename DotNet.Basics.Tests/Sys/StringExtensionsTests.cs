@@ -12,6 +12,21 @@ namespace DotNet.Basics.Tests.Sys
         const string _prefix = "myPrefix";
         const string _suffix = "myPostfix";
 
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData("", "")]
+        [InlineData("   ", "   ")]
+        [InlineData("lower", "Lower")]
+        [InlineData("Upper", "Upper")]
+        public void ToUpperFirstChar_Valid_FirstCharIsUpper(string input, string expected)
+        {
+            var output = input.ToUpperFirstChar();
+            output.Should().Be(expected);
+
+            if (!string.IsNullOrWhiteSpace(output))
+                char.IsUpper(output[0]).Should().BeTrue();
+        }
+
         [Fact]
         public void EnsureNewlineHasCarriageReturn_NoCarriageReturnNewline_NothingChanges()
         {
