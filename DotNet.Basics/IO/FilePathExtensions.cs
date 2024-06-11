@@ -143,9 +143,9 @@ namespace DotNet.Basics.IO
         /// </summary>
         /// <param name="fp"></param>
         /// <returns></returns>
-        public static StreamWriter OpenWrite(this FilePath fp, FileShare fileShare = FileShare.ReadWrite)
+        public static StreamWriter OpenWrite(this FilePath fp, FileMode fileMode = FileMode.OpenOrCreate, FileAccess fileAccess = FileAccess.ReadWrite, FileShare fileShare = FileShare.ReadWrite)
         {
-            return new StreamWriter(File.Open(fp.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite, fileShare));
+            return new StreamWriter(File.Open(fp.FullName, fileMode, fileAccess, fileShare));
         }
     }
 }
