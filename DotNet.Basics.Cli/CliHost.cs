@@ -86,7 +86,7 @@ namespace DotNet.Basics.Cli
             }
             finally
             {
-                await Log.CloseAndFlushAsync();
+                Log.CloseAndFlush();
             }
         }
 
