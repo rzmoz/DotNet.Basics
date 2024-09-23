@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using DotNet.Basics.Sys;
+using DotNet.Basics.Sys.Text;
 using FluentAssertions;
 using Xunit;
 
@@ -171,6 +172,18 @@ namespace DotNet.Basics.Tests.Sys
         {
             var replaced = orgString.Remove(removes);
             replaced.Should().Be(expected);
+        }
+
+        [Fact]
+        public void Remove_SysRegex_RemoveByRegex()
+        {
+            var orgString = "Hello World!";
+            SysRegex regex = @"o";
+
+            //act
+            var result = orgString.Remove(regex);
+
+            result.Should().Be("Hell Wrld!");
         }
 
         [Fact]

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using DotNet.Basics.Sys.Text;
 
 namespace DotNet.Basics.Sys
 {
@@ -169,6 +170,10 @@ namespace DotNet.Basics.Sys
                 originalString = originalString.Replace(remove, string.Empty, stringComparison);
 
             return originalString;
+        }
+        public static string Remove(this string originalString, SysRegex regex)
+        {
+            return regex.Remove(originalString);
         }
 
         public static string Replace(this string originalString, string oldValue, string newValue, StringComparison comparisonType)
