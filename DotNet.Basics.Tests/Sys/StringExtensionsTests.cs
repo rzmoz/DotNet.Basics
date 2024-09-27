@@ -150,6 +150,19 @@ namespace DotNet.Basics.Tests.Sys
             hashedString.Should().Be(expectedHash);
         }
 
+        [Fact]
+        public void Replace_ByIndexAndLength_SubstringIsReplaced()
+        {
+            //arrange
+            var input = "Hello World!";
+
+            //act
+            var trimmed = input.Replace(4, 5, "!");
+
+            //assert
+            trimmed.Should().Be("Hell!ld!");
+        }
+
         [Theory]
         [InlineData("xyz", "y", "!", "x!z")]//exclamation mark (special char
         [InlineData("1MyString", "1", "2", "2MyString")]//replacement in start

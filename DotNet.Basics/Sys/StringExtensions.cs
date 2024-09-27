@@ -176,6 +176,14 @@ namespace DotNet.Basics.Sys
             return regex.Remove(originalString);
         }
 
+        public static string Replace(this string text, int removeIndex, int removeLength, string replacement = "")
+        {
+            var output = text.Substring(0, removeIndex);
+            output += replacement;
+            output += text.Substring(removeIndex + removeLength);
+            return output;
+        }
+
         public static string Replace(this string originalString, string oldValue, string newValue, StringComparison comparisonType)
         {
             var startIndex = 0;
