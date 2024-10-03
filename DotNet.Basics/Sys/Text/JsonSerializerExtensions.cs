@@ -7,9 +7,11 @@ namespace DotNet.Basics.Sys.Text
 {
     public static class JsonSerializerExtensions
     {
-        private static JsonSerializerOptions GetJsonSerializerOptions(bool writeIndented) => new()
+        private static JsonSerializerOptions GetJsonSerializerOptions(bool writeIndented, JsonNamingPolicy jsonNamingPolicy) => new()
         {
             WriteIndented = writeIndented,
+            PropertyNamingPolicy = jsonNamingPolicy,
+            PropertyNameCaseInsensitive = true,
             Converters =
             {
                 new DirPathJsonConverter(),
@@ -26,19 +28,24 @@ namespace DotNet.Basics.Sys.Text
         }
         public static string ToJson<TValue>(this TValue value, bool writeIndented, Action<JsonSerializerOptions> options = null)
         {
-            var defOptions = GetJsonSerializerOptions(writeIndented);
+            return ToJson(value, writeIndented, JsonNamingPolicy.CamelCase, options);
+        }
+        public static string ToJson<TValue>(this TValue value, bool writeIndented, JsonNamingPolicy jsonNamingPolicy, Action<JsonSerializerOptions> options = null)
+        {
+            var defOptions = GetJsonSerializerOptions(writeIndented, jsonNamingPolicy);
             options?.Invoke(defOptions);
             return JsonSerializer.Serialize(value, defOptions);
         }
+
         public static TValue FromJson<TValue>(this string json, Action<JsonSerializerOptions> options = null)
         {
-            var defOptions = GetJsonSerializerOptions(false);
+            var defOptions = GetJsonSerializerOptions(false, JsonNamingPolicy.CamelCase);
             options?.Invoke(defOptions);
             return JsonSerializer.Deserialize<TValue>(json, defOptions);
         }
         public static TValue FromJsonStream<TValue>(this Stream jsonStream, Action<JsonSerializerOptions> options = null)
         {
-            var defOptions = GetJsonSerializerOptions(false);
+            var defOptions = GetJsonSerializerOptions(false, JsonNamingPolicy.CamelCase);
             options?.Invoke(defOptions);
             return JsonSerializer.Deserialize<TValue>(jsonStream, defOptions);
         }
