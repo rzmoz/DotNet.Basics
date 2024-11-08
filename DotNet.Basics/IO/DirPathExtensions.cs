@@ -47,7 +47,11 @@ namespace DotNet.Basics.IO
             {
                 var path = dir.FullName;
                 if (!PathInfo.IsWindowsRooted(path))
-                    path = path.RemovePrefix(Directory.GetCurrentDirectory()).TrimStart('/');
+                {
+                    path = path.RemovePrefix(Directory.GetCurrentDirectory());
+                    if (path != dir.FullName)
+                        path = path.RemovePrefix('/');
+                }
 
                 Directory.CreateDirectory(path);
             }

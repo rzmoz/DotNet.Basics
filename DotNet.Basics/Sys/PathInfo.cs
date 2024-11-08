@@ -50,7 +50,8 @@ namespace DotNet.Basics.Sys
                 RawPath = RawPath.EnsurePrefix(_uncDetector);
             else if (uriScheme != null)
                 RawPath = RawPath.RemovePrefix(uriScheme.TrimEnd('/')).TrimStart('/').EnsurePrefix(uriScheme);
-
+            if (Path.IsPathRooted(path))
+                RawPath = RawPath.EnsurePrefix(Slash);
 
             Parent = null;
             var parentSegments = Segments.Take(Segments.Count - 1).ToArray();
