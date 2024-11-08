@@ -2,37 +2,31 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using DotNet.Basics.IO;
+using DotNet.Basics.Sys.Text;
 
 namespace DotNet.Basics.Sys
 {
     public abstract class PathInfo
     {
+        private static readonly SysRegex _windowsRootPathRegex = @"^[a-zA-X]:";
         private const string _uriSchemePattern = @"^([a-zA-Z]+://)";
-        private static readonly Regex _uriSchemeRegex = new Regex(_uriSchemePattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        public const char Slash = '/';
+
+        private static readonly Regex _uriSchemeRegex =
+            new(_uriSchemePattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
         private const string _uncDetector = @"\\";
 
-        private static readonly char[] _separatorDetectors = { PathSeparator.Backslash, PathSeparator.Slash };
-
-        protected PathInfo(string path, params string[] segments)
-            : this(path, PathType.Unknown, segments)
-        { }
-
         protected PathInfo(string path, PathType pathType, params string[] segments)
-            : this(path, pathType, PathSeparator.Unknown, segments)
-        { }
-
-        protected PathInfo(string path, PathType pathType, char pathSeparator, params string[] segments)
         {
-            if (path == null)
-                path = string.Empty;
+            path ??= string.Empty;
 
             var flattened = Flatten(path, segments);
-
-            //detect path characteristics
-            Separator = pathSeparator != PathSeparator.Unknown ? pathSeparator : DetectPathSeparator(flattened);
 
             var isUnc = false;
             string uriScheme = null;
@@ -44,45 +38,47 @@ namespace DotNet.Basics.Sys
                 if (uriMatch.Success)
                     uriScheme = uriMatch.Groups[0].Value;
             }
+
             //Clean and tokenize segments
             Segments = Tokenize(flattened);
             PathType = pathType == PathType.Unknown ? DetectPathType(path, segments) : pathType;
 
             //Set raw path
-            RawPath = Flatten(PathType, flattened);
-            RawPath = OverridePathSeparator(RawPath, Separator);
+            RawPath = Flatten(flattened, Path.IsPathRooted(path));
+            RawPath = ConformPathSeparator(RawPath);
             if (isUnc)
                 RawPath = RawPath.EnsurePrefix(_uncDetector);
             else if (uriScheme != null)
                 RawPath = RawPath.RemovePrefix(uriScheme.TrimEnd('/')).TrimStart('/').EnsurePrefix(uriScheme);
 
+
+            Parent = null;
+            var parentSegments = Segments.Take(Segments.Count - 1).ToArray();
+            if (parentSegments.Any())
+            {
+                if (Path.IsPathRooted(path) && !_windowsRootPathRegex.IsMatch(path))
+                    Parent = new DirPath("/", parentSegments);
+                else
+                    Parent = new DirPath(null, parentSegments);
+            }
+
             //set name
-            Name = Path.GetFileName(RawPath.RemoveSuffix(Separator));
+            Name = Path.GetFileName(RawPath.RemoveSuffix(Slash));
         }
 
         public string RawPath { get; }
         public string Name { get; }
 
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public string NameWoExtension => Path.GetFileNameWithoutExtension(Name);
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public string Extension => Path.GetExtension(Name);
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public string FullName => Path.GetFullPath(RawPath);
+        [JsonIgnore] [IgnoreDataMember] public string NameWoExtension => Path.GetFileNameWithoutExtension(Name);
+        [JsonIgnore] [IgnoreDataMember] public string Extension => Path.GetExtension(Name);
+        [JsonIgnore] [IgnoreDataMember] public string FullName => Path.GetFullPath(RawPath);
 
         public PathType PathType { get; }
 
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public DirPath Parent => Segments.Count <= 1 ? null : new DirPath(null, Segments.Take(Segments.Count - 1).ToArray());
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public DirPath Directory => PathType == PathType.File ? Parent : (DirPath)this;
+        [JsonIgnore] [IgnoreDataMember] public DirPath Parent { get; }
 
-        public char Separator { get; }
+        [JsonIgnore] [IgnoreDataMember] public DirPath Directory => PathType == PathType.File ? Parent : (DirPath)this;
+
         public IReadOnlyCollection<string> Segments;
 
         public static List<string> Tokenize(ICollection<string> segments)
@@ -98,9 +94,9 @@ namespace DotNet.Basics.Sys
             if (string.IsNullOrWhiteSpace(path))
                 return Enumerable.Empty<string>();
 
-            path = OverridePathSeparator(path, PathSeparator.Backslash);
+            path = ConformPathSeparator(path);
 
-            return path.Split(new[] { PathSeparator.Backslash }, StringSplitOptions.RemoveEmptyEntries)
+            return path.Split(Slash, StringSplitOptions.RemoveEmptyEntries)
                 .Where(seg => string.IsNullOrWhiteSpace(seg) == false);
         }
 
@@ -108,30 +104,21 @@ namespace DotNet.Basics.Sys
         {
             var asOne = new List<string>();
             if (string.IsNullOrWhiteSpace(path) == false)
-                asOne.Add(path);
-            asOne.AddRange(segments.Where(seg => string.IsNullOrWhiteSpace(seg) == false));
+                asOne.Add(ConformPathSeparator(path));
+            asOne.AddRange(segments.Where(seg => string.IsNullOrWhiteSpace(seg) == false).Select(ConformPathSeparator));
             return asOne;
         }
 
-        public static string Flatten(PathType pathType, ICollection<string> segments)
+        public static string Flatten(ICollection<string> segments, bool isRooted)
         {
             var tokenized = Tokenize(segments);
-            var separator = DetectPathSeparator(tokenized);
-            var flattened = tokenized.JoinString(separator.ToString());
-            if (pathType == PathType.Dir)
-                flattened = flattened.EnsureSuffix(separator);
+            var flattened = tokenized.JoinString(Slash.ToString());
+
+            if (isRooted)
+                flattened = flattened.EnsurePrefix(Slash);
             return flattened;
         }
 
-        private static string OverridePathSeparator(string path, char separator)
-        {
-            //conform separators
-            path = path.Replace(PathSeparator.Slash, separator);
-            path = path.Replace(PathSeparator.Backslash, separator);
-            path = path.Replace(PathSeparator.Unknown, separator);
-
-            return path;
-        }
 
         public static PathType DetectPathType(string path, string[] segments)
         {
@@ -142,26 +129,19 @@ namespace DotNet.Basics.Sys
             if (lookingAt == null)
                 return PathType.Unknown;
 
-            if (lookingAt.EndsWith(PathSeparator.Backslash.ToString()) || lookingAt.EndsWith(PathSeparator.Slash.ToString()))
-                return PathType.Dir;
-            return PathType.File;
+            if (Path.GetExtension(lookingAt.TrimEnd(Slash)).Length > 0)
+                return PathType.File;
+            return lookingAt.EndsWith(Slash.ToString())
+                ? PathType.Dir
+                : PathType.File;
         }
 
-        private static char DetectPathSeparator(IEnumerable<string> segments)
+        public static string ConformPathSeparator(string path)
         {
-            //auto detect supported separators
-            foreach (var segment in segments)
-            {
-                if (segment == null)
-                    continue;
-                //first separator wins!
-                var separatorIndex = segment.IndexOfAny(_separatorDetectors);
-                if (separatorIndex >= 0)
-                    return segment[separatorIndex];
-            }
-
-            return PathSeparator.Backslash;//default
+            return path.Replace('\\', Slash);
         }
+
+        public static bool IsWindowsRooted(string path) => _windowsRootPathRegex.IsMatch(path);
 
         public override string ToString()
         {
@@ -170,7 +150,9 @@ namespace DotNet.Basics.Sys
 
         protected bool Equals(PathInfo other)
         {
-            return RawPath.Equals(other.RawPath, StringComparison.OrdinalIgnoreCase);//ignore case on comparison since we're mainly Windows. To bad (L)inux systems
+            return RawPath.Equals(other.RawPath,
+                StringComparison
+                    .OrdinalIgnoreCase); //ignore case on comparison since we're mainly Windows. To bad (L)inux systems
         }
 
         public override bool Equals(object obj)

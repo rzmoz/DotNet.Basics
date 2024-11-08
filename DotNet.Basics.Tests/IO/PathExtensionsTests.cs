@@ -9,7 +9,8 @@ namespace DotNet.Basics.Tests.IO
     public class PathExtensionsTests : TestWithHelpers
     {
         public PathExtensionsTests(ITestOutputHelper output) : base(output)
-        { }
+        {
+        }
 
         [Fact]
         public void ToPath_DirToDir_PathTypeIsSet()
@@ -59,7 +60,7 @@ namespace DotNet.Basics.Tests.IO
             ArrangeActAssertPaths(dir =>
             {
                 //arrange
-                var isFile= dir.ToFile("file.txt");
+                var isFile = dir.ToFile("file.txt");
 
                 //pre-assert
                 isFile.PathType.Should().Be(PathType.File);
@@ -122,17 +123,15 @@ namespace DotNet.Basics.Tests.IO
             ArrangeActAssertPaths(dir =>
             {
                 //arrange
-                var pathName = "FileWithTrailingSeparator.txt/";
-                pathName.ToFile().DeleteIfExists();
+                var fileNameWithTrialingSlash = "FileWithTrailingSeparator.txt/";
+                fileNameWithTrialingSlash.ToFile().DeleteIfExists();
                 //pre-assert
-                var rawPi = pathName.ToPath();
-                pathName.ToFile().WriteAllText("bla");
+                dir.ToFile(fileNameWithTrialingSlash).WriteAllText("bla");
 
                 //act
-                var pi = pathName.ToPath();
+                var pi = fileNameWithTrialingSlash.ToPath();
 
                 //assert
-                rawPi.PathType.Should().Be(PathType.Dir);
                 pi.PathType.Should().Be(PathType.File);
             });
         }

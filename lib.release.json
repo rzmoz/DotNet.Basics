@@ -5,14 +5,9 @@
   "releases": [
     {
       "name": "DotNet.Basics",
-      "version": "10.12.5",
+      "version": "11.0.0",
       "prerelease": ""
-    },
-    {
-      "name": "DotNet.Basics.Cli",
-      "version": "11.3.0",
-      "prerelease": ""
-    },
+    },    
     {
       "name": "DotNet.Basics.Pipelines",
       "version": "10.3.0",
@@ -22,12 +17,7 @@
       "name": "DotNet.Basics.Serilog",
       "version": "4.1.0",
       "prerelease": ""
-    },
-    {
-      "name": "DotNet.Basics.SevenZip",
-      "version": "23.01.1",
-      "prerelease": ""
-    }
+    }    
   ],
   "tests": [
     "DotNet.Basics.Tests"

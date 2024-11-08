@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.IO.Pipes;
 using System.Threading.Tasks;
 using DotNet.Basics.Sys;
 
@@ -8,17 +7,20 @@ namespace DotNet.Basics.IO
 {
     public static class FilePathExtensions
     {
-        public static bool MoveTo(this FilePath fp, DirPath targetDir, bool overwrite = false, bool ensureTargetDir = true)
+        public static bool MoveTo(this FilePath fp, DirPath targetDir, bool overwrite = false,
+            bool ensureTargetDir = true)
         {
             return fp.MoveTo(targetDir.ToFile(fp.Name), overwrite, ensureTargetDir);
         }
 
-        public static bool MoveTo(this FilePath fp, string targetFile, bool overwrite = false, bool ensureTargetDir = true)
+        public static bool MoveTo(this FilePath fp, string targetFile, bool overwrite = false,
+            bool ensureTargetDir = true)
         {
             return fp.MoveTo(targetFile.ToFile(), overwrite, ensureTargetDir);
         }
 
-        public static bool MoveTo(this FilePath fp, FilePath targetFile, bool overwrite = false, bool ensureTargetDir = true)
+        public static bool MoveTo(this FilePath fp, FilePath targetFile, bool overwrite = false,
+            bool ensureTargetDir = true)
         {
             if (ensureTargetDir)
                 targetFile.Directory().CreateIfNotExists();
@@ -29,17 +31,20 @@ namespace DotNet.Basics.IO
             return targetFile.Exists();
         }
 
-        public static void CopyTo(this FilePath fp, DirPath targetDir, bool overwrite = false, bool ensureTargetDir = true)
+        public static void CopyTo(this FilePath fp, DirPath targetDir, bool overwrite = false,
+            bool ensureTargetDir = true)
         {
             fp.CopyTo(targetDir.ToFile(fp.Name), overwrite, ensureTargetDir);
         }
 
-        public static void CopyTo(this FilePath fp, DirPath targetDir, string newFileName, bool overwrite = false, bool ensureTargetDir = true)
+        public static void CopyTo(this FilePath fp, DirPath targetDir, string newFileName, bool overwrite = false,
+            bool ensureTargetDir = true)
         {
             fp.CopyTo(targetDir.ToFile(newFileName), overwrite, ensureTargetDir);
         }
 
-        public static void CopyTo(this FilePath fp, FilePath target, bool overwrite = false, bool ensureTargetDir = true)
+        public static void CopyTo(this FilePath fp, FilePath target, bool overwrite = false,
+            bool ensureTargetDir = true)
         {
             if (fp == null) throw new ArgumentNullException(nameof(fp));
             if (target == null) throw new ArgumentNullException(nameof(target));
@@ -55,13 +60,15 @@ namespace DotNet.Basics.IO
         public static FilePath WriteAllText(this FilePath fp, string content, bool overwrite = true)
         {
             if (overwrite == false && fp.Exists())
-                throw new IOException($"Target file already exists. Set overwrite to true to ignore existing file: {fp.FullName}");
+                throw new IOException(
+                    $"Target file already exists. Set overwrite to true to ignore existing file: {fp.FullName}");
 
-            fp.Directory().CreateIfNotExists();
             fp.DeleteIfExists();
-            File.WriteAllText(fp.FullName, content ?? string.Empty);
+            using var writer = OpenWrite(fp);
+            writer.Write(content ?? string.Empty);
             return fp;
         }
+
         public static byte[] ReadAllBytes(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
         {
             try
@@ -78,6 +85,7 @@ namespace DotNet.Basics.IO
                 if (ifNotExists == IfNotExists.ThrowIoException)
                     throw;
             }
+
             return null;
         }
 
@@ -87,7 +95,8 @@ namespace DotNet.Basics.IO
             return reader?.ReadToEnd();
         }
 
-        public static async Task<string> ReadAllTextAsync(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
+        public static async Task<string> ReadAllTextAsync(this FilePath fp,
+            IfNotExists ifNotExists = IfNotExists.ThrowIoException)
         {
             using var reader = fp.OpenRead(ifNotExists, FileShare.ReadWrite | FileShare.Delete);
             return await reader.ReadToEndAsync();
@@ -97,21 +106,27 @@ namespace DotNet.Basics.IO
         {
             try
             {
-                return File.Create(fp.FullName);
+                fp.Directory.CreateIfNotExists();
+                return File.Open(fp.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite,
+                    FileShare.ReadWrite | FileShare.Delete);
             }
             catch (DirectoryNotFoundException)
             {
                 if (ifNotExists == IfNotExists.ThrowIoException)
                     throw;
             }
+
             catch (FileNotFoundException)
             {
                 if (ifNotExists == IfNotExists.ThrowIoException)
                     throw;
             }
+
             return null;
         }
-        public static FileStream Create(this FilePath fp, Stream content, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
+
+        public static FileStream Create(this FilePath fp, Stream content,
+            IfNotExists ifNotExists = IfNotExists.ThrowIoException)
         {
             var fileStream = Create(fp, ifNotExists);
             content.CopyTo(fileStream);
@@ -119,7 +134,8 @@ namespace DotNet.Basics.IO
             return fileStream;
         }
 
-        public static StreamReader OpenRead(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException, FileShare fileShare = FileShare.ReadWrite)
+        public static StreamReader OpenRead(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException,
+            FileShare fileShare = FileShare.ReadWrite)
         {
             try
             {
@@ -135,6 +151,7 @@ namespace DotNet.Basics.IO
                 if (ifNotExists == IfNotExists.ThrowIoException)
                     throw;
             }
+
             return null;
         }
 
@@ -142,10 +159,17 @@ namespace DotNet.Basics.IO
         /// Opens an existing file or creates a new file for writing.
         /// </summary>
         /// <param name="fp"></param>
+        /// <param name="fileMode"></param>
+        /// <param name="fileAccess"></param>
+        /// <param name="fileShare"></param>
         /// <returns></returns>
-        public static StreamWriter OpenWrite(this FilePath fp, FileMode fileMode = FileMode.OpenOrCreate, FileAccess fileAccess = FileAccess.ReadWrite, FileShare fileShare = FileShare.ReadWrite)
+        public static StreamWriter OpenWrite(this FilePath fp, FileMode fileMode = FileMode.OpenOrCreate,
+            FileAccess fileAccess = FileAccess.ReadWrite, FileShare fileShare = FileShare.ReadWrite)
         {
-            return new StreamWriter(File.Open(fp.FullName, fileMode, fileAccess, fileShare));
+            var fileStream = fp.Exists()
+                ? File.Open(fp.FullName, fileMode, fileAccess, fileShare)
+                : Create(fp);
+            return new StreamWriter(fileStream);
         }
     }
 }

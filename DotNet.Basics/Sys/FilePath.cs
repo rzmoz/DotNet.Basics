@@ -1,15 +1,8 @@
 ﻿namespace DotNet.Basics.Sys
 {
-    public class FilePath : PathInfo
+    public class FilePath(string path, params string[] segments)
+        : PathInfo(path, PathType.File, segments)
     {
-        public FilePath(string path, params string[] segments)
-            : this(path, PathSeparator.Unknown, segments)
-        { }
-
-        public FilePath(string path, char pathSeparator, params string[] segments)
-            : base(path, PathType.File, pathSeparator, segments)
-        { }
-
         public static explicit operator FilePath(string s)
         {
             return new FilePath(s);

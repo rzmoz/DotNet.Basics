@@ -17,12 +17,16 @@ namespace DotNet.Basics.Tests.IO
         {
             await WithTestRootAsync(async dir =>
             {
-                var expectedText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\r\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\r\n";
+                var expectedText =
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\r\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\r\n";
 
                 var testFile = dir.ToFile(Guid.NewGuid().ToString());
                 await using var textStream = expectedText.ToStream();
                 {
-                    await using var fileStream = testFile.Create(textStream);//ensure this code is executed in a separate block from read to ensure proper disposal of write operation
+                    await using var
+                        fileStream =
+                            testFile.Create(
+                                textStream); //ensure this code is executed in a separate block from read to ensure proper disposal of write operation
                 }
 
                 var observedText = await testFile.OpenRead().ReadToEndAsync();
@@ -39,6 +43,7 @@ namespace DotNet.Basics.Tests.IO
 
             actual.Should().BeNull();
         }
+
         [Fact]
         public void ToFile_PathIsEmpty_NullIsReturned()
         {
@@ -75,7 +80,6 @@ namespace DotNet.Basics.Tests.IO
                     testDir.ToFile(testFile1.Name).Exists().Should().BeFalse();
                 }
             });
-
         }
 
         [Theory]
@@ -88,11 +92,11 @@ namespace DotNet.Basics.Tests.IO
                 var testDir = dir.Add($"{overwrite}");
                 var targetFile = testDir.ToFile("myFile.txt");
                 targetFile.WriteAllText("blaaah!");
-                targetFile.ReadAllText().Should().Be("blaaah!");//assert target file exists
+                targetFile.ReadAllText().Should().Be("blaaah!"); //assert target file exists
 
                 TestFile1 testFile1 = null;
                 WithTestRoot(testRoot => testFile1 = new TestFile1(testRoot));
-                testFile1.CopyTo(testDir, targetFile.Name, true);//ensure file exists in target
+                testFile1.CopyTo(testDir, targetFile.Name, true); //ensure file exists in target
 
                 Action action = () => testFile1.CopyTo(targetFile, overwrite);
 
@@ -126,30 +130,31 @@ namespace DotNet.Basics.Tests.IO
                 sourceFile.Exists().Should().BeFalse("Source file after move");
                 tagetFile.Exists().Should().BeTrue("Target file after move");
             });
-
         }
 
         [Fact]
-        public void ReadAllBytes_ReadBytes_BytesAreREad()
+        public void ReadAllBytes_ReadBytes_BytesAreRead()
         {
             ArrangeActAssertPaths(testDir =>
             {
-                TestFile1 testFile = new TestFile1(testDir);
-
+                var testFile = new TestFile1(testDir);
+                testFile.Exists().Should().BeFalse();
+                testFile.WriteAllText("Hello World!");
                 var bytes = testFile.ReadAllBytes();
                 var content = System.Text.Encoding.UTF8.GetString(bytes);
                 content.Should().EndWithEquivalentOf("Hello World!");
             });
         }
+
         [Fact]
         public void ReadAllTextThrowIfNotExists_SilenceWhenDirNotFound_NullIsReturned()
         {
             ArrangeActAssertPaths(testDir =>
-                {
-                    var file = testDir.ToFile("NotFOund.asd");
-                    var content = file.ReadAllText(IfNotExists.Mute);
-                    content.Should().BeNull();
-                });
+            {
+                var file = testDir.ToFile("NotFOund.asd");
+                var content = file.ReadAllText(IfNotExists.Mute);
+                content.Should().BeNull();
+            });
         }
 
         [Fact]
@@ -160,18 +165,20 @@ namespace DotNet.Basics.Tests.IO
                 var file = testDir.ToFile("NotFOund.asd");
                 var content = Lorem.Ipsum(25);
                 file.WriteAllText(content);
-                
+
                 var contentFromDisk = file.ReadAllTextAsync().Result;
-                
+
                 contentFromDisk.Should().Be(content);
             });
         }
+
         [Fact]
         public void ReadAllTextThrowIfNotExists_SilenceWhenFileNotFound_NullIsReturned()
         {
             ArrangeActAssertPaths(testDir =>
             {
-                var file = testDir.ToFile(@"ReadAllTextThrowIfNotExists_SilenceWhenFileNotFound_NullIsReturned", "NotFOund.asd");
+                var file = testDir.ToFile(@"ReadAllTextThrowIfNotExists_SilenceWhenFileNotFound_NullIsReturned",
+                    "NotFOund.asd");
                 file.Directory().CreateIfNotExists();
                 var content = file.ReadAllText(IfNotExists.Mute);
                 content.Should().BeNull();
@@ -187,14 +194,14 @@ namespace DotNet.Basics.Tests.IO
                 Action action = () => file.ReadAllText();
                 action.Should().Throw<DirectoryNotFoundException>();
             });
-
         }
+
         [Fact]
         public void ReadAllTextThrowIfNotExists_ThrowWhenFileNotFound_ExceptionIsThrown()
         {
             ArrangeActAssertPaths(testDir =>
             {
-                var file = testDir.ToFile("NotFOundxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.asd");
+                var file = testDir.ToFile("NotFOundxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.txt");
                 file.Directory().CreateIfNotExists();
                 Action action = () => file.ReadAllText();
                 action.Should().Throw<FileNotFoundException>();
@@ -256,7 +263,9 @@ namespace DotNet.Basics.Tests.IO
                 //act
                 Action action = () => targetFile.WriteAllText(@"random", overwrite: false);
 
-                action.Should().Throw<IOException>().WithMessage($"Target file already exists. Set overwrite to true to ignore existing file: {targetFile.FullName}");
+                action.Should().Throw<IOException>()
+                    .WithMessage(
+                        $"Target file already exists. Set overwrite to true to ignore existing file: {targetFile.FullName}");
             });
         }
 
@@ -288,20 +297,21 @@ namespace DotNet.Basics.Tests.IO
             const string fileName = "myFile.temp";
             var sourceFile = fileName.ToFile();
 
-            var targetDir = @"c:\MyPath".ToDir("subfolder1", "subfolder2");
+            var targetDir = @"\MyPath".ToDir("subfolder1", "subfolder2");
             var targetfile = targetDir.ToFile(sourceFile.Name);
 
-            targetfile.FullName.Should().Be(@"c:\MyPath\subfolder1\subfolder2\" + fileName);
+            targetfile.FullName.Should().EndWith(@"/MyPath/subfolder1/subfolder2/" + fileName);
         }
+
         [Fact]
         public void ToTargetFile_SingleDirCombine_TargetFileHasNewDir()
         {
-            const string fileName = @"c:\Something\myFile.temp";
+            const string fileName = @"/Something\myFile.temp";
             var sourceFile = fileName.ToFile();
 
-            var targetfile = @"c:\MyPath".ToFile(sourceFile.Name);
+            var targetfile = @"\MyPath".ToFile(sourceFile.Name);
 
-            targetfile.FullName.Should().Be(@"c:\MyPath\myFile.temp");
+            targetfile.FullName.Should().EndWith(@"/MyPath/myFile.temp");
         }
     }
 }

@@ -12,7 +12,8 @@ namespace DotNet.Basics.Tests.IO
     public class DirPathExtensionsTests : TestWithHelpers
     {
         public DirPathExtensionsTests(ITestOutputHelper output) : base(output)
-        { }
+        {
+        }
 
         [Fact]
         public void SearchOption_SubDirs_OptionsAreObeyed()
@@ -63,6 +64,7 @@ namespace DotNet.Basics.Tests.IO
 
             actual.Should().BeNull();
         }
+
         [Fact]
         public void ToDir_PathIsEmpty_NullIsReturned()
         {
@@ -76,16 +78,16 @@ namespace DotNet.Basics.Tests.IO
         [Fact]
         public void ToDir_CombineToDir_FullNameIsCorrect()
         {
-            var _testDirRoot = @"K:\testDir";
-            var _testDoubleDir = @"\testa\testb";
+            var testDirRoot = @"/testDir";
+            var testDoubleDir = @"/testa/testb";
 
-            var actual = _testDirRoot.ToDir(_testDoubleDir);
-            var expected = _testDirRoot + _testDoubleDir + actual.Separator;
-            actual.FullName.Should().Be(expected);
+            var actual = testDirRoot.ToDir(testDoubleDir);
+            var expected = testDirRoot + testDoubleDir;
+            actual.RawPath.Should().Be(expected);
 
-            actual = @"c:\BuildLibrary\Dir\Module 2.0.1".ToDir("Website");
-            expected = @"c:\BuildLibrary\Dir\Module 2.0.1\Website\";
-            actual.FullName.Should().Be(expected);
+            actual = @"/BuildLibrary/Dir/Module 2.0.1".ToDir("Website");
+            expected = @"/BuildLibrary/Dir/Module 2.0.1/Website";
+            actual.RawPath.Should().Be(expected);
         }
 
         [Fact]
@@ -95,8 +97,8 @@ namespace DotNet.Basics.Tests.IO
             {
                 //arrange
                 var subFolder = testDir.Add("my-sub-folder");
-                
-                subFolder.Exists().Should().BeFalse();//not created yet
+
+                subFolder.Exists().Should().BeFalse(); //not created yet
 
                 //act
                 testDir.CreateIfNotExists(subFolder.Name);
@@ -147,6 +149,7 @@ namespace DotNet.Basics.Tests.IO
                 testDir.GetFiles().Count.Should().Be(1);
             });
         }
+
         [Fact]
         public void CleanIfExists_DirDoesntExists_NoActionAndNoExceptions()
         {
@@ -161,8 +164,8 @@ namespace DotNet.Basics.Tests.IO
                 //assert
                 dirThatDoesntExists.Exists().Should().BeFalse();
             });
-
         }
+
         [Fact]
         public void CleanIfExists_RemoveAllContentFromADir_DirIsCleaned()
         {
@@ -212,6 +215,7 @@ namespace DotNet.Basics.Tests.IO
                 testFolder.CreateIfNotExists();
                 testFolder.ToFile($"blaa{i}.txt").WriteAllText("blaaa");
             }
+
             for (var i = 0; i < numOfTestFiles; i++)
                 dir.ToFile($"myFile{i}.txt").WriteAllText("blaaaaa");
         }

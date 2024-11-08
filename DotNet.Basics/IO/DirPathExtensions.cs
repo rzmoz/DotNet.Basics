@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Collections;
@@ -43,7 +44,13 @@ namespace DotNet.Basics.IO
         {
             var dir = dp.Add(subFolders);
             if (dir.Exists() == false)
-                Directory.CreateDirectory(dir.FullName);
+            {
+                var path = dir.FullName;
+                if (!PathInfo.IsWindowsRooted(path))
+                    path = path.RemovePrefix(Directory.GetCurrentDirectory()).TrimStart('/');
+
+                Directory.CreateDirectory(path);
+            }
 
             return dir;
         }
@@ -68,57 +75,62 @@ namespace DotNet.Basics.IO
                 return;
 
             if (targetPath.StartsWith(sourcePath))
-                throw new IOException($"Target path is a sub path of Source path. Target: {targetPath} | Source: {sourcePath}");
+                throw new IOException(
+                    $"Target path is a sub path of Source path. Target: {targetPath} | Source: {sourcePath}");
 
-            try
+            target.CreateIfNotExists();
+
+            if (includeSubfolders)
             {
-                target.CreateIfNotExists();
-
-                if (includeSubfolders)
+                Parallel.ForEach(dp.GetDirectories(), dir =>
                 {
-                    Parallel.ForEach(dp.GetDirectories(), dir =>
-                    {
-                        var nextTargetSubDir = target.ToDir(dir.Name);
-                        nextTargetSubDir.CreateIfNotExists();
-                        dir.CopyTo(nextTargetSubDir, true);
-                    });
-                }
-
-                Parallel.ForEach(dp.EnumerateFiles(), file =>
-                {
-                    file.CopyTo(target, overwrite: true, ensureTargetDir: false);
+                    var nextTargetSubDir = target.ToDir(dir.Name);
+                    nextTargetSubDir.CreateIfNotExists();
+                    dir.CopyTo(nextTargetSubDir, true);
                 });
             }
-            catch (Exception)
-            {
-                //switching to more robust copying if something fails
-                Robocopy.CopyDir(dp.FullName, target.FullName, includeSubFolders: includeSubfolders);
-            }
+
+            Parallel.ForEach(dp.EnumerateFiles(),
+                file => { file.CopyTo(target, overwrite: true, ensureTargetDir: false); });
         }
 
-        public static IReadOnlyCollection<DirPath> GetDirectories(this DirPath dp, string searchPattern = null, SearchOption searchOption = SearchOption.TopDirectoryOnly)
+        public static IReadOnlyCollection<DirPath> GetDirectories(this DirPath dp, string searchPattern = null,
+            SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             return dp.EnumerateDirectories(searchPattern ?? "*", searchOption).ToArray();
         }
-        public static IReadOnlyCollection<FilePath> GetFiles(this DirPath dp, string searchPattern = null, SearchOption searchOption = SearchOption.TopDirectoryOnly)
+
+        public static IReadOnlyCollection<FilePath> GetFiles(this DirPath dp, string searchPattern = null,
+            SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             return dp.EnumerateFiles(searchPattern ?? "*", searchOption).ToArray();
         }
-        public static IReadOnlyCollection<PathInfo> GetPaths(this DirPath dp, string searchPattern = null, SearchOption searchOption = SearchOption.TopDirectoryOnly)
+
+        public static IReadOnlyCollection<PathInfo> GetPaths(this DirPath dp, string searchPattern = null,
+            SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             return dp.EnumeratePaths(searchPattern ?? "*", searchOption).ToArray();
         }
-        public static IEnumerable<DirPath> EnumerateDirectories(this DirPath dp, string searchPattern = null, SearchOption searchOption = SearchOption.TopDirectoryOnly)
+
+        public static IEnumerable<DirPath> EnumerateDirectories(this DirPath dp, string searchPattern = null,
+            SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
-            return Directory.EnumerateDirectories(dp.FullName, searchPattern ?? "*", searchOption).Select(dir => dir.ToDir());
+            return Directory.EnumerateDirectories(dp.FullName, searchPattern ?? "*", searchOption)
+                .Select(dir => dir.ToDir());
         }
-        public static IEnumerable<FilePath> EnumerateFiles(this DirPath dp, string searchPattern = null, SearchOption searchOption = SearchOption.TopDirectoryOnly)
+
+        public static IEnumerable<FilePath> EnumerateFiles(this DirPath dp, string searchPattern = null,
+            SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
-            return Directory.EnumerateFiles(dp.FullName, searchPattern ?? "*", searchOption).Select(file => file.ToFile());
+            return Directory.EnumerateFiles(dp.FullName, searchPattern ?? "*", searchOption)
+                .Select(file => file.ToFile());
         }
-        public static IEnumerable<PathInfo> EnumeratePaths(this DirPath dp, string searchPattern = null, SearchOption searchOption = SearchOption.TopDirectoryOnly)
+
+        public static IEnumerable<PathInfo> EnumeratePaths(this DirPath dp, string searchPattern = null,
+            SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
-            return Directory.EnumerateFileSystemEntries(dp.FullName, searchPattern ?? "*", searchOption).Select(fse => fse.ToPath());
+            return Directory.EnumerateFileSystemEntries(dp.FullName, searchPattern ?? "*", searchOption)
+                .Select(fse => fse.ToPath());
         }
     }
 }

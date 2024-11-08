@@ -9,7 +9,7 @@ namespace DotNet.Basics.Tests.Sys
 {
     public class FilePathTests
     {
-        private const string _path = "c:/mypath";
+        private const string _path = "/mypath";
         private const string _segment = "segment";
 
         public FilePath FilePath { get; set; }//Used for deserialization test
@@ -45,7 +45,7 @@ namespace DotNet.Basics.Tests.Sys
         [Fact]
         public void Deserialization_StringToFilPath_StringIsDeserialized()
         {
-            var fileStr = "lorem/ipsum";
+            var fileStr = "/lorem/ipsum";
             var obj = JsonConvert.DeserializeObject<FilePathTests>($"{{'{nameof(FilePath)}':'{fileStr}'}}");
             obj.FilePath.RawPath.Should().Be(fileStr);
         }
@@ -69,9 +69,9 @@ namespace DotNet.Basics.Tests.Sys
         }
 
         [Theory]
-        [InlineData("SomeDir\\MyFile.txt", "MyFile")]//has extension
-        [InlineData("SomeDir\\MyFile", "MyFile")]//no extension
-        [InlineData("SomeDir\\.txt", "")]//only extension
+        [InlineData("SomeDir/MyFile.txt", "MyFile")]//has extension
+        [InlineData("SomeDir/MyFile", "MyFile")]//no extension
+        [InlineData("SomeDir/.txt", "")]//only extension
         public void NameWoExtension_WithoutExtension_NameIsRight(string name, string nameWoExtensions)
         {
             var file = name.ToFile();
@@ -79,9 +79,9 @@ namespace DotNet.Basics.Tests.Sys
         }
 
         [Theory]
-        [InlineData("SomeDir\\MyFile.txt", ".txt")]//has extension
-        [InlineData("SomeDir\\MyFile", "")]//no extension
-        [InlineData("SomeDir\\.txt", ".txt")]//only extension
+        [InlineData("SomeDir/MyFile.txt", ".txt")]//has extension
+        [InlineData("SomeDir/MyFile", "")]//no extension
+        [InlineData("SomeDir/.txt", ".txt")]//only extension
         public void Extension_Extension_ExtensionsIsRight(string name, string extension)
         {
             var file = name.ToFile();

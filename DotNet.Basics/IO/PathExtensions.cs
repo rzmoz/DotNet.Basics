@@ -13,20 +13,13 @@ namespace DotNet.Basics.IO
 
         public static PathInfo ToPath(this string path, PathType pathType, params string[] segments)
         {
-            return path.ToPath(pathType, PathSeparator.Unknown, segments);
-        }
-
-        public static PathInfo ToPath(this string path, char pathSeparator, params string[] segments)
-        {
-            return path.ToPath(PathType.Unknown, pathSeparator, segments);
-        }
-
-        public static PathInfo ToPath(this string path, PathType pathType, char pathSeparator, params string[] segments)
-        {
             if (pathType == PathType.Unknown)
             {
+                path = PathInfo.ConformPathSeparator(path);
+                var root = path.TrimStart().StartsWith(PathInfo.Slash);
+
                 var flattened = PathInfo.Flatten(path, segments);
-                var cleanedSegments = PathInfo.Flatten(pathType, flattened);
+                var cleanedSegments = PathInfo.Flatten(flattened, root);
                 if (string.IsNullOrWhiteSpace(cleanedSegments) == false)
                 {
                     var fullName = Path.GetFullPath(cleanedSegments);
@@ -40,8 +33,8 @@ namespace DotNet.Basics.IO
             }
 
             return pathType == PathType.Dir
-                ? path.ToDir(pathSeparator, segments)
-                : path.ToFile(pathSeparator, segments) as PathInfo;
+                ? path.ToDir(segments)
+                : path.ToFile(segments);
         }
 
         public static PathInfo ToPath(this PathInfo pi, PathType pathType, params string[] segments)
@@ -53,11 +46,6 @@ namespace DotNet.Basics.IO
         public static T Add<T>(this T pi, params string[] segments) where T : PathInfo
         {
             return pi.RawPath.ToPath(pi.PathType, segments) as T;
-        }
-
-        public static bool IsRooted(this PathInfo pi)
-        {
-            return Path.IsPathRooted(pi.RawPath);
         }
     }
 }
