@@ -22,7 +22,7 @@ namespace DotNet.Basics.Sys.Text
         public string Replace(string input, string replacement) => Regex.Replace(input, replacement);
         public string Replace(string input, MatchEvaluator evaluator) => Regex.Replace(input, evaluator);
         public string Remove(string input) => Regex.Replace(input, string.Empty);
-
+        
         public static implicit operator SysRegex(string pattern)
         {
             return new SysRegex(pattern ?? throw new ArgumentNullException(nameof(pattern)));

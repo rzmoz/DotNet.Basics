@@ -34,7 +34,6 @@ namespace DotNet.Basics.Tests.Sys.Text
         [Fact]
         public void TryMatch_NoMatch_FallbackValueIsReturned()
         {
-            
             //arrange
             var fallbackValue = "§§123123123§§";
             SysRegex regex = "this pattern is not found in lorem ipsum text";
@@ -46,6 +45,7 @@ namespace DotNet.Basics.Tests.Sys.Text
             isMatch.Should().BeFalse();
             match.Should().Be(fallbackValue);
         }
+
         [Fact]
         public void TryMatch_GroupNumber_SpecifiedGroupNumberIsReturned()
         {
@@ -76,7 +76,6 @@ namespace DotNet.Basics.Tests.Sys.Text
         [Fact]
         public void Match_NoMatch_FallbackValueIsReturned()
         {
-            
             //arrange
             var fallbackValue = "§§123123123§§";
             SysRegex regex = "this pattern is not found in lorem ipsum text";
@@ -87,6 +86,7 @@ namespace DotNet.Basics.Tests.Sys.Text
             //assert
             matchValue.Should().Be(fallbackValue);
         }
+
         [Fact]
         public void Match_GroupNumber_SpecifiedGroupNumberIsReturned()
         {
@@ -131,7 +131,6 @@ namespace DotNet.Basics.Tests.Sys.Text
         [Fact]
         public void Replace_StringReplacement_MatchIsReplaced()
         {
-
             //arrange
             var replacement = "ice-cream";
             SysRegex regex = "Lorem";
@@ -142,11 +141,12 @@ namespace DotNet.Basics.Tests.Sys.Text
             //assert
             result.Should().Be(replacement + " ipsum odor amet, consectetuer adipiscing elit.");
         }
+
         [Fact]
         public void Remove_RemovesEntireMatches_RemoveIsRemoved()
         {
             //arrange
-            
+
             SysRegex regex = " ipsum (odor) amet";
 
             //act
@@ -154,6 +154,21 @@ namespace DotNet.Basics.Tests.Sys.Text
 
             //assert
             result.Should().Be("Lorem, consectetuer adipiscing elit.");
+        }
+
+        [Fact]
+        public void Remove_MultipleRegexes_AlleRegexesAreInvokedInOrder()
+        {
+            //arrange
+            SysRegex[] regexes = ["ip", "o", @"[0-9a]*"];
+
+            var input = "ips1um (odor) amet234876234872634876234";
+
+            //act
+            var result = input.Remove(regexes);
+
+            //assert
+            result.Should().Be("sum (dr) met");
         }
     }
 }
