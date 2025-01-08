@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
@@ -50,14 +49,12 @@ namespace DotNet.Basics.Sys
                 RawPath = RawPath.EnsurePrefix(_uncDetector);
             else if (uriScheme != null)
                 RawPath = RawPath.RemovePrefix(uriScheme.TrimEnd('/')).TrimStart('/').EnsurePrefix(uriScheme);
-            if (Path.IsPathRooted(path))
-                RawPath = RawPath.EnsurePrefix(Slash);
-
+            
             Parent = null;
             var parentSegments = Segments.Take(Segments.Count - 1).ToArray();
             if (parentSegments.Any())
             {
-                if (Path.IsPathRooted(path) && !_windowsRootPathRegex.IsMatch(path))
+                if (Path.IsPathRooted(path) && !_windowsRootPathRegex.Test(path))
                     Parent = new DirPath("/", parentSegments);
                 else
                     Parent = new DirPath(null, parentSegments);
@@ -70,15 +67,15 @@ namespace DotNet.Basics.Sys
         public string RawPath { get; }
         public string Name { get; }
 
-        [JsonIgnore] [IgnoreDataMember] public string NameWoExtension => Path.GetFileNameWithoutExtension(Name);
-        [JsonIgnore] [IgnoreDataMember] public string Extension => Path.GetExtension(Name);
-        [JsonIgnore] [IgnoreDataMember] public string FullName => Path.GetFullPath(RawPath);
+        [JsonIgnore][IgnoreDataMember] public string NameWoExtension => Path.GetFileNameWithoutExtension(Name);
+        [JsonIgnore][IgnoreDataMember] public string Extension => Path.GetExtension(Name);
+        [JsonIgnore][IgnoreDataMember] public string FullName => ConformPathSeparator(Path.GetFullPath(RawPath));
 
         public PathType PathType { get; }
 
-        [JsonIgnore] [IgnoreDataMember] public DirPath Parent { get; }
+        [JsonIgnore][IgnoreDataMember] public DirPath Parent { get; }
 
-        [JsonIgnore] [IgnoreDataMember] public DirPath Directory => PathType == PathType.File ? Parent : (DirPath)this;
+        [JsonIgnore][IgnoreDataMember] public DirPath Directory => PathType == PathType.File ? Parent : (DirPath)this;
 
         public IReadOnlyCollection<string> Segments;
 
@@ -115,8 +112,15 @@ namespace DotNet.Basics.Sys
             var tokenized = Tokenize(segments);
             var flattened = tokenized.JoinString(Slash.ToString());
 
-            if (isRooted)
-                flattened = flattened.EnsurePrefix(Slash);
+            switch (isRooted)
+            {
+                case true when segments.First().Contains(":"):
+                    flattened = flattened.RemovePrefix(Slash);
+                    break;
+                case true:
+                    flattened = flattened.EnsurePrefix(Slash);
+                    break;
+            }
             return flattened;
         }
 
@@ -142,7 +146,7 @@ namespace DotNet.Basics.Sys
             return path.Replace('\\', Slash);
         }
 
-        public static bool IsWindowsRooted(string path) => _windowsRootPathRegex.IsMatch(path);
+        public static bool IsWindowsRooted(string path) => _windowsRootPathRegex.Test(path);
 
         public override string ToString()
         {
@@ -154,6 +158,15 @@ namespace DotNet.Basics.Sys
             return RawPath.Equals(other.RawPath,
                 StringComparison
                     .OrdinalIgnoreCase); //ignore case on comparison since we're mainly Windows. To bad (L)inux systems
+        }
+
+        public static implicit operator PathInfo(string s)
+        {
+            return s.ToPath();
+        }
+        public static implicit operator string(PathInfo p)
+        {
+            return p.RawPath;
         }
 
         public override bool Equals(object obj)

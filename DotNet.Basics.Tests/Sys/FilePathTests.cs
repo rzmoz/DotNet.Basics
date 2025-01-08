@@ -15,11 +15,12 @@ namespace DotNet.Basics.Tests.Sys
         public FilePath FilePath { get; set; }//Used for deserialization test
 
         [Fact]
-        public void ExplicitCast_FromString_StringIsCastToFilePath()
+        public void ImplicitCast_FromString_StringIsCastToFilePath()
         {
             var fileStr = "lorem/ipsum";
-            var filePath = (FilePath)fileStr;
+            FilePath filePath = fileStr;//compiles
             filePath.RawPath.Should().Be(fileStr);
+            fileStr.Should().Be(filePath);
         }
 
         [Fact]

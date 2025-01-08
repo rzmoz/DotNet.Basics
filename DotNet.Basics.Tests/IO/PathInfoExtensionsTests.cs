@@ -107,7 +107,7 @@ namespace DotNet.Basics.Tests.IO
         {
             var relativePath = "GetFullPath_CallSystemIo_PathsAreIdentical";
 
-            var systemDotIoDotPath = Path.GetFullPath(relativePath);
+            var systemDotIoDotPath = Path.GetFullPath(relativePath).Replace("\\","/");
             var systemIoPath = relativePath.ToPath().FullName;
 
             systemIoPath.Should().Be(systemDotIoDotPath);

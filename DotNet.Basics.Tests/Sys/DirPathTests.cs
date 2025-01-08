@@ -19,11 +19,12 @@ namespace DotNet.Basics.Tests.Sys
         public DirPath DirPath { get; set; }//Used for deserialization test
 
         [Fact]
-        public void ExplicitCast_FromString_StringIsCast()
+        public void ImplicitCast_FromString_StringIsCast()
         {
             var dirStr = "/lorem/ipsum/";
-            var dirPath = (DirPath)dirStr;
+            DirPath dirPath = dirStr;//compiles
             dirPath.RawPath.Should().Be(dirStr.TrimEnd('/'));
+            dirStr.TrimEnd('/').Should().Be(dirPath);
         }
 
         [Fact]

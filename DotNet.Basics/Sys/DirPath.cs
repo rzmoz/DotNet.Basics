@@ -2,9 +2,13 @@
 {
     public class DirPath(string path, params string[] segments) : PathInfo(path, PathType.Dir, segments)
     {
-        public static explicit operator DirPath(string s)
+        public static implicit operator DirPath(string s)
         {
             return new DirPath(s);
+        }
+        public static implicit operator string(DirPath p)
+        {
+            return p.RawPath;
         }
     }
 }

@@ -166,5 +166,14 @@ namespace DotNet.Basics.Sys
                 return 1;
             return 0;
         }
+
+        public static implicit operator SemVersion(string s)
+        {
+            return new SemVersion(s);
+        }
+        public static implicit operator string(SemVersion v)
+        {
+            return v.SemVer20String;
+        }
     }
 }

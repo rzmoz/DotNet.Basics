@@ -109,7 +109,7 @@ namespace DotNet.Basics.Tests.Sys.Text
             SysRegex regex = pattern;
 
             //act
-            var isMatch = regex.IsMatch(_sampleInput);
+            var isMatch = regex.Test(_sampleInput);
 
             //assert
             isMatch.Should().Be(expectedIsMatch);
