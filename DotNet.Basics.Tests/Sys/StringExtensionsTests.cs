@@ -187,15 +187,6 @@ namespace DotNet.Basics.Tests.Sys
             replaced.Should().Be(expected);
         }
 
-        private const string _linkListClassName = "unit-profile__details--link-list";
-        private const string _unitProfilePointsClassName = @"unit-profile__details--points";
-        private const string _unitProfileCostClassName = @"unit-profile__details--cost";
-        [Fact]
-        public void Remove_MultipleRemove_NoCompileComflictWithSysRegex()
-        {
-            var replaced = "1MyString".Remove(_linkListClassName, _unitProfileCostClassName, _unitProfilePointsClassName);
-        }
-
         [Fact]
         public void Remove_SysRegex_RemoveByRegex()
         {

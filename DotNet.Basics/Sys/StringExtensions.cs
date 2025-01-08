@@ -154,28 +154,6 @@ namespace DotNet.Basics.Sys
             return hash.Aggregate(string.Empty, (current, x) => current + $"{x:x2}");
         }
 
-        /// <summary>
-        /// Removes removes in order
-        /// </summary>
-        /// <param name="originalString"></param>
-        /// <param name="removes"></param>
-        /// <returns></returns>
-        public static string Remove(this string originalString, params string[] removes)
-        {
-            return Remove(originalString, StringComparison.CurrentCulture, removes);
-        }
-        public static string Remove(this string originalString, StringComparison stringComparison, params string[] removes)
-        {
-            foreach (var remove in removes)
-                originalString = originalString.Replace(remove, string.Empty, stringComparison);
-
-            return originalString;
-        }
-        public static string Remove(this string originalString, SysRegex regex)
-        {
-            return regex.Remove(originalString);
-        }
-
         public static string Replace(this string text, int removeIndex, int removeLength, string replacement = "")
         {
             var output = text.Substring(0, removeIndex);
