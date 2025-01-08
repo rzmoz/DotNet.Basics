@@ -160,12 +160,14 @@ namespace DotNet.Basics.Tests.Sys.Text
         public void Remove_MultipleRegexes_AlleRegexesAreInvokedInOrder()
         {
             //arrange
-            SysRegex[] regexes = ["ip", "o", @"[0-9a]*"];
+            SysRegex regex1 = "ip";
+            SysRegex regex2 = "o";
+            SysRegex regex3 = "[0-9a]*";
 
             var input = "ips1um (odor) amet234876234872634876234";
 
             //act
-            var result = input.Remove(regexes);
+            var result = input.Remove(regex1, regex2, regex3);
 
             //assert
             result.Should().Be("sum (dr) met");

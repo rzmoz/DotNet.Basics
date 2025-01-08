@@ -177,14 +177,23 @@ namespace DotNet.Basics.Tests.Sys
         }
 
         [Theory]
-        [InlineData("OiOiOiOiOi", new[] { "O", "i" }, "")]//multi remove
-        [InlineData("1MyString", new[] { "1", "2" }, "MyString")]//misses are ignored
-        [InlineData("1MyString", new[] { "My", "1String" }, "")]//ordered removal
-        [InlineData("1MyString", new[] { "1String", "My" }, "1String")]//ordered removal
-        public void Remove_MultipleRemove_EntriesAreRemoved(string orgString, string[] removes, string expected)
+        [InlineData("OiOiOiOiOi", "", new[] { "O", "i" })]//multi remove
+        [InlineData("1MyString", "MyString", new[] { "1", "2" })]//misses are ignored
+        [InlineData("1MyString", "", new[] { "My", "1String" })]//ordered removal
+        [InlineData("1MyString", "1String", "1String", "My")]//ordered removal
+        public void Remove_MultipleRemove_EntriesAreRemoved(string orgString, string expected, params string[] removes)
         {
             var replaced = orgString.Remove(removes);
             replaced.Should().Be(expected);
+        }
+
+        private const string _linkListClassName = "unit-profile__details--link-list";
+        private const string _unitProfilePointsClassName = @"unit-profile__details--points";
+        private const string _unitProfileCostClassName = @"unit-profile__details--cost";
+        [Fact]
+        public void Remove_MultipleRemove_NoCompileComflictWithSysRegex()
+        {
+            var replaced = "1MyString".Remove(_linkListClassName, _unitProfileCostClassName, _unitProfilePointsClassName);
         }
 
         [Fact]
