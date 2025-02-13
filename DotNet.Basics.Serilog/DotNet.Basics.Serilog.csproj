@@ -1,13 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <Nullable>enable</Nullable>
-	  <LangVersion>latest</LangVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<Description>Helpers and extensions for using serilog in with ADO and colored dev console sinks</Description>
+		<PackageProjectUrl />
+		<PackageLicenseUrl></PackageLicenseUrl>
+		<Authors>rzmoz</Authors>
+		<Company />
+		<Product />
+		<RepositoryUrl>https://github.com/rzmoz/DotNet.Basics</RepositoryUrl>
+		<Version>0.0.0</Version>
+		<AssemblyVersion>0.0.0</AssemblyVersion>
+		<FileVersion>0.0.0</FileVersion>
+		<PackageReleaseNotes></PackageReleaseNotes>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Serilog" Version="4.2.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\"/>
+		<PackageReference Include="Serilog" Version="4.2.0" />
+	</ItemGroup>
 
 </Project>
