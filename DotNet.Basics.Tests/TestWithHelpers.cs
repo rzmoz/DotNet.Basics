@@ -49,6 +49,7 @@ namespace DotNet.Basics.Tests
             {
                 var testRootDir = rootDir.Add(TestPathPrefix);
                 testRootDir.CreateIfNotExists();
+                testRootDir.CleanIfExists();
                 Output.WriteLine($"TestRootDir: {testRootDir}");
                 arrangeActAssert?.Invoke(testRootDir);
             }
