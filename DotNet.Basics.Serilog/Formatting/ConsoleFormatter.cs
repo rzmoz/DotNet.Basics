@@ -19,7 +19,7 @@ namespace DotNet.Basics.Serilog.Formatting
                 var replaceValue = HighlightMarkers.Prefix + prop.Value.ToString().Trim('"') + HighlightMarkers.Suffix;
                 msg = msg.Replace(key, replaceValue, StringComparison.CurrentCulture);
             }
-
+            Console.ResetColor();
             Console.ForegroundColor = theme.GetForegroundColor(logEvent.Level);
             foreach (var @char in msg)
             {
@@ -38,6 +38,7 @@ namespace DotNet.Basics.Serilog.Formatting
             }
             output.Write(Environment.NewLine);
             Console.ResetColor();
+            Console.ForegroundColor = theme.GetForegroundColor(logEvent.Level);
         }
     }
 }
