@@ -6,7 +6,6 @@ using DotNet.Basics.Serilog.Diagnostics;
 using DotNet.Basics.Serilog.Sinks;
 using DotNet.Basics.Sys;
 using Microsoft.Extensions.DependencyInjection;
-using Log = DotNet.Basics.Serilog.Diagnostics.Log;
 
 namespace DotNet.Basics.Serilog
 {
@@ -19,10 +18,10 @@ namespace DotNet.Basics.Serilog
         public static IServiceCollection AddDiagnosticsWithSerilog(this IServiceCollection services, Func<LoggerConfiguration, LoggerConfiguration> config, TimeSpan longRunningOperationsPingInterval)
         {
             global::Serilog.Log.Logger = config(new LoggerConfiguration()).CreateLogger();
-            services.AddSingleton<ILog>(new Log().WithLogTarget(new SerilogLogTarget()));
+            services.AddSingleton<ILoog>(new Loog().WithLogTarget(new SerilogLoogTarget()));
             services.AddSingleton(s =>
             {
-                var logger = s.GetService<ILog>()!;
+                var logger = s.GetService<ILoog>()!;
                 return new LongRunningOperations(logger, longRunningOperationsPingInterval);
             });
             return services;

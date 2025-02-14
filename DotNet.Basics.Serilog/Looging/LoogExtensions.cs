@@ -2,7 +2,7 @@
 
 namespace DotNet.Basics.Serilog.Diagnostics
 {
-    public static class LogExtensions
+    public static class LoogExtensions
     {
         public static string Highlight(this string str)
         {

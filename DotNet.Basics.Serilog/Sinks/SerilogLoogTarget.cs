@@ -3,19 +3,18 @@ using DotNet.Basics.Serilog.Diagnostics;
 using DotNet.Basics.Serilog.Formatting;
 using DotNet.Basics.Sys;
 using Serilog;
-using Log = Serilog.Log;
 
 namespace DotNet.Basics.Serilog.Sinks
 {
-    public class SerilogLogTarget : ILogTarget
+    public class SerilogLoogTarget : ILoogTarget
     {
-        public SerilogLogTarget()
+        public SerilogLoogTarget()
         {
             LogTarget += LogHandler;
             TimingTarget += TimingHandler;
         }
 
-        private void TimingHandler(LogLevel lvl, string name, string @event, TimeSpan elapsed)
+        private void TimingHandler(LoogLevel lvl, string name, string @event, TimeSpan elapsed)
         {
             Log.Logger.Write(lvl.ToLogEventLevel(),
                 elapsed > TimeSpan.MinValue
@@ -23,12 +22,12 @@ namespace DotNet.Basics.Serilog.Sinks
                     : $"{name}:{@event}");
         }
 
-        private void LogHandler(LogLevel lvl, string msg, Exception? e)
+        private void LogHandler(LoogLevel lvl, string msg, Exception? e)
         {
             Log.Logger.Write(lvl.ToLogEventLevel(), e, msg);
         }
 
-        public Action<LogLevel, string, Exception?> LogTarget { get; }
-        public Action<LogLevel, string, string, TimeSpan> TimingTarget { get; }
+        public Action<LoogLevel, string, Exception?> LogTarget { get; }
+        public Action<LoogLevel, string, string, TimeSpan> TimingTarget { get; }
     }
 }

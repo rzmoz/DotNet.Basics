@@ -2,19 +2,19 @@
 
 namespace DotNet.Basics.Serilog.Diagnostics
 {
-    public class NullLog : ILog
+    public class NullLoog : ILoog
     {
-        public event Log.MessageLoggedEventHandler? MessageLogged;
-        public event Log.TimingLoggedEventHandler? TimingLogged;
+        public event Loog.MessageLoggedEventHandler? MessageLogged;
+        public event Loog.TimingLoggedEventHandler? TimingLogged;
 
-        public static ILog Instance { get; } = new NullLog();
+        public static ILoog Instance { get; } = new NullLoog();
 
-        public ILog WithLogTarget(ILogTarget target)
+        public ILoog WithLogTarget(ILoogTarget target)
         {
             return this;
         }
 
-        public ILog InContext(string context, bool floatMessageLogged = true)
+        public ILoog InContext(string context, bool floatMessageLogged = true)
         {
             return this;
         }
@@ -46,13 +46,13 @@ namespace DotNet.Basics.Serilog.Diagnostics
         { }
         public void Error(string message, Exception e)
         { }
-        public void Write(LogLevel level, string message)
+        public void Write(LoogLevel level, string message)
         { }
-        public void Write(LogLevel level, string message, Exception e)
+        public void Write(LoogLevel level, string message, Exception e)
         { }
-        public void Timing(LogLevel level, string name, string @event)
+        public void Timing(LoogLevel level, string name, string @event)
         { }
-        public void Timing(LogLevel level, string name, string @event, TimeSpan duration)
+        public void Timing(LoogLevel level, string name, string @event, TimeSpan duration)
         { }
     }
 }

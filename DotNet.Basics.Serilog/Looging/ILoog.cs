@@ -2,11 +2,11 @@
 
 namespace DotNet.Basics.Serilog.Diagnostics
 {
-    public interface ILog : ILogDispatcher
+    public interface ILoog : ILoogDispatcher
     {
-        ILog WithLogTarget(ILogTarget target);
+        ILoog WithLogTarget(ILoogTarget target);
 
-        ILog InContext(string context, bool floatMessageLogged = true);
+        ILoog InContext(string context, bool floatMessageLogged = true);
         void Raw(string message);
         void Raw(string message, Exception e);
         void Verbose(string message);
@@ -21,9 +21,9 @@ namespace DotNet.Basics.Serilog.Diagnostics
         void Warning(string message, Exception e);
         void Error(string message);
         void Error(string message, Exception e);
-        void Write(LogLevel level, string message);
-        void Write(LogLevel level, string message, Exception e);
-        void Timing(LogLevel level, string name, string @event);
-        void Timing(LogLevel level, string name, string @event, TimeSpan duration);
+        void Write(LoogLevel level, string message);
+        void Write(LoogLevel level, string message, Exception e);
+        void Timing(LoogLevel level, string name, string @event);
+        void Timing(LoogLevel level, string name, string @event, TimeSpan duration);
     }
 }

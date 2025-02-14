@@ -1,6 +1,6 @@
 ﻿namespace DotNet.Basics.Serilog.Diagnostics
 {
-    public enum LogLevel
+    public enum LoogLevel
     {
         Raw = -1,
         Verbose = 0,

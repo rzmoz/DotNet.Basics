@@ -14,11 +14,11 @@ namespace DotNet.Basics.Tests.Serilog.Diagnostics
             var context2 = "context2";
             var message = "my Message";
 
-            ILog outerLog = new Log();
-            var innerLog = outerLog.InContext(context1).InContext(context2);
+            ILoog outerLoog = new Loog();
+            var innerLog = outerLoog.InContext(context1).InContext(context2);
             var messageReceived = string.Empty;
 
-            outerLog.MessageLogged += (lvl, msg, e) => { messageReceived = msg; };
+            outerLoog.MessageLogged += (lvl, msg, e) => { messageReceived = msg; };
 
             //act
             innerLog.Info(message);
