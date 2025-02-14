@@ -2,11 +2,11 @@
 
 namespace DotNet.Basics.Serilog.Diagnostics
 {
-    public interface ILogger : ILogDispatcher
+    public interface ILog : ILogDispatcher
     {
-        ILogger WithLogTarget(ILogTarget target);
+        ILog WithLogTarget(ILogTarget target);
 
-        ILogger InContext(string context, bool floatMessageLogged = true);
+        ILog InContext(string context, bool floatMessageLogged = true);
         void Raw(string message);
         void Raw(string message, Exception e);
         void Verbose(string message);

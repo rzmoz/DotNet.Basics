@@ -14,7 +14,7 @@ namespace DotNet.Basics.Tests.Serilog.Diagnostics
             var context2 = "context2";
             var message = "my Message";
 
-            ILogger outerLog = new Logger();
+            ILog outerLog = new Log();
             var innerLog = outerLog.InContext(context1).InContext(context2);
             var messageReceived = string.Empty;
 

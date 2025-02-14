@@ -2,7 +2,7 @@
 {
     public interface ILogDispatcher
     {
-        event Logger.MessageLoggedEventHandler MessageLogged;
-        event Logger.TimingLoggedEventHandler TimingLogged;
+        event Log.MessageLoggedEventHandler MessageLogged;
+        event Log.TimingLoggedEventHandler TimingLogged;
     }
 }

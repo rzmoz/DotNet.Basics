@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DotNet.Basics.Serilog.Diagnostics
 {
-    public class Logger : ILogger
+    public class Log : ILog
     {
         public delegate void MessageLoggedEventHandler(LogLevel level, string message, Exception? e);
         public delegate void TimingLoggedEventHandler(LogLevel level, string name, string @event, TimeSpan duration);
@@ -16,7 +16,7 @@ namespace DotNet.Basics.Serilog.Diagnostics
 
         public string Context { get; }
 
-        public Logger(params IEnumerable<string> context)
+        public Log(params IEnumerable<string> context)
         {
             _context = new(context);
             if (_context.Any())
@@ -25,7 +25,7 @@ namespace DotNet.Basics.Serilog.Diagnostics
                 Context = string.Empty;
         }
 
-        public ILogger WithLogTarget(ILogTarget target)
+        public ILog WithLogTarget(ILogTarget target)
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
             MessageLogged += target.LogTarget.Invoke;
@@ -33,11 +33,11 @@ namespace DotNet.Basics.Serilog.Diagnostics
             return this;
         }
 
-        public virtual ILogger InContext(string context, bool floatMessageLogged = true)
+        public virtual ILog InContext(string context, bool floatMessageLogged = true)
         {
             var newLogger = string.IsNullOrWhiteSpace(context)
-                ? new Logger(_context)
-                : new Logger(_context.Append(context));
+                ? new Log(_context)
+                : new Log(_context.Append(context));
             if (floatMessageLogged)
             {
                 newLogger.MessageLogged += (lvl, msg, e) => MessageLogged?.Invoke(lvl, msg, e);

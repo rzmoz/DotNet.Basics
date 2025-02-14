@@ -8,14 +8,14 @@ namespace DotNet.Basics.Serilog.Diagnostics
 {
     public class LongRunningOperations
     {
-        private readonly ILogger _log;
+        private readonly ILog _log;
         private readonly ConcurrentDictionary<string, LongRunningOperation> _operations = new();
         private readonly Timer _timer;
 
-        public LongRunningOperations(ILogger log)
+        public LongRunningOperations(ILog log)
         : this(log, TimeSpan.FromMinutes(1))
         { }
-        public LongRunningOperations(ILogger log, TimeSpan pingInterval)
+        public LongRunningOperations(ILog log, TimeSpan pingInterval)
         {
             _log = log;
             if (pingInterval <= TimeSpan.Zero)

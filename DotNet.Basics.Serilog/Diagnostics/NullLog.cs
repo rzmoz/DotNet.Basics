@@ -2,19 +2,19 @@
 
 namespace DotNet.Basics.Serilog.Diagnostics
 {
-    public class NullLogger : ILogger
+    public class NullLog : ILog
     {
-        public event Logger.MessageLoggedEventHandler? MessageLogged;
-        public event Logger.TimingLoggedEventHandler? TimingLogged;
+        public event Log.MessageLoggedEventHandler? MessageLogged;
+        public event Log.TimingLoggedEventHandler? TimingLogged;
 
-        public static ILogger Instance { get; } = new NullLogger();
+        public static ILog Instance { get; } = new NullLog();
 
-        public ILogger WithLogTarget(ILogTarget target)
+        public ILog WithLogTarget(ILogTarget target)
         {
             return this;
         }
 
-        public ILogger InContext(string context, bool floatMessageLogged = true)
+        public ILog InContext(string context, bool floatMessageLogged = true)
         {
             return this;
         }

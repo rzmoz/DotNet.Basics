@@ -3,6 +3,7 @@ using DotNet.Basics.Serilog.Diagnostics;
 using DotNet.Basics.Serilog.Formatting;
 using DotNet.Basics.Sys;
 using Serilog;
+using Log = Serilog.Log;
 
 namespace DotNet.Basics.Serilog.Sinks
 {
