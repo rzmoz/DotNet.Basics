@@ -23,8 +23,10 @@ namespace DotNet.Basics.Tests.Sys.Text
         {
             var rawPath = @"/my/path/";
             var path = $@"""{rawPath}""".FromJson<DirPath>();
-
             path.RawPath.Should().Be(rawPath.TrimEnd('/'));
+
+            var typedPath = (DirPath)$@"""{rawPath}""".FromJson(typeof(DirPath));
+            typedPath.RawPath.Should().Be(rawPath.TrimEnd('/'));
         }
     }
 }
