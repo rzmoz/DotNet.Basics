@@ -11,13 +11,22 @@ namespace DotNet.Basics.Serilog
 {
     public static class ConfigurationExtensions
     {
+        public static IServiceCollection AddDiagnosticsWithSerilogDevConsole(this IServiceCollection services, bool isADO = false, bool verbose = true)
+        {
+            return services.AddDiagnosticsWithSerilog(config =>
+            {
+                config.MinimumLevel.Is(verbose ? LogEventLevel.Verbose : LogEventLevel.Debug);
+                return config.WriteTo.DevConsole(isADO, verbose);
+            });
+        }
+
         public static IServiceCollection AddDiagnosticsWithSerilog(this IServiceCollection services, Func<LoggerConfiguration, LoggerConfiguration> config)
         {
             return services.AddDiagnosticsWithSerilog(config, 1.Minutes());
         }
         public static IServiceCollection AddDiagnosticsWithSerilog(this IServiceCollection services, Func<LoggerConfiguration, LoggerConfiguration> config, TimeSpan longRunningOperationsPingInterval)
         {
-            global::Serilog.Log.Logger = config(new LoggerConfiguration()).CreateLogger();
+            Log.Logger = config(new LoggerConfiguration()).CreateLogger();
             services.AddSingleton<ILoog>(new Loog().WithLogTarget(new SerilogLoogTarget()));
             services.AddSingleton(s =>
             {
