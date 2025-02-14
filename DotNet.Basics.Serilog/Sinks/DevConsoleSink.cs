@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using DotNet.Basics.Serilog.Formatting;
 using Serilog.Core;
 using Serilog.Events;
@@ -9,10 +10,9 @@ namespace DotNet.Basics.Serilog.Sinks
 {
     public class DevConsoleSink(bool isADO) : ILogEventSink
     {
-        private static readonly object _messageLock = new();
+        private static readonly Lock _messageLock = new();
 
         private readonly ITextFormatter _formatter = isADO ? new AdoPipelinesTextFormatter() : new ConsoleFormatter();
-
 
         public void Emit(LogEvent logEvent)
         {

@@ -1,8 +1,9 @@
-﻿using DotNet.Basics.Diagnostics;
+﻿using DotNet.Basics.Serilog.Diagnostics;
 using FluentAssertions;
 using Xunit;
 
-namespace DotNet.Basics.Tests.Diagnostics
+
+namespace DotNet.Basics.Tests.Serilog.Diagnostics
 {
     public class LogDispatcherTests
     {

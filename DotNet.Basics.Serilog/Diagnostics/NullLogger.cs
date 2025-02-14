@@ -1,17 +1,15 @@
 ﻿using System;
 
-namespace DotNet.Basics.Diagnostics
+namespace DotNet.Basics.Serilog.Diagnostics
 {
     public class NullLogger : ILogger
     {
-#pragma warning disable 67
-        public event Logger.MessageLoggedEventHandler MessageLogged;
-        public event Logger.TimingLoggedEventHandler TimingLogged;
-#pragma warning restore 67
+        public event Logger.MessageLoggedEventHandler? MessageLogged;
+        public event Logger.TimingLoggedEventHandler? TimingLogged;
 
-        public bool HasListeners { get; } = false;
+        public static ILogger Instance { get; } = new NullLogger();
 
-        public ILogger AddLogTarget(ILogTarget target)
+        public ILogger WithLogTarget(ILogTarget target)
         {
             return this;
         }

@@ -5,21 +5,10 @@ using Serilog.Formatting;
 
 namespace DotNet.Basics.Serilog.Formatting
 {
-    public class ConsoleFormatter : ITextFormatter
+    public class ConsoleFormatter(ConsoleTheme theme) : ITextFormatter
     {
-        private const char _beginMarker = '\u0002';
-        private const char _endMarker = '\u0003';
-
-        private readonly ConsoleTheme _theme;
-
-        public ConsoleFormatter()
-        : this(new ConsoleDarkTheme())
+        public ConsoleFormatter() : this(new ConsoleDarkTheme())
         { }
-
-        public ConsoleFormatter(ConsoleTheme theme)
-        {
-            _theme = theme;
-        }
 
         public void Format(LogEvent logEvent, TextWriter output)
         {
@@ -27,20 +16,20 @@ namespace DotNet.Basics.Serilog.Formatting
             foreach (var prop in logEvent.Properties)
             {
                 var key = $"{{{prop.Key}}}";
-                var replaceValue = _beginMarker + prop.Value.ToString().Trim('"') + _endMarker;
+                var replaceValue = HighlightMarkers.Prefix + prop.Value.ToString().Trim('"') + HighlightMarkers.Suffix;
                 msg = msg.Replace(key, replaceValue, StringComparison.CurrentCulture);
             }
 
-            Console.ForegroundColor = _theme.GetForegroundColor(logEvent.Level);
+            Console.ForegroundColor = theme.GetForegroundColor(logEvent.Level);
             foreach (var @char in msg)
             {
                 switch (@char)
                 {
-                    case _beginMarker:
-                        Console.ForegroundColor = _theme.GetForegroundHighlightColor(logEvent.Level);
+                    case HighlightMarkers.Prefix:
+                        Console.ForegroundColor = theme.GetForegroundHighlightColor(logEvent.Level);
                         continue;
-                    case _endMarker:
-                        Console.ForegroundColor = _theme.GetForegroundColor(logEvent.Level);
+                    case HighlightMarkers.Suffix:
+                        Console.ForegroundColor = theme.GetForegroundColor(logEvent.Level);
                         continue;
                     default:
                         output.Write(@char);

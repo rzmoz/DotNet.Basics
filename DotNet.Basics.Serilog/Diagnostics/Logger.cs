@@ -3,30 +3,20 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DotNet.Basics.Diagnostics
+namespace DotNet.Basics.Serilog.Diagnostics
 {
     public class Logger : ILogger
     {
-        public delegate void MessageLoggedEventHandler(LogLevel level, string message, Exception e);
+        public delegate void MessageLoggedEventHandler(LogLevel level, string message, Exception? e);
         public delegate void TimingLoggedEventHandler(LogLevel level, string name, string @event, TimeSpan duration);
-        public event MessageLoggedEventHandler MessageLogged;
-        public event TimingLoggedEventHandler TimingLogged;
-        public bool HasListeners => MessageLogged != null || TimingLogged != null;
-        
-        /// <summary>
-        /// Logs to nothing and doesn't raise events
-        /// </summary>
-        public static ILogger NullLogger { get; } = new NullLogger();
+        public event MessageLoggedEventHandler? MessageLogged;
+        public event TimingLoggedEventHandler? TimingLogged;
 
         private readonly ConcurrentStack<string> _context;
 
         public string Context { get; }
 
-        public Logger(IEnumerable<string> context)
-        : this((context ?? Array.Empty<string>()).ToArray())
-        {
-        }
-        public Logger(params string[] context)
+        public Logger(params IEnumerable<string> context)
         {
             _context = new(context);
             if (_context.Any())
@@ -35,13 +25,11 @@ namespace DotNet.Basics.Diagnostics
                 Context = string.Empty;
         }
 
-        public ILogger AddLogTarget(ILogTarget target)
+        public ILogger WithLogTarget(ILogTarget target)
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
-            if (target.LogTarget != null)
-                MessageLogged += target.LogTarget.Invoke;
-            if (target.TimingTarget != null)
-                TimingLogged += target.TimingTarget.Invoke;
+            MessageLogged += target.LogTarget.Invoke;
+            TimingLogged += target.TimingTarget.Invoke;
             return this;
         }
 
@@ -60,7 +48,7 @@ namespace DotNet.Basics.Diagnostics
         }
         public void Raw(string message)
         {
-            Raw(message, null);
+            Write(LogLevel.Raw, message);
         }
         public void Raw(string message, Exception e)
         {
@@ -68,7 +56,7 @@ namespace DotNet.Basics.Diagnostics
         }
         public void Verbose(string message)
         {
-            Verbose(message, null);
+            Write(LogLevel.Verbose, message);
         }
         public void Verbose(string message, Exception e)
         {
@@ -76,7 +64,7 @@ namespace DotNet.Basics.Diagnostics
         }
         public void Debug(string message)
         {
-            Debug(message, null);
+            Write(LogLevel.Debug, message);
         }
         public void Debug(string message, Exception e)
         {
@@ -84,7 +72,7 @@ namespace DotNet.Basics.Diagnostics
         }
         public void Info(string message)
         {
-            Info(message, null);
+            Write(LogLevel.Info, message);
         }
         public void Info(string message, Exception e)
         {
@@ -92,7 +80,7 @@ namespace DotNet.Basics.Diagnostics
         }
         public void Success(string message)
         {
-            Success(message, null);
+            Write(LogLevel.Success, message);
         }
         public void Success(string message, Exception e)
         {
@@ -100,7 +88,7 @@ namespace DotNet.Basics.Diagnostics
         }
         public void Warning(string message)
         {
-            Warning(message, null);
+            Write(LogLevel.Warning, message);
         }
         public void Warning(string message, Exception e)
         {
@@ -108,7 +96,7 @@ namespace DotNet.Basics.Diagnostics
         }
         public void Error(string message)
         {
-            Error(message, null);
+            Write(LogLevel.Error, message);
         }
         public void Error(string message, Exception e)
         {
@@ -118,7 +106,7 @@ namespace DotNet.Basics.Diagnostics
         {
             Write(level, message, null);
         }
-        public virtual void Write(LogLevel level, string message, Exception e)
+        public virtual void Write(LogLevel level, string message, Exception? e)
         {
             MessageLogged?.Invoke(level, level == LogLevel.Raw ? message : $"{Context}{message}", e);
         }

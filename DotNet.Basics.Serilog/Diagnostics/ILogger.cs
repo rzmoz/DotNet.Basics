@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace DotNet.Basics.Diagnostics
+namespace DotNet.Basics.Serilog.Diagnostics
 {
     public interface ILogger : ILogDispatcher
     {
-        ILogger AddLogTarget(ILogTarget target);
+        ILogger WithLogTarget(ILogTarget target);
 
         ILogger InContext(string context, bool floatMessageLogged = true);
         void Raw(string message);

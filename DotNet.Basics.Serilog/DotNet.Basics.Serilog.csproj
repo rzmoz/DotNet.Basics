@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
-		<TargetFramework>netstandard2.1</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<Description>Helpers and extensions for using serilog in with ADO and colored dev console sinks</Description>
 		<PackageProjectUrl />
 		<PackageLicenseUrl></PackageLicenseUrl>
@@ -20,8 +20,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="README.md" Pack="true" PackagePath="\"/>
+		<None Include="README.md" Pack="true" PackagePath="\" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2" />
 		<PackageReference Include="Serilog" Version="4.2.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />
 	</ItemGroup>
 
 </Project>

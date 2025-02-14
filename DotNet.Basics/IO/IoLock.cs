@@ -5,19 +5,11 @@ using DotNet.Basics.Tasks.Repeating;
 
 namespace DotNet.Basics.IO
 {
-    public class IoLock : IDisposable
+    public class IoLock(DirPath lockDir, string lockName) : IDisposable
     {
-        private readonly DirPath _lockDir;
-        FileStream _lockHandle;
+        FileStream _lockHandle = null;
 
-        public IoLock(DirPath lockDir, string lockName)
-        {
-            Name = lockName ?? throw new ArgumentNullException(nameof(lockName));
-            _lockDir = lockDir;
-            _lockHandle = null;
-        }
-
-        public string Name { get; }
+        public string Name { get; } = lockName ?? throw new ArgumentNullException(nameof(lockName));
 
         public bool HasLock()
         {
@@ -26,14 +18,14 @@ namespace DotNet.Basics.IO
 
         public bool TryAcquire(int? maxTries = 10)
         {
-            _lockDir.CreateIfNotExists();
+            lockDir.CreateIfNotExists();
             //try to acquire exclusive handle ownership
             try
             {
-                //try get lock handle
+                //try to get lock handle
                 return Repeat.Task(() =>
                 {
-                    _lockHandle = File.Create(_lockDir.ToFile(Name).FullName, 128, FileOptions.DeleteOnClose);
+                    _lockHandle = File.Create(lockDir.ToFile(Name).FullName, 128, FileOptions.DeleteOnClose);
                 }).WithOptions(o =>
                 {
                     o.MaxTries = maxTries ?? 10;

@@ -1,9 +1,8 @@
-﻿namespace DotNet.Basics.Diagnostics
+﻿namespace DotNet.Basics.Serilog.Diagnostics
 {
     public interface ILogDispatcher
     {
         event Logger.MessageLoggedEventHandler MessageLogged;
         event Logger.TimingLoggedEventHandler TimingLogged;
-        bool HasListeners { get; }
     }
 }

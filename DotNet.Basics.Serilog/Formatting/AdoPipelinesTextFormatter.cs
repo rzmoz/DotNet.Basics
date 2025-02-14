@@ -20,7 +20,7 @@ namespace DotNet.Basics.Serilog.Formatting
             };
 
             output.Write(adoPrefix);
-            output.WriteLine(logEvent.RenderMessage());
+            output.WriteLine();
         }
     }
 }

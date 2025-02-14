@@ -1,20 +1,16 @@
 ﻿using System;
-using DotNet.Basics.Sys;
 
-namespace DotNet.Basics.Diagnostics
+namespace DotNet.Basics.Serilog.Diagnostics
 {
     public static class LogExtensions
     {
-        public static string HighlightPrefix { get; } = "<¤>";
-        public static string HighlightSuffix { get; } = "</¤>]";
-
         public static string Highlight(this string str)
         {
-            return str.EnsurePrefix(HighlightPrefix).EnsureSuffix(HighlightSuffix);
+            return $"{HighlightMarkers.Prefix}{str}{HighlightMarkers.Suffix}";
         }
         public static string StripHighlight(this string str)
         {
-            return str.Replace(HighlightPrefix, string.Empty).Replace(HighlightSuffix, string.Empty);
+            return str.Replace($"{HighlightMarkers.Prefix}", string.Empty).Replace($"{HighlightMarkers.Suffix}", string.Empty);
         }
         public static string WithGutter(this string msg, int gutterSize = 26)
         {

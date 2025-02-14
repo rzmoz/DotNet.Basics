@@ -9,11 +9,7 @@ namespace DotNet.Basics.Serilog.Formatting
     {
         private readonly IDictionary<LogEventLevel, ConsoleColor> _colors = new Dictionary<LogEventLevel, ConsoleColor>();
 
-        public ConsoleColor this[LogEventLevel lvl]
-        {
-            get => _colors[lvl];
-            set => _colors[lvl] = value;
-        }
+        public ConsoleColor this[LogEventLevel lvl] => _colors[lvl];
 
         public void Add(LogEventLevel lvl, ConsoleColor color)
         {

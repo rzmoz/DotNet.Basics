@@ -3,31 +3,24 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
-using DotNet.Basics.Sys;
 
-namespace DotNet.Basics.Diagnostics
+namespace DotNet.Basics.Serilog.Diagnostics
 {
-    public static class LongRunningOperations
+    public class LongRunningOperations
     {
-        private static ILogger _log = Logger.NullLogger;
-        private static readonly ConcurrentDictionary<string, LongRunningOperation> _operations = new ConcurrentDictionary<string, LongRunningOperation>();
-        private static Timer _timer;
+        private readonly ILogger _log;
+        private readonly ConcurrentDictionary<string, LongRunningOperation> _operations = new();
+        private readonly Timer _timer;
 
-        static LongRunningOperations()
+        public LongRunningOperations(ILogger log)
+        : this(log, TimeSpan.FromMinutes(1))
+        { }
+        public LongRunningOperations(ILogger log, TimeSpan pingInterval)
         {
-            Init(1.Minutes());
-        }
-
-        public static void Init(ILogger log)
-        {
-            _log = log ?? Logger.NullLogger;
-        }
-        public static void Init(TimeSpan pingInterval)
-        {
+            _log = log;
             if (pingInterval <= TimeSpan.Zero)
-                return;
+                throw new ArgumentOutOfRangeException(nameof(pingInterval), "Must be bigger than 0");
 
-            _timer?.Dispose();
             _timer = new Timer(pingInterval.TotalMilliseconds)
             {
                 AutoReset = true,
@@ -37,13 +30,7 @@ namespace DotNet.Basics.Diagnostics
             _log.Verbose($"Long running operations initialized with ping interval: {$@"{pingInterval:hh\:mm\:ss}".Highlight()}");
         }
 
-        public static void Init(ILogger log, TimeSpan pingInterval)
-        {
-            Init(log);
-            Init(pingInterval);
-        }
-
-        private static void _timer_Elapsed(object sender, ElapsedEventArgs e)
+        private void _timer_Elapsed(object? sender, ElapsedEventArgs e)
         {
             if (_operations.Any() == false)
                 return;
@@ -55,7 +42,7 @@ namespace DotNet.Basics.Diagnostics
             _log.Verbose(message.WithGutter());
         }
 
-        public static async Task<int> StartAsync(string name, Func<Task<int>> action)
+        public async Task<int> StartAsync(string name, Func<Task<int>> action)
         {
             var operation = new LongRunningOperation(name);
 
