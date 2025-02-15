@@ -8,13 +8,8 @@ namespace DotNet.Basics.Serilog.Console
     {
         static async Task<int> Main(string[] args)
         {
-            await using var ctx = new ConsoleHostContext(args, 1.Seconds())
-            {
-                ExceptionExitCodes =
-                {
-                    {nameof(ExceptionHandlingException), e => 400}
-                }
-            };
+            await using var ctx = new ConsoleLoogContext(args, 1.Seconds())
+                .WithExceptionHandler<ExitCodeException>(e => e.ExitCode);
 
             return await ctx.RunAsync(async (services, log) =>
             {
@@ -28,8 +23,8 @@ namespace DotNet.Basics.Serilog.Console
                     log.Warning($"{nameof(log.Warning)} {nameof(log.Warning).Highlight()} lalalalalalala");
                     log.Error($"{nameof(log.Error)} {nameof(log.Error).Highlight()} lalalalalalala");
                     log.Fatal($"{nameof(log.Fatal)} {nameof(log.Fatal).Highlight()} lalalalalalala");*/
-                    await Task.Delay(5.Seconds());
-                    return 0;
+                    
+                    return 005;
                 });
             });
         }
