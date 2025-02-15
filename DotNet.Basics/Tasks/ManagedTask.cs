@@ -22,6 +22,8 @@ namespace DotNet.Basics.Tasks
 
         public string Name { get; }
 
+        public abstract Task RunAsync(object args);
+
         protected virtual void FireStarted(string taskName)
         {
             Started?.Invoke(taskName);
@@ -63,7 +65,7 @@ namespace DotNet.Basics.Tasks
         { }
 
         public ManagedTask(string name, Action<T, CancellationToken> task, params string[] removeSuffixes)
-            : this(name, (args,  ct) =>
+            : this(name, (args, ct) =>
             {
                 task?.Invoke(args, ct);
                 return Task.FromResult(string.Empty);
@@ -76,9 +78,14 @@ namespace DotNet.Basics.Tasks
             _task = task ?? throw new ArgumentNullException(nameof(task));
         }
 
+        public override async Task RunAsync(object args)
+        {
+            await RunAsync((T)args);
+        }
+
         public Task<T> RunAsync(T args)
         {
-            return RunAsync(args, default);
+            return RunAsync(args, CancellationToken.None);
         }
 
         public async Task<T> RunAsync(T args, CancellationToken ct)

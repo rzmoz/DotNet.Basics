@@ -14,11 +14,11 @@ namespace DotNet.Basics.Tests.Tasks
         public async Task Ctor_NoTask_NoExceptionIsThrown()
         {
             var task = new ManagedTask<EventArgs>("MyTask");
-            
+
             //act
             await task.RunAsync(EventArgs.Empty);
         }
-        
+
         [Fact]
         public async Task RunAsync_ArgsIsNull_ArgsIsNull()
         {
@@ -37,18 +37,33 @@ namespace DotNet.Basics.Tests.Tasks
             var argsValue = 12312313;
 
             var ctSource = new CancellationTokenSource();
-            ctSource.Cancel();
+            await ctSource.CancelAsync();
 
             var task = new ManagedTask<EventArgs<int>>((args, ct) => { args.Value = argsValue; });
 
-            using (var monitoredTask = task.Monitor())
-            {
-                //act
-                await task.RunAsync(null, ctSource.Token);
+            using var monitoredTask = task.Monitor();
+            //act
+            await task.RunAsync(null, ctSource.Token);
 
-                monitoredTask.Should().Raise(nameof(task.Started));
-                monitoredTask.Should().Raise(nameof(task.Ended));
-            }
+            monitoredTask.Should().Raise(nameof(task.Started));
+            monitoredTask.Should().Raise(nameof(task.Ended));
+        }
+
+        [Fact]
+        public async Task RunAsync_NonGenericBase_TaskIsRun()
+        {
+            ///VERY important that type is set to abstract base type
+            var result = string.Empty;
+
+            result.Should().BeEmpty();
+
+            ManagedTask task = new ManagedTask<EventArgs<int>>((args, ct) => { result = "Hello World!"; });
+
+            //act
+            await task.RunAsync(null);
+
+            //assert
+            result.Should().Be("Hello World!");
         }
 
         [Fact]
