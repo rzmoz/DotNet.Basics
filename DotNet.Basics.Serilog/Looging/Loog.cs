@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DotNet.Basics.Serilog.Diagnostics
+namespace DotNet.Basics.Serilog.Looging
 {
     public class Loog : ILoog
     {
@@ -102,6 +102,17 @@ namespace DotNet.Basics.Serilog.Diagnostics
         {
             Write(LoogLevel.Error, message, e);
         }
+
+        public void Fatal(string message)
+        {
+            Write(LoogLevel.Fatal, message);
+        }
+
+        public void Fatal(string message, Exception e)
+        {
+            Write(LoogLevel.Fatal, message, e);
+        }
+
         public void Write(LoogLevel level, string message)
         {
             Write(level, message, null);

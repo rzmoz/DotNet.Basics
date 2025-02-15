@@ -5,18 +5,19 @@ using Serilog.Events;
 
 namespace DotNet.Basics.Serilog.Formatting
 {
-    public class ConsoleColorSet : IEnumerable<KeyValuePair<LogEventLevel, ConsoleColor>>
+    public class ConsoleColorSet(ConsoleColor foreground, ConsoleColor? background = null) : IEnumerable<KeyValuePair<LogEventLevel, (ConsoleColor Foreground, ConsoleColor Background)>>
     {
-        private readonly IDictionary<LogEventLevel, ConsoleColor> _colors = new Dictionary<LogEventLevel, ConsoleColor>();
+        private readonly Dictionary<LogEventLevel, (ConsoleColor Forground, ConsoleColor Background)> _colors = new();
 
-        public ConsoleColor this[LogEventLevel lvl] => _colors[lvl];
+        public (ConsoleColor Foreground, ConsoleColor Background) Success { get; } = (foreground, background ?? ConsoleColor.Black);
+        public (ConsoleColor Foreground, ConsoleColor Background) this[LogEventLevel lvl] => _colors[lvl];
 
-        public void Add(LogEventLevel lvl, ConsoleColor color)
+        public void Add(LogEventLevel lvl, ConsoleColor foreground, ConsoleColor? background = null)
         {
-            _colors.Add(lvl, color);
+            _colors.Add(lvl, (foreground, background ?? ConsoleColor.Black));
         }
 
-        public IEnumerator<KeyValuePair<LogEventLevel, ConsoleColor>> GetEnumerator()
+        public IEnumerator<KeyValuePair<LogEventLevel, (ConsoleColor Foreground, ConsoleColor Background)>> GetEnumerator()
         {
             return _colors.GetEnumerator();
         }

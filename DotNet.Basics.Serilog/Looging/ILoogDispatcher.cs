@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.Serilog.Diagnostics
+﻿namespace DotNet.Basics.Serilog.Looging
 {
     public interface ILoogDispatcher
     {

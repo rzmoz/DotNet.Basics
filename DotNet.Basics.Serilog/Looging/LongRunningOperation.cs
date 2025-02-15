@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DotNet.Basics.Serilog.Diagnostics
+namespace DotNet.Basics.Serilog.Looging
 {
     public class LongRunningOperation(string name, string? id = null)
     {

@@ -3,8 +3,9 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
+using DotNet.Basics.Serilog.Looging;
 
-namespace DotNet.Basics.Serilog.Diagnostics
+namespace DotNet.Basics.Serilog.Looging
 {
     public class LongRunningOperations
     {

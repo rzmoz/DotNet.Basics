@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.Serilog.Diagnostics
+﻿namespace DotNet.Basics.Serilog.Looging
 {
     public enum LoogLevel
     {
@@ -8,6 +8,7 @@
         Info = 2,
         Success = 3,
         Warning = 4,
-        Error = 5
+        Error = 5,
+        Fatal = 6
     }
 }

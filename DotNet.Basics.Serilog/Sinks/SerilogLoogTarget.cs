@@ -1,6 +1,6 @@
 ﻿using System;
-using DotNet.Basics.Serilog.Diagnostics;
 using DotNet.Basics.Serilog.Formatting;
+using DotNet.Basics.Serilog.Looging;
 using DotNet.Basics.Sys;
 using Serilog;
 
@@ -8,8 +8,13 @@ namespace DotNet.Basics.Serilog.Sinks
 {
     public class SerilogLoogTarget : ILoogTarget
     {
-        public SerilogLoogTarget()
+        public bool IsADO { get; }
+        public bool Verbose { get; }
+
+        public SerilogLoogTarget(bool verbose, bool isADO)
         {
+            IsADO = isADO;
+            Verbose = verbose;
             LogTarget += LogHandler;
             TimingTarget += TimingHandler;
         }
@@ -24,7 +29,10 @@ namespace DotNet.Basics.Serilog.Sinks
 
         private void LogHandler(LoogLevel lvl, string msg, Exception? e)
         {
-            Log.Logger.Write(lvl.ToLogEventLevel(), e, msg);
+            if (!Verbose && lvl < LoogLevel.Info)
+                return;
+
+            Log.Logger.Write(lvl.ToLogEventLevel(), e, lvl == LoogLevel.Success ? $"{ConsoleMarkers.SuccessPrefix}{msg}" : msg);
         }
 
         public Action<LoogLevel, string, Exception?> LogTarget { get; }

@@ -7,27 +7,26 @@ namespace DotNet.Basics.Serilog.Formatting
     {
         private static ConsoleColorSet GetForegroundColors()
         {
-            return new ConsoleColorSet
+            return new ConsoleColorSet(ConsoleColor.Green)
             {
-
                 { LogEventLevel.Verbose, ConsoleColor.DarkGray},
                 { LogEventLevel.Debug, ConsoleColor.DarkCyan},
                 { LogEventLevel.Information, ConsoleColor.White },
-                { LogEventLevel.Warning, ConsoleColor.Yellow},
+                { LogEventLevel.Warning, ConsoleColor.DarkYellow},
                 { LogEventLevel.Error, ConsoleColor.Red},
-                { LogEventLevel.Fatal, ConsoleColor.Red}
+                { LogEventLevel.Fatal, ConsoleColor.White,ConsoleColor.DarkRed}
         };
         }
         private static ConsoleColorSet GetForegroundHighlightColors()
         {
-            return new ConsoleColorSet
+            return new ConsoleColorSet(ConsoleColor.Black, ConsoleColor.DarkGreen)
             {
-                { LogEventLevel.Verbose, ConsoleColor.DarkYellow},
-                { LogEventLevel.Debug, ConsoleColor.Gray},
-                { LogEventLevel.Information, ConsoleColor.Cyan},
-                { LogEventLevel.Warning, ConsoleColor.Red},
-                { LogEventLevel.Error, ConsoleColor.White },
-                { LogEventLevel.Fatal, ConsoleColor.White }
+                { LogEventLevel.Verbose, ConsoleColor.Black, ConsoleColor.DarkGray},
+                { LogEventLevel.Debug, ConsoleColor.Black, ConsoleColor.DarkCyan},
+                { LogEventLevel.Information, ConsoleColor.Black, ConsoleColor.Gray},
+                { LogEventLevel.Warning, ConsoleColor.Black, ConsoleColor.Yellow},
+                { LogEventLevel.Error, ConsoleColor.Black, ConsoleColor.DarkRed},
+                { LogEventLevel.Fatal, ConsoleColor.Black, ConsoleColor.Red}
             };
         }
     }

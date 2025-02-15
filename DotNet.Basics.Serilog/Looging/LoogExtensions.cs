@@ -1,16 +1,16 @@
 ﻿using System;
 
-namespace DotNet.Basics.Serilog.Diagnostics
+namespace DotNet.Basics.Serilog.Looging
 {
     public static class LoogExtensions
     {
         public static string Highlight(this string str)
         {
-            return $"{HighlightMarkers.Prefix}{str}{HighlightMarkers.Suffix}";
+            return $"{ConsoleMarkers.HighlightPrefix}{str}{ConsoleMarkers.HighlightSuffix}";
         }
         public static string StripHighlight(this string str)
         {
-            return str.Replace($"{HighlightMarkers.Prefix}", string.Empty).Replace($"{HighlightMarkers.Suffix}", string.Empty);
+            return str.Replace($"{ConsoleMarkers.HighlightPrefix}", string.Empty).Replace($"{ConsoleMarkers.HighlightSuffix}", string.Empty);
         }
         public static string WithGutter(this string msg, int gutterSize = 26)
         {

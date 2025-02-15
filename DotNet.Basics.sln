@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.Pipelines", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Basics.Serilog", "DotNet.Basics.Serilog\DotNet.Basics.Serilog.csproj", "{CED52929-E6F9-4359-ADC0-355C62195969}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.Basics.Serilog.Console", "DotNet.Basics.Serilog.Console\DotNet.Basics.Serilog.Console.csproj", "{5936CDE9-F921-4E4B-A5F3-A02156D26276}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{CED52929-E6F9-4359-ADC0-355C62195969}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CED52929-E6F9-4359-ADC0-355C62195969}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CED52929-E6F9-4359-ADC0-355C62195969}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5936CDE9-F921-4E4B-A5F3-A02156D26276}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5936CDE9-F921-4E4B-A5F3-A02156D26276}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5936CDE9-F921-4E4B-A5F3-A02156D26276}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5936CDE9-F921-4E4B-A5F3-A02156D26276}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,6 +58,7 @@ Global
 		{6D1B9906-A6EB-47C9-9192-6B14288F9C48} = {8D2438BF-0158-46EE-9734-92B712CF5479}
 		{EF8BECEB-A97E-48FE-A31D-C2502BE742EB} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
 		{CED52929-E6F9-4359-ADC0-355C62195969} = {4F8D1747-682B-4A10-A618-26DB3A7B2B2C}
+		{5936CDE9-F921-4E4B-A5F3-A02156D26276} = {8D2438BF-0158-46EE-9734-92B712CF5479}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8CBE2111-AC24-4AFA-9537-5FD16E0BF1E5}

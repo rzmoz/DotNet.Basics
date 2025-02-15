@@ -1,4 +1,4 @@
-﻿using DotNet.Basics.Serilog.Diagnostics;
+﻿using DotNet.Basics.Serilog.Looging;
 using FluentAssertions;
 using Xunit;
 

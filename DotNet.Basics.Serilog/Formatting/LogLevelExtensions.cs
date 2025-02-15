@@ -1,4 +1,4 @@
-﻿using DotNet.Basics.Serilog.Diagnostics;
+﻿using DotNet.Basics.Serilog.Looging;
 using Serilog.Events;
 
 namespace DotNet.Basics.Serilog.Formatting
@@ -9,14 +9,15 @@ namespace DotNet.Basics.Serilog.Formatting
         {
             return lvl switch
             {
+                LoogLevel.Raw => LogEventLevel.Verbose,
                 LoogLevel.Verbose => LogEventLevel.Verbose,
                 LoogLevel.Debug => LogEventLevel.Debug,
                 LoogLevel.Info => LogEventLevel.Information,
                 LoogLevel.Success => LogEventLevel.Information,
                 LoogLevel.Warning => LogEventLevel.Warning,
                 LoogLevel.Error => LogEventLevel.Error,
-                LoogLevel.Raw => LogEventLevel.Information,
-                _ => LogEventLevel.Information
+                LoogLevel.Fatal => LogEventLevel.Fatal,
+                _ => LogEventLevel.Debug
             };
         }
     }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DotNet.Basics.Serilog.Diagnostics
+namespace DotNet.Basics.Serilog.Looging
 {
     public interface ILoog : ILoogDispatcher
     {
@@ -21,6 +21,8 @@ namespace DotNet.Basics.Serilog.Diagnostics
         void Warning(string message, Exception e);
         void Error(string message);
         void Error(string message, Exception e);
+        void Fatal(string message);
+        void Fatal(string message, Exception e);
         void Write(LoogLevel level, string message);
         void Write(LoogLevel level, string message, Exception e);
         void Timing(LoogLevel level, string name, string @event);

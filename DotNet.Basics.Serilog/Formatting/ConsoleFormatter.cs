@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using DotNet.Basics.Sys;
 using Serilog.Events;
 using Serilog.Formatting;
 
@@ -16,29 +17,36 @@ namespace DotNet.Basics.Serilog.Formatting
             foreach (var prop in logEvent.Properties)
             {
                 var key = $"{{{prop.Key}}}";
-                var replaceValue = HighlightMarkers.Prefix + prop.Value.ToString().Trim('"') + HighlightMarkers.Suffix;
+                var replaceValue = ConsoleMarkers.HighlightPrefix + prop.Value.ToString().Trim('"') + ConsoleMarkers.HighlightSuffix;
                 msg = msg.Replace(key, replaceValue, StringComparison.CurrentCulture);
             }
-            Console.ResetColor();
-            Console.ForegroundColor = theme.GetForegroundColor(logEvent.Level);
+
+            var isSuccess = logEvent.MessageTemplate.Text.StartsWith(ConsoleMarkers.SuccessPrefix);
+
+            if (isSuccess)
+                msg = msg.RemovePrefix(ConsoleMarkers.SuccessPrefix);
+
+            theme.ResetColors();
+            theme.SetColors(logEvent.Level, false, isSuccess);
             foreach (var @char in msg)
             {
                 switch (@char)
                 {
-                    case HighlightMarkers.Prefix:
-                        Console.ForegroundColor = theme.GetForegroundHighlightColor(logEvent.Level);
+                    case ConsoleMarkers.HighlightPrefix:
+                        theme.SetColors(logEvent.Level, true, isSuccess);
+                        output.Write(' ');
                         continue;
-                    case HighlightMarkers.Suffix:
-                        Console.ForegroundColor = theme.GetForegroundColor(logEvent.Level);
+                    case ConsoleMarkers.HighlightSuffix:
+                        output.Write(' ');
+                        theme.SetColors(logEvent.Level, false, isSuccess);
                         continue;
                     default:
                         output.Write(@char);
                         break;
                 }
             }
-            output.Write(Environment.NewLine);
-            Console.ResetColor();
-            Console.ForegroundColor = theme.GetForegroundColor(logEvent.Level);
+            theme.ResetColors();
+            output.WriteLine(" ");
         }
     }
 }
