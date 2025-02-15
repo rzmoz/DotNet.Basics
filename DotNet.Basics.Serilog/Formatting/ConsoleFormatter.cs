@@ -34,10 +34,8 @@ namespace DotNet.Basics.Serilog.Formatting
                 {
                     case ConsoleMarkers.HighlightPrefix:
                         theme.SetColors(logEvent.Level, true, isSuccess);
-                        output.Write(' ');
                         continue;
                     case ConsoleMarkers.HighlightSuffix:
-                        output.Write(' ');
                         theme.SetColors(logEvent.Level, false, isSuccess);
                         continue;
                     default:
