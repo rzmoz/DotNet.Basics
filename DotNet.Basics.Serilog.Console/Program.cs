@@ -5,21 +5,16 @@ namespace DotNet.Basics.Serilog.Console
 {
     internal class Program
     {
-        private const string _verboseFlag = "--verbose";
-        private const string _isADOFlag = "--ado";
-
         static async Task<int> Main(string[] args)
         {
-            var verbose = args.Any(a => a.Equals(_verboseFlag, StringComparison.OrdinalIgnoreCase));
-            var isADO = args.Any(a => a.Equals(_isADOFlag, StringComparison.OrdinalIgnoreCase));
-
-            await using var ctx = new ConsoleHostContext(verbose: verbose, ado: isADO)
+            await using var ctx = new ConsoleHostContext(args)
             {
                 ExceptionExitCodes =
                 {
                     {nameof(ExceptionHandlingException), e => 400}
                 }
             };
+
             return await ctx.RunAsync(async (services, log) =>
             {
                 log.Verbose($"{nameof(log.Verbose)} {nameof(log.Verbose).Highlight()} lalalalalalala");

@@ -9,8 +9,16 @@ using Serilog;
 
 namespace DotNet.Basics.Serilog.Cli
 {
-    public class ConsoleHostContext(bool verbose = false, bool ado = false, Action<IServiceCollection>? configureServices = null) : IAsyncDisposable
+    public class ConsoleHostContext(bool verbose = false, bool ado = false, bool debug = false, Action<IServiceCollection>? configureServices = null) : IAsyncDisposable
     {
+        public static readonly string DebugFlag = "--debug";
+        public static readonly string VerboseFlag = "--verbose";
+        public static readonly string ADOFlag = "--ADO";
+
+        public ConsoleHostContext(string[] args, Action<IServiceCollection>? configureServices = null)
+        : this(verbose: HasFlag(VerboseFlag, args), ado: HasFlag(ADOFlag, args), debug: HasFlag(DebugFlag, args), configureServices)
+        { }
+
         public int FatalExitCode { get; set; } = 500;
         public IDictionary<string, Func<Exception, int>> ExceptionExitCodes { get; set; } = new Dictionary<string, Func<Exception, int>>();
 
@@ -23,6 +31,12 @@ namespace DotNet.Basics.Serilog.Cli
             var log = services.GetService<ILoog>()!;
             try
             {
+                if (!ado && debug)
+                {
+                    Console.WriteLine($"Pausing to attach debugger [{Environment.ProcessId}]. Press enter to continue");
+                    Console.ReadLine();
+                }
+
                 return await loogContext.Invoke(services, log);
             }
             catch (Exception e)
@@ -41,6 +55,11 @@ namespace DotNet.Basics.Serilog.Cli
         public async ValueTask DisposeAsync()
         {
             await Log.CloseAndFlushAsync();
+        }
+
+        private static bool HasFlag(string flag, string[] args)
+        {
+            return args.Any(a => a.Equals(flag, StringComparison.OrdinalIgnoreCase));
         }
     }
 }
