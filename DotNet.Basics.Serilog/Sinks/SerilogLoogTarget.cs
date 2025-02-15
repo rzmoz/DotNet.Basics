@@ -8,12 +8,12 @@ namespace DotNet.Basics.Serilog.Sinks
 {
     public class SerilogLoogTarget : ILoogTarget
     {
-        public bool IsADO { get; }
+        public bool ADO { get; }
         public bool Verbose { get; }
 
-        public SerilogLoogTarget(bool verbose, bool isADO)
+        public SerilogLoogTarget(bool verbose, bool ado)
         {
-            IsADO = isADO;
+            ADO = ado;
             Verbose = verbose;
             LogTarget += LogHandler;
             TimingTarget += TimingHandler;
