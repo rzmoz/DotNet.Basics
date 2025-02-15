@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Serilog.Looging
 {
@@ -27,7 +28,7 @@ namespace DotNet.Basics.Serilog.Looging
                 Enabled = true
             };
             _timer.Elapsed += _timer_Elapsed;
-            _loog.Verbose($"Long running operations initialized with ping interval: {$@"{pingInterval:hh\:mm\:ss}".Highlight()}");
+            _loog.Verbose($"Long running operations initialized with ping interval: {$@"{pingInterval.ToHumanReadableString()}".Highlight()}");
         }
 
         private void _timer_Elapsed(object? sender, ElapsedEventArgs e)
@@ -37,7 +38,7 @@ namespace DotNet.Basics.Serilog.Looging
 
             var message = string.Empty;
             foreach (var operation in _operations.Values.OrderBy(o => o.StartTime))
-                message += $"[ {operation.Name.Highlight()} has been running for {operation.DurationNowFormatted.Highlight()} ]\r\n";
+                message += $"[ {operation.Name.Highlight()} has been running for {operation.DurationNow.ToHumanReadableString().Highlight()} ]\r\n";
 
             _loog.Verbose(message.WithGutter());
         }
@@ -50,9 +51,9 @@ namespace DotNet.Basics.Serilog.Looging
             try
             {
                 if (_operations.TryAdd(operation.Id, operation))
-                    _loog.Timing(LoogLevel.Debug, operation.Name, "starting", TimeSpan.MinValue);
+                    _loog.Timing(LoogLevel.Debug, operation.Name.Highlight(), "Starting...", TimeSpan.MinValue);
                 else
-                    _loog.Error($"Failed to start {operation.Name} with Id: {operation.Id}");
+                    _loog.Error($"Failed to start {operation.Name.Highlight()} with Id: {operation.Id}");
                 exitCode = await action.Invoke().ConfigureAwait(false);
                 return exitCode;
             }
@@ -67,9 +68,10 @@ namespace DotNet.Basics.Serilog.Looging
                     _loog.Verbose($"{operation.Name} not removed from {nameof(LongRunningOperations)} stack :-(");
 
                 if (exitCode == 0)
-                    _loog.Timing(LoogLevel.Success, operation.Name, "DONE", operation.DurationNow);
+                    _loog.Success($"{operation.Name.Highlight()}: DONE");
                 else if (exitCode != int.MinValue)
-                    _loog.Timing(LoogLevel.Error, $"{operation.Name}", $"FAILED with exit code {exitCode}. See loog for details", operation.DurationNow);
+                    _loog.Error($"{operation.Name.Highlight()}: FAILED with exit code {exitCode.ToString().Highlight()}");
+                _loog.Debug($"Running time: {operation.DurationNow.ToHumanReadableString().Highlight()}");
             }
         }
     }

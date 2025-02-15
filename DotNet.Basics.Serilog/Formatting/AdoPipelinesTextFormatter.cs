@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using DotNet.Basics.Serilog.Looging;
 using Serilog.Events;
 using Serilog.Formatting;
 
@@ -20,7 +21,7 @@ namespace DotNet.Basics.Serilog.Formatting
             };
 
             output.Write(adoPrefix);
-            output.WriteLine(logEvent.MessageTemplate.Text);
+            output.WriteLine(logEvent.MessageTemplate.Text.StripHighlight());
         }
     }
 }

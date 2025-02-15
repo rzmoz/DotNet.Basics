@@ -1,5 +1,6 @@
 ﻿using DotNet.Basics.Serilog.Cli;
 using DotNet.Basics.Serilog.Looging;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Serilog.Console
 {
@@ -7,7 +8,7 @@ namespace DotNet.Basics.Serilog.Console
     {
         static async Task<int> Main(string[] args)
         {
-            await using var ctx = new ConsoleHostContext(args)
+            await using var ctx = new ConsoleHostContext(args, 1.Seconds())
             {
                 ExceptionExitCodes =
                 {
@@ -17,14 +18,19 @@ namespace DotNet.Basics.Serilog.Console
 
             return await ctx.RunAsync(async (services, log) =>
             {
-                log.Verbose($"{nameof(log.Verbose)} {nameof(log.Verbose).Highlight()} lalalalalalala");
-                log.Debug($"{nameof(log.Debug)} {nameof(log.Debug).Highlight()} lalalalalalala");
-                log.Info($"{nameof(log.Info)} {nameof(log.Info).Highlight()} lalalalalalala");
-                log.Success($"{nameof(log.Success)} {nameof(log.Success).Highlight()} lalalalalalala");
-                log.Warning($"{nameof(log.Warning)} {nameof(log.Warning).Highlight()} lalalalalalala");
-                log.Error($"{nameof(log.Error)} {nameof(log.Error).Highlight()} lalalalalalala");
-                log.Fatal($"{nameof(log.Fatal)} {nameof(log.Fatal).Highlight()} lalalalalalala");
-                throw new IOException("Halleluja");
+                var longOps = (LongRunningOperations)services.GetService(typeof(LongRunningOperations))!;
+                return await longOps.StartAsync("logging", async () =>
+                {
+                    /*log.Verbose($"{nameof(log.Verbose)} {nameof(log.Verbose).Highlight()} lalalalalalala");
+                    log.Debug($"{nameof(log.Debug)} {nameof(log.Debug).Highlight()} lalalalalalala");
+                    log.Info($"{nameof(log.Info)} {nameof(log.Info).Highlight()} lalalalalalala");
+                    log.Success($"{nameof(log.Success)} {nameof(log.Success).Highlight()} lalalalalalala");
+                    log.Warning($"{nameof(log.Warning)} {nameof(log.Warning).Highlight()} lalalalalalala");
+                    log.Error($"{nameof(log.Error)} {nameof(log.Error).Highlight()} lalalalalalala");
+                    log.Fatal($"{nameof(log.Fatal)} {nameof(log.Fatal).Highlight()} lalalalalalala");*/
+                    await Task.Delay(5.Seconds());
+                    return 0;
+                });
             });
         }
     }

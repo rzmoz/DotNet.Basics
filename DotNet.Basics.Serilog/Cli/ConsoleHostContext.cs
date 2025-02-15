@@ -9,14 +9,17 @@ using Serilog;
 
 namespace DotNet.Basics.Serilog.Cli
 {
-    public class ConsoleHostContext(bool verbose = false, bool ado = false, bool debug = false, Action<IServiceCollection>? configureServices = null) : IAsyncDisposable
+    public class ConsoleHostContext(bool verbose, bool ado, bool debug, TimeSpan longRunningOperationsPingInterval, Action<IServiceCollection>? configureServices = null) : IAsyncDisposable
     {
         public static readonly string DebugFlag = "--debug";
         public static readonly string VerboseFlag = "--verbose";
         public static readonly string ADOFlag = "--ADO";
 
         public ConsoleHostContext(string[] args, Action<IServiceCollection>? configureServices = null)
-        : this(verbose: HasFlag(VerboseFlag, args), ado: HasFlag(ADOFlag, args), debug: HasFlag(DebugFlag, args), configureServices)
+            : this(args, 1.Minutes(), configureServices)
+        { }
+        public ConsoleHostContext(string[] args, TimeSpan longRunningOperationsPingInterval, Action<IServiceCollection>? configureServices = null)
+        : this(verbose: HasFlag(VerboseFlag, args), ado: HasFlag(ADOFlag, args), debug: HasFlag(DebugFlag, args), longRunningOperationsPingInterval, configureServices)
         { }
 
         public int FatalExitCode { get; set; } = 500;
@@ -26,7 +29,7 @@ namespace DotNet.Basics.Serilog.Cli
         {
             var serviceCollection = new ServiceCollection();
             configureServices?.Invoke(serviceCollection);
-            serviceCollection.AddDiagnosticsWithSerilogDevConsole(verbose: verbose, ado: ado);
+            serviceCollection.AddDiagnosticsWithSerilogDevConsole(verbose: verbose, ado: ado, longRunningOperationsPingInterval: longRunningOperationsPingInterval);
             var services = serviceCollection.BuildServiceProvider();
             var log = services.GetService<ILoog>()!;
             try

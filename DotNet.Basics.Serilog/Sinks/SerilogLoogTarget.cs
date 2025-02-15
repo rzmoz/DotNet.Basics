@@ -23,8 +23,8 @@ namespace DotNet.Basics.Serilog.Sinks
         {
             Log.Logger.Write(lvl.ToLogEventLevel(),
                 elapsed > TimeSpan.MinValue
-                    ? $"{name}:{@event} has been running for: {elapsed.ToHumanReadableString()}"
-                    : $"{name}:{@event}");
+                    ? $"{name}: {@event} has been running for: {elapsed.ToHumanReadableString()}"
+                    : $"{name}: {@event}");
         }
 
         private void LogHandler(LoogLevel lvl, string msg, Exception? e)

@@ -4,17 +4,12 @@ using Serilog;
 using System;
 using DotNet.Basics.Serilog.Looging;
 using DotNet.Basics.Serilog.Sinks;
-using DotNet.Basics.Sys;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DotNet.Basics.Serilog
 {
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection AddDiagnosticsWithSerilogDevConsole(this IServiceCollection services, bool verbose, bool ado)
-        {
-            return services.AddDiagnosticsWithSerilogDevConsole(verbose: verbose, ado: ado, 1.Minutes());
-        }
         public static IServiceCollection AddDiagnosticsWithSerilogDevConsole(this IServiceCollection services, bool verbose, bool ado, TimeSpan longRunningOperationsPingInterval)
         {
             return services.AddDiagnosticsWithSerilog(config =>
