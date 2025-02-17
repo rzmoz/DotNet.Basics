@@ -16,7 +16,7 @@ namespace DotNet.Basics.Tests.Pipelines
             var services = new ServiceCollection();
 
             //act
-            services.AddPipelines(typeof(PipelineExtensionsTests).Assembly);
+            services.AddPipelines([typeof(PipelineExtensionsTests).Assembly]);
 
             var provider = services.BuildServiceProvider();
 
@@ -30,7 +30,7 @@ namespace DotNet.Basics.Tests.Pipelines
             var services = new ServiceCollection();
 
             //act
-            services.AddPipelineSteps(typeof(PipelineExtensionsTests).Assembly);
+            services.AddPipelineSteps([typeof(PipelineExtensionsTests).Assembly]);
 
             var provider = services.BuildServiceProvider();
 
