@@ -22,7 +22,7 @@ namespace DotNet.Basics.Tasks
 
         public string Name { get; }
 
-        public abstract Task RunAsync(object args);
+        public abstract Task<object> RunAsync(object args);
 
         protected virtual void FireStarted(string taskName)
         {
@@ -78,9 +78,9 @@ namespace DotNet.Basics.Tasks
             _task = task ?? throw new ArgumentNullException(nameof(task));
         }
 
-        public override async Task RunAsync(object args)
+        public override async Task<object> RunAsync(object args)
         {
-            await RunAsync((T)args);
+            return await RunAsync((T)args);
         }
 
         public Task<T> RunAsync(T args)

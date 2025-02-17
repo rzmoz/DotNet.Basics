@@ -53,17 +53,18 @@ namespace DotNet.Basics.Tests.Tasks
         public async Task RunAsync_NonGenericBase_TaskIsRun()
         {
             ///VERY important that type is set to abstract base type
-            var result = string.Empty;
-
-            result.Should().BeEmpty();
-
-            ManagedTask task = new ManagedTask<EventArgs<int>>((args, ct) => { result = "Hello World!"; });
+            var initialValue = 1;
+            var updatedValue = 3;
+            ManagedTask task = new ManagedTask<EventArgs<int>>((args, ct) => { args.Value = updatedValue; });
 
             //act
-            await task.RunAsync(null);
+            var updatedResult = (EventArgs<int>)await task.RunAsync(new EventArgs<int>
+            {
+                Value = initialValue
+            });
 
             //assert
-            result.Should().Be("Hello World!");
+            updatedResult.Value.Should().Be(updatedValue);
         }
 
         [Fact]
