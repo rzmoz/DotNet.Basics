@@ -1,6 +1,5 @@
 ﻿using DotNet.Basics.Serilog.Looging;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace DotNet.Basics.Cli.Console
 {
@@ -18,7 +17,7 @@ namespace DotNet.Basics.Cli.Console
 
             return await host.RunAsync(async (services, log) =>
             {
-                var longOps = (LongRunningOperations)services.Services.GetService(typeof(LongRunningOperations))!;
+                var longOps = services.Services.GetService<LongRunningOperations>()!;
                 return await longOps.StartAsync("logging", async () =>
                 {
                     log.Verbose($"{nameof(log.Verbose)} {nameof(log.Verbose).Highlight()} lalalalalalala");

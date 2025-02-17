@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using DotNet.Basics.Collections;
 using DotNet.Basics.Sys;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,14 +24,19 @@ namespace DotNet.Basics.Cli
         public IServiceProvider Services { get; set; } = new ServiceCollection().BuildServiceProvider();
         public IReadOnlyList<string> Args => args.Blacklist(VerboseFlag, ADOFlag, DebugFlag).ToArray();
         public IReadOnlyDictionary<string, Func<Exception, int>> ExceptionHandlers => _exceptionHandlers;
-        
+
+        public T GetService<T>()
+        {
+            return Services.GetService<T>() ?? throw new NullReferenceException(typeof(T).FullName);
+        }
+
         public LoogConsoleOptions WithExceptionHandler<T>(Func<T, int> exceptionHandler) where T : Exception
         {
             _exceptionHandlers.Add(typeof(T).Name, e => exceptionHandler.Invoke((T)e));
             return this;
         }
 
-        
+
 
         private bool HasFlag(string flag)
         {
