@@ -1,4 +1,4 @@
-﻿namespace DotNet.Basics.Serilog.Console
+﻿namespace DotNet.Basics.Cli.Console
 {
     public class ExitCodeException(int exitCode) : Exception
     {

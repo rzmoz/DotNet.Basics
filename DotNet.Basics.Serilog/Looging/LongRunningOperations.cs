@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
-using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Serilog.Looging
 {
@@ -73,6 +72,14 @@ namespace DotNet.Basics.Serilog.Looging
                     _loog.Error($"{operation.Name.Highlight()}: FAILED with exit code {exitCode.ToString().Highlight()}");
                 _loog.Debug($"Running time: {operation.DurationNow.ToHumanReadableString().Highlight()}");
             }
+        }
+        public async Task<int> StartAsync(string name, Func<Task> action)
+        {
+            return await StartAsync(name, async () =>
+            {
+                await action();
+                return 0;
+            });
         }
     }
 }

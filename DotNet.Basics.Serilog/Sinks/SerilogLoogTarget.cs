@@ -1,7 +1,6 @@
 ﻿using System;
 using DotNet.Basics.Serilog.Formatting;
 using DotNet.Basics.Serilog.Looging;
-using DotNet.Basics.Sys;
 using Serilog;
 
 namespace DotNet.Basics.Serilog.Sinks

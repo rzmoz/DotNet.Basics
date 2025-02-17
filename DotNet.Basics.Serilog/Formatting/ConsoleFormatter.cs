@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using DotNet.Basics.Sys;
 using Serilog.Events;
 using Serilog.Formatting;
 
@@ -24,7 +23,7 @@ namespace DotNet.Basics.Serilog.Formatting
             var isSuccess = logEvent.MessageTemplate.Text.StartsWith(ConsoleMarkers.SuccessPrefix);
 
             if (isSuccess)
-                msg = msg.RemovePrefix(ConsoleMarkers.SuccessPrefix);
+                msg = msg.Replace(ConsoleMarkers.SuccessPrefix, string.Empty);
 
             theme.ResetColors();
             theme.SetColors(logEvent.Level, false, isSuccess);

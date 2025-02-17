@@ -1,5 +1,5 @@
-﻿using Serilog.Events;
-using System;
+﻿using System;
+using Serilog.Events;
 
 namespace DotNet.Basics.Serilog.Formatting
 {
