@@ -19,6 +19,13 @@ namespace DotNet.Basics.Cli
         public bool ADO => Options.ADO;
         public bool Debug => Options.Debug;
 
+        public async Task<int> RunPipelineAsync<T>() where T : ManagedTask
+        {
+            var argsFactory = new PipelineArgsFactory();
+            var args = argsFactory.Create(typeof(T), Args);
+            return await RunPipelineAsync<T>(args);
+        }
+
         public async Task<int> RunPipelineAsync<T>(object args) where T : ManagedTask
         {
             var managedTask = Options.GetService<T>();

@@ -14,7 +14,7 @@ namespace DotNet.Basics.Cli.Console
                 .Build();
 
 
-            return await host.RunPipelineAsync<TestPipeline>(host.Options);
+            return await host.RunPipelineAsync<TestPipeline>();
         }
     }
 }

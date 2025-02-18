@@ -3,7 +3,7 @@ using DotNet.Basics.Serilog.Looging;
 
 namespace DotNet.Basics.Cli.Console
 {
-    public class TestPipeline : Pipeline<LoogConsoleOptions>
+    public class TestPipeline : Pipeline<TestPipelineArgs>
     {
         private readonly ILoog _log;
 
@@ -14,12 +14,9 @@ namespace DotNet.Basics.Cli.Console
             AddStep(nameof(ExitCodeStep), ExitCodeStep);
         }
 
-        public Task<int> Looging(LoogConsoleOptions args)
+        public Task<int> Looging(TestPipelineArgs args)
         {
-            _log.Info($"--{nameof(args.Verbose)}: {args.Verbose}");
-            _log.Info($"--{nameof(args.Debug)}: {args.Debug}");
-            _log.Info($"--{nameof(args.ADO)}: {args.ADO}");
-
+            _log.Debug(args.OtherCode.ToString());
             /*
             _log.Verbose($"{nameof(_log.Verbose)} {nameof(_log.Verbose).Highlight()} lalalalalalala");
             _log.Debug($"{nameof(_log.Debug)} {nameof(_log.Debug).Highlight()} lalalalalalala");
@@ -28,9 +25,9 @@ namespace DotNet.Basics.Cli.Console
             _log.Warning($"{nameof(_log.Warning)} {nameof(_log.Warning).Highlight()} lalalalalalala");
             _log.Error($"{nameof(_log.Error)} {nameof(_log.Error).Highlight()} lalalalalalala");
             _log.Fatal($"{nameof(_log.Fatal)} {nameof(_log.Fatal).Highlight()} lalalalalalala");*/
-            return Task.FromResult(0);
+            return Task.FromResult(args.ExitCode);
         }
-        public Task<int> ExitCodeStep(LoogConsoleOptions args)
+        public Task<int> ExitCodeStep(TestPipelineArgs args)
         {
             return Task.FromResult(0);
         }

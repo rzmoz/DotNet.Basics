@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using DotNet.Basics.Serilog.Looging;
 
 namespace DotNet.Basics.Cli
 {
