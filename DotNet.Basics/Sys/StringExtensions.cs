@@ -12,7 +12,7 @@ namespace DotNet.Basics.Sys
     public static class StringExtensions
     {
         private const string _newlinePattern = @"\r\n|\r|\n";
-        private static readonly Regex _newlineRegex = new Regex(_newlinePattern, RegexOptions.Compiled);
+        private static readonly Regex _newlineRegex = new(_newlinePattern, RegexOptions.Compiled);
 
         public static string ToUpperFirstChar(this string input)
         {
