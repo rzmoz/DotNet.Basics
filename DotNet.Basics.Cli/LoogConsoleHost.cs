@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DotNet.Basics.Serilog.Looging;
-using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 namespace DotNet.Basics.Cli
@@ -14,10 +13,22 @@ namespace DotNet.Basics.Cli
         private static readonly Regex _newlineRegex = new(_newlinePattern, RegexOptions.Compiled);
         public LoogConsoleOptions Options { get; } = options;
 
-        public async Task<int> RunAsync(Func<LoogConsoleOptions, ILoog, Task<int>> loogContext)
+        public async Task<int> RunAsync(Func<Task<int>> loogContext)
         {
-            var log = Options.Services.GetService<ILoog>()!;
-
+            return await RunAsync(async (_, _, _) => await loogContext());
+        }
+        public async Task<int> RunAsync(Func<ILoog, Task<int>> loogContext)
+        {
+            return await RunAsync(async (_, _, log) => await loogContext(log));
+        }
+        public async Task<int> RunAsync(Func<LongRunningOperations, ILoog, Task<int>> loogContext)
+        {
+            return await RunAsync(async (_, ops, log) => await loogContext(ops, log));
+        }
+        public async Task<int> RunAsync(Func<LoogConsoleOptions, LongRunningOperations, ILoog, Task<int>> loogContext)
+        {
+            var log = Options.GetService<ILoog>()!;
+            var longRunningOperations = options.GetService<LongRunningOperations>();
             var exitCode = Options.FatalExitCode;
 
             try
@@ -28,7 +39,7 @@ namespace DotNet.Basics.Cli
                     Console.ReadLine();
                 }
 
-                exitCode = await loogContext.Invoke(Options, log);
+                exitCode = await loogContext.Invoke(Options, longRunningOperations, log);
             }
             catch (Exception e)
             {
