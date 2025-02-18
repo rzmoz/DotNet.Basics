@@ -7,7 +7,7 @@ namespace DotNet.Basics.Tests.Pipelines.PipelineHelpers
 {
     public class SimpleStep : PipelineStep<EventArgs>
     {
-        protected override Task<int> RunImpAsync(EventArgs args, CancellationToken ct)
+        protected override Task<int> RunImpAsync(EventArgs args)
         {
             return Task.FromResult(0);
         }

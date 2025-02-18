@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +12,7 @@ namespace DotNet.Basics.Pipelines
     {
         private readonly Func<IServiceProvider> _getServiceProvider;
         private readonly ConcurrentQueue<ManagedTask<T>> _tasks;
-        private readonly Func<T, CancellationToken, Task<int>> _innerRun;
+        private readonly Func<T, Task<int>> _innerRun;
 
         public Pipeline(string name = null, Invoke invoke = Invoke.Sequential)
             : this(null, name, invoke)
@@ -76,25 +75,25 @@ namespace DotNet.Basics.Pipelines
             return this;
         }
 
-        public Pipeline<T> AddStep(Action<T, CancellationToken> task)
+        public Pipeline<T> AddStep(Action<T> task)
         {
             var mt = new ManagedTask<T>(task, "Step");
             return AddStep(mt);
         }
 
-        public Pipeline<T> AddStep(string name, Action<T, CancellationToken> task)
+        public Pipeline<T> AddStep(string name, Action<T> task)
         {
             var mt = new ManagedTask<T>(name, task, "Step");
             return AddStep(mt);
         }
 
-        public Pipeline<T> AddStep(Func<T, CancellationToken, Task<int>> task)
+        public Pipeline<T> AddStep(Func<T, Task<int>> task)
         {
             var mt = new ManagedTask<T>(task, "Step");
             return AddStep(mt);
         }
 
-        public Pipeline<T> AddStep(string name, Func<T, CancellationToken, Task<int>> task)
+        public Pipeline<T> AddStep(string name, Func<T, Task<int>> task)
         {
             var mt = new ManagedTask<T>(name, task, "Step");
             return AddStep(mt);
@@ -107,17 +106,17 @@ namespace DotNet.Basics.Pipelines
             return this;
         }
 
-        public Pipeline<T> AddBlock(params Func<T, CancellationToken, Task<int>>[] tasks)
+        public Pipeline<T> AddBlock(params Func<T, Task<int>>[] tasks)
         {
             return AddBlock(null, tasks);
         }
 
-        public Pipeline<T> AddBlock(string name, params Func<T, CancellationToken, Task<int>>[] tasks)
+        public Pipeline<T> AddBlock(string name, params Func<T, Task<int>>[] tasks)
         {
             return AddBlock(name, Invoke.Parallel, tasks);
         }
 
-        public Pipeline<T> AddBlock(string name, Invoke invoke = Invoke.Parallel, params Func<T, CancellationToken, Task<int>>[] tasks)
+        public Pipeline<T> AddBlock(string name, Invoke invoke = Invoke.Parallel, params Func<T, Task<int>>[] tasks)
         {
             var count = _tasks.Count(s => s.GetType() == typeof(Pipeline<>));
             var block = new Pipeline<T>(_getServiceProvider, name ?? $"Block {count}", invoke);
@@ -128,29 +127,25 @@ namespace DotNet.Basics.Pipelines
             return block;
         }
 
-        protected override Task<int> InnerRunAsync(T args, CancellationToken ct)
+        protected override Task<int> InnerRunAsync(T args)
         {
-            return _innerRun(args, ct);
+            return _innerRun(args);
         }
 
-        protected async Task<int> InnerParallelRunAsync(T args, CancellationToken ct)
+        protected async Task<int> InnerParallelRunAsync(T args)
         {
-            if (ct.IsCancellationRequested)
-                return 0;
-            var tasks = Tasks.Select(task => task.RunAsync(args, ct));
+            var tasks = Tasks.Select(task => task.RunAsync(args));
             var results = await Task.WhenAll(tasks);
             return results.Select(i => i < 0 ? i * -1 : i).Sum();
         }
 
-        protected async Task<int> InnerSequentialRunAsync(T args, CancellationToken ct)
+        protected async Task<int> InnerSequentialRunAsync(T args)
         {
             var results = new List<int>();
 
             foreach (var task in Tasks)
             {
-                if (ct.IsCancellationRequested)
-                    break;
-                results.Add(await task.RunAsync(args, ct));
+                results.Add(await task.RunAsync(args));
             }
             return results.Select(i => i < 0 ? i * -1 : i).Sum();
         }

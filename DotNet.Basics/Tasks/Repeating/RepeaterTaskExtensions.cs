@@ -10,7 +10,7 @@ namespace DotNet.Basics.Tasks.Repeating
             return new OnceOnlyTask(task).RunSync;
         }
 
-        public static Func<Task> ToOnceOnly(this Func<Task> task)
+        public static Func<Task<int>> ToOnceOnly(this Func<Task<int>> task)
         {
             return new OnceOnlyTask(task).RunAsync;
         }

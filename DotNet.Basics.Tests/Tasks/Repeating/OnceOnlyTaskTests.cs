@@ -18,6 +18,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
 #pragma warning restore 1998
             {
                 counter++;
+                return 0;
             });
 
             counter.Should().Be(1);
@@ -63,8 +64,8 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             });
             counter.Should().Be(1);
         }
-        
-        private async Task Run5TimesAsync(Func<Task> task)
+
+        private async Task Run5TimesAsync(Func<Task<int>> task)
         {
             var ooTask = task.ToOnceOnly();
 

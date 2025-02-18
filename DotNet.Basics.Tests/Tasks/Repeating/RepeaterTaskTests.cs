@@ -284,7 +284,7 @@ namespace DotNet.Basics.Tests.Tasks.Repeating
             var doCounter = 0;
             var pingCounter = 0;
             const int maxTries = 5;
-            var result = Repeat.TaskOnce(() => { doCounter++; return Task.FromResult(""); })
+            var result = Repeat.TaskOnce(() => { doCounter++; return Task.FromResult(0); })
                 .WithOptions(o =>
                 {
                     o.PingOnRetry = () => { pingCounter++; };

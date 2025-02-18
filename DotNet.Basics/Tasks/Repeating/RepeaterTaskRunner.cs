@@ -32,7 +32,7 @@ namespace DotNet.Basics.Tasks.Repeating
                     Exception exceptionInLastLoop = null;
                     try
                     {
-                        await task.RunAsync(EventArgs.Empty, CancellationToken.None).ConfigureAwait(false);
+                        await task.RunAsync(EventArgs.Empty).ConfigureAwait(false);
                     }
                     catch (Exception e)
                     {

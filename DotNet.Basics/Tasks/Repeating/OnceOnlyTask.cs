@@ -6,7 +6,7 @@ namespace DotNet.Basics.Tasks.Repeating
     public class OnceOnlyTask
     {
         private Action _syncTask;
-        private Func<Task> _asyncTask;
+        private Func<Task<int>> _asyncTask;
 
         public OnceOnlyTask(Action task)
         {
@@ -23,17 +23,17 @@ namespace DotNet.Basics.Tasks.Repeating
             };
         }
 
-        public OnceOnlyTask(Func<Task> asyncTask)
+        public OnceOnlyTask(Func<Task<int>> asyncTask)
         {
             _asyncTask = async () =>
             {
                 try
                 {
-                    await asyncTask().ConfigureAwait(false);
+                    return await asyncTask().ConfigureAwait(false);
                 }
                 finally
                 {
-                    _asyncTask = () => Task.FromResult(string.Empty);
+                    _asyncTask = () => Task.FromResult(0);
                 }
             };
         }
@@ -42,7 +42,7 @@ namespace DotNet.Basics.Tasks.Repeating
         {
             _syncTask();
         }
-        public Task RunAsync()
+        public Task<int> RunAsync()
         {
             return _asyncTask();
         }

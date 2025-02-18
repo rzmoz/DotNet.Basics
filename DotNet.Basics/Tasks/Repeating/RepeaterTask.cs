@@ -5,7 +5,7 @@ namespace DotNet.Basics.Tasks.Repeating
 {
     public class RepeaterTask : ManagedTask<EventArgs>
     {
-        public RepeaterTask(Func<Task> task) : base(task)
+        public RepeaterTask(Func<Task<int>> task) : base(task)
         {
             Options = new RepeatOptions();
         }

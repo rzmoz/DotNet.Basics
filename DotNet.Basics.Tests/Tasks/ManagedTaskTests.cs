@@ -25,8 +25,8 @@ namespace DotNet.Basics.Tests.Tasks
             string argsInput = null;
             var argsIsNull = false;
 
-            var task = new ManagedTask<string>((args, ct) => argsIsNull = args == null);
-            await task.RunAsync(argsInput, CancellationToken.None);
+            var task = new ManagedTask<string>((args) => argsIsNull = args == null);
+            await task.RunAsync(argsInput);
 
             argsIsNull.Should().BeTrue();
         }
@@ -34,16 +34,11 @@ namespace DotNet.Basics.Tests.Tasks
         [Fact]
         public async Task RunAsync_EventRaising_StartAndEndedEventAreRaised()
         {
-            var argsValue = 12312313;
-
-            var ctSource = new CancellationTokenSource();
-            await ctSource.CancelAsync();
-
-            var task = new ManagedTask<EventArgs<int>>((args, ct) => { args.Value = argsValue; });
+            var task = new ManagedTask<EventArgs>(async (args) => { await Task.Delay(1.Seconds()); });
 
             using var monitoredTask = task.Monitor();
             //act
-            await task.RunAsync(null, ctSource.Token);
+            await task.RunAsync(EventArgs.Empty);
 
             monitoredTask.Should().Raise(nameof(task.Started));
             monitoredTask.Should().Raise(nameof(task.Ended));
@@ -54,7 +49,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             ///VERY important that type is set to abstract base type
             int exitCode = 123412;
-            ManagedTask task = new ManagedTask<EventArgs>(async (args, ct) => exitCode);
+            ManagedTask task = new ManagedTask<EventArgs>(async (args) => exitCode);
 
             //act
             var observedExitCode = await task.RunAsync(EventArgs.Empty);
@@ -67,7 +62,7 @@ namespace DotNet.Basics.Tests.Tasks
         public async Task RunAsync_Exception_ExceptionIsCapturedInTaskEndEvent()
         {
             var exMessage = "buuh";
-            var task = new ManagedTask<EventArgs<int>>((args, ct) => throw new ArgumentException(exMessage));
+            var task = new ManagedTask<EventArgs<int>>((args) => throw new ArgumentException(exMessage));
 
             Exception capturedException = null;
 

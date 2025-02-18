@@ -5,12 +5,12 @@ namespace DotNet.Basics.Tasks.Repeating
 {
     public static class Repeat
     {
-        public static RepeaterTask Task(Func<Task> task)
+        public static RepeaterTask Task(Func<Task<int>> task)
         {
             return new RepeaterTask(task);
         }
 
-        public static RepeaterTask TaskOnce(Func<Task> task)
+        public static RepeaterTask TaskOnce(Func<Task<int>> task)
         {
             return new RepeaterTask(task.ToOnceOnly());
         }
