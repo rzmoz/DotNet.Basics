@@ -3,7 +3,7 @@ using DotNet.Basics.Serilog.Looging;
 
 namespace DotNet.Basics.Cli.Console
 {
-    public class TestPipeline : Pipeline<int>
+    public class TestPipeline : Pipeline<LoogConsoleOptions>
     {
         private readonly ILoog _log;
 
@@ -14,20 +14,25 @@ namespace DotNet.Basics.Cli.Console
             AddStep(nameof(ExitCodeStep), ExitCodeStep);
         }
 
-        public Task<int> Looging(int args)
+        public Task<int> Looging(LoogConsoleOptions args)
         {
+            _log.Info($"--{nameof(args.Verbose)}: {args.Verbose}");
+            _log.Info($"--{nameof(args.Debug)}: {args.Debug}");
+            _log.Info($"--{nameof(args.ADO)}: {args.ADO}");
+
+            /*
             _log.Verbose($"{nameof(_log.Verbose)} {nameof(_log.Verbose).Highlight()} lalalalalalala");
             _log.Debug($"{nameof(_log.Debug)} {nameof(_log.Debug).Highlight()} lalalalalalala");
             _log.Info($"{nameof(_log.Info)} {nameof(_log.Info).Highlight()} lalalalalalala");
             _log.Success($"{nameof(_log.Success)} {nameof(_log.Success).Highlight()} lalalalalalala");
             _log.Warning($"{nameof(_log.Warning)} {nameof(_log.Warning).Highlight()} lalalalalalala");
             _log.Error($"{nameof(_log.Error)} {nameof(_log.Error).Highlight()} lalalalalalala");
-            _log.Fatal($"{nameof(_log.Fatal)} {nameof(_log.Fatal).Highlight()} lalalalalalala");
+            _log.Fatal($"{nameof(_log.Fatal)} {nameof(_log.Fatal).Highlight()} lalalalalalala");*/
             return Task.FromResult(0);
         }
-        public Task<int> ExitCodeStep(int args)
+        public Task<int> ExitCodeStep(LoogConsoleOptions args)
         {
-            return Task.FromResult(args);
+            return Task.FromResult(0);
         }
     }
 }
