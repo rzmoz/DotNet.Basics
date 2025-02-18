@@ -142,11 +142,7 @@ namespace DotNet.Basics.Pipelines
         protected async Task<int> InnerSequentialRunAsync(T args)
         {
             foreach (var task in Tasks)
-            {
-                var exitCode = await task.RunAsync(args);
-                if (exitCode != 0)
-                    throw new PipelineException($"{Name}:{task.Name} failed! See log for details.", exitCode);
-            }
+                await AssertRunTask(task, args);
             return 0;
         }
 

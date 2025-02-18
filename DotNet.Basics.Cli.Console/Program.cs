@@ -1,5 +1,5 @@
-﻿using DotNet.Basics.Serilog.Looging;
-using Microsoft.Extensions.DependencyInjection;
+﻿using DotNet.Basics.Pipelines;
+using DotNet.Basics.Serilog.Looging;
 
 namespace DotNet.Basics.Cli.Console
 {
@@ -10,9 +10,9 @@ namespace DotNet.Basics.Cli.Console
             await using var host = new LoogConsoleBuilder(args)
                 .Services(services =>
                 {
-                    services.AddTransient<ExitCodeException>();
+                    services.AddPipelines();
                 })
-                .Configure(o => o.WithExceptionHandler<ExitCodeException>(e => e.ExitCode))
+                .Configure(o => o.WithExceptionHandler<PipelineException>(e => e.ExitCode))
                 .Build();
 
             return await host.RunAsync(async (lops, log) =>
