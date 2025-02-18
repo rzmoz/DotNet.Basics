@@ -5,7 +5,7 @@
   "releases": [
     {
       "name": "DotNet.Basics",
-      "version": "11.4.4",
+      "version": "11.4.5",
       "prerelease": ""
     },
     {
@@ -15,7 +15,7 @@
     },
     {
       "name": "DotNet.Basics.Pipelines",
-      "version": "10.4.2",
+      "version": "10.4.3",
       "prerelease": ""
     },
     {

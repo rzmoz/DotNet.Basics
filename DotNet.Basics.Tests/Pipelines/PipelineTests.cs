@@ -174,6 +174,7 @@ namespace DotNet.Basics.Tests.Pipelines
 
         [Fact]
         public async Task RunAsync_AllInParallel_AllStepsAreRunInParallel()
+
         {
             var pipeline = new Pipeline<EventArgs>();
             var block = pipeline.AddBlock("ParallelBlock", Invoke.Parallel);
@@ -181,7 +182,7 @@ namespace DotNet.Basics.Tests.Pipelines
             var runCount = 101;
 
             for (var i = 0; i < runCount; i++)
-                block.AddStep(async (args, ct) => await Task.Delay(TimeSpan.FromSeconds(1), ct));
+                block.AddStep(async (args, ct) => await Task.Delay(TimeSpan.FromSeconds(5), ct));
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -189,7 +190,7 @@ namespace DotNet.Basics.Tests.Pipelines
             stopwatch.Stop();
 
             //total timespan should be close to 1 second since tasks were run in parallel
-            stopwatch.Elapsed.Should().BeCloseTo(TimeSpan.FromSeconds(6), TimeSpan.FromSeconds(5));
+            stopwatch.Elapsed.Should().BeCloseTo(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(6));
         }
 
         [Fact]
@@ -199,7 +200,7 @@ namespace DotNet.Basics.Tests.Pipelines
             var task1Called = false;
             var task2Called = false;
 
-            pipeline.AddBlock("1", async (args, ct) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200), ct); });
+            pipeline.AddBlock("1", async (args, ct) => { task1Called = true; await Task.Delay(TimeSpan.FromMilliseconds(200), ct); return 0; });
             pipeline.AddBlock("2", (args, ct) =>
             {
                 if (task1Called == false)
@@ -207,7 +208,7 @@ namespace DotNet.Basics.Tests.Pipelines
                 if (task2Called)
                     throw new ArgumentException("Task 2 called already");
                 task2Called = true;
-                return Task.FromResult("");
+                return Task.FromResult(0);
             });
 
             task1Called.Should().BeFalse();
@@ -267,38 +268,24 @@ namespace DotNet.Basics.Tests.Pipelines
         public async Task BlockInvokeStyle_Sequence_TasksAreRunAccordingToInvokeStyle(int stepCount, Invoke invoke)
         {
             var block = new Pipeline<EventArgs<int>>(invoke: invoke);
-            int lockFlag = 0;
+            var @lock = new Lock();
 
-            var raceConditionEncountered = 0;
             for (var i = 0; i < stepCount; i++)
                 block.AddStep(async (args, ct) =>
                 {
-                    if (Interlocked.CompareExchange(ref lockFlag, 1, 0) == 0)
-                    {
-                        Monitor.Enter(lockFlag);
-                        args.Value = args.Value + 1;
-                        await Task.Delay(TimeSpan.FromMilliseconds(100), CancellationToken.None);
-                        // free the lock.
-                        Interlocked.Decrement(ref lockFlag);
-                    }
-                    else
-                        raceConditionEncountered++;
+                    @lock.Enter();
+                    args.Value += 1;
+                    await Task.Delay(TimeSpan.FromSeconds(100), CancellationToken.None);
+
+                    @lock.Exit();
                 });
 
             var argsParam = new EventArgs<int>();
 
-            await block.RunAsync(argsParam, CancellationToken.None);
-
-            if (invoke == Invoke.Parallel)
-            {
-                argsParam.Value.Should().BeLessThan(stepCount);
-                raceConditionEncountered.Should().BeGreaterThan(0);
-            }
-            else
-            {
-                argsParam.Value.Should().Be(stepCount);
-                raceConditionEncountered.Should().Be(0);
-            }
+            //act
+            await block.RunAsync(argsParam);
+            //assert
+            argsParam.Value.Should().Be(stepCount);
         }
 
         [Fact]

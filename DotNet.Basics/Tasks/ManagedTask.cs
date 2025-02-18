@@ -22,7 +22,8 @@ namespace DotNet.Basics.Tasks
 
         public string Name { get; }
 
-        public abstract Task<object> RunAsync(object args);
+        public abstract Task<int> RunAsync(object args);
+        public abstract Task<int> RunAsync(object args, CancellationToken ct);
 
         protected virtual void FireStarted(string taskName)
         {
@@ -40,9 +41,9 @@ namespace DotNet.Basics.Tasks
         }
     }
 
-    public class ManagedTask<T> : ManagedTask
+    public class ManagedTask<T>(string name, Func<T, CancellationToken, Task<int>> task, params string[] removeSuffixes) : ManagedTask(name, removeSuffixes)
     {
-        private readonly Func<T, CancellationToken, Task> _task;
+        private readonly Func<T, CancellationToken, Task<int>> _task = task ?? throw new ArgumentNullException(nameof(task));
 
         public ManagedTask(string name, params string[] removeSuffixes)
             : this(name, (args, lct) => { }, removeSuffixes)
@@ -60,7 +61,7 @@ namespace DotNet.Basics.Tasks
             : this(null, task, removeSuffixes)
         { }
 
-        public ManagedTask(Func<T, CancellationToken, Task> task, params string[] removeSuffixes)
+        public ManagedTask(Func<T, CancellationToken, Task<int>> task, params string[] removeSuffixes)
             : this(null, task, removeSuffixes)
         { }
 
@@ -68,36 +69,36 @@ namespace DotNet.Basics.Tasks
             : this(name, (args, ct) =>
             {
                 task?.Invoke(args, ct);
-                return Task.FromResult(string.Empty);
+                return Task.FromResult(0);
             }, removeSuffixes)
         { }
 
-        public ManagedTask(string name, Func<T, CancellationToken, Task> task, params string[] removeSuffixes)
-        : base(name, removeSuffixes)
-        {
-            _task = task ?? throw new ArgumentNullException(nameof(task));
-        }
-
-        public override async Task<object> RunAsync(object args)
+        public override async Task<int> RunAsync(object args)
         {
             return await RunAsync((T)args);
         }
 
-        public Task<T> RunAsync(T args)
+        public override async Task<int> RunAsync(object args, CancellationToken ct)
+        {
+            return await RunAsync((T)args, ct);
+        }
+
+        public Task<int> RunAsync(T args)
         {
             return RunAsync(args, CancellationToken.None);
         }
 
-        public async Task<T> RunAsync(T args, CancellationToken ct)
+        public async Task<int> RunAsync(T args, CancellationToken ct)
         {
+            var exitCode = -1;
             FireStarted(Name);
             try
             {
                 if (ct.IsCancellationRequested == false)
-                    await InnerRunAsync(args, ct).ConfigureAwait(false);
+                    exitCode = await InnerRunAsync(args, ct).ConfigureAwait(false);
 
                 FireEnded(Name);
-                return args;
+                return exitCode;
             }
             catch (Exception e)
             {
@@ -105,7 +106,7 @@ namespace DotNet.Basics.Tasks
                 throw;
             }
         }
-        protected virtual Task InnerRunAsync(T args, CancellationToken ct)
+        protected virtual Task<int> InnerRunAsync(T args, CancellationToken ct)
         {
             return _task?.Invoke(args, ct);
         }

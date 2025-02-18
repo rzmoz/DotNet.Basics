@@ -7,10 +7,10 @@ namespace DotNet.Basics.Tests.Pipelines.PipelineHelpers
 {
     public class IncrementArgsStep : PipelineStep<EventArgs<int>>
     {
-        protected override Task RunImpAsync(EventArgs<int> args, CancellationToken ct)
+        protected override Task<int> RunImpAsync(EventArgs<int> args, CancellationToken ct)
         {
             args.Value = IncrementByOne(args.Value);
-            return Task.CompletedTask;
+            return Task.FromResult(0);
         }
 
         public int IncrementByOne(int input)

@@ -53,25 +53,21 @@ namespace DotNet.Basics.Tests.Tasks
         public async Task RunAsync_NonGenericBase_TaskIsRun()
         {
             ///VERY important that type is set to abstract base type
-            var initialValue = 1;
-            var updatedValue = 3;
-            ManagedTask task = new ManagedTask<EventArgs<int>>((args, ct) => { args.Value = updatedValue; });
+            int exitCode = 123412;
+            ManagedTask task = new ManagedTask<EventArgs>(async (args, ct) => exitCode);
 
             //act
-            var updatedResult = (EventArgs<int>)await task.RunAsync(new EventArgs<int>
-            {
-                Value = initialValue
-            });
+            var observedExitCode = await task.RunAsync(EventArgs.Empty);
 
             //assert
-            updatedResult.Value.Should().Be(updatedValue);
+            observedExitCode.Should().Be(exitCode);
         }
 
         [Fact]
         public async Task RunAsync_Exception_ExceptionIsCapturedInTaskEndEvent()
         {
             var exMessage = "buuh";
-            var task = new ManagedTask<EventArgs<int>>((args, ct) => { throw new ArgumentException(exMessage); });
+            var task = new ManagedTask<EventArgs<int>>((args, ct) => throw new ArgumentException(exMessage));
 
             Exception capturedException = null;
 

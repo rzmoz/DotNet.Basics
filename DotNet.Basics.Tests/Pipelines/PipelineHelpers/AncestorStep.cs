@@ -6,10 +6,10 @@ namespace DotNet.Basics.Tests.Pipelines.PipelineHelpers
 {
     public class AncestorStep : PipelineStep<AncestorArgs>
     {
-        protected override Task RunImpAsync(AncestorArgs args, CancellationToken ct)
+        protected override Task<int> RunImpAsync(AncestorArgs args, CancellationToken ct)
         {
             args.AncestorUpdated = true;
-            return Task.CompletedTask;
+            return Task.FromResult(0);
         }
     }
 }
