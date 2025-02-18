@@ -134,20 +134,28 @@ namespace DotNet.Basics.Pipelines
 
         protected async Task<int> InnerParallelRunAsync(T args)
         {
-            var tasks = Tasks.Select(task => task.RunAsync(args));
-            var results = await Task.WhenAll(tasks);
-            return results.Select(i => i < 0 ? i * -1 : i).Sum();
+            var tasks = Tasks.Select(task => AssertRunTask(task, args));
+            await Task.WhenAll(tasks);
+            return 0;
         }
 
         protected async Task<int> InnerSequentialRunAsync(T args)
         {
-            var results = new List<int>();
-
             foreach (var task in Tasks)
             {
-                results.Add(await task.RunAsync(args));
+                var exitCode = await task.RunAsync(args);
+                if (exitCode != 0)
+                    throw new PipelineException($"{Name}:{task.Name} failed! See log for details.", exitCode);
             }
-            return results.Select(i => i < 0 ? i * -1 : i).Sum();
+            return 0;
+        }
+
+        private async Task<int> AssertRunTask<T>(ManagedTask<T> task, T args)
+        {
+            var exitCode = await task.RunAsync(args);
+            if (exitCode != 0)
+                throw new PipelineException($"{Name}:{task.Name} failed! See log for details.", exitCode);
+            return 0;
         }
 
         private void InitEvents(ManagedTask<T> task)
