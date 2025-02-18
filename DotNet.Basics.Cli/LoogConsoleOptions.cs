@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using DotNet.Basics.Collections;
 using DotNet.Basics.Sys;
+using DotNet.Basics.Sys.Text;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DotNet.Basics.Cli
 {
-    public class LoogConsoleOptions(string[] args)
+    public class LoogConsoleOptions(string[] rawArgs, Func<IReadOnlyList<string>, IReadOnlyDictionary<string, string>>? argsParser)
     {
+        private static readonly SysRegex _argRegex = @"^--(?<key>.+?)=(?<value>.+)";
         private readonly Dictionary<string, Func<Exception, int>> _exceptionHandlers = new();
 
         public string DebugFlag { get; set; } = "--debug";
@@ -22,7 +23,8 @@ namespace DotNet.Basics.Cli
         public bool Debug => HasFlag(DebugFlag);
         public TimeSpan LongRunningOperationsPingInterval { get; set; } = 1.Minutes();
         public IServiceProvider Services { get; set; } = new ServiceCollection().BuildServiceProvider();
-        public IReadOnlyList<string> Args => args.Blacklist(VerboseFlag, ADOFlag, DebugFlag).ToArray();
+        public IReadOnlyList<string> RawArgs => rawArgs.Blacklist(VerboseFlag, ADOFlag, DebugFlag).ToArray();
+        public IReadOnlyDictionary<string, string> ParsedArgs { get; } = argsParser?.Invoke(rawArgs) ?? DefaultArgsParse(rawArgs);
         public IReadOnlyDictionary<string, Func<Exception, int>> ExceptionHandlers => _exceptionHandlers;
 
         public T GetService<T>()
@@ -36,11 +38,19 @@ namespace DotNet.Basics.Cli
             return this;
         }
 
+        public static IReadOnlyDictionary<string, string> DefaultArgsParse(IReadOnlyList<string> args)
+        {
+            return args.Select(a =>
+            {
+                var match = _argRegex.Regex.Match(a);
+                return new KeyValuePair<string, string>(match.Groups["key"].Value.ToLowerInvariant(), match.Groups["value"].Value.Trim('"'));
+            }).ToDictionary();
+        }
 
 
         private bool HasFlag(string flag)
         {
-            return args.Any(a => a.Equals(flag, StringComparison.OrdinalIgnoreCase));
+            return rawArgs.Any(a => a.Equals(flag, StringComparison.OrdinalIgnoreCase));
         }
     }
 }
