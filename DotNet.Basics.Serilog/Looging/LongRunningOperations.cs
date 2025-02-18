@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
+using Humanizer;
 
 namespace DotNet.Basics.Serilog.Looging
 {
@@ -27,7 +28,7 @@ namespace DotNet.Basics.Serilog.Looging
                 Enabled = true
             };
             _timer.Elapsed += _timer_Elapsed;
-            _loog.Verbose($"Long running operations initialized with ping interval: {$@"{pingInterval.ToHumanReadableString()}".Highlight()}");
+            _loog.Verbose($"Long running operations initialized with ping interval: {$@"{pingInterval.Humanize()}".Highlight()}");
         }
 
         private void _timer_Elapsed(object? sender, ElapsedEventArgs e)
@@ -37,7 +38,7 @@ namespace DotNet.Basics.Serilog.Looging
 
             var message = string.Empty;
             foreach (var operation in _operations.Values.OrderBy(o => o.StartTime))
-                message += $"[ {operation.Name.Highlight()} has been running for {operation.DurationNow.ToHumanReadableString().Highlight()} ]\r\n";
+                message += $"[ {operation.Name.Highlight()} has been running for {operation.DurationNow.Humanize().Highlight()} ]\r\n";
 
             _loog.Verbose(message.WithGutter());
         }
@@ -71,7 +72,7 @@ namespace DotNet.Basics.Serilog.Looging
                 else if (exitCode != int.MinValue)
                     _loog.Error($"{operation.Name.Highlight()}: FAILED");
 
-                _loog.Debug($"Operation: {operation.Name.Highlight()} - Exit code: {exitCode.ToString().Highlight()} - Running time: {operation.DurationNow.ToHumanReadableString().Highlight()}");
+                _loog.Debug($"Operation: {operation.Name.Highlight()} - Exit code: {exitCode.ToString().Highlight()} - Running time: {operation.DurationNow.Humanize().Highlight()}");
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using DotNet.Basics.Serilog.Formatting;
 using DotNet.Basics.Serilog.Looging;
+using Humanizer;
 using Serilog;
 
 namespace DotNet.Basics.Serilog.Sinks
@@ -22,7 +23,7 @@ namespace DotNet.Basics.Serilog.Sinks
         {
             Log.Logger.Write(lvl.ToLogEventLevel(),
                 elapsed > TimeSpan.MinValue
-                    ? $"{name}: {@event} has been running for: {elapsed.ToHumanReadableString()}"
+                    ? $"{name}: {@event} has been running for: {elapsed.Humanize()}"
                     : $"{name}: {@event}");
         }
 
