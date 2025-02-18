@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DotNet.Basics.Serilog.Looging;
+using DotNet.Basics.Tasks;
 using Serilog;
 
 namespace DotNet.Basics.Cli
@@ -13,22 +15,19 @@ namespace DotNet.Basics.Cli
         private static readonly Regex _newlineRegex = new(_newlinePattern, RegexOptions.Compiled);
         public LoogConsoleOptions Options { get; } = options;
 
-        public async Task<int> RunAsync(Func<Task<int>> loogContext)
+        public async Task<int> RunPipelineAsync<T>(object args) where T : ManagedTask
         {
-            return await RunAsync(async (_, _, _) => await loogContext());
+            var managedTask = Options.GetService<T>();
+            return await RunPipelineAsync(managedTask, args);
         }
-        public async Task<int> RunAsync(Func<ILoog, Task<int>> loogContext)
+        public async Task<int> RunPipelineAsync(ManagedTask managedTask, object args)
         {
-            return await RunAsync(async (_, _, log) => await loogContext(log));
+            return await RunAsync(managedTask.Name, () => managedTask.RunAsync(args));
         }
-        public async Task<int> RunAsync(Func<LongRunningOperations, ILoog, Task<int>> loogContext)
-        {
-            return await RunAsync(async (_, ops, log) => await loogContext(ops, log));
-        }
-        public async Task<int> RunAsync(Func<LoogConsoleOptions, LongRunningOperations, ILoog, Task<int>> loogContext)
+        public async Task<int> RunAsync(string operationName, Func<Task<int>> loogContext)
         {
             var log = Options.GetService<ILoog>()!;
-            var longRunningOperations = options.GetService<LongRunningOperations>();
+            var longRunningOperations = Options.GetService<LongRunningOperations>();
             var exitCode = Options.FatalExitCode;
 
             try
@@ -39,18 +38,27 @@ namespace DotNet.Basics.Cli
                     Console.ReadLine();
                 }
 
-                exitCode = await loogContext.Invoke(Options, longRunningOperations, log);
+                exitCode = await longRunningOperations.StartAsync(operationName, () => loogContext.Invoke());
             }
             catch (Exception e)
             {
                 log.Info(" ");
                 log.Fatal($"{e.GetType().FullName}: {e.Message.Highlight()} ");
                 log.Error(string.Join(Environment.NewLine, _newlineRegex.Split(e.ToString()).Skip(1)));
-                exitCode = Options.ExceptionHandlers.TryGetValue(e.GetType().Name, out var resolver) ? resolver.Invoke(e) : Options.FatalExitCode;
+
+                var exitCodeProperty = e.GetType().GetProperty("ExitCode");
+                if (exitCodeProperty != null)
+                {
+                    var rawValue = exitCodeProperty.GetValue(e);
+                    if (rawValue != null)
+                    {
+                        exitCode = int.Parse(rawValue.ToString()!, NumberStyles.Integer);
+                    }
+                }
             }
             finally
             {
-                log.Verbose($"Exit code: {exitCode.ToString().Highlight()}");
+                log.Write(exitCode == 0 ? LoogLevel.Success : LoogLevel.Error, $"Global exit code: {exitCode.ToString().Highlight()}");
                 Console.ResetColor();
             }
             return exitCode;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using DotNet.Basics.Serilog.Looging;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DotNet.Basics.Cli
@@ -11,7 +12,6 @@ namespace DotNet.Basics.Cli
         private const string _argsDefaultParsePattern = @"^--(?<key>.+?)=(?<value>.+)";
         private static readonly Regex _argsDefaultParseRegex = new Regex(_argsDefaultParsePattern, RegexOptions.Compiled);
 
-        private readonly Dictionary<string, Func<Exception, int>> _exceptionHandlers = new();
 
         public string DebugFlag { get; set; } = "--debug";
         public string VerboseFlag { get; set; } = "--verbose";
@@ -22,20 +22,18 @@ namespace DotNet.Basics.Cli
         public bool ADO => HasFlag(ADOFlag);
         public bool Debug => HasFlag(DebugFlag);
         public TimeSpan LongRunningOperationsPingInterval { get; set; } = TimeSpan.FromMinutes(1);
+        public ILoog Log => GetService<ILoog>();
         public IServiceProvider Services { get; set; } = new ServiceCollection().BuildServiceProvider();
         public IReadOnlyList<string> RawArgs => RemoveStandardFlags(rawArgs);
         public IReadOnlyDictionary<string, string> ParsedArgs { get; } = argsParser?.Invoke(rawArgs) ?? DefaultArgsParse(rawArgs);
-        public IReadOnlyDictionary<string, Func<Exception, int>> ExceptionHandlers => _exceptionHandlers;
 
         public T GetService<T>()
         {
             return Services.GetService<T>() ?? throw new NullReferenceException(typeof(T).FullName);
         }
-
-        public LoogConsoleOptions WithExceptionHandler<T>(Func<T, int> exceptionHandler) where T : Exception
+        public T GetService<T>(Type t)
         {
-            _exceptionHandlers.Add(typeof(T).Name, e => exceptionHandler.Invoke((T)e));
-            return this;
+            return (T)Services.GetService(t)!;
         }
 
         public static IReadOnlyDictionary<string, string> DefaultArgsParse(IReadOnlyList<string> args)

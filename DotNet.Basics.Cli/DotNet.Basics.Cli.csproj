@@ -19,6 +19,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\DotNet.Basics.Serilog\DotNet.Basics.Serilog.csproj" />
+	  <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />
 	</ItemGroup>
 
 </Project>

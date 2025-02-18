@@ -134,23 +134,20 @@ namespace DotNet.Basics.Pipelines
 
         protected async Task<int> InnerParallelRunAsync(T args)
         {
-            var tasks = Tasks.Select(task => AssertRunTask(task, args));
-            await Task.WhenAll(tasks);
-            return 0;
+            var tasks = Tasks.Select(task => task.RunAsync(args));
+            var results = await Task.WhenAll(tasks);
+            return results.Select(i => i < 0 ? i * -1 : i).Sum();
         }
 
         protected async Task<int> InnerSequentialRunAsync(T args)
         {
             foreach (var task in Tasks)
-                await AssertRunTask(task, args);
-            return 0;
-        }
+            {
+                var result = await task.RunAsync(args);
+                if (result != 0)
+                    return result;
+            }
 
-        private async Task<int> AssertRunTask<T>(ManagedTask<T> task, T args)
-        {
-            var exitCode = await task.RunAsync(args);
-            if (exitCode != 0)
-                throw new PipelineException($"{Name}:{task.Name} failed! See log for details.", exitCode);
             return 0;
         }
 

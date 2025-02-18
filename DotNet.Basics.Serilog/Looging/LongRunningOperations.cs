@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
@@ -69,17 +70,10 @@ namespace DotNet.Basics.Serilog.Looging
                 if (exitCode == 0)
                     _loog.Success($"{operation.Name.Highlight()}: DONE");
                 else if (exitCode != int.MinValue)
-                    _loog.Error($"{operation.Name.Highlight()}: FAILED with exit code {exitCode.ToString().Highlight()}");
-                _loog.Debug($"Running time: {operation.DurationNow.ToHumanReadableString().Highlight()}");
+                    _loog.Error($"{operation.Name.Highlight()}: FAILED");
+
+                _loog.Debug($"Operation: {operation.Name.Highlight()} - Exit code: {exitCode.ToString().Highlight()} - Running time: {operation.DurationNow.ToHumanReadableString().Highlight()}");
             }
-        }
-        public async Task<int> StartAsync(string name, Func<Task> action)
-        {
-            return await StartAsync(name, async () =>
-            {
-                await action();
-                return 0;
-            });
         }
     }
 }
