@@ -13,9 +13,16 @@ namespace DotNet.Basics.Cli
         private Func<IReadOnlyList<string>, IReadOnlyDictionary<string, string>>? _argsParser;
 
         public LoogConsoleHost Build()
-        {
+        {   
             var options = new LoogConsoleOptions(args, _argsParser);
             _configureOptions?.Invoke(options);
+
+            if (options is { ADO: false, Debug: true })
+            {
+                Console.WriteLine($"Pausing to attach debugger [{Environment.ProcessId}]. Press enter to continue");
+                Console.ReadLine();
+            }
+
             var serviceCollection = _createServiceCollection?.Invoke() ?? new ServiceCollection();
             _configureServices?.Invoke(serviceCollection);
             serviceCollection.AddDiagnosticsWithSerilogDevConsole(verbose: options.Verbose, ado: options.ADO, longRunningOperationsPingInterval: options.LongRunningOperationsPingInterval);

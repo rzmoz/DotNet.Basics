@@ -1,11 +1,11 @@
-﻿using System;
+﻿using DotNet.Basics.Serilog.Looging;
+using DotNet.Basics.Tasks;
+using Serilog;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using DotNet.Basics.Serilog.Looging;
-using DotNet.Basics.Tasks;
-using Serilog;
 
 namespace DotNet.Basics.Cli
 {
@@ -14,6 +14,10 @@ namespace DotNet.Basics.Cli
         private const string _newlinePattern = @"\r\n|\r|\n";
         private static readonly Regex _newlineRegex = new(_newlinePattern, RegexOptions.Compiled);
         public LoogConsoleOptions Options { get; } = options;
+        public ArgsProvider Args => Options.Args;
+        public bool Verbose => Options.Verbose;
+        public bool ADO => Options.ADO;
+        public bool Debug => Options.Debug;
 
         public async Task<int> RunPipelineAsync<T>(object args) where T : ManagedTask
         {
@@ -32,13 +36,13 @@ namespace DotNet.Basics.Cli
 
             try
             {
-                if (Options is { ADO: false, Debug: true })
-                {
-                    Console.WriteLine($"Pausing to attach debugger [{Environment.ProcessId}]. Press enter to continue");
-                    Console.ReadLine();
-                }
-
                 exitCode = await longRunningOperations.StartAsync(operationName, () => loogContext.Invoke());
+            }
+            catch (CliArgNotFoundException e)
+            {
+                log.Info(" ");
+                log.Fatal($"Missing argument: {e.Message}");
+                exitCode = 400;
             }
             catch (Exception e)
             {
