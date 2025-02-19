@@ -10,9 +10,6 @@ namespace DotNet.Basics.Cli
         public IServiceProvider Services { get; } = serviceProvider;
 
         public ArgsDictionary Args => builderOptions.Args;
-        public bool Verbose => builderOptions.Verbose;
-        public bool ADO => builderOptions.ADO;
-        public bool Debug => builderOptions.Debug;
 
         public T GetService<T>()
         {

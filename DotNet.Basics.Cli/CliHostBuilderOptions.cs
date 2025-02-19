@@ -5,9 +5,6 @@
         public int FatalExitCode { get; set; } = 500;
 
         public ArgsDictionary Args => argsParser.Parse(args);
-        public bool Verbose => Args.ContainsKey(nameof(Verbose));
-        public bool ADO => Args.ContainsKey(nameof(ADO));
-        public bool Debug => Args.ContainsKey(nameof(Debug));
-        public bool SerilogDevConsole { get; set; } = true;
+        public bool WithSerilogDevConsole { get; set; } = true;
     }
 }

@@ -2,7 +2,7 @@
 {
     public class TestPipelineArgs
     {
-        public int ExitCode { get; set; }//required since it has set
-        public int OtherCode { get; } = 500;//optional since it has no set
+        public int ExitCode { get; set; }
+        public int OtherCode { get; set; } = 3939393;
     }
 }

@@ -5,7 +5,7 @@ using DotNet.Basics.Sys.Text;
 
 namespace DotNet.Basics.Cli
 {
-    public class ArgsMsBuildStyleParser : IArgsParser
+    public class ArgsGreedyParser : IArgsParser
     {
         private readonly SysRegex _keyValueStyleRegex = @$"^[{_flagIndicators.Select(c => c.ToString()).JoinString("")}]+(?<key>.+)=(?<value>.+)";
         private static readonly char[] _flagIndicators = ['-', '/'];

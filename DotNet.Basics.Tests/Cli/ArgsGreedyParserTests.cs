@@ -5,9 +5,9 @@ using Xunit.Abstractions;
 
 namespace DotNet.Basics.Tests.Cli
 {
-    public class ArgsMsBuildStyleParserTests(ITestOutputHelper output) : TestWithHelpers(output)
+    public class ArgsGreedyParserTests(ITestOutputHelper output) : TestWithHelpers(output)
     {
-        private readonly IArgsParser _argsParser = new ArgsMsBuildStyleParser();
+        private readonly IArgsParser _argsParser = new ArgsGreedyParser();
 
         [Theory]
         [InlineData("debug", true, "--debug", "-hello", "my", "world")]//detect flag without flag indicator

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
+using DotNet.Basics.Sys.Text;
 
 namespace DotNet.Basics.Cli
 {
@@ -15,19 +17,26 @@ namespace DotNet.Basics.Cli
             while (argsPipelineType!.GetGenericArguments().Any() == false)
                 argsPipelineType = argsPipelineType.BaseType;
 
-
             var argsType = argsPipelineType.GetGenericArguments().Single();
             var argsObject = Activator.CreateInstance(argsType)!;
-            var argsProperties = argsType.GetProperties(BindingFlags.Public | BindingFlags.SetProperty | BindingFlags.Instance);
-            foreach (var argsProperty in argsProperties)
+            var writeProperties = argsType.GetProperties(BindingFlags.Public | BindingFlags.SetProperty | BindingFlags.Instance)
+                .Where(p => p.CanWrite).ToList();
+
+            var unusedList = args.Keys.ToList();
+
+            foreach (var prop in writeProperties)
             {
-                if (!argsProperty.CanWrite)
-                    continue;
-
-                var parser = GetParser(argsProperty.PropertyType);
-
-                argsProperty.SetValue(argsObject, parser.Invoke(args[argsProperty.Name]));
+                if (args.ContainsKey(prop.Name))
+                {
+                    unusedList.RemoveAt(unusedList.IndexOf(prop.Name.ToLowerInvariant()));
+                    var parser = GetParser(prop.PropertyType);
+                    prop.SetValue(argsObject, parser.Invoke(args[prop.Name]));
+                }
             }
+
+            if (unusedList.Any())//all provided arguments must be accepted by args object. Not all Setters must be provided
+                throw new ArgumentException($"Unknown arguments provided for pipeline: {unusedList.ToJson()}");
+
 
             return argsObject;
         }
@@ -59,6 +68,16 @@ namespace DotNet.Basics.Cli
                 not null when argsType == typeof(FilePath) => val => val.ToFile(),
                 not null when argsType == typeof(PathInfo) => val => val.ToPath(),
                 not null when argsType == typeof(SemVersion) => SemVersion.Parse,
+
+                not null when argsType == typeof(string[]) => val => val.Split('|').ToArray(),
+                not null when argsType == typeof(DirPath[]) => val => val.Split('|').Select(v => v.ToDir()).ToArray(),
+                not null when argsType == typeof(FilePath[]) => val => val.Split('|').Select(v => v.ToFile()).ToArray(),
+                not null when argsType == typeof(PathInfo[]) => val => val.Split('|').Select(v => v.ToPath()).ToArray(),
+                not null when argsType.IsAssignableTo(typeof(IEnumerable<string>)) => val => val.Split('|').ToList(),
+                not null when argsType.IsAssignableTo(typeof(IEnumerable<DirPath>)) => val => val.Split('|').ToList(),
+                not null when argsType.IsAssignableTo(typeof(IEnumerable<FilePath>)) => val => val.Split('|').ToList(),
+                not null when argsType.IsAssignableTo(typeof(IEnumerable<PathInfo>)) => val => val.Split('|').ToList(),
+
                 _ => val =>
                 {
                     var parser = argParsers.FirstOrDefault(p => p.CanParse(argsType!));

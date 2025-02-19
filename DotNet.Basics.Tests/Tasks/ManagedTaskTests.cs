@@ -49,7 +49,7 @@ namespace DotNet.Basics.Tests.Tasks
         {
             ///VERY important that type is set to abstract base type
             int exitCode = 123412;
-            ManagedTask task = new ManagedTask<EventArgs>(async (args) => exitCode);
+            ManagedTask task = new ManagedTask<EventArgs>(_ => Task.FromResult(exitCode));
 
             //act
             var observedExitCode = await task.RunAsync(EventArgs.Empty);
