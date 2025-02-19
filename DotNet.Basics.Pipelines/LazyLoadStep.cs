@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
@@ -21,24 +20,17 @@ namespace DotNet.Basics.Pipelines
             return typeof(TTask);
         }
 
-        public LazyLoadStep(string name, Func<IServiceProvider> getServiceProviderTask) : base(name ?? typeof(TTask).GetNameWithGenericsExpanded(), "Step")
+        public LazyLoadStep(string name, IServiceProvider serviceProvider) : base(name ?? typeof(TTask).GetNameWithGenericsExpanded(), "Step")
         {
-            if (getServiceProviderTask == null) throw new ArgumentNullException(nameof(getServiceProviderTask));
-
-            _loadTask = () =>
-            {
-                var serviceProvider = getServiceProviderTask.Invoke();
-                if (serviceProvider == null)
-                    throw new ServiceProviderIsNullException(Name);
-                return serviceProvider.GetService(typeof(TTask)) as TTask;
-            };
+            if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
+            _loadTask = () => serviceProvider.GetService(typeof(TTask)) as TTask;
         }
 
         protected override Task<int> InnerRunAsync(T args)
         {
             var lazyLoadedTask = _loadTask();
             return lazyLoadedTask == null
-                ? throw new TaskNotResolvedFromServiceProviderException(Name)
+                ? throw new TaskNotResolvedFromServiceProviderException($"{typeof(TTask).FullName} in {Name}")
                 : lazyLoadedTask.RunAsync(args);
         }
     }

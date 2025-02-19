@@ -40,7 +40,7 @@ namespace DotNet.Basics.Cli
 
             try
             {
-                exitCode = await longRunningOperations.StartAsync(operationName, () => loogContext.Invoke());
+                exitCode = await longRunningOperations.StartAsync(operationName, loogContext.Invoke);
             }
             catch (CliArgNotFoundException e)
             {

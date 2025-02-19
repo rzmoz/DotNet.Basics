@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using DotNet.Basics.Pipelines;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tests.Pipelines.PipelineHelpers;
@@ -20,41 +21,27 @@ namespace DotNet.Basics.Tests.Pipelines
 
             var provider = services.BuildServiceProvider();
 
-            var step = provider.GetService<PipelineFromPipeline>();
-            step.Should().BeOfType<PipelineFromPipeline>();
+            var pipelineFromPipeline = provider.GetService<PipelineFromPipeline>();
+            pipelineFromPipeline.Should().BeOfType<PipelineFromPipeline>();
+
+            var pipelineFromPipelinePipeline = provider.GetService<PipelineFromPipelinePipeline>();
+            pipelineFromPipelinePipeline.Should().BeOfType<PipelineFromPipelinePipeline>();
+            pipelineFromPipelinePipeline.Tasks.Count.Should().Be(1);
+
+            var simpleStep = provider.GetService<SimpleStep>();
+            simpleStep.Should().BeOfType<SimpleStep>();
+
         }
 
-        [Fact]
-        public void AddPipelineTypes_AddToServiceCollection_StepsAreAdded()
-        {
-            var services = new ServiceCollection();
-
-            //act
-            services.AddPipelineSteps([typeof(PipelineExtensionsTests).Assembly]);
-
-            var provider = services.BuildServiceProvider();
-
-            var step = provider.GetService<SimpleStep>();
-            step.Should().BeOfType<SimpleStep>();
-        }
-
-        [Fact]
-        public void GetPipelineTypes_ScanForPipelines_PipelinesAreFound()
-        {
-            var pipelines = typeof(PipelineExtensionsTests).Assembly.GetPipelineTypes();
-            pipelines.Count().Should().Be(4);
-        }
-
-        [Fact]
-        public void GetPipelineStepTypes_ScanForPipelineSteps_PipelineStepsAreFound()
-        {
-            var steps = typeof(PipelineExtensionsTests).Assembly.GetPipelineStepTypes();
-            steps.Count().Should().Be(5);
-        }
-
-        public class PipelineFromPipeline : Pipeline<EventArgs<int>>
+        public class PipelineFromPipeline(IServiceProvider services) : Pipeline<EventArgs>(services)
         { }
+
         public class PipelineFromPipelinePipeline : PipelineFromPipeline
-        { }
+        {
+            public PipelineFromPipelinePipeline(IServiceProvider services) : base(services)
+            {
+                AddStep<SimpleStep>();
+            }
+        }
     }
 }

@@ -4,18 +4,20 @@ using DotNet.Basics.Pipelines;
 using DotNet.Basics.Tasks;
 using DotNet.Basics.Tests.Pipelines.PipelineHelpers;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace DotNet.Basics.Tests.Pipelines
 {
-    public class LazyLoadStepTests
+    public class LazyLoadStepTests(ITestOutputHelper output): TestWithHelpers(output)
     {
         [Fact]
         public void AssertLazyLoadSteps_MissingDirectRegistration_AssertHasEntries()
         {
+
+
             var errorMessage = string.Empty;
-            var pipeline = new Pipeline<EventArgs>(services => services.AddTransient<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>());
+            var pipeline = new Pipeline<EventArgs>(GetTransientServiceProvider<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>());
             pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
 
             var assert = pipeline.AssertLazyLoadSteps(ref errorMessage);
@@ -27,8 +29,9 @@ namespace DotNet.Basics.Tests.Pipelines
         [Fact]
         public void AssertLazyLoadSteps_MissingCtorRegistration_AssertHasEntries()
         {
+
             var errorMessage = string.Empty;
-            var pipeline = new Pipeline<EventArgs>(services => services.AddTransient(typeof(GenericThatTakesAnotherConcreteClassAsArgStep<>)));
+            var pipeline = new Pipeline<EventArgs>(GetTransientServiceProvider(typeof(GenericThatTakesAnotherConcreteClassAsArgStep<>)));
 
 
             pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
@@ -39,21 +42,11 @@ namespace DotNet.Basics.Tests.Pipelines
             assert.Should().BeFalse();
             errorMessage.Should().Be("Failed to load GenericThatTakesAnotherConcreteClassAsArgStep`1 - Unable to resolve service for type 'DotNet.Basics.Tests.Pipelines.PipelineHelpers.ClassThatTakesAnAbstractClassAsCtorParam' while attempting to activate 'DotNet.Basics.Tests.Pipelines.PipelineHelpers.GenericThatTakesAnotherConcreteClassAsArgStep`1[System.EventArgs]'.");
         }
-
-        [Fact]
-        public void GetTask_Fails_ExceptionIsBubbled()
-        {
-            var lazyStep = new LazyLoadStep<EventArgs, ManagedTask<EventArgs>>("mystep", () => { throw new ArgumentException(); });
-
-            Action action = () => lazyStep.GetTask();
-
-            action.Should().ThrowExactly<ArgumentException>();
-        }
-
+        
         [Fact]
         public async Task AddStep_StepIsRegisteredInContainer_StepIsResolved()
         {
-            var pipeline = new Pipeline<EventArgs>(services => services.AddTransient<SimpleStep>());
+            var pipeline = new Pipeline<EventArgs>(GetTransientServiceProvider<SimpleStep>());
 
             pipeline.AddStep<SimpleStep>();
 
@@ -73,7 +66,7 @@ namespace DotNet.Basics.Tests.Pipelines
         [Fact]
         public async Task AddStep_StepIsNotRegisteredProperlyInContainer_ExceptionIsThrownOnRun()
         {
-            var pipeline = new Pipeline<EventArgs>();
+            var pipeline = new Pipeline<EventArgs>(GetTransientServiceProvider<Task>());
 
             pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();
 

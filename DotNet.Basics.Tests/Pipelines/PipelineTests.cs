@@ -6,22 +6,22 @@ using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
-using DotNet.Basics.Collections;
 using DotNet.Basics.Pipelines;
 using DotNet.Basics.Tests.Pipelines.PipelineHelpers;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace DotNet.Basics.Tests.Pipelines
 {
-    public class PipelineTests
+    public class PipelineTests(ITestOutputHelper output) : TestWithHelpers(output)
     {
         [Fact]
         public void Name_IgnoreSuffix_SuffixIsRemovedFromName()
         {
             var pipelineName = "MyPipeline";
-            var pipeline = new Pipeline<EventArgs>(pipelineName);
+            var pipeline = new Pipeline<EventArgs>(GetEmptyServiceProvider(), pipelineName);
             //assert
             pipeline.Name.Should().Be("My");
             (pipeline.Name + "Pipeline").Should().Be(pipelineName);
@@ -30,7 +30,7 @@ namespace DotNet.Basics.Tests.Pipelines
         public void Name_IgnoreBlock_SuffixIsRemovedFromName()
         {
             var blockName = "MyBlock";
-            var pipeline = new Pipeline<EventArgs>();
+            var pipeline = new Pipeline<EventArgs>(GetEmptyServiceProvider());
             var block = pipeline.AddBlock(blockName);
             //assert
             block.Name.Should().Be("My");
@@ -43,7 +43,7 @@ namespace DotNet.Basics.Tests.Pipelines
             var pipelineName = "MyPipeline";
             var pipelineStarted = 0;
 
-            var pipeline = new Pipeline<EventArgs>(pipelineName);
+            var pipeline = new Pipeline<EventArgs>(GetEmptyServiceProvider(), pipelineName);
             var block = pipeline.AddBlock();
 
             block.AddStep(args => Task.FromResult(0));
@@ -81,17 +81,14 @@ namespace DotNet.Basics.Tests.Pipelines
 
         private async Task AssertRegisterPipelineStepsAsync<T>(Action<Pipeline<T>> addAction)
         {
-            var pipeline = new Pipeline<T>(services =>
-            {
+            var pipeline = new Pipeline<T>(new ServiceCollection()
                 //register abstract types specifically
-                services.AddTransient<IAbstract, ConcreteClass>();
-                services.AddTransient<ClassThatTakesAnAbstractClassAsCtorParam>();
+                .AddTransient<IAbstract, ConcreteClass>()
+                .AddTransient<ClassThatTakesAnAbstractClassAsCtorParam>()
+
                 //abstract dependency registrations are not overridden
-                var pipelines = typeof(PipelineTests).Assembly.GetPipelineTypes().ToList();
-                pipelines.ForEach(p => services.AddTransient(p));
-                var pipelineSteps = typeof(PipelineTests).Assembly.GetPipelineStepTypes();
-                pipelineSteps.ForEach(p => services.AddTransient(p));
-            });
+                .AddPipelines([typeof(PipelineTests).Assembly])
+                .BuildServiceProvider());
             addAction(pipeline);
 
             Func<Task> action = async () => await pipeline.RunAsync(default(T));
@@ -102,7 +99,7 @@ namespace DotNet.Basics.Tests.Pipelines
         [Fact]
         public void Ctor_LazyLoadStepName_NameIsSetOnAdd()
         {
-            var pipeline = new Pipeline<EventArgs>();
+            var pipeline = new Pipeline<EventArgs>(GetEmptyServiceProvider());
             pipeline.AddStep<SimpleStep>();
 
             pipeline.Tasks.Single().Name.Should().Be("Simple");
@@ -114,10 +111,7 @@ namespace DotNet.Basics.Tests.Pipelines
             var argsInit = new DescendantArgs();
             argsInit.AncestorUpdated.Should().BeFalse();
             argsInit.DescendantUpdated.Should().BeFalse();
-            var pipeline = new Pipeline<DescendantArgs>(services =>
-            {
-                services.AddTransient<DescendantStep>();
-            });
+            var pipeline = new Pipeline<DescendantArgs>(GetTransientServiceProvider<DescendantStep>());
 
             //act
             pipeline.AddStep((args) => new AncestorStep().RunAsync(args));
@@ -132,10 +126,7 @@ namespace DotNet.Basics.Tests.Pipelines
         [Fact]
         public async Task DisplayName_DisplayNameIsNotSet_TypeNameNameIsUsed()
         {
-            var pipeline = new Pipeline<EventArgs<int>>(services =>
-            {
-                services.AddSingleton<IncrementArgsStep>();
-            });
+            var pipeline = new Pipeline<EventArgs<int>>(GetSingletonServiceProvider<IncrementArgsStep>());
             pipeline.AddStep<IncrementArgsStep>();
             string stepName = null;
 
@@ -154,7 +145,7 @@ namespace DotNet.Basics.Tests.Pipelines
         public async Task RunAsync_AllInParallel_AllStepsAreRunInParallel()
 
         {
-            var pipeline = new Pipeline<EventArgs>();
+            var pipeline = new Pipeline<EventArgs>(GetEmptyServiceProvider());
             var block = pipeline.AddBlock("ParallelBlock", Invoke.Parallel);
 
             var runCount = 101;
@@ -174,7 +165,7 @@ namespace DotNet.Basics.Tests.Pipelines
         [Fact]
         public async Task RunAsync_BlockWait_StepsAreRunInBlockOrder()
         {
-            var pipeline = new Pipeline<EventArgs>();
+            var pipeline = new Pipeline<EventArgs>(GetEmptyServiceProvider());
             var task1Called = false;
             var task2Called = false;
 
@@ -201,10 +192,7 @@ namespace DotNet.Basics.Tests.Pipelines
         [Fact]
         public async Task RunAsync_PassArgs_ArgsArePassedInPipeline()
         {
-            var pipeline = new Pipeline<EventArgs<int>>(services =>
-            {
-                services.AddSingleton<IncrementArgsStep>();
-            });
+            var pipeline = new Pipeline<EventArgs<int>>(GetSingletonServiceProvider<IncrementArgsStep>());
             pipeline.AddStep<IncrementArgsStep>();
             pipeline.AddStep<IncrementArgsStep>();
             pipeline.AddBlock("1").AddStep<IncrementArgsStep>();
@@ -219,7 +207,7 @@ namespace DotNet.Basics.Tests.Pipelines
         [Fact]
         public void Add_AddGenericSteps_StepsAreAdded()
         {
-            var block = new Pipeline<EventArgs>();
+            var block = new Pipeline<EventArgs>(GetEmptyServiceProvider());
             var taskCount = 7;
 
             foreach (var i in Enumerable.Range(0, taskCount))
@@ -231,7 +219,7 @@ namespace DotNet.Basics.Tests.Pipelines
         [Fact]
         public void Add_AddInlineTasks_TasksAreAdded()
         {
-            var block = new Pipeline<EventArgs<int>>();
+            var block = new Pipeline<EventArgs<int>>(GetEmptyServiceProvider());
             var taskCount = 7;
 
             foreach (var i in Enumerable.Range(0, taskCount))
@@ -245,7 +233,7 @@ namespace DotNet.Basics.Tests.Pipelines
         [InlineData(10, Invoke.Sequential)]
         public async Task BlockInvokeStyle_Sequence_TasksAreRunAccordingToInvokeStyle(int stepCount, Invoke invoke)
         {
-            var block = new Pipeline<EventArgs<int>>(invoke: invoke);
+            var block = new Pipeline<EventArgs<int>>(GetEmptyServiceProvider(), invoke: invoke);
             var @lock = new Lock();
 
             for (var i = 0; i < stepCount; i++)
@@ -275,10 +263,7 @@ namespace DotNet.Basics.Tests.Pipelines
             var ended = new List<string>();
 
 
-            var pipeline = new Pipeline<EventArgs<int>>(services =>
-            {
-                services.AddSingleton<IncrementArgsStep>();
-            });
+            var pipeline = new Pipeline<EventArgs<int>>(GetSingletonServiceProvider<IncrementArgsStep>());
             pipeline.AddBlock().AddStep<IncrementArgsStep>();
             pipeline.AddStep("StepInline", (args) => { });
 

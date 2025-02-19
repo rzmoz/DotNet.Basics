@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
 
 namespace DotNet.Basics.Tests
@@ -26,6 +27,23 @@ namespace DotNet.Basics.Tests
         protected string ClassName { get; }
         protected string TestPathPrefix { get; }
         protected ITestOutputHelper Output { get; }
+
+        protected IServiceProvider GetEmptyServiceProvider()
+        {
+            return new ServiceCollection().BuildServiceProvider();
+        }
+        protected IServiceProvider GetTransientServiceProvider(Type t)
+        {
+            return new ServiceCollection().AddTransient(t).BuildServiceProvider();
+        }
+        protected IServiceProvider GetTransientServiceProvider<T>() where T : class
+        {
+            return new ServiceCollection().AddTransient<T>().BuildServiceProvider();
+        }
+        protected IServiceProvider GetSingletonServiceProvider<T>() where T : class
+        {
+            return new ServiceCollection().AddSingleton<T>().BuildServiceProvider();
+        }
 
         protected void WithTestRoot(Action<DirPath> testRootAction)
         {

@@ -4,30 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DotNet.Basics.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DotNet.Basics.Pipelines
 {
     public class Pipeline<T> : ManagedTask<T>
     {
-        private readonly Func<IServiceProvider> _getServiceProvider;
-        private readonly ConcurrentQueue<ManagedTask<T>> _tasks;
+        private readonly IServiceProvider _serviceProvider;
+
+        private readonly ConcurrentQueue<ManagedTask<T>> _tasks = new();
         private readonly Func<T, Task<int>> _innerRun;
 
-        public Pipeline(string name = null, Invoke invoke = Invoke.Sequential)
-            : this(null, name, invoke)
-        { }
-
-        public Pipeline(Action<IServiceCollection> configureServices, string name = null, Invoke invoke = Invoke.Sequential)
-            : this(GetServiceProvider(configureServices), name, invoke)
-        { }
-
-        public Pipeline(Func<IServiceProvider> getServiceProvider, string name = null, Invoke invoke = Invoke.Sequential)
+        public Pipeline(IServiceProvider serviceProvider, string name = null, Invoke invoke = Invoke.Sequential)
             : base(name, "Pipeline", "Block")
         {
-            _getServiceProvider = getServiceProvider ?? new ServiceCollection().BuildServiceProvider;
-            _tasks = new ConcurrentQueue<ManagedTask<T>>();
-            Invoke = invoke;
+            _serviceProvider = serviceProvider;
             switch (Invoke)
             {
                 case Invoke.Parallel:
@@ -69,7 +59,7 @@ namespace DotNet.Basics.Pipelines
 
         public Pipeline<T> AddStep<TTask>(string name = null) where TTask : ManagedTask<T>
         {
-            var lazyTask = new LazyLoadStep<T, TTask>(name, _getServiceProvider);
+            var lazyTask = new LazyLoadStep<T, TTask>(name, _serviceProvider);
             InitEvents(lazyTask);
             _tasks.Enqueue(lazyTask);
             return this;
@@ -119,7 +109,7 @@ namespace DotNet.Basics.Pipelines
         public Pipeline<T> AddBlock(string name, Invoke invoke = Invoke.Parallel, params Func<T, Task<int>>[] tasks)
         {
             var count = _tasks.Count(s => s.GetType() == typeof(Pipeline<>));
-            var block = new Pipeline<T>(_getServiceProvider, name ?? $"Block {count}", invoke);
+            var block = new Pipeline<T>(_serviceProvider, name ?? $"Block {count}", invoke);
             foreach (var task in tasks)
                 block.AddStep(task);
             InitEvents(block);
@@ -155,13 +145,6 @@ namespace DotNet.Basics.Pipelines
         {
             task.Started += FireStarted;
             task.Ended += FireEnded;
-        }
-
-        private static Func<IServiceProvider> GetServiceProvider(Action<IServiceCollection> configuresServices)
-        {
-            var services = new ServiceCollection();
-            configuresServices?.Invoke(services);
-            return () => services.BuildServiceProvider();
         }
     }
 }
