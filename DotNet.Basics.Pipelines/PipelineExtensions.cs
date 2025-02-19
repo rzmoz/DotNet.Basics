@@ -35,6 +35,13 @@ namespace DotNet.Basics.Pipelines
             services.AddPipelineSteps(steps);
             return services;
         }
+        
+        public static IServiceCollection AddPipelineSteps(this IServiceCollection services, Func<Type, bool> where = null)
+        {
+            var steps = Assembly.GetEntryAssembly().GetPipelineStepTypes(where);
+            services.AddPipelineSteps(steps);
+            return services;
+        }
 
         public static IServiceCollection AddPipelineSteps(this IServiceCollection services, IEnumerable<Type> pipelineStepTypes)
         {
