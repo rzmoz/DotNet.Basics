@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using DotNet.Basics.IO;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Cli
 {
     public class PipelineArgsFactory
     {
-        public object Create(Type pipelineType, ArgsDictionary args, params IArgParser[] argParsers)
+        public virtual object Create(Type pipelineType, ArgsDictionary args, params IArgParser[] argParsers)
         {
             var argsPipelineType = pipelineType;
 
@@ -30,7 +32,7 @@ namespace DotNet.Basics.Cli
             return argsObject;
         }
 
-        public Func<string, object> GetParser(Type argsType, params IArgParser[] argParsers)
+        public virtual Func<string, object> GetParser(Type argsType, params IArgParser[] argParsers)
         {
             if (argsType == null) throw new ArgumentNullException(nameof(argsType));
             return argsType switch
@@ -52,6 +54,11 @@ namespace DotNet.Basics.Cli
                 not null when argsType == typeof(ulong) => val => ulong.Parse(val),
                 not null when argsType == typeof(short) => val => short.Parse(val),
                 not null when argsType == typeof(ushort) => val => ushort.Parse(val),
+                //dotnet.basics types
+                not null when argsType == typeof(DirPath) => val => val.ToDir(),
+                not null when argsType == typeof(FilePath) => val => val.ToFile(),
+                not null when argsType == typeof(PathInfo) => val => val.ToPath(),
+                not null when argsType == typeof(SemVersion) => SemVersion.Parse,
                 _ => val =>
                 {
                     var parser = argParsers.FirstOrDefault(p => p.CanParse(argsType!));

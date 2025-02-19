@@ -16,9 +16,9 @@ namespace DotNet.Basics.Cli
         public CliHostOptions Options { get; } = options;
         public ArgsDictionary Args => Options.Args;
 
-        public async Task<int> RunPipelineAsync<T>() where T : ManagedTask
+        public async Task<int> RunPipelineAsync<T>(PipelineArgsFactory? pipelineArgsFactory = null) where T : ManagedTask
         {
-            var argsFactory = new PipelineArgsFactory();
+            var argsFactory = pipelineArgsFactory ?? new PipelineArgsFactory();
             var args = argsFactory.Create(typeof(T), Args);
             return await RunPipelineAsync<T>(args);
         }
