@@ -23,9 +23,9 @@ namespace DotNet.Basics.Cli
             var options = new CliHostBuilderOptions(args, argsParser ?? new ArgsMsBuildStyleParser());
             _configureOptions?.Invoke(options);
 
-            var config = new LoggerConfiguration();
-            _configureSerilog?.Invoke(options, config);
-            Log.Logger = config.CreateLogger();
+            if (options.SerilogDevConsole)
+                InitSerilog(options);
+
             var serviceCollection = serviceCollectionFactory?.Invoke() ?? new ServiceCollection();
             serviceCollection.AddLoogDiagnostics(verbose: options.Verbose, ado: options.ADO);
             _configureServices?.Invoke(options, serviceCollection);
@@ -34,16 +34,16 @@ namespace DotNet.Basics.Cli
             var hostOptions = new CliHostOptions(options, services);
             return new CliHost(hostOptions);
         }
-        
-        public CliHostBuilder WithSerilogDevConsole(Action<CliHostBuilderOptions, LoggerConfiguration>? configure = null)
+
+        private void InitSerilog(CliHostBuilderOptions o)
         {
-            return WithSerilog((o, config) =>
-            {
-                config.MinimumLevel.Is(o.Verbose ? LogEventLevel.Verbose : LogEventLevel.Information);
-                config.WriteTo.DevConsole(verbose: o.Verbose, ado: o.ADO);
-                configure?.Invoke(o, config);
-            });
+            var config = new LoggerConfiguration();
+            config.MinimumLevel.Is(o.Verbose ? LogEventLevel.Verbose : LogEventLevel.Information);
+            config.WriteTo.DevConsole(verbose: o.Verbose, ado: o.ADO);
+            _configureSerilog?.Invoke(o, config);
+            Log.Logger = config.CreateLogger();
         }
+
         public CliHostBuilder WithSerilog(Action<LoggerConfiguration>? configure = null)
         {
             _configureSerilog = (_, s) => configure?.Invoke(s);
