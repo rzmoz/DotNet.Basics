@@ -23,6 +23,7 @@ namespace DotNet.Basics.Cli
                 .Where(p => p.CanWrite).ToList();
 
             var unusedList = args.Keys.ToList();
+            var mandatoryPropertiesNotSet = new List<(string ArgName, string ArgType)>();
 
             foreach (var prop in writeProperties)
             {
@@ -32,10 +33,15 @@ namespace DotNet.Basics.Cli
                     var parser = GetParser(prop.PropertyType);
                     prop.SetValue(argsObject, parser.Invoke(args[prop.Name]));
                 }
+                //assert mandatory properties = nullable and null
+                var underlyingType = Nullable.GetUnderlyingType(prop.PropertyType);
+                if (underlyingType != null && prop.GetValue(argsObject) == null)
+                    mandatoryPropertiesNotSet.Add((prop.Name, $"{underlyingType.Name}?"));
             }
-
+            if (mandatoryPropertiesNotSet.Any())
+                throw new MissingArgumentException(argsType, mandatoryPropertiesNotSet);
             if (unusedList.Any())//all provided arguments must be accepted by args object. Not all Setters must be provided
-                throw new ArgumentException($"Unknown arguments provided for pipeline: {unusedList.ToJson()}");
+                throw new ArgumentException($"Unknown arguments: {unusedList.ToJson()}");
 
 
             return argsObject;

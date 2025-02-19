@@ -6,6 +6,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using DotNet.Basics.Sys;
+using Serilog.Context;
 
 namespace DotNet.Basics.Cli
 {
@@ -18,9 +20,23 @@ namespace DotNet.Basics.Cli
 
         public async Task<int> RunPipelineAsync<T>(PipelineArgsFactory? pipelineArgsFactory = null) where T : ManagedTask
         {
-            var argsFactory = pipelineArgsFactory ?? new PipelineArgsFactory();
-            var args = argsFactory.Create(typeof(T), Args);
-            return await RunPipelineAsync<T>(args);
+            try
+            {
+                var argsFactory = pipelineArgsFactory ?? new PipelineArgsFactory();
+                var args = argsFactory.Create(typeof(T), Args);
+                return await RunPipelineAsync<T>(args);
+            }
+            catch (MissingArgumentException e)
+            {
+                var log = Options.GetService<ILoog>()!;
+                log.Info(" ");
+                log.Fatal($"Missing arguments for {e.ArgsType.FullName.Highlight()}:");
+                foreach (var missingArg in e.MissingArgs)
+                {
+                    log.Error($"{missingArg.ArgType} {missingArg.ArgName.Highlight()} {{ get; set; }}");
+                }
+                return 400;
+            }
         }
 
         public async Task<int> RunPipelineAsync<T>(object args) where T : ManagedTask
@@ -41,12 +57,6 @@ namespace DotNet.Basics.Cli
             try
             {
                 exitCode = await longRunningOperations.StartAsync(operationName, loogContext.Invoke);
-            }
-            catch (CliArgNotFoundException e)
-            {
-                log.Info(" ");
-                log.Fatal($"Missing argument: {e.Message}");
-                exitCode = 400;
             }
             catch (Exception e)
             {

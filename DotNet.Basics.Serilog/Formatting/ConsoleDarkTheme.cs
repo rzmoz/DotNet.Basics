@@ -14,7 +14,7 @@ namespace DotNet.Basics.Serilog.Formatting
                 { LogEventLevel.Information, ConsoleColor.Cyan},
                 { LogEventLevel.Warning, ConsoleColor.Yellow},
                 { LogEventLevel.Error, ConsoleColor.DarkRed},
-                { LogEventLevel.Fatal, ConsoleColor.Yellow,ConsoleColor.Red}
+                { LogEventLevel.Fatal, ConsoleColor.Black,ConsoleColor.DarkRed}
         };
         }
         private static ConsoleColorSet GetForegroundHighlightColors()
@@ -25,8 +25,8 @@ namespace DotNet.Basics.Serilog.Formatting
                 { LogEventLevel.Debug, ConsoleColor.DarkYellow},
                 { LogEventLevel.Information, ConsoleColor.White},
                 { LogEventLevel.Warning, ConsoleColor.DarkYellow},
-                { LogEventLevel.Error, ConsoleColor.Red},
-                { LogEventLevel.Fatal, ConsoleColor.Black, ConsoleColor.Red}
+                { LogEventLevel.Error, ConsoleColor.Yellow},
+                { LogEventLevel.Fatal, ConsoleColor.Yellow, ConsoleColor.DarkRed}
             };
         }
     }

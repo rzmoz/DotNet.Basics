@@ -2,7 +2,8 @@
 {
     public class TestPipelineArgs
     {
-        public int ExitCode { get; set; }
-        public int OtherCode { get; set; } = 3939393;
+        public int ExitCode { get; set; }//optional
+        public int OtherCode { get; set; } = 3939393;//optional
+        public int? Mandatory { get; set; } = null; //mandatory when nullable and null
     }
 }
