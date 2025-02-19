@@ -10,17 +10,12 @@ namespace DotNet.Basics.Serilog
 {
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection AddDiagnosticsWithSerilogDevConsole(this IServiceCollection services, bool verbose, bool ado, TimeSpan longRunningOperationsPingInterval)
+        public static IServiceCollection AddLoogDiagnostics(this IServiceCollection services, bool verbose, bool ado)
         {
-            return services.AddDiagnosticsWithSerilog(config =>
-            {
-                config.MinimumLevel.Is(verbose ? LogEventLevel.Verbose : LogEventLevel.Information);
-                return config.WriteTo.DevConsole(verbose: verbose, ado: ado);
-            }, verbose: verbose, ado: ado, longRunningOperationsPingInterval);
+            return services.AddLoogDiagnostics(verbose: verbose, ado: ado, TimeSpan.FromMinutes(1));
         }
-        public static IServiceCollection AddDiagnosticsWithSerilog(this IServiceCollection services, Func<LoggerConfiguration, LoggerConfiguration> config, bool verbose, bool ado, TimeSpan longRunningOperationsPingInterval)
+        public static IServiceCollection AddLoogDiagnostics(this IServiceCollection services, bool verbose, bool ado, TimeSpan longRunningOperationsPingInterval)
         {
-            Log.Logger = config(new LoggerConfiguration()).CreateLogger();
             services.AddSingleton<ILoog>(new Loog().WithLogTarget(new SerilogLoogTarget(verbose: verbose, ado: ado)));
             services.AddSingleton(s =>
             {
@@ -29,7 +24,7 @@ namespace DotNet.Basics.Serilog
             });
             return services;
         }
-
+        
         public static LoggerConfiguration DevConsole(this LoggerSinkConfiguration sinkConfiguration, bool verbose = false, bool ado = false)
         {
             if (sinkConfiguration == null)

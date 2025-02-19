@@ -6,12 +6,8 @@ using Xunit.Abstractions;
 
 namespace DotNet.Basics.Tests.IO
 {
-    public class PathExtensionsTests : TestWithHelpers
+    public class PathExtensionsTests(ITestOutputHelper output) : TestWithHelpers(output)
     {
-        public PathExtensionsTests(ITestOutputHelper output) : base(output)
-        {
-        }
-
         [Fact]
         public void ToPath_DirToDir_PathTypeIsSet()
         {

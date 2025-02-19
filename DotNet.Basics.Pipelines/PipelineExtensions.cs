@@ -9,33 +9,38 @@ namespace DotNet.Basics.Pipelines
 {
     public static class PipelineExtensions
     {
-        public static void AddPipelines(this IServiceCollection services, Func<Type, bool> where = null)
+        public static IServiceCollection AddPipelines(this IServiceCollection services, Func<Type, bool> where = null)
         {
             var pipelines = Assembly.GetEntryAssembly().GetPipelineTypes(where);
             services.AddPipelines(pipelines);
+            return services;
         }
-        public static void AddPipelines(this IServiceCollection services, IEnumerable<Assembly> assemblies, Func<Type, bool> where = null)
+        public static IServiceCollection AddPipelines(this IServiceCollection services, IEnumerable<Assembly> assemblies, Func<Type, bool> where = null)
         {
             var pipelines = assemblies.SelectMany(a => GetPipelineTypes(a, where));
             services.AddPipelines(pipelines);
+            return services;
         }
 
-        public static void AddPipelines(this IServiceCollection services, IEnumerable<Type> pipelineTypes)
+        public static IServiceCollection AddPipelines(this IServiceCollection services, IEnumerable<Type> pipelineTypes)
         {
             foreach (var pipelineStepType in pipelineTypes)
                 services.AddTransient(pipelineStepType);
+            return services;
         }
 
-        public static void AddPipelineSteps(this IServiceCollection services, IEnumerable<Assembly> assemblies, Func<Type, bool> where = null)
+        public static IServiceCollection AddPipelineSteps(this IServiceCollection services, IEnumerable<Assembly> assemblies, Func<Type, bool> where = null)
         {
             var steps = assemblies.SelectMany(a => GetPipelineStepTypes(a, where));
             services.AddPipelineSteps(steps);
+            return services;
         }
 
-        public static void AddPipelineSteps(this IServiceCollection services, IEnumerable<Type> pipelineStepTypes)
+        public static IServiceCollection AddPipelineSteps(this IServiceCollection services, IEnumerable<Type> pipelineStepTypes)
         {
             foreach (var pipelineStepType in pipelineStepTypes)
                 services.AddTransient(pipelineStepType);
+            return services;
         }
 
         public static IEnumerable<Type> GetPipelineTypes(this Assembly assembly, Func<Type, bool> where = null)

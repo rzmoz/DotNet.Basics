@@ -9,15 +9,12 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Cli
 {
-    public class LoogConsoleHost(LoogConsoleOptions options) : IAsyncDisposable
+    public class CliHost(CliHostOptions options) : IAsyncDisposable
     {
         private const string _newlinePattern = @"\r\n|\r|\n";
         private static readonly Regex _newlineRegex = new(_newlinePattern, RegexOptions.Compiled);
-        public LoogConsoleOptions Options { get; } = options;
-        public ArgsProvider Args => Options.Args;
-        public bool Verbose => Options.Verbose;
-        public bool ADO => Options.ADO;
-        public bool Debug => Options.Debug;
+        public CliHostOptions Options { get; } = options;
+        public ArgsDictionary Args => Options.Args;
 
         public async Task<int> RunPipelineAsync<T>() where T : ManagedTask
         {
