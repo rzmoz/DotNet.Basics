@@ -8,7 +8,8 @@ namespace DotNet.Basics.Cli.Console
         protected override Task<int> RunImpAsync(TestPipelineArgs args)
         {
             log.Debug(args.OtherCode.ToString());
-            
+            log.Debug($"{nameof(args.MyBool)}:{args.MyBool}");
+
             log.Verbose($"{nameof(log.Verbose)} {nameof(log.Verbose).Highlight()} lalalalalalala");
             log.Debug($"{nameof(log.Debug)} {nameof(log.Debug).Highlight()} lalalalalalala");
             log.Info($"{nameof(log.Info)} {nameof(log.Info).Highlight()} lalalalalalala");

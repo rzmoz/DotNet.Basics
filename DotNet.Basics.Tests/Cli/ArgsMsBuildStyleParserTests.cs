@@ -6,9 +6,9 @@ using Xunit.Abstractions;
 
 namespace DotNet.Basics.Tests.Cli
 {
-    public class ArgsGreedyParserTests(ITestOutputHelper output) : TestWithHelpers(output)
+    public class ArgsMsBuildStyleParserTests(ITestOutputHelper output) : TestWithHelpers(output)
     {
-        private readonly IArgsParser _argsParser = new ArgsGreedyParser();
+        private readonly IArgsParser _argsParser = new ArgsMsBuildStyleParser();
 
         [Theory]
         [InlineData("debug", "--debug", "-hello", "my", "world")]//detect flag without flag indicator
@@ -46,19 +46,11 @@ namespace DotNet.Basics.Tests.Cli
         [Fact]
         public void Parse_KeyValueStyle_ArgsAreParsed()
         {
-            var key = "---------myKey";//annoyingly long flag indicator => no error
-            string[] args = [$"{key}=1|2|3", "--anotherFlag"];
+            var key = "-/-//-//---/-/-/myKey";//annoyingly mixed flag indicator => no error
+            string[] args = [key, $"1|2|3", "--anotherFlag"];
             var dictionary = _argsParser.Parse(args);
-            dictionary.Get(key).Count.Should().Be(3);
+            dictionary.Get(key).Count.Should().Be(1);
         }
 
-        [Fact]
-        public void Parse_ConfusedFlagStyles_ArgsAreParsed()
-        {
-            var key = "-/-//-//---/-/-/myKey";//annoyingly mixed flag indicator => no error
-            string[] args = [$"{key}=1|2|3", "--anotherFlag"];
-            var dictionary = _argsParser.Parse(args);
-            dictionary.Get(key).Count.Should().Be(3);
-        }
     }
 }

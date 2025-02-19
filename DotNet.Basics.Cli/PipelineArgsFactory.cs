@@ -10,7 +10,7 @@ namespace DotNet.Basics.Cli
 {
     public class PipelineArgsFactory
     {
-        public virtual object Create(Type pipelineType, ArgsDictionary args, params IArgParser[] argParsers)
+        public virtual object Create(Type pipelineType, ArgsDictionary args)
         {
             var argsPipelineType = pipelineType;
 
@@ -30,7 +30,12 @@ namespace DotNet.Basics.Cli
                 if (args.ContainsKey(prop.Name))
                 {
                     unusedList.RemoveAt(unusedList.IndexOf(prop.Name.ToLowerInvariant()));
-                    var parser = GetParser(prop.PropertyType);
+
+                    var parserType = Nullable.GetUnderlyingType(prop.PropertyType) != null
+                        ? Nullable.GetUnderlyingType(prop.PropertyType)
+                        : prop.PropertyType;
+
+                    var parser = GetParser(parserType!);
                     prop.SetValue(argsObject, parser.Invoke(args[prop.Name]));
                 }
                 //assert mandatory properties = nullable and null
@@ -47,14 +52,14 @@ namespace DotNet.Basics.Cli
             return argsObject;
         }
 
-        public virtual Func<string, object> GetParser(Type argsType, params IArgParser[] argParsers)
+        public virtual Func<string, object> GetParser(Type argsType)
         {
             if (argsType == null) throw new ArgumentNullException(nameof(argsType));
             return argsType switch
             {
                 //https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/built-in-types
                 not null when argsType == typeof(string) => val => val,
-                not null when argsType == typeof(bool) => val => bool.Parse(val),
+                not null when argsType == typeof(bool) => val => string.IsNullOrEmpty(val) || bool.Parse(val),
                 not null when argsType == typeof(byte) => val => byte.Parse(val),
                 not null when argsType == typeof(sbyte) => val => sbyte.Parse(val),
                 not null when argsType == typeof(char) => val => char.Parse(val),
@@ -83,13 +88,13 @@ namespace DotNet.Basics.Cli
                 not null when argsType.IsAssignableTo(typeof(IEnumerable<DirPath>)) => val => val.Split('|').ToList(),
                 not null when argsType.IsAssignableTo(typeof(IEnumerable<FilePath>)) => val => val.Split('|').ToList(),
                 not null when argsType.IsAssignableTo(typeof(IEnumerable<PathInfo>)) => val => val.Split('|').ToList(),
-
-                _ => val =>
-                {
-                    var parser = argParsers.FirstOrDefault(p => p.CanParse(argsType!));
-                    return parser != null ? parser.Parse(val) : throw new NotSupportedException(argsType!.FullName);
-                }
+                _ => val => Parse(argsType!, val)
             };
+        }
+
+        protected virtual object Parse(Type argsType, string val)
+        {
+            throw new NotSupportedException(argsType!.FullName);
         }
     }
 }
