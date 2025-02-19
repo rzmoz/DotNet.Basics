@@ -30,31 +30,32 @@ namespace DotNet.Basics.Cli
             return argsObject;
         }
 
-        private Func<string, object> GetParser(Type t, params IArgParser[] argParsers)
+        public Func<string, object> GetParser(Type argsType, params IArgParser[] argParsers)
         {
-            if (t == null) throw new ArgumentNullException(nameof(t));
-            return t switch
+            if (argsType == null) throw new ArgumentNullException(nameof(argsType));
+            return argsType switch
             {
                 //https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/built-in-types
-                not null when t == typeof(bool) => val => bool.Parse(val),
-                not null when t == typeof(byte) => val => byte.Parse(val),
-                not null when t == typeof(sbyte) => val => sbyte.Parse(val),
-                not null when t == typeof(char) => val => char.Parse(val),
-                not null when t == typeof(decimal) => val => decimal.Parse(val),
-                not null when t == typeof(double) => val => double.Parse(val),
-                not null when t == typeof(float) => val => float.Parse(val),
-                not null when t == typeof(int) => val => int.Parse(val),
-                not null when t == typeof(uint) => val => uint.Parse(val),
-                not null when t == typeof(nint) => val => nint.Parse(val),
-                not null when t == typeof(nuint) => val => nuint.Parse(val),
-                not null when t == typeof(long) => val => long.Parse(val),
-                not null when t == typeof(ulong) => val => ulong.Parse(val),
-                not null when t == typeof(short) => val => short.Parse(val),
-                not null when t == typeof(ushort) => val => ushort.Parse(val),
+                not null when argsType == typeof(string) => val => val,
+                not null when argsType == typeof(bool) => val => bool.Parse(val),
+                not null when argsType == typeof(byte) => val => byte.Parse(val),
+                not null when argsType == typeof(sbyte) => val => sbyte.Parse(val),
+                not null when argsType == typeof(char) => val => char.Parse(val),
+                not null when argsType == typeof(decimal) => val => decimal.Parse(val),
+                not null when argsType == typeof(double) => val => double.Parse(val),
+                not null when argsType == typeof(float) => val => float.Parse(val),
+                not null when argsType == typeof(int) => val => int.Parse(val),
+                not null when argsType == typeof(uint) => val => uint.Parse(val),
+                not null when argsType == typeof(nint) => val => nint.Parse(val),
+                not null when argsType == typeof(nuint) => val => nuint.Parse(val),
+                not null when argsType == typeof(long) => val => long.Parse(val),
+                not null when argsType == typeof(ulong) => val => ulong.Parse(val),
+                not null when argsType == typeof(short) => val => short.Parse(val),
+                not null when argsType == typeof(ushort) => val => ushort.Parse(val),
                 _ => val =>
                 {
-                    var parser = argParsers.FirstOrDefault(p => p.CanParse(t!));
-                    return parser != null ? parser.Parse(val) : throw new NotSupportedException(t!.FullName);
+                    var parser = argParsers.FirstOrDefault(p => p.CanParse(argsType!));
+                    return parser != null ? parser.Parse(val) : throw new NotSupportedException(argsType!.FullName);
                 }
             };
         }

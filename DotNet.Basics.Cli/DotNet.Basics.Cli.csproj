@@ -1,25 +1,22 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-		<Description>Convenient host builder for common console operations</Description>
-		<PackageLicenseUrl></PackageLicenseUrl>
-		<Authors>rzmoz</Authors>
-		<RepositoryUrl>https://github.com/rzmoz/DotNet.Basics</RepositoryUrl>
-		<Version>0.0.0</Version>
-		<AssemblyVersion>0.0.0</AssemblyVersion>
-		<FileVersion>0.0.0</FileVersion>
-		<LangVersion>13.0</LangVersion>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
-
-	<ItemGroup>
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\DotNet.Basics.Serilog\DotNet.Basics.Serilog.csproj" />
-	  <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />
-	</ItemGroup>
-
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Description>Convenient host builder for common console operations</Description>
+    <PackageLicenseUrl>
+    </PackageLicenseUrl>
+    <Authors>rzmoz</Authors>
+    <RepositoryUrl>https://github.com/rzmoz/DotNet.Basics</RepositoryUrl>
+	  <Version>0.0.0</Version>
+	  <AssemblyVersion>0.0.0</AssemblyVersion>
+	  <FileVersion>0.0.0</FileVersion>
+    <LangVersion>13.0</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DotNet.Basics.Serilog\DotNet.Basics.Serilog.csproj" />
+    <ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />
+  </ItemGroup>
 </Project>

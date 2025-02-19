@@ -1,12 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<TargetFramework>net9.0</TargetFramework>
 		<Description>Helpers and extensions for using serilog in with ADO and colored dev console sinks</Description>
 		<PackageProjectUrl />
-		<PackageLicenseUrl></PackageLicenseUrl>
+		<PackageLicenseUrl>
+		</PackageLicenseUrl>
 		<Authors>rzmoz</Authors>
 		<Company />
 		<Product />
@@ -15,16 +15,15 @@
 		<AssemblyVersion>0.0.0</AssemblyVersion>
 		<FileVersion>0.0.0</FileVersion>
 		<LangVersion>13.0</LangVersion>
-		<PackageReleaseNotes></PackageReleaseNotes>
+		<PackageReleaseNotes>
+		</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
-
 	<ItemGroup>
 		<None Include="README.md" Pack="true" PackagePath="\" />
 		<PackageReference Include="Humanizer.Core" Version="2.14.1" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
 		<PackageReference Include="Serilog" Version="4.2.0" />
 	</ItemGroup>
-
 </Project>
