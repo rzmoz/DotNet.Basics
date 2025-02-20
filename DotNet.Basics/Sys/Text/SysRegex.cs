@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace DotNet.Basics.Sys.Text
 {
-    public class SysRegex(string pattern, RegexOptions options = RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline)
+    public class SysRegex(string pattern, RegexOptions options = RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline)
     {
         public string Pattern { get; } = pattern;
 

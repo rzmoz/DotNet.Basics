@@ -1,8 +1,11 @@
 {
+  "nuget":{
+    "source":"https://api.nuget.org/v3/index.json"
+  },
   "releases": [
     {
       "name": "DotNet.Basics",
-      "version": "11.5.0",
+      "version": "11.5.1",
       "prerelease": ""
     },
     {
