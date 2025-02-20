@@ -3,7 +3,7 @@ using System.Text;
 
 namespace DotNet.Basics.Win
 {
-    public class CmdPromptLogger
+    public class CmdPromptLogger : IDisposable
     {
         public delegate void DebugLoggedEventHandler(string line);
         public delegate void InfoLoggedEventHandler(string line);
@@ -36,6 +36,8 @@ namespace DotNet.Basics.Win
             };
         }
 
+        public bool HasErrors => Error.Length > 0;
+
         public Action<string> WriteDebug { get; }
         public Action<string> WriteInfo { get; }
         public Action<string> WriteError { get; }
@@ -45,6 +47,11 @@ namespace DotNet.Basics.Win
             Debug = new();
             Info = new();
             Error = new();
+        }
+
+        public void Dispose()
+        {
+            Reset();
         }
     }
 }
