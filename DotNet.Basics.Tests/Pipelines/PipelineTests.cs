@@ -12,6 +12,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
+using DotNet.Basics.Sys.Text;
 
 namespace DotNet.Basics.Tests.Pipelines
 {
@@ -140,7 +141,27 @@ namespace DotNet.Basics.Tests.Pipelines
 
             stepName.Should().Be("IncrementArgs");
         }
-        
+
+        [Fact]
+        public async Task LazyLoad_RunInSequence_StepsAreRunInSequence()
+        {
+            var pipeline = new AddToListPipeline(GetTransientServiceProvider<AddToListStep>());
+            var items = new List<int>();
+
+            //act
+            await pipeline.RunAsync(items);
+
+            //assert
+            items.Count.Should().Be(AddToListPipeline.StepCount);
+
+            var expected = pipeline.Tasks.Select(t => int.Parse(t.Name)).ToJson();
+            var observed = items.ToJson();
+            output.WriteLine($"Expected: {expected}");
+            output.WriteLine($"Observed: {observed}");
+            expected.Should().Be(observed);
+        }
+
+
         [Fact]
         public async Task RunAsync_AllInParallel_AllStepsAreRunInParallel()
 

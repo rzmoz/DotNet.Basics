@@ -14,11 +14,11 @@ namespace DotNet.Basics.Pipelines
         private readonly ConcurrentQueue<ManagedTask<T>> _tasks = new();
         private readonly Func<T, Task<int>> _innerRun;
 
-        public Pipeline(IServiceProvider serviceProvider, string name = null, Invoke invoke = Invoke.Sequential)
+        public Pipeline(IServiceProvider serviceProvider, string? name = null, Invoke invoke = Invoke.Sequential)
             : base(name, "Pipeline", "Block")
         {
             _serviceProvider = serviceProvider;
-            switch (Invoke)
+            switch (invoke)
             {
                 case Invoke.Parallel:
                     _innerRun = InnerParallelRunAsync;
@@ -27,13 +27,12 @@ namespace DotNet.Basics.Pipelines
                     _innerRun = InnerSequentialRunAsync;
                     break;
                 default:
-                    throw new ArgumentException($"{nameof(Invoke)} not supported: {Invoke}");
+                    throw new ArgumentException($"{nameof(Invoke)} not supported: {invoke}");
             }
         }
 
         public IReadOnlyCollection<ManagedTask<T>> Tasks => _tasks.ToList();
-        public Invoke Invoke { get; }
-
+        
         public bool AssertLazyLoadSteps(ref string errorMessage)
         {
             return AssertLazyLoadSteps(Tasks, ref errorMessage);
@@ -117,9 +116,9 @@ namespace DotNet.Basics.Pipelines
             return block;
         }
 
-        protected override Task<int> InnerRunAsync(T args)
+        protected override async Task<int> InnerRunAsync(T args)
         {
-            return _innerRun(args);
+            return await _innerRun(args);
         }
 
         protected async Task<int> InnerParallelRunAsync(T args)

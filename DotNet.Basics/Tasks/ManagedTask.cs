@@ -94,9 +94,9 @@ namespace DotNet.Basics.Tasks
                 throw;
             }
         }
-        protected virtual Task<int> InnerRunAsync(T args)
+        protected virtual async Task<int> InnerRunAsync(T args)
         {
-            return _task?.Invoke(args);
+            return await _task?.Invoke(args);
         }
     }
 }

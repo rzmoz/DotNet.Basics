@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DotNet.Basics.Pipelines;
 
 namespace DotNet.Basics.Tests.Pipelines.PipelineHelpers
 {
-    public class AddToListStep : PipelineStep<List<string>>
+    public class AddToListStep : PipelineStep<List<int>>
     {
-        protected override Task<int> RunImpAsync(List<string> args)
+        protected override async Task<int> RunImpAsync(List<int> args)
         {
-            args.Add(Name);
-            return Task.FromResult(0);
+            await Task.Delay(TimeSpan.FromMilliseconds(int.Parse(Name) * 500));
+            args.Add(int.Parse(Name));
+            return 0;
         }
     }
 }

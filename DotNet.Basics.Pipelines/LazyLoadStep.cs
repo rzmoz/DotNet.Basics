@@ -36,12 +36,12 @@ namespace DotNet.Basics.Pipelines
             };
         }
 
-        protected override Task<int> InnerRunAsync(T args)
+        protected override async Task<int> InnerRunAsync(T args)
         {
             var lazyLoadedTask = _loadTask();
             return lazyLoadedTask == null
                 ? throw new TaskNotResolvedFromServiceProviderException($"{typeof(TTask).FullName} in {Name}")
-                : lazyLoadedTask.RunAsync(args);
+                : await lazyLoadedTask.RunAsync(args);
         }
     }
 }
