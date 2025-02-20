@@ -36,19 +36,19 @@ namespace DotNet.Basics.Sys.Text
             options?.Invoke(defOptions);
             return JsonSerializer.Serialize(value, defOptions);
         }
-        public static object FromJson(this string json, Type returnType, Action<JsonSerializerOptions> options = null)
+        public static object? FromJson(this string json, Type returnType, Action<JsonSerializerOptions> options = null)
         {
             var defOptions = GetJsonSerializerOptions(false, JsonNamingPolicy.CamelCase);
             options?.Invoke(defOptions);
             return JsonSerializer.Deserialize(json, returnType, defOptions);
         }
-        public static TValue FromJson<TValue>(this string json, Action<JsonSerializerOptions> options = null)
+        public static TValue? FromJson<TValue>(this string json, Action<JsonSerializerOptions> options = null)
         {
             var defOptions = GetJsonSerializerOptions(false, JsonNamingPolicy.CamelCase);
             options?.Invoke(defOptions);
             return JsonSerializer.Deserialize<TValue>(json, defOptions);
         }
-        public static TValue FromJsonStream<TValue>(this Stream jsonStream, Action<JsonSerializerOptions> options = null)
+        public static TValue? FromJsonStream<TValue>(this Stream jsonStream, Action<JsonSerializerOptions> options = null)
         {
             var defOptions = GetJsonSerializerOptions(false, JsonNamingPolicy.CamelCase);
             options?.Invoke(defOptions);

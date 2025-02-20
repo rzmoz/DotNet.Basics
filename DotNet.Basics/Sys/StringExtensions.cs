@@ -185,7 +185,7 @@ namespace DotNet.Basics.Sys
 
         public static string EnsurePrefix(this string str, string prefix, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
         {
-            if (str == null || string.IsNullOrEmpty(prefix))
+            if (string.IsNullOrEmpty(prefix))
                 return str;
             str = str.RemovePrefix(prefix, comparison);
             return prefix + str;
@@ -198,7 +198,7 @@ namespace DotNet.Basics.Sys
 
         public static string EnsureSuffix(this string str, string suffix, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
         {
-            if (str == null || string.IsNullOrEmpty(suffix))
+            if (string.IsNullOrEmpty(suffix))
                 return str;
             str = str.RemoveSuffix(suffix, comparison);
             return str + suffix;
@@ -211,7 +211,7 @@ namespace DotNet.Basics.Sys
 
         public static string RemovePrefix(this string str, string prefix, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
         {
-            if (str == null || string.IsNullOrEmpty(prefix))
+            if (string.IsNullOrEmpty(prefix))
                 return str;
             return str.StartsWith(prefix, comparison) ? str.Substring(prefix.Length) : str;
         }
@@ -223,7 +223,7 @@ namespace DotNet.Basics.Sys
 
         public static string RemoveSuffix(this string str, string suffix, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
         {
-            if (str == null || string.IsNullOrEmpty(suffix))
+            if (string.IsNullOrEmpty(suffix))
                 return str;
             return str.EndsWith(suffix, comparison) ? str.Remove(str.Length - suffix.Length) : str;
         }

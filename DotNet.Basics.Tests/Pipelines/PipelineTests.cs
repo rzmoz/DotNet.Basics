@@ -156,8 +156,8 @@ namespace DotNet.Basics.Tests.Pipelines
 
             var expected = pipeline.Tasks.Select(t => int.Parse(t.Name)).ToJson();
             var observed = items.ToJson();
-            output.WriteLine($"Expected: {expected}");
-            output.WriteLine($"Observed: {observed}");
+            Output.WriteLine($"Expected: {expected}");
+            Output.WriteLine($"Observed: {observed}");
             expected.Should().Be(observed);
         }
 

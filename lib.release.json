@@ -10,7 +10,7 @@
     },
     {
       "name": "DotNet.Basics.Cli",
-      "version": "11.6.5",
+      "version": "11.6.7",
       "prerelease": ""
     },
     {
@@ -20,7 +20,7 @@
     },
     {
       "name": "DotNet.Basics.Serilog",
-      "version": "4.6.4",
+      "version": "4.6.5",
       "prerelease": ""
     }
   ],
