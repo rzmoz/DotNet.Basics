@@ -19,7 +19,7 @@ namespace DotNet.Basics.Win
 
         public DirPath InstallDir { get; } = installDir ?? throw new ArgumentNullException(nameof(installDir));
 
-        public int RunFromCmd(string fileName, IEnumerable<string> args, Action<string>? writeOutput = null, Action<string>? writeError = null, Action<string>? writeDebug = null)
+        public int RunFromCmd(string fileName, IEnumerable<string> args, CmdPromptLogger? logger = null)
         {
             Install();
             var argString = args.JoinString(" ");
@@ -28,20 +28,20 @@ namespace DotNet.Basics.Win
             if (file.Exists() == false)
                 throw new FileNotFoundException(file.FullName);
 
-            return CmdPrompt.Run($"{file.FullName} {argString}", writeOutput, writeError, writeDebug);
+            return CmdPrompt.Run($"{file.FullName} {argString}", logger);
         }
 
-        public FileApplication WithStream<T>(string fileName, Action<FilePath> postInstallAction = null)
+        public FileApplication WithStream<T>(string fileName, Action<FilePath>? postInstallAction = null)
         {
             var stream = typeof(T).Assembly.GetManifestResourceStream(typeof(T), fileName);
             return WithStream(fileName, stream, true, postInstallAction);
         }
 
-        public FileApplication WithStream(string filename, Stream content, Action<FilePath> postInstallAction = null)
+        public FileApplication WithStream(string filename, Stream content, Action<FilePath>? postInstallAction = null)
         {
             return WithStream(filename, content, true, postInstallAction);
         }
-        public FileApplication WithStream(string filename, Stream content, bool disposeStreamWhenDone, Action<FilePath> postInstallAction = null)
+        public FileApplication WithStream(string filename, Stream content, bool disposeStreamWhenDone, Action<FilePath>? postInstallAction = null)
         {
             if (content == null) throw new ArgumentNullException(nameof(content));
             var target = InstallDir.ToFile(filename);

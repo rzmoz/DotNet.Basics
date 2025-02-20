@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotNet.Basics.Win;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -6,10 +7,15 @@ namespace DotNet.Basics.Sys
 {
     public static class ExternalProcess
     {
-        public static int Run(string path, object args = null, Action<string>? writeOutput = null, Action<string>? writeError = null, Action<string>? writeDebug = null)
+        public static int Run(string path, object? args = null, CmdPromptLogger? logger = null)
+        {
+            logger ??= new CmdPromptLogger();
+            return Run(path, args?.ToString() ?? string.Empty, logger.WriteInfo, logger.WriteError, logger.WriteDebug);
+        }
+        public static int Run(string path, string args, Action<string> writeOutput, Action<string> writeError, Action<string> writeDebug = null)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
-            var si = new ProcessStartInfo(path, args?.ToString() ?? string.Empty)
+            var si = new ProcessStartInfo(path, args)
             {
                 RedirectStandardInput = false,
                 RedirectStandardOutput = true,
@@ -21,16 +27,16 @@ namespace DotNet.Basics.Sys
             try
             {
                 using var process = new Process { StartInfo = si };
-                if (writeOutput != null)
-                    process.OutputDataReceived += (_, data) =>
-                    {
-                        if (data.Data != null) { writeOutput.Invoke(data.Data); }
-                    };
-                if (writeError != null)
-                    process.ErrorDataReceived += (_, data) =>
-                    {
-                        if (data.Data != null) { writeError.Invoke(data.Data); }
-                    };
+
+                process.OutputDataReceived += (_, data) =>
+                {
+                    if (data.Data != null) { writeOutput.Invoke(data.Data); }
+                };
+
+                process.ErrorDataReceived += (_, data) =>
+                {
+                    if (data.Data != null) { writeError.Invoke(data.Data); }
+                };
 
                 process.Start();
                 writeDebug?.Invoke($"[{process.Id}] Process <{process.ProcessName}> starting: {path} {args}");
