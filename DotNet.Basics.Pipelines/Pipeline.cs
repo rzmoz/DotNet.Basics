@@ -57,7 +57,7 @@ namespace DotNet.Basics.Pipelines
             return success;
         }
 
-        public Pipeline<T> AddStep<TTask>(string name = null) where TTask : ManagedTask<T>
+        public Pipeline<T> AddStep<TTask>(string? name = null) where TTask : ManagedTask<T>
         {
             var lazyTask = new LazyLoadStep<T, TTask>(name, _serviceProvider);
             InitEvents(lazyTask);
@@ -101,12 +101,12 @@ namespace DotNet.Basics.Pipelines
             return AddBlock(null, tasks);
         }
 
-        public Pipeline<T> AddBlock(string name, params Func<T, Task<int>>[] tasks)
+        public Pipeline<T> AddBlock(string? name, params Func<T, Task<int>>[] tasks)
         {
             return AddBlock(name, Invoke.Parallel, tasks);
         }
 
-        public Pipeline<T> AddBlock(string name, Invoke invoke = Invoke.Parallel, params Func<T, Task<int>>[] tasks)
+        public Pipeline<T> AddBlock(string? name, Invoke invoke = Invoke.Parallel, params Func<T, Task<int>>[] tasks)
         {
             var count = _tasks.Count(s => s.GetType() == typeof(Pipeline<>));
             var block = new Pipeline<T>(_serviceProvider, name ?? $"Block {count}", invoke);

@@ -12,7 +12,7 @@ namespace DotNet.Basics.Sys
             logger ??= new CmdPromptLogger();
             return Run(path, args?.ToString() ?? string.Empty, logger.WriteInfo, logger.WriteError, logger.WriteDebug);
         }
-        public static int Run(string path, string args, Action<string> writeOutput, Action<string> writeError, Action<string> writeDebug = null)
+        public static int Run(string path, string args, Action<string> writeOutput, Action<string> writeError, Action<string> writeDebug)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
             var si = new ProcessStartInfo(path, args)

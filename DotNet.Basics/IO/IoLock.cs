@@ -7,7 +7,7 @@ namespace DotNet.Basics.IO
 {
     public class IoLock(DirPath lockDir, string lockName) : IDisposable
     {
-        FileStream _lockHandle = null;
+        FileStream? _lockHandle = null;
 
         public string Name { get; } = lockName ?? throw new ArgumentNullException(nameof(lockName));
 

@@ -97,39 +97,39 @@ namespace DotNet.Basics.IO
                 file => { file.CopyTo(target, overwrite: true, ensureTargetDir: false); });
         }
 
-        public static IReadOnlyCollection<DirPath> GetDirectories(this DirPath dp, string searchPattern = null,
+        public static IReadOnlyCollection<DirPath> GetDirectories(this DirPath dp, string? searchPattern = null,
             SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             return dp.EnumerateDirectories(searchPattern ?? "*", searchOption).ToArray();
         }
 
-        public static IReadOnlyCollection<FilePath> GetFiles(this DirPath dp, string searchPattern = null,
+        public static IReadOnlyCollection<FilePath> GetFiles(this DirPath dp, string? searchPattern = null,
             SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             return dp.EnumerateFiles(searchPattern ?? "*", searchOption).ToArray();
         }
 
-        public static IReadOnlyCollection<PathInfo> GetPaths(this DirPath dp, string searchPattern = null,
+        public static IReadOnlyCollection<PathInfo> GetPaths(this DirPath dp, string? searchPattern = null,
             SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             return dp.EnumeratePaths(searchPattern ?? "*", searchOption).ToArray();
         }
 
-        public static IEnumerable<DirPath> EnumerateDirectories(this DirPath dp, string searchPattern = null,
+        public static IEnumerable<DirPath> EnumerateDirectories(this DirPath dp, string? searchPattern = null,
             SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             return Directory.EnumerateDirectories(dp.FullName, searchPattern ?? "*", searchOption)
                 .Select(dir => dir.ToDir());
         }
 
-        public static IEnumerable<FilePath> EnumerateFiles(this DirPath dp, string searchPattern = null,
+        public static IEnumerable<FilePath> EnumerateFiles(this DirPath dp, string? searchPattern = null,
             SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             return Directory.EnumerateFiles(dp.FullName, searchPattern ?? "*", searchOption)
                 .Select(file => file.ToFile());
         }
 
-        public static IEnumerable<PathInfo> EnumeratePaths(this DirPath dp, string searchPattern = null,
+        public static IEnumerable<PathInfo> EnumeratePaths(this DirPath dp, string? searchPattern = null,
             SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             return Directory.EnumerateFileSystemEntries(dp.FullName, searchPattern ?? "*", searchOption)
