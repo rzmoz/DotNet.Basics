@@ -140,7 +140,7 @@ namespace DotNet.Basics.Tests.Pipelines
 
             stepName.Should().Be("IncrementArgs");
         }
-
+        
         [Fact]
         public async Task RunAsync_AllInParallel_AllStepsAreRunInParallel()
 

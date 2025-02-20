@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using DotNet.Basics.Pipelines;
-using DotNet.Basics.Tasks;
 using DotNet.Basics.Tests.Pipelines.PipelineHelpers;
 using FluentAssertions;
 using Xunit;
@@ -14,8 +13,6 @@ namespace DotNet.Basics.Tests.Pipelines
         [Fact]
         public void AssertLazyLoadSteps_MissingDirectRegistration_AssertHasEntries()
         {
-
-
             var errorMessage = string.Empty;
             var pipeline = new Pipeline<EventArgs>(GetTransientServiceProvider<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>());
             pipeline.AddStep<GenericThatTakesAnotherConcreteClassAsArgStep<EventArgs>>();

@@ -12,7 +12,7 @@ namespace DotNet.Basics.Tasks
         public event TaskStartedEventHandler Started;
         public event TaskEndedEventHandler Ended;
 
-        protected ManagedTask(string name = null, params string[] removeSuffixes)
+        protected ManagedTask(string? name = null, params string[] removeSuffixes)
         {
             Name = name ?? GetType().GetNameWithGenericsExpanded();
             foreach (var removeSuffix in removeSuffixes)
@@ -57,7 +57,7 @@ namespace DotNet.Basics.Tasks
         { }
 
         public ManagedTask(string name, params string[] removeSuffixes)
-            : this(name, (args) => { }, removeSuffixes)
+            : this(name, _ => { }, removeSuffixes)
         { }
 
         public ManagedTask(string name, Action<T> task, params string[] removeSuffixes)
