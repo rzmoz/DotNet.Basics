@@ -19,7 +19,7 @@ namespace DotNet.Basics.Win
 
         public DirPath InstallDir { get; } = installDir ?? throw new ArgumentNullException(nameof(installDir));
 
-        public int RunFromCmd(string fileName, IEnumerable<string> args, Action<string> writeOutput = null, Action<string> writeError = null, Action<string> writeDebug = null)
+        public int RunFromCmd(string fileName, IEnumerable<string> args, Action<string>? writeOutput = null, Action<string>? writeError = null, Action<string>? writeDebug = null)
         {
             Install();
             var argString = args.JoinString(" ");

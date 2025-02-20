@@ -6,7 +6,7 @@ namespace DotNet.Basics.Sys
 {
     public static class ExternalProcess
     {
-        public static int Run(string path, object args = null, Action<string> writeOutput = null, Action<string> writeError = null, Action<string> writeDebug = null)
+        public static int Run(string path, object args = null, Action<string>? writeOutput = null, Action<string>? writeError = null, Action<string>? writeDebug = null)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
             var si = new ProcessStartInfo(path, args?.ToString() ?? string.Empty)
@@ -22,12 +22,12 @@ namespace DotNet.Basics.Sys
             {
                 using var process = new Process { StartInfo = si };
                 if (writeOutput != null)
-                    process.OutputDataReceived += (sender, data) =>
+                    process.OutputDataReceived += (_, data) =>
                     {
                         if (data.Data != null) { writeOutput.Invoke(data.Data); }
                     };
                 if (writeError != null)
-                    process.ErrorDataReceived += (sender, data) =>
+                    process.ErrorDataReceived += (_, data) =>
                     {
                         if (data.Data != null) { writeError.Invoke(data.Data); }
                     };

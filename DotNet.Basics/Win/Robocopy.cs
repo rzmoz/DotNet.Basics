@@ -15,7 +15,7 @@ namespace DotNet.Basics.Win
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static RobocopyStatus Run(string source, string target, string filesToCopy = null, string options = " /NS /NC /NFL /NDL /NP", Action<string> writeOutput = null, Action<string> writeError = null, Action<string> writeDebug = null)
+        public static RobocopyStatus Run(string source, string target, string? filesToCopy = null, string? options = " /NS /NC /NFL /NDL /NP", Action<string>? writeOutput = null, Action<string>? writeError = null, Action<string>? writeDebug = null)
         {
             if (source == null) { throw new ArgumentNullException(nameof(source)); }
             if (target == null) { throw new ArgumentNullException(nameof(target)); }
@@ -33,7 +33,7 @@ namespace DotNet.Basics.Win
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static RobocopyStatus CopyFile(string sourceDir, string targetDir, string sourceFileName, string extraOptions = null, Action<string> writeOutput = null, Action<string> writeError = null, Action<string> writeDebug = null)
+        public static RobocopyStatus CopyFile(string sourceDir, string targetDir, string sourceFileName, string? extraOptions = null, Action<string>? writeOutput = null, Action<string>? writeError = null, Action<string>? writeDebug = null)
         {
             if (sourceFileName == null) throw new ArgumentNullException(nameof(sourceFileName));
             if (targetDir == null) throw new ArgumentNullException(nameof(targetDir));
@@ -46,7 +46,7 @@ namespace DotNet.Basics.Win
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static RobocopyStatus CopyDir(string sourceDir, string targetDir, bool includeSubFolders = false, string extraOptions = null, Action<string> writeOutput = null, Action<string> writeError = null, Action<string> writeDebug = null)
+        public static RobocopyStatus CopyDir(string sourceDir, string targetDir, bool includeSubFolders = false, string? extraOptions = null, Action<string>? writeOutput = null, Action<string>? writeError = null, Action<string>? writeDebug = null)
         {
             var options = string.Empty;
             if (includeSubFolders)
@@ -56,7 +56,7 @@ namespace DotNet.Basics.Win
             return Run(sourceDir, targetDir, null, options, writeOutput, writeError, writeDebug);
         }
 
-        public static RobocopyStatus MoveFolder(string sourceDir, string targetDir, string filter = null, bool includeSubFolders = false, string extraOptions = null, Action<string> writeOutput = null, Action<string> writeError = null, Action<string> writeDebug = null)
+        public static RobocopyStatus MoveFolder(string sourceDir, string targetDir, string? filter = null, bool includeSubFolders = false, string? extraOptions = null, Action<string>? writeOutput = null, Action<string>? writeError = null, Action<string>? writeDebug = null)
         {
             string options = $"{_moveOption} {extraOptions}";
             if (includeSubFolders)
@@ -70,7 +70,7 @@ namespace DotNet.Basics.Win
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static RobocopyStatus MoveContent(string sourceDir, string targetDir, string filter = null, bool includeSubFolders = false, string extraOptions = null, Action<string> writeOutput = null, Action<string> writeError = null, Action<string> writeDebug = null)
+        public static RobocopyStatus MoveContent(string sourceDir, string targetDir, string? filter = null, bool includeSubFolders = false, string? extraOptions = null, Action<string>? writeOutput = null, Action<string>? writeError = null, Action<string>? writeDebug = null)
         {
             var result = MoveFolder(sourceDir, targetDir, filter, includeSubFolders, extraOptions, writeOutput, writeError, writeDebug);
             Directory.CreateDirectory(sourceDir);
