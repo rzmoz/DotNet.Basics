@@ -20,20 +20,16 @@ namespace DotNet.Basics.Win
 
     public class CmdPromptLogger
     {
-        private StringBuilder _debug = new();
-        private StringBuilder _info = new();
-        private StringBuilder _error = new();
+        public StringBuilder Debug { get; set; } = new();
+        public StringBuilder Info { get; set; } = new();
+        public StringBuilder Error { get; set; } = new();
 
         public CmdPromptLogger()
         {
-            WriteDebug = d => _debug.AppendLine(d);
-            WriteInfo = i => _info.AppendLine(i);
-            WriteError = e => _error.AppendLine(e);
+            WriteDebug = d => Debug.AppendLine(d);
+            WriteInfo = i => Info.AppendLine(i);
+            WriteError = e => Error.AppendLine(e);
         }
-
-        public string Debug => _debug.ToString();
-        public string Info => _info.ToString();
-        public string Error => _error.ToString();
 
         public Action<string> WriteDebug { get; set; }
         public Action<string> WriteInfo { get; set; }
@@ -41,9 +37,9 @@ namespace DotNet.Basics.Win
 
         public void Reset()
         {
-            _debug = new();
-            _info = new();
-            _error = new();
+            Debug = new();
+            Info = new();
+            Error = new();
         }
     }
 }
