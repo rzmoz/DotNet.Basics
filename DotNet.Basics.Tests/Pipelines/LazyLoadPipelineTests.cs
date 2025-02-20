@@ -22,7 +22,7 @@ namespace DotNet.Basics.Tests.Pipelines
             //assert
             items.Count.Should().Be(pipeline.StepCount);
             for (var i = 0; i < pipeline.StepCount; i++)
-                items[0].Should().Be(i.ToString());
+                items[i].Should().Be(i.ToString());
         }
     }
 

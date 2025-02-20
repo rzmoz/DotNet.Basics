@@ -88,10 +88,10 @@ namespace DotNet.Basics.IO
             return null;
         }
 
-        public static string ReadAllText(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
+        public static string? ReadAllText(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
         {
             using var reader = fp.OpenRead(ifNotExists, FileShare.ReadWrite | FileShare.Delete);
-            return reader.ReadToEnd();
+            return reader?.ReadToEnd();
         }
 
         public static async Task<string> ReadAllTextAsync(this FilePath fp,
