@@ -16,6 +16,8 @@ namespace DotNet.Basics.Cli.Console
 
         public Task<int> ExitCodeStep(TestPipelineArgs args)
         {
+            var promptLogger = _log.WithPromptLogger();
+            promptLogger.WriteError.Invoke($"Hello World from {"PromptLogger".Highlight()}!");
             return Task.FromResult(0);
         }
     }
