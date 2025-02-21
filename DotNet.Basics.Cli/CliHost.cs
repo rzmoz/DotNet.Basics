@@ -87,7 +87,7 @@ namespace DotNet.Basics.Cli
             }
             finally
             {
-                log.Write(exitCode == 0 ? LoogLevel.Success : LoogLevel.Error, $"Global exit code: {exitCode.ToString().Highlight()}");
+                log.Debug($"Exit code: {exitCode.ToString().Highlight()}");
                 Console.ResetColor();
             }
             return exitCode;

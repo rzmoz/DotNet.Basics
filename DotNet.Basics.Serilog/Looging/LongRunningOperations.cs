@@ -51,7 +51,7 @@ namespace DotNet.Basics.Serilog.Looging
             try
             {
                 if (_operations.TryAdd(operation.Id, operation))
-                    _loog.Timing(LoogLevel.Debug, operation.Name.Highlight(), "Starting...", TimeSpan.MinValue);
+                    _loog.Debug($"{operation.Name.Highlight()} started");
                 else
                     _loog.Error($"Failed to start {operation.Name.Highlight()} with Id: {operation.Id}");
                 exitCode = await action.Invoke().ConfigureAwait(false);
@@ -64,15 +64,13 @@ namespace DotNet.Basics.Serilog.Looging
             }
             finally
             {
-                if (_operations.TryRemove(operation.Id, out var op) == false)
+                if (_operations.TryRemove(operation.Id, out _) == false)
                     _loog.Verbose($"{operation.Name} not removed from {nameof(LongRunningOperations)} stack :-(");
 
-                if (exitCode == 0)
-                    _loog.Success($"{operation.Name.Highlight()}: DONE");
-                else if (exitCode != int.MinValue)
-                    _loog.Error($"{operation.Name.Highlight()}: FAILED");
+                _loog.Debug($"{operation.Name.Highlight()} finished in {operation.DurationNow.Humanize().Highlight()}");
 
-                _loog.Debug($"Operation: {operation.Name.Highlight()} - Exit code: {exitCode.ToString().Highlight()} - Running time: {operation.DurationNow.Humanize().Highlight()}");
+                if (exitCode != 0)
+                    _loog.Fatal($"{operation.Name.Highlight()} FAILED with exit code: {exitCode.ToString().Highlight()}");
             }
         }
     }
