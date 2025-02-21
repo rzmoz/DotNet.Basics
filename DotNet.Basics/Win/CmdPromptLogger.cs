@@ -24,7 +24,7 @@ namespace DotNet.Basics.Win
                 Debug.AppendLine(d);
                 DebugLogged?.Invoke(d);
             };
-            WriteInfo = i =>
+            WriteOutput = i =>
             {
                 Info.AppendLine(i);
                 InfoLogged?.Invoke(i);
@@ -39,7 +39,7 @@ namespace DotNet.Basics.Win
         public bool HasErrors => Error.Length > 0;
 
         public Action<string> WriteDebug { get; }
-        public Action<string> WriteInfo { get; }
+        public Action<string> WriteOutput { get; }
         public Action<string> WriteError { get; }
 
         public void Reset()

@@ -5,13 +5,12 @@ namespace DotNet.Basics.Win
 {
     public static class CmdPrompt
     {
-        public static int Run(string commandString, CmdPromptLogger? logger = null)
+        public static int Run(string commandString, CmdPromptLogger logger)
         {
-            logger ??= new CmdPromptLogger();
-            return Run(commandString, logger.WriteInfo, logger.WriteError, logger.WriteDebug);
+            return Run(commandString, logger?.WriteOutput, logger?.WriteError, logger?.WriteDebug);
         }
 
-        public static int Run(string commandString, Action<string> writeOutput, Action<string> writeError, Action<string> writeDebug)
+        public static int Run(string commandString, Action<string>? writeOutput = null, Action<string>? writeError = null, Action<string>? writeDebug = null)
         {
             return ExternalProcess.Run("cmd.exe", $"/c {commandString}", writeOutput, writeError, writeDebug);
         }
