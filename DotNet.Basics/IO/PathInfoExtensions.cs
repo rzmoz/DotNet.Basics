@@ -30,7 +30,7 @@ namespace DotNet.Basics.IO
 
             return true;
         }
-        
+
         public static DirPath? ParentFromFullName(this PathInfo? pi)
         {
             if (pi == null)
@@ -53,19 +53,21 @@ namespace DotNet.Basics.IO
             }
         }
 
-        public static bool Exists(this PathInfo pi)
+        public static bool Exists(this PathInfo? pi)
         {
+            if (pi == null)
+                return false;
             return pi.PathType == PathType.Dir ? System.IO.Directory.Exists(pi.FullName) : File.Exists(pi.FullName);
         }
 
-        public static bool DeleteIfExists(this PathInfo pi)
+        public static bool DeleteIfExists(this PathInfo? pi)
         {
-            return pi.DeleteIfExists(20.Seconds());
+            return pi?.DeleteIfExists(20.Seconds()) ?? true;
         }
 
-        public static bool DeleteIfExists(this PathInfo pi, TimeSpan timeout)
+        public static bool DeleteIfExists(this PathInfo? pi, TimeSpan timeout)
         {
-            if (pi.Exists() == false)
+            if (pi.Exists() == false || pi == null)
                 return true;
 
             Repeat.Task(() =>
