@@ -69,7 +69,7 @@ namespace DotNet.Basics.IO
             return fp;
         }
 
-        public static byte[] ReadAllBytes(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
+        public static byte[]? ReadAllBytes(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
         {
             try
             {
@@ -101,7 +101,7 @@ namespace DotNet.Basics.IO
             return await reader.ReadToEndAsync();
         }
 
-        public static FileStream Create(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
+        public static FileStream? Create(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
         {
             try
             {
@@ -120,14 +120,15 @@ namespace DotNet.Basics.IO
                 if (ifNotExists == IfNotExists.ThrowIoException)
                     throw;
             }
-
             return null;
         }
 
-        public static FileStream Create(this FilePath fp, Stream content,
+        public static FileStream? Create(this FilePath fp, Stream content,
             IfNotExists ifNotExists = IfNotExists.ThrowIoException)
         {
             var fileStream = Create(fp, ifNotExists);
+            if (fileStream == null)
+                return null;
             content.CopyTo(fileStream);
             fileStream.Flush();
             return fileStream;

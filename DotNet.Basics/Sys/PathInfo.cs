@@ -49,7 +49,7 @@ namespace DotNet.Basics.Sys
                 RawPath = RawPath.EnsurePrefix(_uncDetector);
             else if (uriScheme != null)
                 RawPath = RawPath.RemovePrefix(uriScheme.TrimEnd('/')).TrimStart('/').EnsurePrefix(uriScheme);
-            
+
             Parent = null;
             var parentSegments = Segments.Take(Segments.Count - 1).ToArray();
             if (parentSegments.Any())
@@ -73,9 +73,9 @@ namespace DotNet.Basics.Sys
 
         public PathType PathType { get; }
 
-        [JsonIgnore][IgnoreDataMember] public DirPath Parent { get; }
+        [JsonIgnore][IgnoreDataMember] public DirPath? Parent { get; }
 
-        [JsonIgnore][IgnoreDataMember] public DirPath Directory => PathType == PathType.File ? Parent : (DirPath)this;
+        [JsonIgnore][IgnoreDataMember] public DirPath Directory => PathType == PathType.File ? Parent ?? ".." : (DirPath)this;
 
         public IReadOnlyCollection<string> Segments;
 
@@ -90,7 +90,7 @@ namespace DotNet.Basics.Sys
         private static IEnumerable<string> Tokenize(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
-                return Enumerable.Empty<string>();
+                return [];
 
             path = ConformPathSeparator(path);
 

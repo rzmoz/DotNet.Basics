@@ -31,7 +31,7 @@ namespace DotNet.Basics.IO
             return true;
         }
         
-        public static DirPath ParentFromFullName(this PathInfo pi)
+        public static DirPath? ParentFromFullName(this PathInfo? pi)
         {
             if (pi == null)
                 return null;
