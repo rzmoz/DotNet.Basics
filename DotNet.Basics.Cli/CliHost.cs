@@ -28,7 +28,7 @@ namespace DotNet.Basics.Cli
             }
             catch (MissingArgumentException e)
             {
-                var log = Options.GetService<ILoog>()!;
+                var log = Options.GetService<ILoog>();
                 log.Error(
                     $"\r\nMissing argument(s): {e.ArgsType.FullName?.Highlight() ?? e.ArgsType.Name.Highlight()}");
                 foreach (var missingArg in e.MissingArgs)
@@ -37,13 +37,13 @@ namespace DotNet.Basics.Cli
             }
             catch (UnknownArgumentsException e)
             {
-                var log = Options.GetService<ILoog>()!;
+                var log = Options.GetService<ILoog>();
                 log.Error($"\r\nUnknown argument(s): {e.ArgNames.JoinString(", ").Highlight()}");
                 return 400;
             }
             catch (Exception e)
             {
-                var log = Options.GetService<ILoog>()!;
+                var log = Options.GetService<ILoog>();
                 log.Error($"\r\n{e.GetType().FullName}: {e.Message.Highlight()} ");
                 log.Verbose(string.Join(Environment.NewLine, _newlineRegex.Split(e.ToString()).Skip(1)));
                 return 400;
@@ -74,7 +74,7 @@ namespace DotNet.Basics.Cli
         }
         public async Task<int> RunAsync(string operationName, Func<Task<int>> loogContext)
         {
-            var log = Options.GetService<ILoog>()!;
+            var log = Options.GetService<ILoog>();
             var longRunningOperations = Options.GetService<LongRunningOperations>();
             var exitCode = Options.FatalExitCode;
 

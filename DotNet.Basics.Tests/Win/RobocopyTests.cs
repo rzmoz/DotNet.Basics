@@ -12,7 +12,7 @@ namespace DotNet.Basics.Tests.Win
     public class RobocopyTests(ITestOutputHelper output) : TestWithHelpers(output)
     {
         [Fact]
-        public void MoveContent_TargetFolderDoesntExist_SourceFolderIsMoved()
+        public void MoveContent_TargetFolderDoesNotExist_SourceFolderIsMoved()
         {
             ArrangeActAssertPaths(testDir =>
             {
@@ -21,7 +21,7 @@ namespace DotNet.Basics.Tests.Win
                 var targetDir = testDir.ToDir("target");
                 TestFile1 testSource = null;
                 WithTestRoot(testRoot => testSource = new TestFile1(testRoot));
-                Robocopy.CopyDir(testSource.Directory().FullName, sourceDir.FullName, true, null);
+                Robocopy.CopyDir(testSource.Directory.FullName, sourceDir.FullName, true, null);
                 emptyDir.CreateIfNotExists();
                 emptyDir.CleanIfExists();
                 emptyDir.GetPaths().Count.Should().Be(0);//empty dir
@@ -55,7 +55,7 @@ namespace DotNet.Basics.Tests.Win
                 targetFile.Exists().Should().BeFalse("target file should not exist before copy");
 
                 //act
-                var result = Robocopy.CopyFile(sourceFile.Directory().FullName, targetFile.Directory().FullName, sourceFile.Name);
+                var result = Robocopy.CopyFile(sourceFile.Directory.FullName, targetFile.Directory.FullName, sourceFile.Name);
 
                 result.ExitCode.Should().BeLessThan(8); //http://ss64.com/nt/robocopy-exit.html
                 result.Failed.Should().BeFalse();

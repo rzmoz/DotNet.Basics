@@ -10,7 +10,7 @@ namespace DotNet.Basics.Win
     {
         private const string _installingHandleName = "installing.dat";
         private const string _installedHandleName = "installed.dat";
-        private readonly FilePath _installedHandle = installDir.ToFile(_installedHandleName)!;
+        private readonly FilePath _installedHandle = installDir.ToFile(_installedHandleName);
         private readonly IList<Action> _installActions = new List<Action>();
 
         public FileApplication(string appName)
@@ -29,7 +29,7 @@ namespace DotNet.Basics.Win
             Install();
             var argString = args.JoinString(" ");
 
-            var file = InstallDir.ToFile(fileName)!;
+            var file = InstallDir.ToFile(fileName);
             if (file.Exists() == false)
                 throw new FileNotFoundException(file.FullName);
 
@@ -49,7 +49,7 @@ namespace DotNet.Basics.Win
         public FileApplication WithStream(string filename, Stream content, bool disposeStreamWhenDone, Action<FilePath>? postInstallAction = null)
         {
             if (content == null) throw new ArgumentNullException(nameof(content));
-            var target = InstallDir.ToFile(filename)!;
+            var target = InstallDir.ToFile(filename);
             _installActions.Add(() =>
             {
                 target.DeleteIfExists();//we ensure file integrity if we got this far. No guarantees that corrupt files haven't been left behind by a faulty installation

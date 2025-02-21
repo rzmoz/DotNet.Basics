@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using DotNet.Basics.Sys;
 using DotNet.Basics.IO;
@@ -9,12 +8,8 @@ using Xunit.Abstractions;
 
 namespace DotNet.Basics.Tests.IO
 {
-    public class DirPathExtensionsTests : TestWithHelpers
+    public class DirPathExtensionsTests(ITestOutputHelper output) : TestWithHelpers(output)
     {
-        public DirPathExtensionsTests(ITestOutputHelper output) : base(output)
-        {
-        }
-
         [Fact]
         public void SearchOption_SubDirs_OptionsAreObeyed()
         {
@@ -55,24 +50,13 @@ namespace DotNet.Basics.Tests.IO
             });
         }
 
-        [Fact]
-        public void ToDir_PathIsNull_NullIsReturned()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        public void ToDir_PathIsNull_PathIsEmpty(string path)
         {
-            string nullPath = null;
-
-            var actual = nullPath.ToDir();
-
-            actual.Should().BeNull();
-        }
-
-        [Fact]
-        public void ToDir_PathIsEmpty_NullIsReturned()
-        {
-            string emptyPath = string.Empty;
-
-            var actual = emptyPath.ToDir();
-
-            actual.Should().BeNull();
+            var actual = path.ToDir();
+            actual.RawPath.Should().BeEmpty();
         }
 
         [Fact]

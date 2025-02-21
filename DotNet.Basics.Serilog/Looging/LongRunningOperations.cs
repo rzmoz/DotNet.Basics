@@ -9,14 +9,14 @@ namespace DotNet.Basics.Serilog.Looging
 {
     public class LongRunningOperations
     {
-        private readonly ILoog _loog;
+        private readonly ILoog? _loog;
         private readonly ConcurrentDictionary<string, LongRunningOperation> _operations = new();
         private readonly Timer _timer;
 
-        public LongRunningOperations(ILoog loog)
+        public LongRunningOperations(ILoog? loog)
         : this(loog, TimeSpan.FromMinutes(1))
         { }
-        public LongRunningOperations(ILoog loog, TimeSpan pingInterval)
+        public LongRunningOperations(ILoog? loog, TimeSpan pingInterval)
         {
             _loog = loog;
             if (pingInterval <= TimeSpan.Zero)
@@ -28,7 +28,7 @@ namespace DotNet.Basics.Serilog.Looging
                 Enabled = true
             };
             _timer.Elapsed += _timer_Elapsed;
-            _loog.Verbose($"Long running operations initialized with ping interval: {$@"{pingInterval.Humanize()}".Highlight()}");
+            _loog?.Verbose($"Long running operations initialized with ping interval: {$@"{pingInterval.Humanize()}".Highlight()}");
         }
 
         private void _timer_Elapsed(object? sender, ElapsedEventArgs e)
@@ -40,7 +40,7 @@ namespace DotNet.Basics.Serilog.Looging
             foreach (var operation in _operations.Values.OrderBy(o => o.StartTime))
                 message += $"[ {operation.Name.Highlight()} has been running for {operation.DurationNow.Humanize().Highlight()} ]\r\n";
 
-            _loog.Verbose(message.WithGutter());
+            _loog?.Verbose(message.WithGutter());
         }
 
         public async Task<int> StartAsync(string name, Func<Task<int>> action)
@@ -51,26 +51,26 @@ namespace DotNet.Basics.Serilog.Looging
             try
             {
                 if (_operations.TryAdd(operation.Id, operation))
-                    _loog.Debug($"{operation.Name.Highlight()} started");
+                    _loog?.Debug($"{operation.Name.Highlight()} started");
                 else
-                    _loog.Error($"Failed to start {operation.Name.Highlight()} with Id: {operation.Id}");
+                    _loog?.Error($"Failed to start {operation.Name.Highlight()} with Id: {operation.Id}");
                 exitCode = await action.Invoke().ConfigureAwait(false);
                 return exitCode;
             }
             catch (Exception e)
             {
-                _loog.Timing(LoogLevel.Error, $"{operation.Name}", $"FAILED with exception: {e.Message}", operation.DurationNow);
+                _loog?.Timing(LoogLevel.Error, $"{operation.Name}", $"FAILED with exception: {e.Message}", operation.DurationNow);
                 throw;
             }
             finally
             {
                 if (_operations.TryRemove(operation.Id, out _) == false)
-                    _loog.Verbose($"{operation.Name} not removed from {nameof(LongRunningOperations)} stack :-(");
+                    _loog?.Verbose($"{operation.Name} not removed from {nameof(LongRunningOperations)} stack :-(");
 
-                _loog.Debug($"{operation.Name.Highlight()} finished in {operation.DurationNow.Humanize().Highlight()}");
+                _loog?.Debug($"{operation.Name.Highlight()} finished in {operation.DurationNow.Humanize().Highlight()}");
 
                 if (exitCode != 0)
-                    _loog.Fatal($"{operation.Name.Highlight()} FAILED with exit code: {exitCode.ToString().Highlight()}");
+                    _loog?.Fatal($"{operation.Name.Highlight()} FAILED with exit code: {exitCode.ToString().Highlight()}");
             }
         }
     }

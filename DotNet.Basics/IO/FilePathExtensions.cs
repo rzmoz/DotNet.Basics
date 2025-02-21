@@ -23,7 +23,7 @@ namespace DotNet.Basics.IO
             bool ensureTargetDir = true)
         {
             if (ensureTargetDir)
-                targetFile.Directory().CreateIfNotExists();
+                targetFile.Directory.CreateIfNotExists();
             if (overwrite)
                 targetFile.DeleteIfExists();
 
@@ -52,7 +52,7 @@ namespace DotNet.Basics.IO
             if (fp.Exists() == false)
                 throw new FileNotFoundException(fp.FullName);
             if (ensureTargetDir)
-                target.Directory().CreateIfNotExists();
+                target.Directory.CreateIfNotExists();
 
             File.Copy(fp.FullName, target.FullName, overwrite);
         }
@@ -65,7 +65,7 @@ namespace DotNet.Basics.IO
 
             fp.DeleteIfExists();
             using var writer = OpenWrite(fp);
-            writer.Write(content ?? string.Empty);
+            writer?.Write(content);
             return fp;
         }
 
@@ -88,16 +88,18 @@ namespace DotNet.Basics.IO
             return null;
         }
 
-        public static string? ReadAllText(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
+        public static string ReadAllText(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
         {
             using var reader = fp.OpenRead(ifNotExists, FileShare.ReadWrite | FileShare.Delete);
-            return reader?.ReadToEnd();
+            return reader?.ReadToEnd() ?? string.Empty;
         }
 
         public static async Task<string> ReadAllTextAsync(this FilePath fp,
             IfNotExists ifNotExists = IfNotExists.ThrowIoException)
         {
             using var reader = fp.OpenRead(ifNotExists, FileShare.ReadWrite | FileShare.Delete);
+            if (reader == null)
+                return string.Empty;
             return await reader.ReadToEndAsync();
         }
 
@@ -123,8 +125,7 @@ namespace DotNet.Basics.IO
             return null;
         }
 
-        public static FileStream? Create(this FilePath fp, Stream content,
-            IfNotExists ifNotExists = IfNotExists.ThrowIoException)
+        public static FileStream? Create(this FilePath fp, Stream content, IfNotExists ifNotExists = IfNotExists.ThrowIoException)
         {
             var fileStream = Create(fp, ifNotExists);
             if (fileStream == null)
@@ -134,8 +135,7 @@ namespace DotNet.Basics.IO
             return fileStream;
         }
 
-        public static StreamReader OpenRead(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException,
-            FileShare fileShare = FileShare.ReadWrite)
+        public static StreamReader? OpenRead(this FilePath fp, IfNotExists ifNotExists = IfNotExists.ThrowIoException, FileShare fileShare = FileShare.ReadWrite)
         {
             try
             {
@@ -163,13 +163,14 @@ namespace DotNet.Basics.IO
         /// <param name="fileAccess"></param>
         /// <param name="fileShare"></param>
         /// <returns></returns>
-        public static StreamWriter OpenWrite(this FilePath fp, FileMode fileMode = FileMode.OpenOrCreate,
+        public static StreamWriter? OpenWrite(this FilePath fp, FileMode fileMode = FileMode.OpenOrCreate,
             FileAccess fileAccess = FileAccess.ReadWrite, FileShare fileShare = FileShare.ReadWrite)
         {
             var fileStream = fp.Exists()
                 ? File.Open(fp.FullName, fileMode, fileAccess, fileShare)
                 : Create(fp);
-            return new StreamWriter(fileStream);
+
+            return fileStream == null ? null : new StreamWriter(fileStream);
         }
     }
 }

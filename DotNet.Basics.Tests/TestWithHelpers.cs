@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using DotNet.Basics.IO;
 using DotNet.Basics.Sys;
@@ -58,7 +57,7 @@ namespace DotNet.Basics.Tests
         protected void ArrangeActAssertPaths(Action<DirPath> arrangeActAssert)
         {
             var frame = new StackFrame(1);
-            var method = frame.GetMethod()!;
+            var method = frame.GetMethod();
             var name = method.Name;
             Output.WriteLine($"Calling class name:{name}");
 

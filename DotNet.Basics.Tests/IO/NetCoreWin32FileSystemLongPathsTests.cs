@@ -8,12 +8,8 @@ using Xunit.Abstractions;
 
 namespace DotNet.Basics.Tests.IO
 {
-    public class NetCoreWin32FileSystemLongPathsTests : LongPathsFileSystemTests
+    public class NetCoreWin32FileSystemLongPathsTests(ITestOutputHelper output) : LongPathsFileSystemTests(output)
     {
-        public NetCoreWin32FileSystemLongPathsTests(ITestOutputHelper output)
-            : base(output)
-        { }
-
         //paths
         [Fact]
         public void Enumerates_Paths_PathsAreFound()

@@ -44,7 +44,7 @@ namespace DotNet.Basics.Sys
 
         public static bool Has<T>(this Enum type, T value)
         {
-            try { return (((int)(object)type & (int)(object)value) == (int)(object)value); }
+            try { return (((int)(object)type & (int)(object)value!) == (int)(object)value); }
             catch { return false; }
         }
 
@@ -55,7 +55,7 @@ namespace DotNet.Basics.Sys
 
         public static string ToName(this Enum @enum)
         {
-            return Enum.GetName(@enum.GetType(), @enum);
+            return Enum.GetName(@enum.GetType(), @enum)!;
         }
     }
 }

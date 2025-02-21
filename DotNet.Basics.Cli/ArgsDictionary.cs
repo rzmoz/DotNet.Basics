@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DotNet.Basics.Cli
 {
-    public class ArgsDictionary(IDictionary<string, string?> args, Func<string, string?> keyTrimmer) : IReadOnlyDictionary<string, string?>
+    public class ArgsDictionary(IDictionary<string, string?> args, Func<string, string> keyTrimmer) : IReadOnlyDictionary<string, string?>
     {
         public bool Verbose { get; } = HasFlag(nameof(Verbose), keyTrimmer, args);
         public bool ADO { get; } = HasFlag(nameof(ADO), keyTrimmer, args);
@@ -19,10 +19,10 @@ namespace DotNet.Basics.Cli
             throw new NotImplementedException();
         }
 
-        public string? this[string key] => _args[keyTrimmer(key)!];
+        public string? this[string key] => _args[keyTrimmer(key)];
         public IEnumerable<string> Keys => _args.Keys;
         public IEnumerable<string?> Values => _args.Values;
-        public bool ContainsKey(string key) => _args.ContainsKey(keyTrimmer(key) ?? string.Empty);
+        public bool ContainsKey(string key) => _args.ContainsKey(keyTrimmer(key));
         private static IReadOnlyDictionary<string, string?> Compile(IDictionary<string, string?> args, Func<string, string> keyTrimmer)
         {
             return args
@@ -50,6 +50,6 @@ namespace DotNet.Basics.Cli
             return GetEnumerator();
         }
 
-        public int Count { get; }
+        public int Count =>_args.Count;
     }
 }

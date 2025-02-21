@@ -7,14 +7,10 @@ using Xunit.Abstractions;
 
 namespace DotNet.Basics.Tests
 {
-    public abstract class LongPathsFileSystemTests : TestWithHelpers
+    public abstract class LongPathsFileSystemTests(ITestOutputHelper output) : TestWithHelpers(output, _veryLongPath)
     {
         private const string _veryLongPath = @"loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\loremp\ipsum\";
 
-        protected LongPathsFileSystemTests(ITestOutputHelper output) : base(output, _veryLongPath)
-        {
-        }
-        
         [Fact]
         public void GetFullPath_Paths_FullPathIsResolved()
         {
@@ -102,9 +98,9 @@ namespace DotNet.Basics.Tests
             {
                 var sourceFile = testDir.ToFile("Source", "MySource.txt");
                 var targetFile = testDir.ToFile("Target", "MyTarget.txt");
-                sourceFile.Directory().CreateIfNotExists();
+                sourceFile.Directory.CreateIfNotExists();
                 targetFile.DeleteIfExists();
-                targetFile.Directory().CreateIfNotExists();
+                targetFile.Directory.CreateIfNotExists();
                 sourceFile.WriteAllText("blaaa");
                 targetFile.Exists().Should().BeFalse();
 
@@ -125,7 +121,7 @@ namespace DotNet.Basics.Tests
                 sourceFile.WriteAllText("blaaa");
                 targetFile.DeleteIfExists();
                 targetFile.Exists().Should().BeFalse();
-                targetFile.Directory().CreateIfNotExists();
+                targetFile.Directory.CreateIfNotExists();
                 File.Move(sourceFile.FullName, targetFile.FullName);
 
                 sourceFile.Exists().Should().BeFalse();

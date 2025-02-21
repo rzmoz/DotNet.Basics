@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using DotNet.Basics.Sys;
 
@@ -7,12 +6,12 @@ namespace DotNet.Basics.IO
     public static class PathExtensions
     {
         //ToPath
-        public static PathInfo? ToPath(this string? path, params string[] segments)
+        public static PathInfo ToPath(this string path, params string[] segments)
         {
             return path.ToPath(PathType.Unknown, segments);
         }
 
-        public static PathInfo? ToPath(this string? path, PathType pathType, params string[] segments)
+        public static PathInfo ToPath(this string path, PathType pathType, params string[] segments)
         {
             if (pathType == PathType.Unknown)
             {
@@ -38,9 +37,9 @@ namespace DotNet.Basics.IO
                 : path.ToFile(segments);
         }
 
-        public static PathInfo? ToPath(this PathInfo? pi, PathType pathType, params string[] segments)
+        public static PathInfo ToPath(this PathInfo pi, PathType pathType, params string[] segments)
         {
-            return ToPath(pi?.RawPath, pathType, segments);
+            return ToPath(pi.RawPath, pathType, segments);
         }
 
         //Common

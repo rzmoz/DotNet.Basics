@@ -25,7 +25,7 @@ namespace DotNet.Basics.Win
 
         private static DirPath GetTempDir()
         {
-            return System.IO.Path.GetTempPath().ToDir()!;
+            return System.IO.Path.GetTempPath().ToDir();
         }
 
         public void Dispose()

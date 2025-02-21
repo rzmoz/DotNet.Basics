@@ -5,7 +5,7 @@ namespace DotNet.Basics.Win
 {
     public static class CmdPrompt
     {
-        public static int Run(string commandString, CmdPromptLogger logger)
+        public static int Run(string commandString, CmdPromptLogger? logger)
         {
             return Run(commandString, logger?.WriteOutput, logger?.WriteError, logger?.WriteDebug);
         }

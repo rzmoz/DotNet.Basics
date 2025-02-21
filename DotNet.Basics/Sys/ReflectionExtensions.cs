@@ -8,7 +8,7 @@ namespace DotNet.Basics.Sys
     public static class ReflectionExtensions
     {
         public static string GetNameWithGenericsExpanded(this Type type)
-        {   
+        {
             var name = type.Name;
             if (type.IsGenericType)
             {
@@ -24,7 +24,7 @@ namespace DotNet.Basics.Sys
             if (baseClass == null) throw new ArgumentNullException(nameof(baseClass));
             return baseClass.IsBaseClassOf(typeof(T));
         }
-        public static bool IsBaseClassOf(this Type baseClass, Type? subClass)
+        public static bool IsBaseClassOf(this Type baseClass, Type subClass)
         {
             if (baseClass == null) throw new ArgumentNullException(nameof(baseClass));
             while (subClass != null && subClass != typeof(object))
@@ -32,6 +32,8 @@ namespace DotNet.Basics.Sys
                 var cur = subClass.IsGenericType ? subClass.GetGenericTypeDefinition() : subClass;
                 if (baseClass == cur)
                     return true;
+                if (subClass.BaseType == null)
+                    return false;
                 subClass = subClass.BaseType;
             }
             return false;

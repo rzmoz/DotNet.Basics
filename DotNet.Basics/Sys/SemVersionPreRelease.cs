@@ -10,10 +10,7 @@ namespace DotNet.Basics.Sys
     public class SemVersionPreRelease
     {
         private const string _preReleaseAllowedCharsFormat = @"^[a-zA-Z0-9\.]+$";
-        private static readonly Regex _preReleaseAllowedCharsRegex = new Regex(_preReleaseAllowedCharsFormat, RegexOptions.Compiled);
-
-        private const string _allNumbersFormat = @"^[0-9]+$";
-        private static readonly Regex _allNumbersFormatRegex = new Regex(_allNumbersFormat, RegexOptions.Compiled);
+        private static readonly Regex _preReleaseAllowedCharsRegex = new (_preReleaseAllowedCharsFormat, RegexOptions.Compiled);
 
         public SemVersionPreRelease()
             : this([])
@@ -100,7 +97,7 @@ namespace DotNet.Basics.Sys
             return other.HashBase.Equals(HashBase);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;

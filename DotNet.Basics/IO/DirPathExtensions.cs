@@ -87,7 +87,7 @@ namespace DotNet.Basics.IO
             {
                 Parallel.ForEach(dp.GetDirectories(), dir =>
                 {
-                    var nextTargetSubDir = target.ToDir(dir.Name)!;
+                    var nextTargetSubDir = target.ToDir(dir.Name);
                     nextTargetSubDir.CreateIfNotExists();
                     dir.CopyTo(nextTargetSubDir, true);
                 });
@@ -119,21 +119,21 @@ namespace DotNet.Basics.IO
             SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             return Directory.EnumerateDirectories(dp.FullName, searchPattern ?? "*", searchOption)
-                .Select(dir => dir.ToDir()!);
+                .Select(dir => dir.ToDir());
         }
 
         public static IEnumerable<FilePath> EnumerateFiles(this DirPath dp, string? searchPattern = null,
             SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             return Directory.EnumerateFiles(dp.FullName, searchPattern ?? "*", searchOption)
-                .Select(file => file.ToFile()!);
+                .Select(file => file.ToFile());
         }
 
         public static IEnumerable<PathInfo> EnumeratePaths(this DirPath dp, string? searchPattern = null,
             SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             return Directory.EnumerateFileSystemEntries(dp.FullName, searchPattern ?? "*", searchOption)
-                .Select(fse => fse.ToPath()!);
+                .Select(fse => fse.ToPath());
         }
     }
 }

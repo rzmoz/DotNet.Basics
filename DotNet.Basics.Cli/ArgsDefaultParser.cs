@@ -22,7 +22,7 @@ namespace DotNet.Basics.Cli
                 {
                     if (currentKey != null)
                         compiled.Add(currentKey, currentValue);
-                    currentKey = TrimKey(arg);
+                    currentKey = TrimKey(arg) == string.Empty ? null : TrimKey(arg);
                     currentValue = null;
                 }
                 else
@@ -37,10 +37,9 @@ namespace DotNet.Basics.Cli
             return new ArgsDictionary(compiled, TrimKey);
         }
 
-        private string? TrimKey(string key)
+        private string TrimKey(string key)
         {
-            var trimmed = key.TrimStart(_flagIndicators).ToLowerInvariant();
-            return !string.IsNullOrEmpty(trimmed) ? trimmed : null;
+            return key.TrimStart(_flagIndicators).ToLowerInvariant();
         }
     }
 }

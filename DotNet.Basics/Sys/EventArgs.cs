@@ -2,18 +2,13 @@
 
 namespace DotNet.Basics.Sys
 {
-    public class EventArgs<T> : EventArgs
+    public class EventArgs<T>(T? value) : EventArgs
     {
         public EventArgs()
-            : this(default(T))
+            : this(default)
         { }
 
-        public EventArgs(T value)
-        {
-            Value = value;
-        }
-
-        public T Value { get; set; }
+        public T? Value { get; set; } = value;
 
         public override string ToString()
         {

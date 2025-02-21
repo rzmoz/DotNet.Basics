@@ -38,6 +38,7 @@ namespace DotNet.Basics.Sys.Text
         {
             return new SysRegex(pattern ?? throw new ArgumentNullException(nameof(pattern)));
         }
+
         public static implicit operator string(SysRegex r)
         {
             return r.Pattern;

@@ -31,23 +31,17 @@ namespace DotNet.Basics.IO
             return true;
         }
 
-        public static DirPath? ParentFromFullName(this PathInfo? pi)
-        {
-            if (pi == null)
-                return null;
-
+        public static DirPath? ParentFromFullName(this PathInfo pi)
+        {   
             return pi.Parent ?? new DirectoryInfo(pi.FullName).Parent?.Name.ToDir();
         }
 
-        public static DirPath? Directory(this PathInfo? pi)
-        {
-            if (pi == null)
-                return null;
-
+        public static DirPath Directory(this PathInfo pi)
+        {   
             switch (pi.PathType)
             {
                 case PathType.File:
-                    return pi.ParentFromFullName();
+                    return pi.ParentFromFullName()!;
                 default:
                     return pi.Directory;
             }

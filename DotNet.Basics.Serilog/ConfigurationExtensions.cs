@@ -19,7 +19,7 @@ namespace DotNet.Basics.Serilog
             services.AddSingleton<ILoog>(new Loog().WithLogTarget(new SerilogLoogTarget(verbose: verbose, ado: ado)));
             services.AddSingleton(s =>
             {
-                var logger = s.GetService<ILoog>()!;
+                var logger = s.GetService<ILoog>();
                 return new LongRunningOperations(logger, longRunningOperationsPingInterval);
             });
             return services;

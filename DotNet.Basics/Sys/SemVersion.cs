@@ -56,6 +56,7 @@ namespace DotNet.Basics.Sys
                 return semVer20String;
             }
         }
+
         public static SemVersion Parse(string? semVer = "0.0.0")
         {
             if (semVer == null)
@@ -129,10 +130,10 @@ namespace DotNet.Basics.Sys
 
         protected bool Equals(SemVersion other)
         {
-            return Major == other.Major && Minor == other.Minor && Patch == other.Patch && String.Equals(PreRelease, other.PreRelease);
+            return Major == other.Major && Minor == other.Minor && Patch == other.Patch && string.Equals(PreRelease, other.PreRelease);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
@@ -147,7 +148,7 @@ namespace DotNet.Basics.Sys
                 var hashCode = Major;
                 hashCode = (hashCode * 397) ^ Minor;
                 hashCode = (hashCode * 397) ^ Patch;
-                hashCode = (hashCode * 397) ^ (PreRelease != null ? PreRelease.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ PreRelease.GetHashCode();
                 return hashCode;
             }
         }

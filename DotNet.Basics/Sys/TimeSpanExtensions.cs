@@ -6,7 +6,7 @@ namespace DotNet.Basics.Sys
     public static class TimeSpanExtensions
     {
         private const string _timeSpanPattern = @"^(\d+)([s|m|h|d|t]|ms)$";
-        private static readonly Regex _timeSpanRegex = new Regex(_timeSpanPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex _timeSpanRegex = new(_timeSpanPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         private const string _formatExceptionText = @"Input must be in format {time}{unit} where time is an integer and unit is ms|s|m|h|d|t. Was: ";
 

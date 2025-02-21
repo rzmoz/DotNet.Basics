@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
@@ -34,7 +33,8 @@ namespace DotNet.Basics.Tests.Tasks
         [Fact]
         public async Task RunAsync_EventRaising_StartAndEndedEventAreRaised()
         {
-            var task = new ManagedTask<EventArgs>(async (args) => { await Task.Delay(1.Seconds()); });
+            // ReSharper disable once AsyncVoidLambda
+            var task = new ManagedTask<EventArgs>(async _ => { await Task.Delay(1.Seconds()); });
 
             using var monitoredTask = task.Monitor();
             //act
@@ -47,8 +47,8 @@ namespace DotNet.Basics.Tests.Tasks
         [Fact]
         public async Task RunAsync_NonGenericBase_TaskIsRun()
         {
-            ///VERY important that type is set to abstract base type
-            int exitCode = 123412;
+            //VERY important that type is set to abstract base type
+            int exitCode = 123412; 
             ManagedTask task = new ManagedTask<EventArgs>(_ => Task.FromResult(exitCode));
 
             //act

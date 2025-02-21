@@ -23,12 +23,10 @@ namespace DotNet.Basics.Sys
 
         protected PathInfo(string path, PathType pathType, params string[] segments)
         {
-            path ??= string.Empty;
-
             var flattened = Flatten(path, segments);
 
             var isUnc = false;
-            string uriScheme = null;
+            string? uriScheme = null;
 
             if (flattened.Any())
             {
@@ -57,7 +55,7 @@ namespace DotNet.Basics.Sys
                 if (Path.IsPathRooted(path) && !_windowsRootPathRegex.Test(path))
                     Parent = new DirPath("/", parentSegments);
                 else
-                    Parent = new DirPath(null, parentSegments);
+                    Parent = new DirPath(string.Empty, parentSegments);
             }
 
             //set name
@@ -66,7 +64,7 @@ namespace DotNet.Basics.Sys
 
         public string RawPath { get; }
         public string Name { get; }
-
+        
         [JsonIgnore][IgnoreDataMember] public string NameWoExtension => Path.GetFileNameWithoutExtension(Name);
         [JsonIgnore][IgnoreDataMember] public string Extension => Path.GetExtension(Name);
         [JsonIgnore][IgnoreDataMember] public string FullName => ConformPathSeparator(Path.GetFullPath(RawPath));
@@ -131,7 +129,7 @@ namespace DotNet.Basics.Sys
             if (segments.Length > 0)
                 lookingAt = segments.Last();
 
-            if (lookingAt == null)
+            if (string.IsNullOrEmpty(lookingAt))
                 return PathType.Unknown;
 
             if (Path.GetExtension(lookingAt.TrimEnd(Slash)).Length > 0)
@@ -169,7 +167,7 @@ namespace DotNet.Basics.Sys
             return p.RawPath;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;

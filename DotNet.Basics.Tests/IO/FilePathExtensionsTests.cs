@@ -34,24 +34,14 @@ namespace DotNet.Basics.Tests.IO
             });
         }
 
-        [Fact]
-        public void ToFile_PathIsNull_NullIsReturned()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        public void ToFile_PathIsNull_PathIsEmpty(string path)
         {
-            string nullPath = null;
+            var actual = path.ToFile();
 
-            var actual = nullPath.ToFile();
-
-            actual.Should().BeNull();
-        }
-
-        [Fact]
-        public void ToFile_PathIsEmpty_NullIsReturned()
-        {
-            string emptyPath = string.Empty;
-
-            var actual = emptyPath.ToFile();
-
-            actual.Should().BeNull();
+            actual.RawPath.Should().BeEmpty();
         }
 
         [Theory]
@@ -147,13 +137,13 @@ namespace DotNet.Basics.Tests.IO
         }
 
         [Fact]
-        public void ReadAllTextThrowIfNotExists_SilenceWhenDirNotFound_NullIsReturned()
+        public void ReadAllTextThrowIfNotExists_SilenceWhenDirNotFound_EmptyReturned()
         {
             ArrangeActAssertPaths(testDir =>
             {
                 var file = testDir.ToFile("NotFOund.asd");
                 var content = file.ReadAllText(IfNotExists.Mute);
-                content.Should().BeNull();
+                content.Should().BeEmpty();
             });
         }
 
@@ -173,15 +163,14 @@ namespace DotNet.Basics.Tests.IO
         }
 
         [Fact]
-        public void ReadAllTextThrowIfNotExists_SilenceWhenFileNotFound_NullIsReturned()
+        public void ReadAllTextThrowIfNotExists_SilenceWhenFileNotFound_EmptyIsReturned()
         {
             ArrangeActAssertPaths(testDir =>
             {
-                var file = testDir.ToFile(@"ReadAllTextThrowIfNotExists_SilenceWhenFileNotFound_NullIsReturned",
-                    "NotFOund.asd");
-                file.Directory().CreateIfNotExists();
+                var file = testDir.ToFile(@"ReadAllTextThrowIfNotExists_SilenceWhenFileNotFound_NullIsReturned", "NotFOund.asd");
+                file.Directory.CreateIfNotExists();
                 var content = file.ReadAllText(IfNotExists.Mute);
-                content.Should().BeNull();
+                content.Should().BeEmpty();
             });
         }
 
@@ -202,7 +191,7 @@ namespace DotNet.Basics.Tests.IO
             ArrangeActAssertPaths(testDir =>
             {
                 var file = testDir.ToFile("NotFOundxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.txt");
-                file.Directory().CreateIfNotExists();
+                file.Directory.CreateIfNotExists();
                 Action action = () => file.ReadAllText();
                 action.Should().Throw<FileNotFoundException>();
             });
@@ -255,7 +244,7 @@ namespace DotNet.Basics.Tests.IO
             ArrangeActAssertPaths(testDir =>
             {
                 var targetFile = testDir.ToFile("target.txt");
-                targetFile.Directory().CreateIfNotExists();
+                targetFile.Directory.CreateIfNotExists();
                 //ensure file exists
                 File.WriteAllText(targetFile.FullName, @"mycontent");
                 targetFile.Exists().Should().BeTrue();
@@ -279,7 +268,7 @@ namespace DotNet.Basics.Tests.IO
 
 
                 var targetFile = testDir.ToFile("target.txt");
-                targetFile.Directory().CreateIfNotExists();
+                targetFile.Directory.CreateIfNotExists();
                 File.WriteAllText(targetFile.FullName, initialContent);
                 targetFile.Exists().Should().BeTrue();
                 File.ReadAllText(targetFile.FullName).Should().Be(initialContent);

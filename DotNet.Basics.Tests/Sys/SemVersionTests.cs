@@ -30,10 +30,10 @@ namespace DotNet.Basics.Tests.Sys
         }
 
         [Fact]
-        public void ToSemVersion_Construction_SemVersionIsConstructed()
+        public void ImplicitOverload_Construction_SemVersionIsConstructed()
         {
             //act
-            var semVer = _fullSemver20String.ToSemVersion();
+            SemVersion semVer = _fullSemver20String;
 
             //assert
             semVer.SemVer20String.Should().Be(_fullSemver20String);
@@ -43,10 +43,10 @@ namespace DotNet.Basics.Tests.Sys
         [InlineData(_fullSemver20String)]//full string
         [InlineData("1.0.5+555")]//wo preRelease
         [InlineData("1.0.5-rc.111")]//wo metadata
-        public void ToSemver20String_ToString_StringIsFormatted(string semVer20String)
+        public void ImplicitOverload_ToString_StringIsFormatted(string semVer20String)
         {
             //act
-            var semVer = semVer20String.ToSemVersion();
+            SemVersion semVer = semVer20String;
 
             //assert
             semVer.SemVer20String.Should().Be(semVer20String);

@@ -2,15 +2,10 @@
 
 namespace DotNet.Basics.Tests.Tasks
 {
-    public class ThrowExceptionUntilXTriesDummyTask<T> where T : Exception, new()
+    public class ThrowExceptionUntilXTriesDummyTask<T>(int switchStateAfterTries) where T : Exception, new()
     {
         private int _tries;
-        public int SwitchStateAfterTries { get; }
-
-        public ThrowExceptionUntilXTriesDummyTask(int switchStateAfterTries)
-        {
-            SwitchStateAfterTries = switchStateAfterTries;
-        }
+        public int SwitchStateAfterTries { get; } = switchStateAfterTries;
 
         public void Reset()
         {

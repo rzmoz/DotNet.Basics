@@ -34,7 +34,7 @@ namespace DotNet.Basics.Sys
 
                 process.ErrorDataReceived += (_, data) =>
                 {
-                    if (data.Data != null) { writeError.Invoke(data.Data); }
+                    if (data.Data != null) { writeError?.Invoke(data.Data); }
                 };
 
                 process.Start();

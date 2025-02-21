@@ -4,9 +4,10 @@ namespace DotNet.Basics.Serilog.Looging
 {
     public class NullLoog : ILoog
     {
+#pragma warning disable 0067
         public event Loog.MessageLoggedEventHandler? MessageLogged;
         public event Loog.TimingLoggedEventHandler? TimingLogged;
-
+#pragma warning restore 0067
         public static ILoog Instance { get; } = new NullLoog();
 
         public ILoog WithLogTarget(ILoogTarget target) { return this; }
