@@ -7,7 +7,7 @@ namespace DotNet.Basics.Serilog.Formatting
     {
         private static ConsoleColorSet GetForegroundColors()
         {
-            return new ConsoleColorSet(ConsoleColor.Green)
+            return new ConsoleColorSet(ConsoleColor.DarkGreen)
             {
                 { LogEventLevel.Verbose, ConsoleColor.DarkGray},
                 { LogEventLevel.Debug, ConsoleColor.DarkGray},
@@ -19,7 +19,7 @@ namespace DotNet.Basics.Serilog.Formatting
         }
         private static ConsoleColorSet GetForegroundHighlightColors()
         {
-            return new ConsoleColorSet(ConsoleColor.DarkGreen)
+            return new ConsoleColorSet(ConsoleColor.Green)
             {
                 { LogEventLevel.Verbose, ConsoleColor.DarkYellow},
                 { LogEventLevel.Debug, ConsoleColor.DarkYellow},
