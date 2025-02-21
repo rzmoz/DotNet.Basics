@@ -3,41 +3,35 @@ using static System.String;
 
 namespace DotNet.Basics.Sys
 {
-    public class SemVersion : IComparable<SemVersion>
+    public class SemVersion(int major, int minor, int patch, SemVersionPreRelease? preRelease, string? metadata) : IComparable<SemVersion>
     {
         public SemVersion()
             : this(Empty)
         { }
 
-        public SemVersion(object semVer)
+        public SemVersion(object? semVer)
             : this(semVer?.ToString())
         { }
-        public SemVersion(string semVer)
+        public SemVersion(string? semVer)
         : this(Parse(semVer ?? "0.0.0"))
         { }
         public SemVersion(SemVersion semVer)
             : this(semVer.Major, semVer.Minor, semVer.Patch, semVer.PreRelease, semVer.Metadata)
         { }
 
-        public SemVersion(int major, int minor, int patch, string preRelease = null, string metadata = null)
+        public SemVersion(string? version, string? preRelease = null, string? metadata = null)
+            : this(Parse(version).Major, Parse(version).Minor, Parse(version).Patch, new SemVersionPreRelease(preRelease), metadata)
+        { }
+
+        public SemVersion(int major, int minor, int patch, string? preRelease = null, string? metadata = null)
         : this(major, minor, patch, new SemVersionPreRelease(preRelease), metadata)
-        {
+        { }
 
-        }
-        public SemVersion(int major, int minor, int patch, SemVersionPreRelease preRelease, string metadata)
-        {
-            Major = major;
-            Minor = minor;
-            Patch = patch;
-            PreRelease = preRelease ?? new SemVersionPreRelease();
-            Metadata = metadata ?? Empty;
-        }
-
-        public int Major { get; set; }
-        public int Minor { get; set; }
-        public int Patch { get; set; }
-        public SemVersionPreRelease PreRelease { get; set; }
-        public string Metadata { get; set; }
+        public int Major { get; set; } = major;
+        public int Minor { get; set; } = minor;
+        public int Patch { get; set; } = patch;
+        public SemVersionPreRelease PreRelease { get; set; } = preRelease ?? new();
+        public string Metadata { get; set; } = metadata ?? string.Empty;
 
         public string FileVerString => $"{Major}.{Minor}.{Patch}";
 
@@ -62,10 +56,10 @@ namespace DotNet.Basics.Sys
                 return semVer20String;
             }
         }
-        public static SemVersion Parse(string semVer)
+        public static SemVersion Parse(string? semVer = "0.0.0")
         {
             if (semVer == null)
-                return null;
+                return new SemVersion();
 
             semVer = semVer.RemovePrefix("v", StringComparison.InvariantCultureIgnoreCase);
             var lexer = new SemVersionLexer();

@@ -94,7 +94,7 @@ namespace DotNet.Basics.Tests.Sys
             semVer.Metadata += metadata;
 
             //assert
-            semVer.SemVer20String.Should().Be($"1.1.1+{metadata }");
+            semVer.SemVer20String.Should().Be($"1.1.1+{metadata}");
         }
 
         [Fact]
@@ -121,6 +121,19 @@ namespace DotNet.Basics.Tests.Sys
             semVer.Minor.Should().Be(_minor);
             semVer.Patch.Should().Be(_patch);
             semVer.PreRelease.ToString().Should().BeEmpty();
+            semVer.Metadata.Should().BeEmpty();
+        }
+
+        [Theory]
+        [InlineData("0.0.0", "", "0.0.0")]
+        [InlineData("1.2.3", "RC.2", "1.2.3-rc.2")]
+        public void Ctor_VersionAndPreReleaseStrings_VersionIsParsed(string version, string prerelease, string semver20String)
+        {
+            //act
+            var semVer = new SemVersion(version, prerelease);
+
+            //assert
+            semVer.SemVer20String.Should().Be(semver20String);
             semVer.Metadata.Should().BeEmpty();
         }
 

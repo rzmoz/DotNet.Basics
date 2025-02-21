@@ -16,10 +16,10 @@ namespace DotNet.Basics.Sys
         private static readonly Regex _allNumbersFormatRegex = new Regex(_allNumbersFormat, RegexOptions.Compiled);
 
         public SemVersionPreRelease()
-            : this(Enumerable.Empty<SemVersionIdentifier>())
+            : this([])
         { }
 
-        public SemVersionPreRelease(string preRelease)
+        public SemVersionPreRelease(string? preRelease)
         : this(ParsePreRelease(preRelease))
         { }
 
@@ -28,11 +28,11 @@ namespace DotNet.Basics.Sys
             if (identifiers == null) throw new ArgumentNullException(nameof(identifiers));
             //lowercase identifiers to ignore case and because lower case chars have a higher ascii value than numerics so numerics are always smaller / lower than chars
             Identifiers = identifiers.ToList();
-            
+
             if (HashBase.Length > 0 && _preReleaseAllowedCharsRegex.IsMatch(HashBase) == false)
                 throw new ArgumentOutOfRangeException($"Invalid character(s) found in PreRelease input. ASCII alphanumerics are allowed [a-zA-Z0-9]. Input was: '{HashBase}'");
         }
-        
+
         [JsonIgnore]
         [IgnoreDataMember]
         public bool Any => Identifiers.Any(i => string.IsNullOrWhiteSpace(i.ToString()) == false);
@@ -41,11 +41,11 @@ namespace DotNet.Basics.Sys
 
         [JsonIgnore]
         [IgnoreDataMember]
-        public string HashBase =>Identifiers.Select(i => i.ToString()).JoinString(SemVersionLexer.VersionSeparator.ToString()).RemovePrefix(SemVersionLexer.VersionSeparator);
+        public string HashBase => Identifiers.Select(i => i.ToString()).JoinString(SemVersionLexer.VersionSeparator.ToString()).RemovePrefix(SemVersionLexer.VersionSeparator);
 
-        private static IEnumerable<SemVersionIdentifier> ParsePreRelease(string preRelease)
+        private static IEnumerable<SemVersionIdentifier> ParsePreRelease(string? preRelease)
         {
-            return preRelease?.Split(SemVersionLexer.VersionSeparator).Select(i => new SemVersionIdentifier(i)) ?? new List<SemVersionIdentifier>();
+            return preRelease?.Split(SemVersionLexer.VersionSeparator).Select(i => new SemVersionIdentifier(i)) ?? [];
         }
 
         public static bool operator ==(SemVersionPreRelease a, SemVersionPreRelease b)
