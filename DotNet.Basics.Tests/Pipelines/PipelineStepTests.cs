@@ -1,4 +1,5 @@
-﻿using DotNet.Basics.Tests.Pipelines.PipelineHelpers;
+﻿using DotNet.Basics.Sys;
+using DotNet.Basics.Tests.Pipelines.PipelineHelpers;
 using FluentAssertions;
 using Xunit;
 
@@ -7,12 +8,11 @@ namespace DotNet.Basics.Tests.Pipelines
     public class PipelineStepTests
     {
         [Fact]
-        public void Name_IgnoreSuffix_SuffixIsRemovedFromName()
+        public void Name_TitleCase_NameIsTitleCased()
         {
             var step = new IncrementArgsStep();
             //assert
-            step.Name.Should().Be("IncrementArgs");
-            (step.Name + "Step").Should().Be(nameof(IncrementArgsStep));
+            step.Name.Should().Be(nameof(IncrementArgsStep).ToTitleCase());
         }
     }
 }

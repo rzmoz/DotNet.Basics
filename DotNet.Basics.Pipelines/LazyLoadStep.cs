@@ -21,7 +21,7 @@ namespace DotNet.Basics.Pipelines
             return typeof(TTask);
         }
 
-        public LazyLoadStep(string? name, IServiceProvider serviceProvider) : base(name ?? typeof(TTask).GetNameWithGenericsExpanded(), "Step")
+        public LazyLoadStep(string? name, IServiceProvider serviceProvider) : base(name ?? typeof(TTask).GetNameWithGenericsExpanded())
         {
             if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
             _loadTask = () =>

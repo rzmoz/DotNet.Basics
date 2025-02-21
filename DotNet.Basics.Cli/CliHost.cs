@@ -16,13 +16,13 @@ namespace DotNet.Basics.Cli
         public CliHostOptions Options { get; } = options;
         public ArgsDictionary Args => Options.Args;
 
-        public async Task<int> RunPipelineAsync<T>(PipelineArgsFactory? pipelineArgsFactory = null) where T : ManagedTask
+        public async Task<int> RunPipelineAsync<T>(PipelineArgsFactory? pipelineArgsFactory = null, ILoog? logger = null) where T : ManagedTask
         {
             try
             {
                 var argsFactory = pipelineArgsFactory ?? new PipelineArgsFactory();
                 var args = argsFactory.Create(typeof(T), Args);
-                return await RunPipelineAsync<T>(args);
+                return await RunPipelineAsync<T>(args, logger);
             }
             catch (MissingArgumentException e)
             {
@@ -37,11 +37,24 @@ namespace DotNet.Basics.Cli
             }
         }
 
-        public async Task<int> RunPipelineAsync<T>(object args) where T : ManagedTask
+        public async Task<int> RunPipelineAsync<T>(object args, ILoog? logger = null) where T : ManagedTask
         {
             var managedTask = Options.GetService<T>();
+            logger ??= Options.GetService<ILoog>();
+            managedTask.Started += taskName =>
+            {
+                if (!taskName.EndsWith("Pipeline"))
+                    logger.Debug($"{taskName.Highlight()} started");
+            };
+            managedTask.Ended += (taskName, e) =>
+            {
+                if (!taskName.EndsWith("Pipeline"))
+                    logger.Debug($"{taskName.Highlight()} ended");
+            };
+
             return await RunPipelineAsync(managedTask, args);
         }
+
         public async Task<int> RunPipelineAsync(ManagedTask managedTask, object args)
         {
             return await RunAsync(managedTask.Name, () => managedTask.RunAsync(args));

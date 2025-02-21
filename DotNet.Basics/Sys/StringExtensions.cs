@@ -93,7 +93,7 @@ namespace DotNet.Basics.Sys
                     output.Append(current);
                 }
 
-                if (current == ' ') //if space
+                if (current is ' ' or '<') //if space or <
                     toUpper = true;
             }
 

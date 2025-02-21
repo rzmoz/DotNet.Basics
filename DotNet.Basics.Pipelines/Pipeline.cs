@@ -15,7 +15,7 @@ namespace DotNet.Basics.Pipelines
         private readonly Func<T, Task<int>> _innerRun;
 
         public Pipeline(IServiceProvider serviceProvider, string? name = null, Invoke invoke = Invoke.Sequential)
-            : base(name, "Pipeline", "Block")
+            : base(name)
         {
             _serviceProvider = serviceProvider;
             switch (invoke)
@@ -66,25 +66,25 @@ namespace DotNet.Basics.Pipelines
 
         public Pipeline<T> AddStep(Action<T> task)
         {
-            var mt = new ManagedTask<T>(task, "Step");
+            var mt = new ManagedTask<T>(task);
             return AddStep(mt);
         }
 
         public Pipeline<T> AddStep(string name, Action<T> task)
         {
-            var mt = new ManagedTask<T>(name, task, "Step");
+            var mt = new ManagedTask<T>(name, task);
             return AddStep(mt);
         }
 
         public Pipeline<T> AddStep(Func<T, Task<int>> task)
         {
-            var mt = new ManagedTask<T>(task, "Step");
+            var mt = new ManagedTask<T>(task);
             return AddStep(mt);
         }
 
         public Pipeline<T> AddStep(string name, Func<T, Task<int>> task)
         {
-            var mt = new ManagedTask<T>(name, task, "Step");
+            var mt = new ManagedTask<T>(name, task);
             return AddStep(mt);
         }
 

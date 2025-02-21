@@ -3,7 +3,7 @@ using DotNet.Basics.Tasks;
 
 namespace DotNet.Basics.Pipelines
 {
-    public abstract class PipelineStep<T>(string? name) : ManagedTask<T>(name, "Step")
+    public abstract class PipelineStep<T>(string? name) : ManagedTask<T>(name)
     {
         protected PipelineStep() : this(null) { }
 

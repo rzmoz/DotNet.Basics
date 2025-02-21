@@ -12,11 +12,9 @@ namespace DotNet.Basics.Tasks
         public event TaskStartedEventHandler? Started;
         public event TaskEndedEventHandler? Ended;
 
-        protected ManagedTask(string? name = null, params string[] removeSuffixes)
+        protected ManagedTask(string? name = null)
         {
-            Name = name ?? GetType().GetNameWithGenericsExpanded();
-            foreach (var removeSuffix in removeSuffixes)
-                Name = Name.RemoveSuffix(removeSuffix);
+            Name = (name ?? GetType().GetNameWithGenericsExpanded()).ToTitleCase();
         }
 
         public string Name { get; }
@@ -39,33 +37,33 @@ namespace DotNet.Basics.Tasks
         }
     }
 
-    public class ManagedTask<T>(string? name, Func<T, Task<int>> task, params string[] removeSuffixes) : ManagedTask(name, removeSuffixes)
+    public class ManagedTask<T>(string? name, Func<T, Task<int>> task) : ManagedTask(name)
     {
         private readonly Func<T, Task<int>> _task = task ?? throw new ArgumentNullException(nameof(task));
 
-        public ManagedTask(Action task, params string[] removeSuffixes)
-            : this(null, _ => task(), removeSuffixes)
+        public ManagedTask(Action task)
+            : this(null, _ => task())
         { }
-        public ManagedTask(Action<T> task, params string[] removeSuffixes)
-            : this(null, task, removeSuffixes)
+        public ManagedTask(Action<T> task)
+            : this(null, task)
         { }
-        public ManagedTask(Func<Task<int>> task, params string[] removeSuffixes)
-            : this(null, _ => task(), removeSuffixes)
+        public ManagedTask(Func<Task<int>> task)
+            : this(null, _ => task())
         { }
-        public ManagedTask(Func<T, Task<int>> task, params string[] removeSuffixes)
-            : this(null, task, removeSuffixes)
-        { }
-
-        public ManagedTask(string? name, params string[] removeSuffixes)
-            : this(name, _ => { }, removeSuffixes)
+        public ManagedTask(Func<T, Task<int>> task)
+            : this(null, task)
         { }
 
-        public ManagedTask(string? name, Action<T> task, params string[] removeSuffixes)
+        public ManagedTask(string? name)
+            : this(name, _ => { })
+        { }
+
+        public ManagedTask(string? name, Action<T> task)
             : this(name, args =>
             {
                 task?.Invoke(args);
                 return Task.FromResult(0);
-            }, removeSuffixes)
+            })
         { }
 
         public override async Task<int> RunAsync(object args)

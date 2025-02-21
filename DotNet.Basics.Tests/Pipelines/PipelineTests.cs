@@ -19,23 +19,21 @@ namespace DotNet.Basics.Tests.Pipelines
     public class PipelineTests(ITestOutputHelper output) : TestWithHelpers(output)
     {
         [Fact]
-        public void Name_IgnoreSuffix_SuffixIsRemovedFromName()
+        public void Name_TitleCase_NameIsTitleCased()
         {
             var pipelineName = "MyPipeline";
             var pipeline = new Pipeline<EventArgs>(GetEmptyServiceProvider(), pipelineName);
             //assert
-            pipeline.Name.Should().Be("My");
-            (pipeline.Name + "Pipeline").Should().Be(pipelineName);
+            pipeline.Name.Should().Be("My Pipeline");
         }
         [Fact]
-        public void Name_IgnoreBlock_SuffixIsRemovedFromName()
+        public void BlockName_TitleCase_NameIsTitleCased()
         {
             var blockName = "MyBlock";
             var pipeline = new Pipeline<EventArgs>(GetEmptyServiceProvider());
             var block = pipeline.AddBlock(blockName);
             //assert
-            block.Name.Should().Be("My");
-            (block.Name + "Block").Should().Be(blockName);
+            block.Name.Should().Be("My Block");
         }
 
         [Fact]
@@ -51,7 +49,7 @@ namespace DotNet.Basics.Tests.Pipelines
 
             pipeline.Started += (e) =>
             {
-                if (e == "My")
+                if (e == "My Pipeline")
                     pipelineStarted++;
             };
 
@@ -103,7 +101,7 @@ namespace DotNet.Basics.Tests.Pipelines
             var pipeline = new Pipeline<EventArgs>(GetEmptyServiceProvider());
             pipeline.AddStep<SimpleStep>();
 
-            pipeline.Tasks.Single().Name.Should().Be("Simple");
+            pipeline.Tasks.Single().Name.Should().Be("Simple Step");
         }
 
         [Fact]
@@ -133,13 +131,13 @@ namespace DotNet.Basics.Tests.Pipelines
 
             pipeline.Started += (name) =>
             {
-                if (name.StartsWith("IncrementArgs", StringComparison.OrdinalIgnoreCase))
+                if (name.StartsWith("Increment Args", StringComparison.OrdinalIgnoreCase))
                     stepName = name;
             };
 
             await pipeline.RunAsync(new EventArgs<int>());
 
-            stepName.Should().Be("IncrementArgs");
+            stepName.Should().Be("Increment Args Step");
         }
 
         [Fact]
@@ -299,15 +297,15 @@ namespace DotNet.Basics.Tests.Pipelines
             logEntries.Count.Should().Be(0);
             ended.Count.Should().Be(4);
 
-            started.Count(s => s == "Pipeline<EventArgs<Int32>>").Should().Be(1);
+            started.Count(s => s == "Pipeline<Event Args<Int32>>").Should().Be(1);
             started.Count(s => s == "Block 0").Should().Be(1);
-            started.Count(s => s == "IncrementArgs").Should().Be(1);
-            started.Count(s => s == "StepInline").Should().Be(1);
+            started.Count(s => s == "Increment Args Step").Should().Be(1);
+            started.Count(s => s == "Step Inline").Should().Be(1);
 
-            ended.Count(s => s == "Pipeline<EventArgs<Int32>>").Should().Be(1);
+            ended.Count(s => s == "Pipeline<Event Args<Int32>>").Should().Be(1);
             ended.Count(s => s == "Block 0").Should().Be(1);
-            ended.Count(s => s == "IncrementArgs").Should().Be(1);
-            ended.Count(s => s == "StepInline").Should().Be(1);
+            ended.Count(s => s == "Increment Args Step").Should().Be(1);
+            ended.Count(s => s == "Step Inline").Should().Be(1);
         }
     }
 }
