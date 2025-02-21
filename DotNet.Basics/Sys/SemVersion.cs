@@ -27,11 +27,11 @@ namespace DotNet.Basics.Sys
         : this(major, minor, patch, new SemVersionPreRelease(preRelease), metadata)
         { }
 
-        public int Major { get; set; } = major;
-        public int Minor { get; set; } = minor;
-        public int Patch { get; set; } = patch;
-        public SemVersionPreRelease PreRelease { get; set; } = preRelease ?? new();
-        public string Metadata { get; set; } = metadata ?? string.Empty;
+        public int Major { get; } = major;
+        public int Minor { get; } = minor;
+        public int Patch { get; } = patch;
+        public SemVersionPreRelease PreRelease { get; } = preRelease ?? new();
+        public string Metadata { get; set; } = metadata ?? Empty;
 
         public string FileVerString => $"{Major}.{Minor}.{Patch}";
 

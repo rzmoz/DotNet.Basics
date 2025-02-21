@@ -75,9 +75,9 @@ namespace DotNet.Basics.Cli
                 not null when argsType == typeof(short) => val => short.Parse(val),
                 not null when argsType == typeof(ushort) => val => ushort.Parse(val),
                 //dotnet.basics types
-                not null when argsType == typeof(DirPath) => val => val.ToDir(),
-                not null when argsType == typeof(FilePath) => val => val.ToFile(),
-                not null when argsType == typeof(PathInfo) => val => val.ToPath(),
+                not null when argsType == typeof(DirPath) => val => val.ToDir() ?? string.Empty,
+                not null when argsType == typeof(FilePath) => val => val.ToFile() ?? string.Empty,
+                not null when argsType == typeof(PathInfo) => val => val.ToPath() ?? string.Empty,
                 not null when argsType == typeof(SemVersion) => SemVersion.Parse,
 
                 not null when argsType == typeof(string[]) => val => val.Split('|').ToArray(),

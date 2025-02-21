@@ -7,7 +7,7 @@ namespace DotNet.Basics.IO
 {
     public class IoLock(DirPath lockDir, string lockName) : IDisposable
     {
-        FileStream? _lockHandle = null;
+        FileStream? _lockHandle;
 
         public string Name { get; } = lockName ?? throw new ArgumentNullException(nameof(lockName));
 
@@ -18,6 +18,7 @@ namespace DotNet.Basics.IO
 
         public bool TryAcquire(int? maxTries = 10)
         {
+            var file = lockDir.ToFile(Name) ?? throw new IOException($"{lockDir.RawPath}{Name}");
             lockDir.CreateIfNotExists();
             //try to acquire exclusive handle ownership
             try
@@ -25,7 +26,7 @@ namespace DotNet.Basics.IO
                 //try to get lock handle
                 return Repeat.Task(() =>
                 {
-                    _lockHandle = File.Create(lockDir.ToFile(Name).FullName, 128, FileOptions.DeleteOnClose);
+                    _lockHandle = File.Create(file.FullName, 128, FileOptions.DeleteOnClose);
                 }).WithOptions(o =>
                 {
                     o.MaxTries = maxTries ?? 10;

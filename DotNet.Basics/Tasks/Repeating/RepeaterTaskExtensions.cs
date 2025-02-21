@@ -32,7 +32,7 @@ namespace DotNet.Basics.Tasks.Repeating
             return task.UntilAsync(e => untilPredicate());
         }
 
-        private static Task<bool> UntilAsync(this RepeaterTask task, Func<Exception, Task<bool>> untilPredicate)
+        private static Task<bool> UntilAsync(this RepeaterTask task, Func<Exception?, Task<bool>> untilPredicate)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace DotNet.Basics.Tasks.Repeating
             return task.Until(e => untilPredicate());
         }
 
-        private static bool Until(this RepeaterTask task, Func<Exception, bool> untilPredicate)
+        private static bool Until(this RepeaterTask task, Func<Exception?, bool> untilPredicate)
         {
             try
             {

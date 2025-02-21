@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using DotNet.Basics.Sys;
 using FluentAssertions;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace DotNet.Basics.Tests.Sys
@@ -31,16 +30,6 @@ namespace DotNet.Basics.Tests.Sys
         }
 
         [Fact]
-        public void Serialize_NewtonSoft_IsSerialized()
-        {
-            var obj = new SemVersion(_fullSemver20String);
-            string jsonStr;
-            Action action = () => jsonStr = JsonConvert.SerializeObject(obj);
-
-            action.Should().NotThrow();
-        }
-
-        [Fact]
         public void ToSemVersion_Construction_SemVersionIsConstructed()
         {
             //act
@@ -49,15 +38,6 @@ namespace DotNet.Basics.Tests.Sys
             //assert
             semVer.SemVer20String.Should().Be(_fullSemver20String);
         }
-
-        [Fact]
-        public void Deserialization_Newtonsoft_StringIsDeserialized()
-        {
-            var jsonStr = @"{""Major"":10,""Minor"":701,""Patch"":232,""PreRelease"":{""Identifiers"":[{""Identifier"":""rc"",""IsNumeric"":false},{""Identifier"":""1"",""IsNumeric"":true}]},""Metadata"":""sdfkjsh.fs.jkhf++djkhf"",""SemVer10String"":""10.701.232"",""SemVer20String"":""10.701.232-rc.1+sdfkjsh.fs.jkhf++djkhf""}";
-            var obj = JsonConvert.DeserializeObject<SemVersion>(jsonStr);
-            obj.SemVer20String.Should().Be(_fullSemver20String);
-        }
-
 
         [Theory]
         [InlineData(_fullSemver20String)]//full string

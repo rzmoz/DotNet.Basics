@@ -8,7 +8,7 @@ namespace DotNet.Basics.Tasks.Repeating
 {
     public class RepeaterTaskRunner
     {
-        public async Task<bool> RunAsync(ManagedTask<EventArgs> task, Func<Exception, Task<bool>> untilPredicate, RepeatOptions? options = null)
+        public async Task<bool> RunAsync(ManagedTask<EventArgs>? task, Func<Exception?, Task<bool>> untilPredicate, RepeatOptions? options = null)
         {
             if (task == null)
                 return false;
@@ -16,10 +16,9 @@ namespace DotNet.Basics.Tasks.Repeating
             if (untilPredicate == null)
                 throw new ArgumentNullException(nameof(untilPredicate), "Task will potentially run forever. Set untilPredicate and also consider adding timeout and maxtries to task options");
 
-            if (options == null)
-                options = new RepeatOptions();
+            options ??= new RepeatOptions();
 
-            Exception lastException = null;
+            Exception? lastException = null;
             options.RepeatMaxTriesPredicate?.Init();
             options.RepeatTimeoutPredicate?.Init();
 
@@ -29,7 +28,7 @@ namespace DotNet.Basics.Tasks.Repeating
             {
                 do
                 {
-                    Exception exceptionInLastLoop = null;
+                    Exception? exceptionInLastLoop = null;
                     try
                     {
                         await task.RunAsync(EventArgs.Empty).ConfigureAwait(false);
@@ -95,7 +94,7 @@ namespace DotNet.Basics.Tasks.Repeating
         }
 
 
-        private bool ShouldContinue(Exception lastException, RepeatOptions options)
+        private bool ShouldContinue(Exception? lastException, RepeatOptions options)
         {
             bool breakPrematurely = options.RepeatMaxTriesPredicate != null && options.RepeatMaxTriesPredicate.ShouldBreak() ||
                                     options.RepeatTimeoutPredicate != null && options.RepeatTimeoutPredicate.ShouldBreak();

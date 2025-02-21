@@ -6,8 +6,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using DotNet.Basics.Sys;
-using Serilog.Context;
 
 namespace DotNet.Basics.Cli
 {
@@ -30,7 +28,7 @@ namespace DotNet.Basics.Cli
             {
                 var log = Options.GetService<ILoog>()!;
                 log.Info(" ");
-                log.Fatal($"Missing arguments for {e.ArgsType.FullName.Highlight()}:");
+                log.Fatal($"Missing arguments for {e.ArgsType.FullName?.Highlight() ?? e.ArgsType.Name.Highlight()}:");
                 foreach (var missingArg in e.MissingArgs)
                 {
                     log.Error($"{missingArg.ArgType} {missingArg.ArgName.Highlight()} {{ get; set; }}");

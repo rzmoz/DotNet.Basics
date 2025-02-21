@@ -10,11 +10,11 @@ namespace DotNet.Basics.Win
     {
         private const string _installingHandleName = "installing.dat";
         private const string _installedHandleName = "installed.dat";
-        private readonly FilePath _installedHandle = installDir.ToFile(_installedHandleName);
+        private readonly FilePath _installedHandle = installDir.ToFile(_installedHandleName)!;
         private readonly IList<Action> _installActions = new List<Action>();
 
         public FileApplication(string appName)
-            : this(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).ToDir(appName))
+            : this(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).ToDir(appName)!)
         { }
 
         public DirPath InstallDir { get; } = installDir ?? throw new ArgumentNullException(nameof(installDir));
@@ -24,7 +24,7 @@ namespace DotNet.Basics.Win
             Install();
             var argString = args.JoinString(" ");
 
-            var file = InstallDir.ToFile(fileName);
+            var file = InstallDir.ToFile(fileName)!;
             if (file.Exists() == false)
                 throw new FileNotFoundException(file.FullName);
 
@@ -33,7 +33,7 @@ namespace DotNet.Basics.Win
 
         public FileApplication WithStream<T>(string fileName, Action<FilePath>? postInstallAction = null)
         {
-            var stream = typeof(T).Assembly.GetManifestResourceStream(typeof(T), fileName);
+            var stream = typeof(T).Assembly.GetManifestResourceStream(typeof(T), fileName) ?? throw new IOException($"Failed to get manifest stream for {fileName} in {typeof(T).FullName}");
             return WithStream(fileName, stream, true, postInstallAction);
         }
 
@@ -44,7 +44,7 @@ namespace DotNet.Basics.Win
         public FileApplication WithStream(string filename, Stream content, bool disposeStreamWhenDone, Action<FilePath>? postInstallAction = null)
         {
             if (content == null) throw new ArgumentNullException(nameof(content));
-            var target = InstallDir.ToFile(filename);
+            var target = InstallDir.ToFile(filename)!;
             _installActions.Add(() =>
             {
                 target.DeleteIfExists();//we ensure file integrity if we got this far. No guarantees that corrupt files haven't been left behind by a faulty installation

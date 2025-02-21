@@ -7,10 +7,10 @@ namespace DotNet.Basics.Tasks
     public abstract class ManagedTask : ITask
     {
         public delegate void TaskStartedEventHandler(string taskName);
-        public delegate void TaskEndedEventHandler(string taskName, Exception e);
+        public delegate void TaskEndedEventHandler(string taskName, Exception? e);
 
-        public event TaskStartedEventHandler Started;
-        public event TaskEndedEventHandler Ended;
+        public event TaskStartedEventHandler? Started;
+        public event TaskEndedEventHandler? Ended;
 
         protected ManagedTask(string? name = null, params string[] removeSuffixes)
         {
@@ -28,7 +28,7 @@ namespace DotNet.Basics.Tasks
             Started?.Invoke(taskName);
         }
 
-        protected virtual void FireEnded(string taskName, Exception e = null)
+        protected virtual void FireEnded(string taskName, Exception? e = null)
         {
             Ended?.Invoke(taskName, e);
         }
@@ -39,28 +39,28 @@ namespace DotNet.Basics.Tasks
         }
     }
 
-    public class ManagedTask<T> : ManagedTask
+    public class ManagedTask<T>(string? name, Func<T, Task<int>> task, params string[] removeSuffixes) : ManagedTask(name, removeSuffixes)
     {
-        private readonly Func<T, Task<int>> _task;
+        private readonly Func<T, Task<int>> _task = task ?? throw new ArgumentNullException(nameof(task));
 
         public ManagedTask(Action task, params string[] removeSuffixes)
-            : this(null, a => task(), removeSuffixes)
+            : this(null, _ => task(), removeSuffixes)
         { }
         public ManagedTask(Action<T> task, params string[] removeSuffixes)
             : this(null, task, removeSuffixes)
         { }
         public ManagedTask(Func<Task<int>> task, params string[] removeSuffixes)
-            : this(null, a => task(), removeSuffixes)
+            : this(null, _ => task(), removeSuffixes)
         { }
         public ManagedTask(Func<T, Task<int>> task, params string[] removeSuffixes)
             : this(null, task, removeSuffixes)
         { }
 
-        public ManagedTask(string name, params string[] removeSuffixes)
+        public ManagedTask(string? name, params string[] removeSuffixes)
             : this(name, _ => { }, removeSuffixes)
         { }
 
-        public ManagedTask(string name, Action<T> task, params string[] removeSuffixes)
+        public ManagedTask(string? name, Action<T> task, params string[] removeSuffixes)
             : this(name, args =>
             {
                 task?.Invoke(args);
@@ -68,10 +68,6 @@ namespace DotNet.Basics.Tasks
             }, removeSuffixes)
         { }
 
-        public ManagedTask(string name, Func<T, Task<int>> task, params string[] removeSuffixes) : base(name, removeSuffixes)
-        {
-            _task = task ?? throw new ArgumentNullException(nameof(task));
-        }
         public override async Task<int> RunAsync(object args)
         {
             return await RunAsync((T)args);
@@ -96,7 +92,7 @@ namespace DotNet.Basics.Tasks
         }
         protected virtual async Task<int> InnerRunAsync(T args)
         {
-            return await _task?.Invoke(args);
+            return await _task.Invoke(args);
         }
     }
 }

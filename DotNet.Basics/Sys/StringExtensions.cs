@@ -5,7 +5,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using DotNet.Basics.Sys.Text;
 
 namespace DotNet.Basics.Sys
 {
@@ -24,7 +23,7 @@ namespace DotNet.Basics.Sys
             return $"{destination.ToString()}{input.AsSpan(1).ToString()}";
         }
 
-        public static string EnsureNewlineHasCarriageReturn(this string source)
+        public static string? EnsureNewlineHasCarriageReturn(this string? source)
         {
             if (source == null)
                 return null;
@@ -35,9 +34,9 @@ namespace DotNet.Basics.Sys
 
             return source;
         }
-        public static string[] ToMultiLine(this string source)
+        public static string[] ToMultiLine(this string? source)
         {
-            return source == null ? null : _newlineRegex.Split(source);
+            return source == null ? [] : _newlineRegex.Split(source);
         }
         public static string JoinString(this IEnumerable<string> source, string separator = "|")
         {
@@ -114,31 +113,23 @@ namespace DotNet.Basics.Sys
 
         public static string ToMd5(this string text)
         {
-            using (var algo = MD5.Create())
-            {
-                return text.ToHash(algo);
-            }
+            using var algo = MD5.Create();
+            return text.ToHash(algo);
         }
         public static string ToSha1(this string text)
         {
-            using (var algo = SHA1.Create())
-            {
-                return text.ToHash(algo);
-            }
+            using var algo = SHA1.Create();
+            return text.ToHash(algo);
         }
         public static string ToSha256(this string text)
         {
-            using (var algo = SHA256.Create())
-            {
-                return text.ToHash(algo);
-            }
+            using var algo = SHA256.Create();
+            return text.ToHash(algo);
         }
         public static string ToSha512(this string text)
         {
-            using (var algo = SHA512.Create())
-            {
-                return text.ToHash(algo);
-            }
+            using var algo = SHA512.Create();
+            return text.ToHash(algo);
         }
 
         public static string ToHash(this string text, HashAlgorithm hashAlgorithm)

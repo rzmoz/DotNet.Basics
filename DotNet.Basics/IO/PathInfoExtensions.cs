@@ -39,7 +39,7 @@ namespace DotNet.Basics.IO
             return pi.Parent ?? new DirectoryInfo(pi.FullName).Parent?.Name.ToDir();
         }
 
-        public static DirPath Directory(this PathInfo pi)
+        public static DirPath? Directory(this PathInfo? pi)
         {
             if (pi == null)
                 return null;

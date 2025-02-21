@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using DotNet.Basics.IO;
 
 namespace DotNet.Basics.Sys.Text
 {
@@ -9,7 +8,7 @@ namespace DotNet.Basics.Sys.Text
     {
         public override DirPath Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return reader.GetString().ToDir();
+            return reader.GetString()?.ToDir() ?? throw new ArgumentException($"Unable to get value from {nameof(reader)}");
         }
 
         public override void Write(Utf8JsonWriter writer, DirPath value, JsonSerializerOptions options)

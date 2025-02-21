@@ -21,19 +21,19 @@ namespace DotNet.Basics.Tasks.Repeating
         /// <summary>
         /// Will be invoked on every retry cycle
         /// </summary>
-        public Action PingOnRetry { get; set; }
+        public Action PingOnRetry { get; set; } = () => { };
 
         /// <summary>
         /// Exceptions of this type will be ignored and task will finish with success even if exceptions of this type occur
         /// </summary>
-        public TypeList MuteExceptions { get; } = new TypeList(2);
+        public TypeList MuteExceptions { get; } = new(2);
 
         /// <summary>
         /// Will always be invoked once on finish regardless of result
         /// </summary>
-        public Action Finally { get; set; }
+        public Action Finally { get; set; } = () => { };
 
-        internal RepeatMaxTriesPredicate RepeatMaxTriesPredicate { get; private set; }
-        internal RepeatTimeoutPredicate RepeatTimeoutPredicate { get; private set; }
+        internal RepeatMaxTriesPredicate? RepeatMaxTriesPredicate { get; private set; }
+        internal RepeatTimeoutPredicate? RepeatTimeoutPredicate { get; private set; }
     }
 }

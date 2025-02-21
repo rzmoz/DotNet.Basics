@@ -8,11 +8,11 @@ namespace DotNet.Basics.Win
     {
         private readonly int _tempDirLength = 16;
 
-        public TempDir(string dirPrefix = null)
+        public TempDir(string? dirPrefix = null)
             : this(GetTempDir(), dirPrefix)
         { }
 
-        public TempDir(DirPath parent, string dirPrefix = null)
+        public TempDir(DirPath parent, string? dirPrefix = null)
         {
             Prefix = dirPrefix == null ? string.Empty : dirPrefix.EnsureSuffix(".");
             Root = (parent ?? GetTempDir()).Add($"{Prefix}{TempName(_tempDirLength)}");
@@ -25,7 +25,7 @@ namespace DotNet.Basics.Win
 
         private static DirPath GetTempDir()
         {
-            return System.IO.Path.GetTempPath().ToDir();
+            return System.IO.Path.GetTempPath().ToDir()!;
         }
 
         public void Dispose()

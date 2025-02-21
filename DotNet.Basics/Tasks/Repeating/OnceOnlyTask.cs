@@ -5,8 +5,8 @@ namespace DotNet.Basics.Tasks.Repeating
 {
     public class OnceOnlyTask
     {
-        private Action _syncTask;
-        private Func<Task<int>> _asyncTask;
+        private Action _syncTask = () => { };
+        private Func<Task<int>> _asyncTask = () => Task.FromResult(-1);
 
         public OnceOnlyTask(Action task)
         {

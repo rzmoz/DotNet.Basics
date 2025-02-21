@@ -5,17 +5,11 @@ namespace DotNet.Basics.Tasks.Repeating
 {
     public class TypeList : List<Type>
     {
-        public TypeList()
-        {
-        }
+        public TypeList() { }
 
-        public TypeList(IEnumerable<Type> collection) : base(collection)
-        {
-        }
+        public TypeList(IEnumerable<Type> collection) : base(collection) { }
 
-        public TypeList(int capacity) : base(capacity)
-        {
-        }
+        public TypeList(int capacity) : base(capacity) { }
 
         public void Add<T>()
         {

@@ -9,7 +9,7 @@ namespace DotNet.Basics.Sys.Text
     {
         public override FilePath Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return reader.GetString().ToFile();
+            return reader.GetString()?.ToFile() ?? throw new ArgumentException($"Unable to get value from {nameof(reader)}"); ;
         }
 
         public override void Write(Utf8JsonWriter writer, FilePath value, JsonSerializerOptions options)
