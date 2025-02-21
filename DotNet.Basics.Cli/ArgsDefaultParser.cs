@@ -3,30 +3,32 @@ using System.Linq;
 
 namespace DotNet.Basics.Cli
 {
-    public class ArgsMsBuildStyleParser : IArgsParser
+    public class ArgsDefaultParser : IArgsParser
     {
         private static readonly char[] _flagIndicators = ['-', '/'];
 
         public ArgsDictionary Parse(params IEnumerable<string> args)
         {
-            var compiled = new Dictionary<string, List<string>>();
+            var compiled = new Dictionary<string, string?>();
 
             string? currentKey = null;
-            List<string> currentValue = new();
+            string? currentValue = null;
 
             foreach (var arg in args.Where(a => !string.IsNullOrEmpty(a)))
             {
+
+
                 if (_flagIndicators.Any(arg.StartsWith))//is flag
                 {
                     if (currentKey != null)
                         compiled.Add(currentKey, currentValue);
                     currentKey = TrimKey(arg);
-                    currentValue = new List<string>();
+                    currentValue = null;
                 }
                 else
                 {
                     if (currentKey != null)
-                        currentValue.Add(arg);
+                        currentValue = arg;
                 }
             }
             if (currentKey != null)
@@ -35,9 +37,10 @@ namespace DotNet.Basics.Cli
             return new ArgsDictionary(compiled, TrimKey);
         }
 
-        private string TrimKey(string key)
+        private string? TrimKey(string key)
         {
-            return key.TrimStart(_flagIndicators).ToLowerInvariant();
+            var trimmed = key.TrimStart(_flagIndicators).ToLowerInvariant();
+            return !string.IsNullOrEmpty(trimmed) ? trimmed : null;
         }
     }
 }

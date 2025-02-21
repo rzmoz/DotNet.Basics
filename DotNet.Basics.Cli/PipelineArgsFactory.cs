@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using DotNet.Basics.IO;
+using DotNet.Basics.Serilog.Looging;
 using DotNet.Basics.Sys;
-using DotNet.Basics.Sys.Text;
 
 namespace DotNet.Basics.Cli
 {
     public class PipelineArgsFactory
     {
-        public virtual object Create(Type pipelineType, ArgsDictionary args)
+        public virtual object Create(Type pipelineType, ArgsDictionary args, ILoog? log = null)
         {
             var argsPipelineType = pipelineType;
 
@@ -36,7 +36,14 @@ namespace DotNet.Basics.Cli
                         : prop.PropertyType;
 
                     var parser = GetParser(parserType!);
-                    prop.SetValue(argsObject, parser.Invoke(args[prop.Name]));
+                    try
+                    {
+                        prop.SetValue(argsObject, parser.Invoke(args[prop.Name]));
+                    }
+                    catch (FormatException e)
+                    {
+                        throw new FormatException($"Failed to parse arg for {prop.Name.Highlight()}. Value was: {args[prop.Name]?.Highlight()}");
+                    }
                 }
                 //assert mandatory properties = nullable and null
                 var underlyingType = Nullable.GetUnderlyingType(prop.PropertyType);
@@ -46,7 +53,7 @@ namespace DotNet.Basics.Cli
             if (mandatoryPropertiesNotSet.Any())
                 throw new MissingArgumentException(argsType, mandatoryPropertiesNotSet);
             if (unusedList.Any())//all provided arguments must be accepted by args object. Not all Setters must be provided
-                throw new ArgumentException($"Unknown arguments: {unusedList.ToJson()}");
+                throw new UnknownArgumentsException(unusedList);
 
 
             return argsObject;

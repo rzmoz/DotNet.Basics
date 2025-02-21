@@ -20,7 +20,7 @@ namespace DotNet.Basics.Cli
                 Console.ReadLine();
             }
 
-            var options = new CliHostBuilderOptions(args, argsParser ?? new ArgsMsBuildStyleParser());
+            var options = new CliHostBuilderOptions(args, argsParser ?? new ArgsDefaultParser());
             _configureOptions?.Invoke(options);
 
             if (options.WithSerilogDevConsole)

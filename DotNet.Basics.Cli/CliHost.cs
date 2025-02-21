@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using DotNet.Basics.Sys;
 
 namespace DotNet.Basics.Cli
 {
@@ -20,19 +21,31 @@ namespace DotNet.Basics.Cli
         {
             try
             {
+                logger ??= Options.GetService<ILoog>();
                 var argsFactory = pipelineArgsFactory ?? new PipelineArgsFactory();
-                var args = argsFactory.Create(typeof(T), Args);
+                var args = argsFactory.Create(typeof(T), Args, logger);
                 return await RunPipelineAsync<T>(args, logger);
             }
             catch (MissingArgumentException e)
             {
                 var log = Options.GetService<ILoog>()!;
-                log.Info(" ");
-                log.Fatal($"Missing arguments for {e.ArgsType.FullName?.Highlight() ?? e.ArgsType.Name.Highlight()}:");
+                log.Error(
+                    $"\r\nMissing argument(s): {e.ArgsType.FullName?.Highlight() ?? e.ArgsType.Name.Highlight()}");
                 foreach (var missingArg in e.MissingArgs)
-                {
-                    log.Error($"{missingArg.ArgType} {missingArg.ArgName.Highlight()} {{ get; set; }}");
-                }
+                    log.Error($" - {missingArg.ArgType} {missingArg.ArgName.Highlight()} {{ get; set; }}");
+                return 400;
+            }
+            catch (UnknownArgumentsException e)
+            {
+                var log = Options.GetService<ILoog>()!;
+                log.Error($"\r\nUnknown argument(s): {e.ArgNames.JoinString(", ").Highlight()}");
+                return 400;
+            }
+            catch (Exception e)
+            {
+                var log = Options.GetService<ILoog>()!;
+                log.Error($"\r\n{e.GetType().FullName}: {e.Message.Highlight()} ");
+                log.Verbose(string.Join(Environment.NewLine, _newlineRegex.Split(e.ToString()).Skip(1)));
                 return 400;
             }
         }
@@ -71,9 +84,8 @@ namespace DotNet.Basics.Cli
             }
             catch (Exception e)
             {
-                log.Info(" ");
-                log.Fatal($"{e.GetType().FullName}: {e.Message.Highlight()} ");
-                log.Error(string.Join(Environment.NewLine, _newlineRegex.Split(e.ToString()).Skip(1)));
+                log.Error($"\r\n{e.GetType().FullName}: {e.Message.Highlight()} ");
+                log.Verbose(string.Join(Environment.NewLine, _newlineRegex.Split(e.ToString()).Skip(1)));
 
                 var exitCodeProperty = e.GetType().GetProperty("ExitCode");
                 if (exitCodeProperty != null)

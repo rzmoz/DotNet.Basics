@@ -1,14 +1,13 @@
 ﻿using DotNet.Basics.Cli;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace DotNet.Basics.Tests.Cli
 {
-    public class ArgsMsBuildStyleParserTests(ITestOutputHelper output) : TestWithHelpers(output)
+    public class ArgsDefaultParserTests(ITestOutputHelper output) : TestWithHelpers(output)
     {
-        private readonly IArgsParser _argsParser = new ArgsMsBuildStyleParser();
+        private readonly IArgsParser _argsParser = new ArgsDefaultParser();
 
         [Theory]
         [InlineData("debug", "--debug", "-hello", "my", "world")]//detect flag without flag indicator
@@ -35,21 +34,13 @@ namespace DotNet.Basics.Tests.Cli
         }
 
         [Fact]
-        public void Parse_MultipleValues_MultiValuesAreSupport()
-        {
-            var key = "--myKey";
-            string[] args = [key, "1", "2", "3", "--anotherFlag"];
-            var dictionary = _argsParser.Parse(args);
-            dictionary.Get(key).Count.Should().Be(3);
-        }
-
-        [Fact]
         public void Parse_KeyValueStyle_ArgsAreParsed()
         {
             var key = "-/-//-//---/-/-/myKey";//annoyingly mixed flag indicator => no error
-            string[] args = [key, $"1|2|3", "--anotherFlag"];
+            var value = $"1|2|3";
+            string[] args = [key, value, "--anotherFlag"];
             var dictionary = _argsParser.Parse(args);
-            dictionary.Get(key).Count.Should().Be(1);
+            dictionary[key].Should().Be(value);
         }
 
     }
