@@ -62,7 +62,7 @@ namespace DotNet.Basics.Sys
             if (semVer == null)
                 return new SemVersion();
 
-            semVer = semVer.RemovePrefix("v", StringComparison.InvariantCultureIgnoreCase);
+            semVer = semVer.RemovePrefix("v");
             var lexer = new SemVersionLexer();
             var tokens = lexer.Lex(semVer);
             var major = int.Parse(tokens[0]);
