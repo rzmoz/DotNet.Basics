@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>netstandard2.1</TargetFramework>
 		<Description>Helpers and extensions for using serilog in with ADO and colored dev console sinks</Description>
 		<PackageProjectUrl />
 		<PackageLicenseUrl>

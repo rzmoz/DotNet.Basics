@@ -10,7 +10,7 @@ namespace DotNet.Basics.Serilog.Sinks
 {
     public class DevConsoleSink(bool isADO) : ILogEventSink
     {
-        private static readonly Lock _messageLock = new();
+        private static readonly object _messageLock = new();
 
         private readonly ITextFormatter _formatter = isADO ? new AdoPipelinesTextFormatter() : new ConsoleFormatter();
 
