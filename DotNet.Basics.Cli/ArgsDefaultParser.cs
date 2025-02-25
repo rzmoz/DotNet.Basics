@@ -40,7 +40,7 @@ namespace DotNet.Basics.Cli
             if (currentKey != null)
                 compiled.Add(new KeyValuePair<string, string?>(currentKey, currentValue));
 
-            return new ArgsDictionary(compiled, TrimKey);
+            return new ArgsDictionary(compiled, TrimKey, firstEntryIsVerb);
         }
 
         private string TrimKey(string key)

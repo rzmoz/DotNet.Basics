@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using DotNet.Basics.Serilog;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Events;
@@ -7,12 +8,16 @@ using Serilog;
 
 namespace DotNet.Basics.Cli
 {
-    public class CliHostBuilder(string[] args, Func<IServiceCollection>? serviceCollectionFactory = null, IArgsParser? argsParser = null)
+    public class CliHostBuilder(string[] args, IArgsParser argsParser, Func<IServiceCollection>? serviceCollectionFactory = null)
     {
         private Action<CliHostBuilderOptions, IServiceCollection>? _configureServices = (_, _) => { };
         private Action<CliHostBuilderOptions>? _configureOptions = _ => { };
         private Action<CliHostBuilderOptions, LoggerConfiguration>? _configureSerilog = (_, _) => { };
-        public CliHost Build(bool firstEntryIsVerb)
+
+        public CliHostBuilder(string[] args, bool firstEntryIsVerb, Func<IServiceCollection>? serviceCollectionFactory = null)
+        : this(args, new ArgsDefaultParser(firstEntryIsVerb), serviceCollectionFactory)
+        { }
+        public CliHost Build()
         {
             if (args.Any(a => a.Contains("-debug", StringComparison.OrdinalIgnoreCase)))
             {
@@ -20,7 +25,7 @@ namespace DotNet.Basics.Cli
                 Console.ReadLine();
             }
 
-            var options = new CliHostBuilderOptions(args, argsParser ?? new ArgsDefaultParser(firstEntryIsVerb));
+            var options = new CliHostBuilderOptions(argsParser.Parse(args));
             _configureOptions?.Invoke(options);
 
             if (options.WithSerilogDevConsole)
