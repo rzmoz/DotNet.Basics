@@ -12,7 +12,7 @@ namespace DotNet.Basics.Cli
         private Action<CliHostBuilderOptions, IServiceCollection>? _configureServices = (_, _) => { };
         private Action<CliHostBuilderOptions>? _configureOptions = _ => { };
         private Action<CliHostBuilderOptions, LoggerConfiguration>? _configureSerilog = (_, _) => { };
-        public CliHost Build()
+        public CliHost Build(bool firstEntryIsVerb)
         {
             if (args.Any(a => a.Contains("-debug", StringComparison.OrdinalIgnoreCase)))
             {
@@ -20,7 +20,7 @@ namespace DotNet.Basics.Cli
                 Console.ReadLine();
             }
 
-            var options = new CliHostBuilderOptions(args, argsParser ?? new ArgsDefaultParser());
+            var options = new CliHostBuilderOptions(args, argsParser ?? new ArgsDefaultParser(firstEntryIsVerb));
             _configureOptions?.Invoke(options);
 
             if (options.WithSerilogDevConsole)

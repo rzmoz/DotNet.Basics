@@ -6,28 +6,28 @@ using System.Linq;
 
 namespace DotNet.Basics.Cli
 {
-    public class ArgsDictionary(IDictionary<string, string?> args, Func<string, string> keyTrimmer) : IReadOnlyDictionary<string, string?>
+    public class ArgsDictionary(IReadOnlyList<KeyValuePair<string, string?>> args, Func<string, string> keyTrimmer) : IReadOnlyDictionary<string, string?>
     {
         public bool Verbose { get; } = HasFlag(nameof(Verbose), keyTrimmer, args);
         public bool ADO { get; } = HasFlag(nameof(ADO), keyTrimmer, args);
         public bool Debug { get; } = HasFlag(nameof(Debug), keyTrimmer, args);
 
-        private readonly IReadOnlyDictionary<string, string?> _args = Compile(args, keyTrimmer);
+        private readonly OrderedDictionary<string, string?> _args = Compile(args, keyTrimmer);
 
         public bool TryGetValue(string key, [MaybeNullWhen(false)] out string value)
         {
-            throw new NotImplementedException();
+            return _args.TryGetValue(key, out value);
         }
+
+        public string? this[int index] => _args.GetAt(index).Value;
 
         public string? this[string key] => _args[keyTrimmer(key)];
         public IEnumerable<string> Keys => _args.Keys;
         public IEnumerable<string?> Values => _args.Values;
         public bool ContainsKey(string key) => _args.ContainsKey(keyTrimmer(key));
-        private static IReadOnlyDictionary<string, string?> Compile(IDictionary<string, string?> args, Func<string, string> keyTrimmer)
+        private static OrderedDictionary<string, string?> Compile(IReadOnlyList<KeyValuePair<string, string?>> args, Func<string, string> keyTrimmer)
         {
-            return args
-                .Where(a => !IsReservedFlag(a.Key, keyTrimmer))
-                .ToDictionary(a => keyTrimmer(a.Key), a => a.Value);
+            return new(args.Where(a => !IsReservedFlag(a.Key, keyTrimmer)));
         }
         private static bool IsReservedFlag(string key, Func<string, string> keyTrimmer)
         {
@@ -35,7 +35,7 @@ namespace DotNet.Basics.Cli
                    keyTrimmer(key).Equals(nameof(ADO), StringComparison.OrdinalIgnoreCase) ||
                    keyTrimmer(key).Equals(nameof(Debug), StringComparison.OrdinalIgnoreCase);
         }
-        private static bool HasFlag(string flag, Func<string, string?> keyTrimmer, IDictionary<string, string?> args)
+        private static bool HasFlag(string flag, Func<string, string?> keyTrimmer, IReadOnlyList<KeyValuePair<string, string?>> args)
         {
             return args.Any(a => keyTrimmer(a.Key)?.Equals(flag, StringComparison.OrdinalIgnoreCase) ?? false);
         }
@@ -50,6 +50,6 @@ namespace DotNet.Basics.Cli
             return GetEnumerator();
         }
 
-        public int Count =>_args.Count;
+        public int Count => _args.Count;
     }
 }

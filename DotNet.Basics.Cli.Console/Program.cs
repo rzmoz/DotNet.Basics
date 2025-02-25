@@ -10,7 +10,7 @@ namespace DotNet.Basics.Cli.Console
                 .WithServices(services =>
                 {
                     services.AddPipelines();
-                }).Build();
+                }).Build(false);
 
             return await host.RunPipelineAsync<TestPipeline>();
         }
