@@ -76,13 +76,14 @@ namespace DotNet.Basics.Tests.Sys
         }
 
         [Fact]
-        public void JoinString_PrintContent_MakingDebugStringsEasierToRead()
+        public void JoinString_Fluent_MakingItEasierToJoiningStringsSyntax()
         {
             var source = new[] { 0, 1, 2, 3 };
 
-            var joinString = source.Select(i => i.ToString()).JoinString();
-
-            joinString.Should().Be("0|1|2|3");
+            var pipedString = source.Select(i => i.ToString()).JoinString("|");
+            pipedString.Should().Be("0|1|2|3");
+            var justString = source.Select(i => i.ToString()).JoinString();
+            justString.Should().Be("0123");
         }
         [Theory]
         [InlineData("BobsYourUncle", "elcnUruoYsboB")]
