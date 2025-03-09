@@ -17,21 +17,9 @@ namespace DotNet.Basics.Tests.Collections
         readonly string[] _all = [_elementSomething, _elementElse];
 
         [Fact]
-        public void Concat_WithSingleElement_EnumerableIsConcatenated()
-        {
-            var range = 7;
-            var series = Enumerable.Range(1, range).ToList();
-
-            var concatenatedSingleElementLast = series.Concat(6);
-            var concatenatedSingleElementFirst = 456.Concat(series);
-
-            concatenatedSingleElementFirst.Count().Should().Be(range + 1);
-            concatenatedSingleElementLast.Count().Should().Be(range + 1);
-        }
-        [Fact]
         public void None_EmptyList_NoneFound()
         {
-            var ints = new int[0];
+            int[] ints = [];
 
             ints.None().Should().BeTrue();
             ints.None(i => i == 0).Should().BeTrue();

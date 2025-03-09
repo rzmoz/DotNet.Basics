@@ -9,15 +9,6 @@ namespace DotNet.Basics.Collections
 {
     public static class EnumerableStringExtensions
     {
-        public static IEnumerable<T> Concat<T>(this T add, IEnumerable<T> source)
-        {
-            return source.Concat(add.ToEnumerable());
-        }
-        public static IEnumerable<T> Concat<T>(this IEnumerable<T> source, T add)
-        {
-            return source.Concat(add.ToEnumerable());
-        }
-
         public static bool None<TSource>(this IEnumerable<TSource> source)
         {
             return source.Any() == false;
@@ -107,10 +98,10 @@ namespace DotNet.Basics.Collections
             }
             return results;
         }
-        
-        public static IEnumerable<T> ToEnumerable<T>(this T t)
+
+        public static IEnumerable<T> Append<T>(this IEnumerable<T> t, IEnumerable<T> append)
         {
-            yield return t;
+            return [.. t, .. append];
         }
 
         public static IEnumerable<string> Whitelist(this IEnumerable<string> all, Regex regex)
