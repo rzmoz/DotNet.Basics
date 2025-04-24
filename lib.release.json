@@ -2,7 +2,7 @@
   "releases": [
     {
       "name": "DotNet.Basics",
-      "version": "11.7.4",
+      "version": "11.7.6",
       "prerelease": ""
     },
     {
@@ -12,12 +12,12 @@
     },
     {
       "name": "DotNet.Basics.Pipelines",
-      "version": "11.7.0",
+      "version": "11.7.2",
       "prerelease": ""
     },
     {
       "name": "DotNet.Basics.Serilog",
-      "version": "11.7.2",
+      "version": "11.7.4",
       "prerelease": ""
     }
   ],
