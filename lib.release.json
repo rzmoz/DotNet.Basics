@@ -2,22 +2,17 @@
   "releases": [
     {
       "name": "DotNet.Basics",
-      "version": "11.7.6",
+      "version": "12.0.0",
+      "prerelease": ""
+    },    
+    {
+      "name": "DotNet.Basics.Pipelines",
+      "version": "12.0.0",
       "prerelease": ""
     },
     {
       "name": "DotNet.Basics.Cli",
-      "version": "11.7.9",
-      "prerelease": ""
-    },
-    {
-      "name": "DotNet.Basics.Pipelines",
-      "version": "11.7.2",
-      "prerelease": ""
-    },
-    {
-      "name": "DotNet.Basics.Serilog",
-      "version": "11.7.4",
+      "version": "12.0.0",
       "prerelease": ""
     }
   ],

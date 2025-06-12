@@ -1,6 +1,7 @@
 ﻿using DotNet.Basics.Sys;
 using System;
 using System.IO;
+using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Win
 {
@@ -15,7 +16,7 @@ namespace DotNet.Basics.Win
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static RobocopyStatus Run(string source, string target, string? filesToCopy = null, string? options = " /NS /NC /NFL /NDL /NP", CmdPromptLogger? logger = null)
+        public static RobocopyStatus Run(string source, string target, string? filesToCopy = null, string? options = " /NS /NC /NFL /NDL /NP", ILogger? logger = null)
         {
             if (source == null) { throw new ArgumentNullException(nameof(source)); }
             if (target == null) { throw new ArgumentNullException(nameof(target)); }
@@ -33,7 +34,7 @@ namespace DotNet.Basics.Win
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static RobocopyStatus CopyFile(string sourceDir, string targetDir, string sourceFileName, string? extraOptions = null, CmdPromptLogger? logger = null)
+        public static RobocopyStatus CopyFile(string sourceDir, string targetDir, string sourceFileName, string? extraOptions = null, ILogger? logger = null)
         {
             if (sourceFileName == null) throw new ArgumentNullException(nameof(sourceFileName));
             if (targetDir == null) throw new ArgumentNullException(nameof(targetDir));
@@ -46,7 +47,7 @@ namespace DotNet.Basics.Win
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static RobocopyStatus CopyDir(string sourceDir, string targetDir, bool includeSubFolders = false, string? extraOptions = null, CmdPromptLogger? logger = null)
+        public static RobocopyStatus CopyDir(string sourceDir, string targetDir, bool includeSubFolders = false, string? extraOptions = null, ILogger? logger = null)
         {
             var options = string.Empty;
             if (includeSubFolders)
@@ -56,7 +57,7 @@ namespace DotNet.Basics.Win
             return Run(sourceDir, targetDir, null, options, logger);
         }
 
-        public static RobocopyStatus MoveFolder(string sourceDir, string targetDir, string? filter = null, bool includeSubFolders = false, string? extraOptions = null, CmdPromptLogger? logger = null)
+        public static RobocopyStatus MoveFolder(string sourceDir, string targetDir, string? filter = null, bool includeSubFolders = false, string? extraOptions = null, ILogger? logger = null)
         {
             string options = $"{_moveOption} {extraOptions}";
             if (includeSubFolders)
@@ -70,7 +71,7 @@ namespace DotNet.Basics.Win
         /// http://ss64.com/nt/robocopy-exit.html
         /// </summary>
         /// <returns>http://ss64.com/nt/robocopy-exit.html</returns>
-        public static RobocopyStatus MoveContent(string sourceDir, string targetDir, string? filter = null, bool includeSubFolders = false, string? extraOptions = null, CmdPromptLogger? logger = null)
+        public static RobocopyStatus MoveContent(string sourceDir, string targetDir, string? filter = null, bool includeSubFolders = false, string? extraOptions = null, ILogger? logger = null)
         {
             var result = MoveFolder(sourceDir, targetDir, filter, includeSubFolders, extraOptions, logger);
             Directory.CreateDirectory(sourceDir);

@@ -1,18 +1,13 @@
 ﻿using DotNet.Basics.Sys;
-using System;
+using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Win
 {
     public static class CmdPrompt
     {
-        public static int Run(string commandString, CmdPromptLogger? logger)
+        public static int Run(string commandString, ILogger? logger = null)
         {
-            return Run(commandString, logger?.WriteOutput, logger?.WriteError, logger?.WriteDebug);
-        }
-
-        public static int Run(string commandString, Action<string>? writeOutput = null, Action<string>? writeError = null, Action<string>? writeDebug = null)
-        {
-            return ExternalProcess.Run("cmd.exe", $"/c {commandString}", writeOutput, writeError, writeDebug);
+            return ExternalProcess.Run("cmd.exe", $"/c {commandString}", logger);
         }
     }
 }

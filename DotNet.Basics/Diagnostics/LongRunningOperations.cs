@@ -15,21 +15,21 @@ namespace DotNet.Basics.Diagnostics
         private readonly Timer _timer;
 
         public LongRunningOperations(ILogger? loog)
-        : this(loog, TimeSpan.FromMinutes(1))
+        : this(loog, new LongRunningOperationsOptions())
         { }
-        public LongRunningOperations(ILogger? loog, TimeSpan pingInterval)
+        public LongRunningOperations(ILogger? loog, LongRunningOperationsOptions o)
         {
             _loog = loog;
-            if (pingInterval <= TimeSpan.Zero)
-                throw new ArgumentOutOfRangeException(nameof(pingInterval), "Must be bigger than 0");
+            if (o.PingInterval <= TimeSpan.Zero)
+                throw new ArgumentOutOfRangeException(nameof(o.PingInterval), "Must be bigger than 0");
 
-            _timer = new Timer(pingInterval.TotalMilliseconds)
+            _timer = new Timer(o.PingInterval.TotalMilliseconds)
             {
                 AutoReset = true,
                 Enabled = true
             };
             _timer.Elapsed += _timer_Elapsed;
-            _loog?.Trace("Long running operations initialized with ping interval: {}", pingInterval.Humanize());
+            _loog?.Trace("Long running operations initialized with ping interval: {}", o.PingInterval.Humanize());
         }
 
         private void _timer_Elapsed(object? sender, ElapsedEventArgs e)

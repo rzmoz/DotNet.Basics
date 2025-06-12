@@ -6,7 +6,7 @@ namespace DotNet.Basics.Cli.Console
     {
         static async Task<int> Main(string[] args)
         {
-            await using var host = new CliHostBuilder(args, false)
+            var host = new CliHostBuilder(args, false)
                 .WithServices(services =>
                 {
                     services.AddPipelines();

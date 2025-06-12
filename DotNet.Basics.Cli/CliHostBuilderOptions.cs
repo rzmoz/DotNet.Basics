@@ -4,6 +4,6 @@
     {
         public int FatalExitCode { get; set; } = 500;
         public ArgsDictionary Args { get; } = args;
-        public bool WithSerilogDevConsole { get; set; } = true;
+        public bool WithDevColoredConsole { get; set; } = true;
     }
 }

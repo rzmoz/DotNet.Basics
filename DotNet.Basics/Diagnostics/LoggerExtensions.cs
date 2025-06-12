@@ -1,10 +1,9 @@
 ﻿using System;
-using Humanizer;
 using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Diagnostics
 {
-    public static class LoggerExtensions
+    public static partial class LoggerExtensions
     {
         private static readonly EventId _emptyEventId = new EventId(0);
 
@@ -382,6 +381,97 @@ namespace DotNet.Basics.Diagnostics
         /// <param name="log"></param>
         /// <param name="msg"></param>
         /// <param name="e"></param>
+        public static void Success(this ILogger log, string msg, Exception? e = null)
+        {
+            Info(log, msg.Success(), e);
+        }
+        /// <summary>
+        /// High performance logging: https://learn.microsoft.com/en-us/dotnet/core/extensions/high-performance-logging
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="log"></param>
+        /// <param name="template"></param>
+        /// <param name="arg1"></param>
+        /// <param name="e"></param>
+        public static void Success<T>(this ILogger log, string template, T arg1, Exception? e = null)
+        {
+            Info(log, template.Success(), arg1, e);
+        }
+        /// <summary>
+        /// High performance logging: https://learn.microsoft.com/en-us/dotnet/core/extensions/high-performance-logging
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <typeparam name="T2"></typeparam>
+        /// <param name="log"></param>
+        /// <param name="template"></param>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        /// <param name="e"></param>
+        public static void Success<T1, T2>(this ILogger log, string template, T1 arg1, T2 arg2, Exception? e = null)
+        {
+            Info(log, template.Success(), arg1, arg2, e);
+        }
+        /// <summary>
+        /// High performance logging: https://learn.microsoft.com/en-us/dotnet/core/extensions/high-performance-logging
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <typeparam name="T2"></typeparam>
+        /// <typeparam name="T3"></typeparam>
+        /// <param name="log"></param>
+        /// <param name="template"></param>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        /// <param name="arg3"></param>
+        /// <param name="e"></param>
+        public static void Success<T1, T2, T3>(this ILogger log, string template, T1 arg1, T2 arg2, T3 arg3, Exception? e = null)
+        {
+            Info(log, template.Success(), arg1, arg2, arg3, e);
+        }
+        /// <summary>
+        /// High performance logging: https://learn.microsoft.com/en-us/dotnet/core/extensions/high-performance-logging
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <typeparam name="T2"></typeparam>
+        /// <typeparam name="T3"></typeparam>
+        /// <typeparam name="T4"></typeparam>
+        /// <param name="log"></param>
+        /// <param name="template"></param>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        /// <param name="arg3"></param>
+        /// <param name="arg4"></param>
+        /// <param name="e"></param>
+        public static void Success<T1, T2, T3, T4>(this ILogger log, string template, T1 arg1, T2 arg2, T3 arg3, T4 arg4, Exception? e = null)
+        {
+            Info(log, template.Success(), arg1, arg2, arg3, arg4, e);
+        }
+        /// <summary>
+        /// High performance logging: https://learn.microsoft.com/en-us/dotnet/core/extensions/high-performance-logging
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <typeparam name="T2"></typeparam>
+        /// <typeparam name="T3"></typeparam>
+        /// <typeparam name="T4"></typeparam>
+        /// <typeparam name="T5"></typeparam>
+        /// <param name="log"></param>
+        /// <param name="template"></param>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        /// <param name="arg3"></param>
+        /// <param name="arg4"></param>
+        /// <param name="arg5"></param>
+        /// <param name="e"></param>
+        public static void Success<T1, T2, T3, T4, T5>(this ILogger log, string template, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, Exception? e = null)
+        {
+            Info(log, template.Success(), arg1, arg2, arg3, arg4, arg5, e);
+        }
+
+        /// <summary>
+        /// High performance logging: https://learn.microsoft.com/en-us/dotnet/core/extensions/high-performance-logging
+        /// </summary>
+        /// <param name="log"></param>
+        /// <param name="msg"></param>
+        /// <param name="e"></param>
         public static void Warn(this ILogger log, string msg, Exception? e = null)
         {
             LoggerMessage.Define(LogLevel.Warning, _emptyEventId, msg).Invoke(log, e);
@@ -654,10 +744,9 @@ namespace DotNet.Basics.Diagnostics
             log.Timing(level, name, @event, TimeSpan.MinValue);
         }
 
-        public static void Timing(this ILogger log, LogLevel level, string name, string @event, TimeSpan elapsed, Exception? e = null)
-        {
-            LoggerMessage.Define<string, string, string>(level, _emptyEventId, "{name}: {@event} [{duration}]").Invoke(log, name, @event, elapsed.Humanize(), e);
-        }
+        [LoggerMessage(Message = "{name}: {@event} [{elapsed}]")]
+        public static partial void Timing(this ILogger log, LogLevel level, string name, string @event, TimeSpan elapsed, Exception? e = null);
+
     }
 }
 

@@ -1,16 +1,17 @@
-﻿using System;
+﻿using DotNet.Basics.IO;
+using DotNet.Basics.Sys;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using DotNet.Basics.IO;
-using DotNet.Basics.Serilog.Looging;
-using DotNet.Basics.Sys;
+using DotNet.Basics.Diagnostics;
 
 namespace DotNet.Basics.Cli
 {
     public class PipelineArgsFactory
     {
-        public virtual object Create(Type pipelineType, ArgsDictionary args, ILoog? log = null)
+        public virtual object Create(Type pipelineType, ArgsDictionary args, ILogger? log = null)
         {
             var argsPipelineType = pipelineType;
 

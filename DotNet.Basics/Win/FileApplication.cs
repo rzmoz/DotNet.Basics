@@ -3,6 +3,7 @@ using DotNet.Basics.Sys;
 using System.Collections.Generic;
 using System.IO;
 using System;
+using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Win
 {
@@ -19,12 +20,7 @@ namespace DotNet.Basics.Win
 
         public DirPath InstallDir { get; } = installDir ?? throw new ArgumentNullException(nameof(installDir));
 
-        public int RunFromCmd(string fileName, IEnumerable<string> args, CmdPromptLogger? logger = null)
-        {
-            return RunFromCmd(fileName, args, logger?.WriteOutput, logger?.WriteError, logger?.WriteDebug);
-        }
-
-        public int RunFromCmd(string fileName, IEnumerable<string> args, Action<string>? writeOutput = null, Action<string>? writeError = null, Action<string>? writeDebug = null)
+        public int RunFromCmd(string fileName, IEnumerable<string> args, ILogger? logger = null)
         {
             Install();
             var argString = args.JoinString(" ");
@@ -33,7 +29,7 @@ namespace DotNet.Basics.Win
             if (file.Exists() == false)
                 throw new FileNotFoundException(file.FullName);
 
-            return CmdPrompt.Run($"{file.FullName} {argString}", writeOutput, writeError, writeDebug);
+            return CmdPrompt.Run($"{file.FullName} {argString}", logger);
         }
 
         public FileApplication WithStream<T>(string fileName, Action<FilePath>? postInstallAction = null)

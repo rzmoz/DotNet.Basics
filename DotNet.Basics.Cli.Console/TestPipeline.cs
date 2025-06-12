@@ -1,13 +1,14 @@
 ﻿using DotNet.Basics.Pipelines;
-using DotNet.Basics.Serilog.Looging;
+using Microsoft.Extensions.Logging;
+using LoggerExtensions = DotNet.Basics.Diagnostics.LoggerExtensions;
 
 namespace DotNet.Basics.Cli.Console
 {
     public class TestPipeline : Pipeline<TestPipelineArgs>
     {
-        private readonly ILoog _log;
+        private readonly ILogger _log;
 
-        public TestPipeline(ILoog log, IServiceProvider services) : base(services)
+        public TestPipeline(ILogger log, IServiceProvider services) : base(services)
         {
             _log = log;
             AddStep<TestPipelineStep>();
@@ -16,8 +17,7 @@ namespace DotNet.Basics.Cli.Console
 
         public Task<int> ExitCodeStep(TestPipelineArgs args)
         {
-            var promptLogger = _log.WithPromptLogger();
-            promptLogger.WriteError.Invoke($"Hello World from {"PromptLogger".Highlight()}!");
+            LoggerExtensions.Info(_log, "Hello World from {}!", nameof(TestPipeline));
             return Task.FromResult(0);
         }
     }

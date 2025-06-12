@@ -1,17 +1,14 @@
-﻿using DotNet.Basics.Win;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using DotNet.Basics.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Sys
 {
     public static class ExternalProcess
     {
-        public static int Run(string path, object? args = null, CmdPromptLogger? logger = null)
-        {
-            return Run(path, args?.ToString() ?? string.Empty, logger?.WriteOutput, logger?.WriteError, logger?.WriteDebug);
-        }
-        public static int Run(string path, string args, Action<string>? writeOutput, Action<string>? writeError, Action<string>? writeDebug)
+        public static int Run(string path, string args, ILogger? logger = null)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
             var si = new ProcessStartInfo(path, args)
@@ -29,26 +26,27 @@ namespace DotNet.Basics.Sys
 
                 process.OutputDataReceived += (_, data) =>
                 {
-                    if (data.Data != null) { writeOutput?.Invoke(data.Data); }
+                    if (data.Data != null) { logger?.Info(data.Data); }
                 };
 
                 process.ErrorDataReceived += (_, data) =>
                 {
-                    if (data.Data != null) { writeError?.Invoke(data.Data); }
+                    if (data.Data != null) { logger?.Error(data.Data); }
                 };
 
                 process.Start();
-                writeDebug?.Invoke($"[{process.Id}] Process <{process.ProcessName}> starting: {path} {args}");
+                logger?.Debug("[{processId}] Process <{ProcessName}> starting: {path} {args}", process.Id, process.ProcessName, path, args);
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
                 process.WaitForExit();
-                writeDebug?.Invoke($"[{process.Id}] Process <{process.ProcessName}> Exit Code: {process.ExitCode}");
+                logger?.Debug("[{processId}] Process <{processName}> Exit Code: {exitCode}", process.Id, process.ProcessName, process.ExitCode);
 
                 return process.ExitCode;
             }
             catch (Win32Exception e)
             {
-                throw new Win32Exception($"Failed to start process: {path} {args}", e);
+                logger?.Error("Failed to start process: {path} {args}", path, args, e);
+                throw;
             }
         }
     }

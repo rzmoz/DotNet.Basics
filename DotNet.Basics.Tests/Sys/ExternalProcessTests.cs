@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.IO;
 using DotNet.Basics.Sys;
 
 using FluentAssertions;
@@ -19,7 +18,7 @@ namespace DotNet.Basics.Tests.Sys
         {
             ArrangeActAssertPaths(testDir =>
              {
-                 Action act = () => ExternalProcess.Run(testDir.RawPath);
+                 Action act = () => ExternalProcess.Run(testDir.RawPath, string.Empty);
 
                  act.Should().Throw<Win32Exception>();
              });
