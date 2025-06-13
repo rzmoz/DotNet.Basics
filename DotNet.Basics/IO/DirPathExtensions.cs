@@ -10,6 +10,15 @@ namespace DotNet.Basics.IO
 {
     public static class DirPathExtensions
     {
+        public static DirPath Add(this DirPath dp, DirPath subPath)
+        {
+            return dp.Add(subPath.Segments.ToArray());
+        }
+        public static DirPath Add(this DirPath dp, params string[] subPath)
+        {
+            return dp.ToDir(subPath);
+        }
+
         public static bool IsEmpty(this DirPath dp)
         {
             return dp.Exists() && dp.EnumeratePaths().None();

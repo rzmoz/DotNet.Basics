@@ -11,16 +11,17 @@ namespace DotNet.Basics.IO
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="path"></param>
         /// <param name="segments">Segments this path "belongs" to.</param>
         /// <example>PathInfo("c:\my\dir\").Contains("dir","my") is true</example>
         /// <example>PathInfo("c:\my\dir\").Contains() is false</example>
         /// <returns></returns>
-        public static bool Contains(this PathInfo pi, params string[] segments)
+        public static bool Contains(this PathInfo path, params string[] segments)
         {
             if (segments.Length == 0)
                 return false;
 
-            var fullName = pi.FullName.Replace('/', '\\');
+            var fullName = path.FullName.Replace('/', '\\');
 
             foreach (var segment in segments.Select(s => s.Replace('/', '\\')))
             {

@@ -106,15 +106,6 @@ namespace DotNet.Basics.Tests.Sys
             altPi.RawPath.Should().Be(pi.RawPath);
         }
 
-        [Fact]
-        public void Add_Immutable_AddShouldBeImmutable()
-        {
-            const string path = "root";
-            var root = path.ToPath();
-            root.Add("sazas"); //no change to original path
-            root.RawPath.Should().Be(path);
-        }
-
         [Theory]
         [InlineData("SomeDir/MyFile.txt", "MyFile.txt")] //has extension
         [InlineData("SomeDir/MyFile", "MyFile")] //no extension
@@ -172,39 +163,6 @@ namespace DotNet.Basics.Tests.Sys
 
             var found = path.Parent?.RawPath;
             found.Should().Be(expectedParent, folder);
-        }
-
-        [Theory]
-        [InlineData("myFolder/", "dir/", PathType.Dir)] //backslash all dirs
-        [InlineData("myFolder/", "file.txt", PathType.Dir)] //backslash dir remains when file added
-        [InlineData("myfile", "dir//", PathType.File)] //slash file remains when dir added - should throw exception?
-        [InlineData("myfile.txt", "file.txt",
-            PathType.File)] //slash file remains when dir added - should throw exception?
-        public void Add_KeepIsFolder_IsFolderIsUnchangedRegardlessOfSegmentsAdded(string root, string newSegment,
-            PathType pathType)
-        {
-            var path = root.ToPath();
-
-            //assert before add
-            path.PathType.Should().Be(pathType);
-
-            //act
-            path = path.Add(newSegment);
-
-            //assert
-            path.PathType.Should().Be(pathType);
-        }
-
-        [Theory]
-        [InlineData("myFolder", "")] //empty
-        [InlineData("myFolder", null)] //null
-        [InlineData("myFolder", "  ")] //spaces
-        public void Add_EmptySegments_PathIsUnchanged(string root, string newSegment)
-        {
-            var path = root.ToPath().Add(newSegment);
-
-            //assert
-            path.RawPath.Should().Be(root);
         }
 
         [Theory]

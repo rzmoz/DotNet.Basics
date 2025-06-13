@@ -64,6 +64,27 @@ namespace DotNet.Basics.Tests.Sys
             dir.RawPath.Should().Be(_path + $"/{_segment }");
         }
 
+
+        [Fact]
+        public void Add_Immutable_AddShouldBeImmutable()
+        {
+            const string path = "root";
+            var root = path.ToDir();
+            root.Add("sazas"); //no change to original path
+            root.RawPath.Should().Be(path);
+        }
+        [Theory]
+        [InlineData("myFolder", "")] //empty
+        [InlineData("myFolder", null)] //null
+        [InlineData("myFolder", "  ")] //spaces
+        public void Add_EmptySegments_PathIsUnchanged(string root, string newSegment)
+        {
+            var path = root.ToDir().Add(newSegment);
+
+            //assert
+            path.RawPath.Should().Be(root);
+        }
+
         [Fact]
         public void ToDir_Create_DirIsCreated()
         {

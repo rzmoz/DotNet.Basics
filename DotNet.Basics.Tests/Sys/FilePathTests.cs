@@ -50,16 +50,7 @@ namespace DotNet.Basics.Tests.Sys
             var obj = JsonConvert.DeserializeObject<FilePathTests>($"{{'{nameof(FilePath)}':'{fileStr}'}}");
             obj.FilePath.RawPath.Should().Be(fileStr);
         }
-
-        [Fact]
-        public void Add_File_SameTypeIsReturned()
-        {
-            var dir = _path.ToFile().Add(_segment);
-
-            dir.Should().BeOfType<FilePath>();
-            dir.RawPath.Should().Be(_path + $"/{_segment }");
-        }
-
+        
         [Fact]
         public void ToFile_Create_FileIsCreated()
         {

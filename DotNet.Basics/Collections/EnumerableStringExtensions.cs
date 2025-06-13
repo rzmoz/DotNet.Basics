@@ -26,7 +26,7 @@ namespace DotNet.Basics.Collections
         public static ICollection<T> ForEachParallel<T>(this IEnumerable<T> col, Action<T> forEachAction)
         {
             if (forEachAction == null) throw new ArgumentNullException(nameof(forEachAction));
-            var list = col.ToList();
+            var list = col.ToArray();
             Parallel.ForEach(list, forEachAction);
             return list;
         }
@@ -34,16 +34,14 @@ namespace DotNet.Basics.Collections
         {
             if (forEachFunc == null) throw new ArgumentNullException(nameof(forEachFunc));
             var results = new ConcurrentStack<TK>();
-            Parallel.ForEach(col, item => results.Push(forEachFunc.Invoke(item)));
+            col.ForEachParallel(item => results.Push(forEachFunc.Invoke(item)));
             return results.ToList();
         }
 
-        public static async Task<ICollection<T>> ForEachParallelAsync<T>(this IEnumerable<T> col, Func<T, Task> forEachAction)
+        public static async Task<ICollection<T>> ForEachParallelAsync<T>(this IEnumerable<T> col, Func<T, Task> forFuncAsync)
         {
             var list = col.ToList();
-            if (forEachAction == null)
-                return list;
-            await Task.WhenAll(list.Select(forEachAction)).ConfigureAwait(false);
+            await Task.WhenAll(list.Select(forFuncAsync)).ConfigureAwait(false);
             return list;
         }
 
@@ -66,12 +64,7 @@ namespace DotNet.Basics.Collections
         public static ICollection<TK> ForEach<T, TK>(this IEnumerable<T> col, Func<T, TK> forEachFunc)
         {
             if (forEachFunc == null) throw new ArgumentNullException(nameof(forEachFunc));
-
-            var results = new List<TK>();
-
-            foreach (var item in col)
-                results.Add(forEachFunc.Invoke(item));
-            return results;
+            return col.Select(forEachFunc.Invoke).ToList();
         }
 
         public static async Task<ICollection<T>> ForEachAsync<T>(this IEnumerable<T> col, Func<T, Task> forEachAction)

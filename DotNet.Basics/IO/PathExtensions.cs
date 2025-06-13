@@ -41,11 +41,5 @@ namespace DotNet.Basics.IO
         {
             return ToPath(pi.RawPath, pathType, segments);
         }
-
-        //Common
-        public static T Add<T>(this T pi, params string[] segments) where T : PathInfo
-        {
-            return (pi.RawPath.ToPath(pi.PathType, segments) as T)!;
-        }
     }
 }
