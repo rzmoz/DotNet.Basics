@@ -70,22 +70,28 @@ namespace DotNet.Basics.Cli
 
         public async Task<int> RunPipelineAsync(ManagedTask managedTask, object args)
         {
-            return await RunAsync(managedTask.Name, () => managedTask.RunAsync(args));
+            return await RunLongRunningOperationAsync(managedTask.Name, () => managedTask.RunAsync(args));
         }
-        public async Task<int> RunAsync(string operationName, Func<Task<int>> loogContext)
+
+        public async Task<int> RunLongRunningOperationAsync(string operationName, Func<Task<int>> operation)
         {
-            var log = Options.GetService<ILogger>();
             var longRunningOperations = Options.GetService<LongRunningOperations>();
+            return await RunAsync(async logger => await longRunningOperations.StartAsync(operationName, operation.Invoke));
+        }
+
+        public async Task<int> RunAsync(Func<ILogger, Task<int>> operation)
+        {
+            var logger = Options.GetService<ILogger>();
             var exitCode = Options.FatalExitCode;
 
             try
             {
-                exitCode = await longRunningOperations.StartAsync(operationName, loogContext.Invoke);
+                exitCode = await operation.Invoke(logger);
             }
             catch (Exception e)
             {
-                log.Error($"\r\n{e.GetType().FullName}: {e.Message.Highlight()} ");
-                log.Trace(string.Join(Environment.NewLine, _newlineRegex.Split(e.ToString()).Skip(1)));
+                logger.Error($"\r\n{e.GetType().FullName}: {e.Message.Highlight()} ");
+                logger.Trace(string.Join(Environment.NewLine, _newlineRegex.Split(e.ToString()).Skip(1)));
 
                 var exitCodeProperty = e.GetType().GetProperty("ExitCode");
                 if (exitCodeProperty != null)
@@ -99,7 +105,7 @@ namespace DotNet.Basics.Cli
             }
             finally
             {
-                log.Debug($"Exit code: {exitCode.ToString().Highlight()}");
+                logger.Debug($"Exit code: {exitCode.ToString().Highlight()}");
                 Console.ResetColor();
             }
             return exitCode;

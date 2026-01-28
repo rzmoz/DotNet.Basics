@@ -2,17 +2,17 @@
   "releases": [
     {
       "name": "DotNet.Basics",
-      "version": "12.0.1",
+      "version": "12.10.1",
       "prerelease": ""
     },    
     {
       "name": "DotNet.Basics.Pipelines",
-      "version": "12.0.0",
+      "version": "12.10.0",
       "prerelease": ""
     },
     {
       "name": "DotNet.Basics.Cli",
-      "version": "12.0.0",
+      "version": "12.10.0",
       "prerelease": ""
     }
   ],
