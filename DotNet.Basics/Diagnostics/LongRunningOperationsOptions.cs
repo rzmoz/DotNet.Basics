@@ -5,6 +5,6 @@ namespace DotNet.Basics.Diagnostics
 {
     public class LongRunningOperationsOptions
     {
-        public TimeSpan PingInterval { get; set; } = 1.Minutes();
+        public TimeSpan PingInterval { get; set; } = 30.Seconds();
     }
 }

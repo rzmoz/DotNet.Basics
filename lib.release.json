@@ -2,7 +2,7 @@
   "releases": [
     {
       "name": "DotNet.Basics",
-      "version": "12.10.2",
+      "version": "12.10.3",
       "prerelease": ""
     },    
     {
@@ -12,7 +12,7 @@
     },
     {
       "name": "DotNet.Basics.Cli",
-      "version": "12.10.0",
+      "version": "12.10.1",
       "prerelease": ""
     }
   ],
