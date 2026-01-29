@@ -41,7 +41,7 @@ namespace DotNet.Basics.Diagnostics
             foreach (var operation in _operations.Values.OrderBy(o => o.StartTime))
                 message += $"[ {operation.Name.Highlight()} has been running for {operation.DurationNow.Humanize().Highlight()} ]\r\n";
 
-            _loog?.Trace(message.WithGutter());
+            _loog?.Debug(message.WithGutter());
         }
 
         public async Task<int> StartAsync(string name, Func<Task<int>> action)
@@ -66,7 +66,7 @@ namespace DotNet.Basics.Diagnostics
             finally
             {
                 if (_operations.TryRemove(operation.Id, out _) == false)
-                    _loog?.Trace("{operationName} not removed from {operatorName} stack :-(", operation.Name, nameof(LongRunningOperations));
+                    _loog?.Warn("{operationName} not removed from {operatorName} stack :-(", operation.Name, nameof(LongRunningOperations));
 
                 _loog?.Debug("{operationName} finished in {operationDurationNow}", operation.Name.Highlight(), operation.DurationNow.Humanize().Highlight());
 
