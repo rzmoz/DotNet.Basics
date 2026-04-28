@@ -36,7 +36,7 @@ namespace DotNet.Basics.Diagnostics
         {
             var message = _operations.Values
                 .OrderBy(o => o.StartTime)
-                .Select(o => $"[ {o.Name.Highlight()} has been running for {o.DurationNow.Humanize(precision: 2).Highlight()} ]")
+                .Select(o => $"[ {o.Name.Highlight()} has been running for {o.DurationNow.Humanize().Highlight()} ]")
                 .JoinString("\r\n");
 
             if (!string.IsNullOrEmpty(message))
