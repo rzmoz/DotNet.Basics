@@ -1,7 +1,8 @@
-﻿using System;
-using System.Linq;
-using DotNet.Basics.Diagnostics;
+﻿using DotNet.Basics.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
 
 namespace DotNet.Basics.Cli
 {
@@ -32,8 +33,9 @@ namespace DotNet.Basics.Cli
             services.AddSingleton<LongRunningOperations>();
             _configureServices?.Invoke(options, services);
 
-            var hostOptions = new CliHostOptions(options, services.BuildServiceProvider());
-            return new CliHost(hostOptions);
+            var serviceProvider = services.BuildServiceProvider();
+            var hostOptions = new CliHostOptions(options, serviceProvider);
+            return new CliHost(hostOptions, serviceProvider.GetService<ILogger>() ?? NullLogger.Instance);
         }
 
         public CliHostBuilder WithServices(Action<IServiceCollection>? configure)

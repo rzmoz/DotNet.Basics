@@ -1,13 +1,14 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace DotNet.Basics.Cli
 {
     public class CliHostOptions(CliHostBuilderOptions builderOptions, IServiceProvider serviceProvider)
-    {   
+    {
         public int FatalExitCode => builderOptions.FatalExitCode;
         public IServiceProvider Services { get; } = serviceProvider;
         public ArgsDictionary Args => builderOptions.Args;
+        public TimeSpan LongRunningOperationsPingInterval { get; set; } = builderOptions.LongRunningOperationsPingInterval;
 
         public T GetService<T>()
         {

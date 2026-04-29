@@ -10,12 +10,13 @@ using Microsoft.Extensions.Logging;
 
 namespace DotNet.Basics.Cli
 {
-    public class CliHost(CliHostOptions options)
+    public class CliHost(CliHostOptions options, ILogger logger)
     {
         private const string _newlinePattern = @"\r\n|\r|\n";
         private static readonly Regex _newlineRegex = new(_newlinePattern, RegexOptions.Compiled);
         public CliHostOptions Options { get; } = options;
         public ArgsDictionary Args => Options.Args;
+        private readonly LongRunningOperations _longRunningOperations = new LongRunningOperations(logger, new LongRunningOperationsOptions { PingInterval = options.LongRunningOperationsPingInterval });
 
         public async Task<int> RunPipelineAsync<T>(PipelineArgsFactory? pipelineArgsFactory = null, ILogger? logger = null) where T : ManagedTask
         {
@@ -70,19 +71,17 @@ namespace DotNet.Basics.Cli
 
         public async Task<int> RunPipelineAsync(ManagedTask managedTask, object args)
         {
-            return await RunLongRunningOperationAsync(managedTask.Name, () => managedTask.RunAsync(args));
+            return await RunLongRunningOperationAsync(new LongRunningOperation(managedTask.Name, logger => managedTask.RunAsync(args)));
         }
 
-        public async Task<int> RunLongRunningOperationAsync(string operationName, Func<Task<int>> operation, LongRunningOperationsOptions? o = null)
+        public async Task<int> RunLongRunningOperationAsync(Func<LongRunningOperation> getOperation)
         {
-            var longRunningOperations = new LongRunningOperations(Options.GetService<ILogger>(), o ?? new LongRunningOperationsOptions());
-            return await RunAsync(async logger => await longRunningOperations.StartAsync(operationName, operation.Invoke));
+            return await RunLongRunningOperationAsync(getOperation());
         }
-        public async Task<int> RunLongRunningOperationAsync(string operationName, Func<Task<int>> operation, Action<LongRunningOperationsOptions> setOptions)
+
+        public async Task<int> RunLongRunningOperationAsync(LongRunningOperation operation)
         {
-            var options = new LongRunningOperationsOptions();
-            setOptions(options);
-            return await RunLongRunningOperationAsync(operationName, operation, options);
+            return await RunAsync(async logger => await _longRunningOperations.RunAsync(operation));
         }
 
         public async Task<int> RunAsync(Func<ILogger, Task<int>> operation)
