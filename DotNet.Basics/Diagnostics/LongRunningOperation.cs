@@ -12,7 +12,7 @@ namespace DotNet.Basics.Diagnostics
         public int ExitCode { get; private set; } = int.MinValue;
         public DateTime StartTime { get; private set; } = DateTime.MaxValue;
         public DateTime EndTime { get; private set; } = DateTime.MinValue;
-        public TimeSpan Duration => EndTime - StartTime;
+        public TimeSpan Duration => HasStarted() ? (HasStopped() ? EndTime - StartTime : DateTime.Now - StartTime) : TimeSpan.Zero;
 
         public async Task<int> StartAsync(ILogger log)
         {
