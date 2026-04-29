@@ -44,6 +44,10 @@ namespace DotNet.Basics.Diagnostics
             if (!string.IsNullOrEmpty(message))
                 _loog?.Debug(message.WithGutter(gutterSize: 10));
         }
+        public async Task<int> RunAsync(string name, Func<ILogger, Task<int>> action)
+        {
+            return await RunAsync(new LongRunningOperation(name, action)).ConfigureAwait(false);
+        }
 
         public async Task<int> RunAsync(LongRunningOperation operation)
         {
