@@ -9,7 +9,7 @@ using System.Timers;
 
 namespace DotNet.Basics.Diagnostics
 {
-    public class LongRunningOperations
+    public sealed class LongRunningOperations
     {
         private readonly ILogger _loog;
         private readonly ConcurrentDictionary<string, LongRunningOperation> _operations = new();

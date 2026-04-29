@@ -73,12 +73,15 @@ namespace DotNet.Basics.Cli
         {
             return await RunLongRunningOperationAsync(new LongRunningOperation(managedTask.Name, logger => managedTask.RunAsync(args)));
         }
-
-        public async Task<int> RunLongRunningOperationAsync(Func<LongRunningOperation> getOperation)
+        
+        public async Task<int> RunLongRunningOperationAsync(Func<LongRunningOperations, LongRunningOperation> getOperation)
         {
-            return await RunLongRunningOperationAsync(getOperation());
+            return await RunLongRunningOperationAsync(getOperation(_longRunningOperations));
         }
-
+        public async Task<int> RunLongRunningOperationAsync(string name, Func<ILogger, Task<int>> action)
+        {
+            return await RunLongRunningOperationAsync(new LongRunningOperation(name, action));
+        }
         public async Task<int> RunLongRunningOperationAsync(LongRunningOperation operation)
         {
             return await RunAsync(async logger => await _longRunningOperations.RunAsync(operation));
