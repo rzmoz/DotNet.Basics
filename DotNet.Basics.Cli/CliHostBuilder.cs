@@ -43,7 +43,7 @@ namespace DotNet.Basics.Cli
             return new CliHost(app);
         }
         private CommandApp InitApp()
-        {   
+        {
             var services = serviceCollectionFactory?.Invoke() ?? new ServiceCollection();
             var eventLogger = new EventLogger();
             services.AddSingleton<ILogger>(eventLogger);
@@ -56,6 +56,7 @@ namespace DotNet.Basics.Cli
                 c.Settings.CaseSensitivity = CaseSensitivity.None;
                 c.Settings.StrictParsing = false;
                 c.Settings.ValidateExamples = true;
+                c.PropagateExceptions();
                 c.SetInterceptor(new DevConsoleInterceptor(eventLogger));
             });
             return app;

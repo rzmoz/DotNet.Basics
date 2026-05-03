@@ -12,10 +12,7 @@ namespace DotNet.Basics.Cli.Logging
             AnsiConsole.Write(GetText(level, message));
             AnsiConsole.Write(Text.NewLine);
             if (e != null)
-            {
-                AnsiConsole.Write(GetText(LogLevel.Error, e.Message));
-                AnsiConsole.Write(GetText(LogLevel.Debug, e.Message));
-            }
+                AnsiConsole.WriteException(e);
         }
         private static Text GetText(LogLevel level, string msg)
         {

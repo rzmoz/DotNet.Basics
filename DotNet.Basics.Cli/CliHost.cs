@@ -23,6 +23,20 @@ namespace DotNet.Basics.Cli
             {
                 exitCode = await spectreApp.RunAsync(args);
             }
+            catch (Exception ex)
+            {
+                AnsiConsole.WriteException(ex, new ExceptionSettings
+                {
+                    Format = ExceptionFormats.ShortenTypes | ExceptionFormats.ShortenMethods | ExceptionFormats.ShowLinks,
+                    Style = new ExceptionStyle
+                    {
+                        Exception = new Style(Color.White, Color.DarkRed),
+                        Message = new Style(Color.Red),                        
+                        LineNumber = new Style(Color.Blue),
+                    }
+                });
+                exitCode = -1;
+            }
             finally
             {
                 DevConsole.Ansi(c =>
@@ -30,7 +44,6 @@ namespace DotNet.Basics.Cli
                     c.Write(new Text("Exit code:", new Style(Color.Blue)));
                     c.Write(" ");
                     c.Write(new Text(exitCode.ToString(), new Style(exitCode == 0 ? Color.Default : Color.Red)));
-
                 });
             }
             return exitCode;

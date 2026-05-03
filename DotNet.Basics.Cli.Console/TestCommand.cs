@@ -23,13 +23,13 @@ namespace DotNet.Basics.Cli.Console
                 .AddItem("Banana", 5, Color.Yellow));
             await log.StatusAsync("Doing some work...", async ctx =>
             {
-                await Task.Delay(1000);
+                await Task.Delay(500);
                 ctx.Status("Still working...");
-                await Task.Delay(1000);
+                await Task.Delay(500);
                 ctx.Status("Almost done...");
-                await Task.Delay(1000);
+                await Task.Delay(500);
             });
-            return 1337;
+            throw new IOException("This is a test exception");
         }
     }
 }
