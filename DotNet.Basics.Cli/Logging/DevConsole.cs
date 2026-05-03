@@ -11,6 +11,15 @@ namespace DotNet.Basics.Cli.Logging
         private readonly AnsiConsoleLogger _logger = new();
         public LogLevel MinimumLogLevel { get; set; } = LogLevel.Information;
 
+        public static void PauseForDebuggerAttach(bool pause = true)
+        {
+            if (pause)
+            {
+                Console.WriteLine($"Pausing to attach debugger [{Environment.ProcessId}]. Press enter to continue");
+                Console.ReadLine();
+            }
+        }
+
         public static async Task StatusAsync(string status, Func<StatusContext, Task> func)
         {
             await AnsiConsole.Status().StartAsync(status, func);

@@ -5,23 +5,24 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Spectre.Console.Cli;
 using System;
+using System.Collections.Generic;
 
 namespace DotNet.Basics.Cli
 {
     public class CliHostBuilder(Func<IServiceCollection>? serviceCollectionFactory = null)
     {
-        private Action<IServiceCollection>? _configureServices = (_) => { };
+        private List<Action<IServiceCollection>> _configureServices = new();
 
         public CliHostBuilder WithServices(Action<IServiceCollection> configure)
         {
-            _configureServices = configure;
+            _configureServices.Add(configure);
             return this;
         }
         public CliHost Build<T>(string? name = null, bool isDefault = true) where T : CliCommand<CliCommandSettings>
         {
-            return Build<T, CliCommandSettings>((name ?? typeof(T).Name.RemoveSuffix("Command")).ToLower(), isDefault);
+            return Build<T, CliCommandSettings>(name, isDefault);
         }
-        public CliHost Build<T, TK>(string name, bool isDefault = true) where T : CliCommand<TK> where TK : CliCommandSettings
+        public CliHost Build<T, TK>(string? name = null, bool isDefault = true) where T : CliCommand<TK> where TK : CliCommandSettings
         {
             WithServices(services =>
             {
@@ -29,7 +30,7 @@ namespace DotNet.Basics.Cli
                 services.AddTransient<T>();
             });
             var app = InitApp();
-            app.Configure(c => c.AddCommand<T>(name));
+            app.Configure(c => c.AddCommand<T>((name ?? typeof(T).Name.RemoveSuffix("Command")).ToLower()));
             if (isDefault)
                 app.SetDefaultCommand<T>();
             return new CliHost(app);
@@ -47,8 +48,7 @@ namespace DotNet.Basics.Cli
             var services = serviceCollectionFactory?.Invoke() ?? new ServiceCollection();
             var eventLogger = new EventLogger();
             services.AddSingleton<ILogger>(eventLogger);
-
-            _configureServices?.Invoke(services);
+            _configureServices.ForEach(s => s.Invoke(services));
             var registrar = new TypeRegistrar(services);
             var app = new CommandApp(registrar);
             app.Configure(c =>

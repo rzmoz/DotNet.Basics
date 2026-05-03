@@ -11,11 +11,7 @@ namespace DotNet.Basics.Cli
     {
         public async Task<int> RunAsync(string[] args)
         {
-            if (args.Any(a => a.EndsWith("-debug", StringComparison.OrdinalIgnoreCase)))
-            {
-                Console.WriteLine($"Pausing to attach debugger [{Environment.ProcessId}]. Press enter to continue");
-                Console.ReadLine();
-            }
+            DevConsole.PauseForDebuggerAttach(args.Any(a => a.EndsWith("-debug", StringComparison.OrdinalIgnoreCase)));
 
             var exitCode = int.MinValue;
 
@@ -31,7 +27,7 @@ namespace DotNet.Basics.Cli
                     Style = new ExceptionStyle
                     {
                         Exception = new Style(Color.White, Color.DarkRed),
-                        Message = new Style(Color.Red),                        
+                        Message = new Style(Color.Red),
                         LineNumber = new Style(Color.Blue),
                     }
                 });

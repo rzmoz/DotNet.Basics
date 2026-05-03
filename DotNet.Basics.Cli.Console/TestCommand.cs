@@ -6,7 +6,7 @@ using Spectre.Console.Cli;
 
 namespace DotNet.Basics.Cli.Console
 {
-    public class TestCommand(ILogger log) : CliCommand
+    public class TestCommand(ILogger log, Greeter greeter) : CliCommand
     {
         protected override async Task<int> ExecuteAsync(CommandContext context, CliCommandSettings settings, CancellationToken cancellationToken)
         {
@@ -21,6 +21,8 @@ namespace DotNet.Basics.Cli.Console
                 .AddItem("Apple", 12, Color.Green)
                 .AddItem("Orange", 8, Color.Orange1)
                 .AddItem("Banana", 5, Color.Yellow));
+
+            log.Info(greeter.Greet("World"));
             await log.StatusAsync("Doing some work...", async ctx =>
             {
                 await Task.Delay(500);
