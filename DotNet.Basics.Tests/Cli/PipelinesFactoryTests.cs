@@ -6,7 +6,7 @@ using Xunit.Abstractions;
 namespace DotNet.Basics.Tests.Cli
 {
     public class PipelinesFactoryTests(ITestOutputHelper output) : TestWithHelpers(output)
-    {
+    {/*
         private readonly PipelineArgsFactory _argsFactory = new();
 
         [Fact]
@@ -35,6 +35,6 @@ namespace DotNet.Basics.Tests.Cli
         {
             var result = _argsFactory.GetParser(typeof(T)).Invoke(arg.ToString());
             result.Should().Be((T)arg);
-        }
+        }*/
     }
 }

@@ -1,58 +1,64 @@
-﻿using DotNet.Basics.Diagnostics;
+﻿using DotNet.Basics.Cli.Logging;
+using DotNet.Basics.Diagnostics;
+using DotNet.Basics.Sys;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Spectre.Console.Cli;
 using System;
-using System.Linq;
 
 namespace DotNet.Basics.Cli
 {
-    public class CliHostBuilder(string[] args, IArgsParser argsParser, Func<IServiceCollection>? serviceCollectionFactory = null)
+    public class CliHostBuilder(Func<IServiceCollection>? serviceCollectionFactory = null)
     {
-        private Action<CliHostBuilderOptions, IServiceCollection>? _configureServices = (_, _) => { };
-        private Action<CliHostBuilderOptions>? _configureOptions = _ => { };
+        private Action<IServiceCollection>? _configureServices = (_) => { };
 
-        public CliHostBuilder(string[] args, bool firstEntryIsVerb, Func<IServiceCollection>? serviceCollectionFactory = null)
-        : this(args, new ArgsDefaultParser(firstEntryIsVerb), serviceCollectionFactory)
-        { }
-        public CliHost Build()
-        {
-            if (args.Any(a => a.Contains("-debug", StringComparison.OrdinalIgnoreCase)))
-            {
-                Console.WriteLine($"Pausing to attach debugger [{Environment.ProcessId}]. Press enter to continue");
-                Console.ReadLine();
-            }
-
-            var options = new CliHostBuilderOptions(argsParser.Parse(args));
-            _configureOptions?.Invoke(options);
-
-            var services = serviceCollectionFactory?.Invoke() ?? new ServiceCollection();
-
-            if (options.WithDevColoredConsole)
-                services.AddDevConsole(o => o.IsAdo = options.Args.ADO);
-
-            services.AddSingleton<LongRunningOperations>();
-            _configureServices?.Invoke(options, services);
-
-            var serviceProvider = services.BuildServiceProvider();
-            var hostOptions = new CliHostOptions(options, serviceProvider);
-            return new CliHost(hostOptions, serviceProvider.GetService<ILogger>() ?? NullLogger.Instance);
-        }
-
-        public CliHostBuilder WithServices(Action<IServiceCollection>? configure)
-        {
-            _configureServices = (_, s) => configure?.Invoke(s);
-            return this;
-        }
-        public CliHostBuilder WithServices(Action<CliHostBuilderOptions, IServiceCollection>? configure)
+        public CliHostBuilder WithServices(Action<IServiceCollection> configure)
         {
             _configureServices = configure;
             return this;
         }
-
-        public CliHostBuilder WithOptions(Action<CliHostBuilderOptions>? configureOptions = null)
+        public CliHost Build<T>(string? name = null, bool isDefault = true) where T : CliCommand<CliCommandSettings>
         {
-            _configureOptions = configureOptions;
-            return this;
+            return Build<T, CliCommandSettings>((name ?? typeof(T).Name.RemoveSuffix("Command")).ToLower(), isDefault);
+        }
+        public CliHost Build<T, TK>(string name, bool isDefault = true) where T : CliCommand<TK> where TK : CliCommandSettings
+        {
+            WithServices(services =>
+            {
+                services.AddSingleton<TK>();
+                services.AddTransient<T>();
+            });
+            var app = InitApp();
+            app.Configure(c => c.AddCommand<T>(name));
+            if (isDefault)
+                app.SetDefaultCommand<T>();
+            return new CliHost(app);
+
+        }
+
+        public CliHost Build(Action<IConfigurator> configureCommands)
+        {
+            var app = InitApp();
+            app.Configure(c => configureCommands(c));
+            return new CliHost(app);
+        }
+        private CommandApp InitApp()
+        {   
+            var services = serviceCollectionFactory?.Invoke() ?? new ServiceCollection();
+            var eventLogger = new EventLogger();
+            services.AddSingleton<ILogger>(eventLogger);
+
+            _configureServices?.Invoke(services);
+            var registrar = new TypeRegistrar(services);
+            var app = new CommandApp(registrar);
+            app.Configure(c =>
+            {
+                c.Settings.CaseSensitivity = CaseSensitivity.None;
+                c.Settings.StrictParsing = false;
+                c.Settings.ValidateExamples = true;
+                c.SetInterceptor(new DevConsoleInterceptor(eventLogger));
+            });
+            return app;
         }
     }
 }

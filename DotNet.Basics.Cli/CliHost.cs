@@ -1,120 +1,37 @@
-﻿using DotNet.Basics.Diagnostics;
-using DotNet.Basics.Tasks;
-using System;
-using System.Globalization;
+﻿using System;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using DotNet.Basics.Sys;
-using Microsoft.Extensions.Logging;
+using Spectre.Console.Cli;
+using Spectre.Console;
+using DotNet.Basics.Cli.Logging;
 
 namespace DotNet.Basics.Cli
 {
-    public class CliHost(CliHostOptions options, ILogger logger)
+    public class CliHost(CommandApp spectreApp)
     {
-        private const string _newlinePattern = @"\r\n|\r|\n";
-        private static readonly Regex _newlineRegex = new(_newlinePattern, RegexOptions.Compiled);
-        public CliHostOptions Options { get; } = options;
-        public ArgsDictionary Args => Options.Args;
-        private readonly LongRunningOperations _longRunningOperations = new LongRunningOperations(logger, new LongRunningOperationsOptions { PingInterval = options.LongRunningOperationsPingInterval });
-
-        public async Task<int> RunPipelineAsync<T>(PipelineArgsFactory? pipelineArgsFactory = null, ILogger? logger = null) where T : ManagedTask
+        public async Task<int> RunAsync(string[] args)
         {
-            try
+            if (args.Any(a => a.EndsWith("-debug", StringComparison.OrdinalIgnoreCase)))
             {
-                logger ??= Options.GetService<ILogger>();
-                var argsFactory = pipelineArgsFactory ?? new PipelineArgsFactory();
-                var args = argsFactory.Create(typeof(T), Args, logger);
-                return await RunPipelineAsync<T>(args, logger);
+                Console.WriteLine($"Pausing to attach debugger [{Environment.ProcessId}]. Press enter to continue");
+                Console.ReadLine();
             }
-            catch (MissingArgumentException e)
-            {
-                var log = Options.GetService<ILogger>();
-                log.Error(
-                    $"\r\nMissing argument(s): {e.ArgsType.FullName?.Highlight() ?? e.ArgsType.Name.Highlight()}");
-                foreach (var missingArg in e.MissingArgs)
-                    log.Error(" - [{argType}] {argName} is not set!", missingArg.ArgType, missingArg.ArgName.Highlight());
-                return 400;
-            }
-            catch (UnknownArgumentsException e)
-            {
-                var log = Options.GetService<ILogger>();
-                log.Error($"\r\nUnknown argument(s): {e.ArgNames.JoinString(", ").Highlight()}");
-                return 400;
-            }
-            catch (Exception e)
-            {
-                var log = Options.GetService<ILogger>();
-                log.Error($"\r\n{e.GetType().FullName}: {e.Message.Highlight()} ");
-                log.Trace(string.Join(Environment.NewLine, _newlineRegex.Split(e.ToString()).Skip(1)));
-                return 400;
-            }
-        }
 
-        public async Task<int> RunPipelineAsync<T>(object args, ILogger? logger = null) where T : ManagedTask
-        {
-            var managedTask = Options.GetService<T>();
-            logger ??= Options.GetService<ILogger>();
-            managedTask.Started += taskName =>
-            {
-                if (!taskName.EndsWith("Pipeline"))
-                    logger.Debug($"{taskName.Highlight()} started");
-            };
-            managedTask.Ended += (taskName, e) =>
-            {
-                if (!taskName.EndsWith("Pipeline"))
-                    logger.Debug($"{taskName.Highlight()} ended");
-            };
-
-            return await RunPipelineAsync(managedTask, args);
-        }
-
-        public async Task<int> RunPipelineAsync(ManagedTask managedTask, object args)
-        {
-            return await RunLongRunningOperationAsync(new LongRunningOperation(managedTask.Name, logger => managedTask.RunAsync(args)));
-        }
-        
-        public async Task<int> RunLongRunningOperationAsync(Func<LongRunningOperations, LongRunningOperation> getOperation)
-        {
-            return await RunLongRunningOperationAsync(getOperation(_longRunningOperations));
-        }
-        public async Task<int> RunLongRunningOperationAsync(string name, Func<ILogger, Task<int>> action)
-        {
-            return await RunLongRunningOperationAsync(new LongRunningOperation(name, action));
-        }
-        public async Task<int> RunLongRunningOperationAsync(LongRunningOperation operation)
-        {
-            return await RunAsync(async logger => await _longRunningOperations.RunAsync(operation));
-        }
-
-        public async Task<int> RunAsync(Func<ILogger, Task<int>> operation)
-        {
-            var logger = Options.GetService<ILogger>();
-            var exitCode = Options.FatalExitCode;
+            var exitCode = int.MinValue;
 
             try
             {
-                exitCode = await operation.Invoke(logger);
-            }
-            catch (Exception e)
-            {
-                logger.Error($"\r\n{e.GetType().FullName}: {e.Message.Highlight()} ");
-                logger.Trace(string.Join(Environment.NewLine, _newlineRegex.Split(e.ToString()).Skip(1)));
-
-                var exitCodeProperty = e.GetType().GetProperty("ExitCode");
-                if (exitCodeProperty != null)
-                {
-                    var rawValue = exitCodeProperty.GetValue(e);
-                    if (rawValue != null)
-                    {
-                        exitCode = int.Parse(rawValue.ToString()!, NumberStyles.Integer);
-                    }
-                }
+                exitCode = await spectreApp.RunAsync(args);
             }
             finally
             {
-                logger.Debug($"Exit code: {exitCode.ToString().Highlight()}");
-                Console.ResetColor();
+                DevConsole.Ansi(c =>
+                {
+                    c.Write(new Text("Exit code:", new Style(Color.Blue)));
+                    c.Write(" ");
+                    c.Write(new Text(exitCode.ToString(), new Style(exitCode == 0 ? Color.Default : Color.Red)));
+
+                });
             }
             return exitCode;
         }

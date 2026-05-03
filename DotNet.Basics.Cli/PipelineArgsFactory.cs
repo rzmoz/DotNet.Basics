@@ -6,12 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using DotNet.Basics.Diagnostics;
+using DotNet.Basics.Cli.Logging;
 
 namespace DotNet.Basics.Cli
 {
     public class PipelineArgsFactory
-    {
-        public virtual object Create(Type pipelineType, ArgsDictionary args, ILogger? log = null)
+    {/*
+        public virtual object Create(Type pipelineType, string[] args, ILogger? log = null)
         {
             var argsPipelineType = pipelineType;
 
@@ -104,7 +105,7 @@ namespace DotNet.Basics.Cli
         protected virtual object Parse(Type argsType, string? val)
         {
             throw new NotSupportedException(argsType.FullName);
-        }
+        }*/
     }
 }
 
