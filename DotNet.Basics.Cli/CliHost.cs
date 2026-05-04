@@ -1,9 +1,10 @@
-﻿using System;
+﻿using DotNet.Basics.Cli.Logging;
+using Spectre.Console;
+using Spectre.Console.Cli;
+using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Spectre.Console.Cli;
-using Spectre.Console;
-using DotNet.Basics.Cli.Logging;
 
 namespace DotNet.Basics.Cli
 {
@@ -11,7 +12,8 @@ namespace DotNet.Basics.Cli
     {
         public async Task<int> RunAsync(string[] args)
         {
-            DevConsole.PauseForDebuggerAttach(args.Any(a => a.EndsWith("-debug", StringComparison.OrdinalIgnoreCase)));
+            if (args.Any(a => a.EndsWith("-debug", StringComparison.OrdinalIgnoreCase)))
+                DevConsole.PauseForDebuggerAttach();
 
             var exitCode = int.MinValue;
 
@@ -19,9 +21,9 @@ namespace DotNet.Basics.Cli
             {
                 exitCode = await spectreApp.RunAsync(args);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                AnsiConsole.WriteException(ex, new ExceptionSettings
+                AnsiConsole.WriteException(e, new ExceptionSettings
                 {
                     Format = ExceptionFormats.ShortenTypes | ExceptionFormats.ShortenMethods | ExceptionFormats.ShowLinks,
                     Style = new ExceptionStyle
@@ -31,15 +33,16 @@ namespace DotNet.Basics.Cli
                         LineNumber = new Style(Color.Blue),
                     }
                 });
-                exitCode = -1;
+                if (int.TryParse(e.GetType().GetProperty("ExitCode")?.GetValue(e)?.ToString(), out int result))
+                    exitCode = result;
             }
             finally
             {
-                DevConsole.Ansi(c =>
+                DevConsole.Ansi(console =>
                 {
-                    c.Write(new Text("Exit code:", new Style(Color.Blue)));
-                    c.Write(" ");
-                    c.Write(new Text(exitCode.ToString(), new Style(exitCode == 0 ? Color.Default : Color.Red)));
+                    console.Write(new Text("Exit code:", new Style(Color.Blue)));
+                    console.Write(" ");
+                    console.Write(new Text(exitCode.ToString(), new Style(exitCode == 0 ? Color.Default : Color.Red)));
                 });
             }
             return exitCode;

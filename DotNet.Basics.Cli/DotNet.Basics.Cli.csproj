@@ -21,6 +21,7 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.7" />
 		<PackageReference Include="Spectre.Console" Version="0.55.2" />
 		<PackageReference Include="Spectre.Console.Cli" Version="0.55.0" />
+		<PackageReference Include="Scrutor" Version="7.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\DotNet.Basics\DotNet.Basics.csproj" />

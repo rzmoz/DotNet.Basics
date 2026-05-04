@@ -8,6 +8,8 @@ namespace DotNet.Basics.Cli.Logging
     {
         private static readonly string _successPrefix = "##[section]";
 
+        public LogLevel MinimumLogLevel { get; set; } = LogLevel.Information;
+
         public void Log(LogLevel level, string message, Exception? e)
         {
             if (string.IsNullOrWhiteSpace(message))

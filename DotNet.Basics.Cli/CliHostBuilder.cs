@@ -26,17 +26,15 @@ namespace DotNet.Basics.Cli
         {
             WithServices(services =>
             {
-                services.AddSingleton<TK>();
-                services.AddTransient<T>();
+                services.AddCommandsAndSettings<T>();
+                services.AddCommandsAndSettings<TK>();
             });
             var app = InitApp();
             app.Configure(c => c.AddCommand<T>((name ?? typeof(T).Name.RemoveSuffix("Command")).ToLower()));
             if (isDefault)
                 app.SetDefaultCommand<T>();
             return new CliHost(app);
-
         }
-
         public CliHost Build(Action<IConfigurator> configureCommands)
         {
             var app = InitApp();

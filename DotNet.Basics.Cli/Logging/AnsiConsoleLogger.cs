@@ -7,19 +7,26 @@ namespace DotNet.Basics.Cli.Logging
 {
     public class AnsiConsoleLogger : IConsoleLogger
     {
+        public LogLevel MinimumLogLevel { get; set; } = LogLevel.Information;
+
         public void Log(LogLevel level, string message, Exception? e)
         {
-            AnsiConsole.Write(GetText(level, message));
-            AnsiConsole.Write(Text.NewLine);
+            if (level >= MinimumLogLevel)
+            {
+                AnsiConsole.Write(GetText(level, message));
+                AnsiConsole.Write(Text.NewLine);
+            }
             if (e != null)
                 AnsiConsole.WriteException(e);
         }
+
         private static Text GetText(LogLevel level, string msg)
         {
             if (msg.IsSuccess())
                 return new Text(msg, new Style(Color.DarkGreen));
             return new Text(msg, GetStyle(level));
         }
+
         private static Style GetStyle(LogLevel level)
         {
             return level switch
