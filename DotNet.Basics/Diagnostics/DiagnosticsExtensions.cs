@@ -18,11 +18,11 @@ namespace DotNet.Basics.Diagnostics
 
         public static bool IsSuccess(this string str)
         {
-            return str.StartsWith(_successMarker);
+            return str.EndsWith(_successMarker);
         }
         private static string AddSuccess(this string str, bool isSuccess = true)
         {
-            return isSuccess ? $"{_successMarker} {str}" : str;
+            return isSuccess ? $"{str} {_successMarker}" : str;
         }
 
         // L0G
