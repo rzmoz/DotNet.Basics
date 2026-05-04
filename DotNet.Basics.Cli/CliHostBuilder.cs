@@ -55,11 +55,11 @@ namespace DotNet.Basics.Cli
             _configureServices.Add(configure);
             return this;
         }
-        public CliHost Build<T>(string? name = null, bool isDefault = true) where T : CliCommand<CliCommandSettings>
+        public CliHost Build<T>(bool isDefault = true, string? name = null) where T : CliCommand<CliCommandSettings>
         {
-            return Build<T, CliCommandSettings>(name, isDefault);
+            return Build<T, CliCommandSettings>(isDefault, name);
         }
-        public CliHost Build<T, TK>(string? name = null, bool isDefault = true) where T : CliCommand<TK> where TK : CliCommandSettings
+        public CliHost Build<T, TK>(bool isDefault = true, string? name = null) where T : CliCommand<TK> where TK : CliCommandSettings
         {
             WithServices(services =>
             {
