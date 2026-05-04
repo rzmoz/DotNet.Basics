@@ -1,4 +1,5 @@
-﻿using Spectre.Console.Cli;
+﻿using Microsoft.Extensions.Logging;
+using Spectre.Console.Cli;
 
 namespace DotNet.Basics.Cli.Logging
 {
@@ -6,7 +7,8 @@ namespace DotNet.Basics.Cli.Logging
     {
         public void Intercept(CommandContext context, CommandSettings settings)
         {
-            console.MinimumLogLevel = (settings as CliCommandSettings)?.LogLevel ?? console.MinimumLogLevel;
+            if (settings is CliCommandSettings cliSettings)            
+                console.MinimumLogLevel = cliSettings.Verbose ? LogLevel.Trace : cliSettings.LogLevel;
         }
     }
 }
