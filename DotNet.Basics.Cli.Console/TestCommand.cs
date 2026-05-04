@@ -6,9 +6,9 @@ using Spectre.Console.Cli;
 
 namespace DotNet.Basics.Cli.Console
 {
-    public class TestCommand(ILogger log, Greeter greeter) : CliCommand
+    public class TestCommand(ILogger log, Greeter greeter) : CliCommand<TestCommandSettings>
     {
-        protected override async Task<int> ExecuteAsync(CommandContext context, CliCommandSettings settings, CancellationToken cancellationToken)
+        protected override async Task<int> ExecuteAsync(CommandContext context, TestCommandSettings settings, CancellationToken cancellationToken)
         {
             log.Trace($"Trace {"Trace".Highlight()} lalalalalalala");
             log.Debug($"Debug {"Debug".Highlight()} lalalalalalala");
@@ -22,7 +22,7 @@ namespace DotNet.Basics.Cli.Console
                 .AddItem("Orange", 8, Color.Orange1)
                 .AddItem("Banana", 5, Color.Yellow));
 
-            log.Info(greeter.Greet("World"));
+            log.Info(greeter.Greet(settings.Greetee));
             await log.StatusAsync("Doing some work...", async ctx =>
             {
                 await Task.Delay(500);

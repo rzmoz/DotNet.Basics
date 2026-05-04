@@ -8,7 +8,7 @@ namespace DotNet.Basics.Cli.Console
         {
             var host = new CliHostBuilder()
                 .WithServices(s => s.AddSingleton<Greeter>())
-                .Build<TestCommand>();
+                .Build<TestCommand, TestCommandSettings>(isDefault: false);
 
             return await host.RunAsync(args);
         }

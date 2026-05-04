@@ -6,8 +6,7 @@ namespace DotNet.Basics.Pipelines
 {
     public static class PipelineExtensions
     {
-        public static IServiceCollection AddPipelines(this IServiceCollection services,
-            Func<Type, bool>? pipelineFilter = null, Func<Type, bool>? pipelineStepFilter = null)
+        public static IServiceCollection AddPipelines(this IServiceCollection services, Func<Type, bool>? pipelineFilter = null, Func<Type, bool>? pipelineStepFilter = null)
         {
             return services.AddPipelines([Assembly.GetEntryAssembly() ?? throw new ApplicationException($"Entry assembly is null")], pipelineFilter, pipelineStepFilter);
         }

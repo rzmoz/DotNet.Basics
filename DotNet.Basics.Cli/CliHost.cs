@@ -2,13 +2,12 @@
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace DotNet.Basics.Cli
 {
-    public class CliHost(CommandApp spectreApp)
+    public class CliHost(CommandApp spectreApp, Func<Exception, int> globalExceptionHandling)
     {
         public async Task<int> RunAsync(string[] args)
         {
@@ -23,18 +22,7 @@ namespace DotNet.Basics.Cli
             }
             catch (Exception e)
             {
-                AnsiConsole.WriteException(e, new ExceptionSettings
-                {
-                    Format = ExceptionFormats.ShortenTypes | ExceptionFormats.ShortenMethods | ExceptionFormats.ShowLinks,
-                    Style = new ExceptionStyle
-                    {
-                        Exception = new Style(Color.White, Color.DarkRed),
-                        Message = new Style(Color.Red),
-                        LineNumber = new Style(Color.Blue),
-                    }
-                });
-                if (int.TryParse(e.GetType().GetProperty("ExitCode")?.GetValue(e)?.ToString(), out int result))
-                    exitCode = result;
+                exitCode = globalExceptionHandling(e);
             }
             finally
             {
