@@ -8,7 +8,7 @@ namespace DotNet.Basics.Cli.Logging
 {
     public class DevConsoleLogger : ILogger
     {
-        public LogLevel MinimumLogLevel { get; set; } = LogLevel.Information;
+        public LogLevel MinimumLogLevel { get => _logger.MinimumLogLevel; set => _logger.MinimumLogLevel = value; }
 
         private readonly AnsiConsoleLogger _logger = new();
 
@@ -33,18 +33,12 @@ namespace DotNet.Basics.Cli.Logging
                 await func();
         }
 
-
-        public bool IsEnabled(LogLevel logLevel)
-        {
-            return logLevel >= MinimumLogLevel;
-        }
+        public bool IsEnabled(LogLevel logLevel) => logLevel >= MinimumLogLevel;
 
         public void Log<TState>(LogLevel lvl, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
-            var msg = formatter.Invoke(state, exception);
-            _logger.Log(lvl, msg, exception);
+            _logger.Log(lvl, formatter.Invoke(state, exception), exception);
         }
         public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
-
     }
 }
