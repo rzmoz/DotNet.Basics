@@ -8,7 +8,7 @@ namespace DotNet.Basics.Sys
 {
     public static class ExternalProcess
     {
-        public static int Run(string path, string args, ILogger? logger = null)
+        public static int Run(string path, string args, ILogger? logger = null, LogLevel outLogLevel = LogLevel.Debug)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
             var si = new ProcessStartInfo(path, args)
@@ -26,7 +26,7 @@ namespace DotNet.Basics.Sys
 
                 process.OutputDataReceived += (_, data) =>
                 {
-                    if (data.Data != null) { logger?.Info(data.Data); }
+                    if (data.Data != null) { logger?.L0G(outLogLevel, data.Data); }
                 };
 
                 process.ErrorDataReceived += (_, data) =>

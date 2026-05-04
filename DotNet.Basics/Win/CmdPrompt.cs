@@ -5,9 +5,9 @@ namespace DotNet.Basics.Win
 {
     public static class CmdPrompt
     {
-        public static int Run(string commandString, ILogger? logger = null)
+        public static int Run(string commandString, ILogger? logger = null, LogLevel outLogLevel = LogLevel.Debug)
         {
-            return ExternalProcess.Run("cmd.exe", $"/c {commandString}", logger);
+            return ExternalProcess.Run("cmd.exe", $"/c {commandString}", logger, outLogLevel);
         }
     }
 }
