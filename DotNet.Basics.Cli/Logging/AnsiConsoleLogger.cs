@@ -18,7 +18,7 @@ namespace DotNet.Basics.Cli.Logging
 
         public void Log(LogLevel level, string message, Exception? e)
         {
-            if (level >= MinimumLogLevel)
+            if (level >= MinimumLogLevel && level < LogLevel.None)
             {
                 var texts = GetTexts(level, message).ToList();
                 texts.ForEach(AnsiConsole.Write);

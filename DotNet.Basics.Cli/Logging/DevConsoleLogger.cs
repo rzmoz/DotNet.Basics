@@ -8,13 +8,16 @@ namespace DotNet.Basics.Cli.Logging
 {
     public class DevConsoleLogger : ILogger
     {
-        public LogLevel MinimumLogLevel { get => _logger.MinimumLogLevel; set => _logger.MinimumLogLevel = value; }
+        public static void PauseForDebuggerAttach() => AnsiConsole.Prompt(new TextPrompt<string>($"Pausing to attach debugger <{Environment.ProcessId}>. [yellow]Press enter to continue[/]").AllowEmpty());
 
         private readonly AnsiConsoleLogger _logger = new();
 
-        public void Log(LogLevel level, string message, Exception? e) => _logger.Log(level, message, e);
+        public LogLevel MinimumLogLevel { get => _logger.MinimumLogLevel; set => _logger.MinimumLogLevel = value; }
 
-        public static void PauseForDebuggerAttach() => AnsiConsole.Prompt(new TextPrompt<string>($"Pausing to attach debugger <{Environment.ProcessId}>. [yellow]Press enter to continue[/]").AllowEmpty());
+        public bool IsEnabled(LogLevel lvl) => lvl >= MinimumLogLevel && lvl < LogLevel.None;
+        public void Log(LogLevel lvl, string msg, Exception? e) => _logger.Log(lvl, msg, e);
+        public void Log<TState>(LogLevel lvl, EventId eventId, TState state, Exception? e, Func<TState, Exception?, string> formatter) => _logger.Log(lvl, formatter.Invoke(state, e), e);
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
 
         public async Task StatusAsync(LogLevel lvl, string status, Func<StatusContext, Task> func) => await RunIfLogLevelAsync(lvl, async () => await AnsiConsole.Status().StartAsync(status, func));
         public async Task ProgressAsync(LogLevel lvl, Func<ProgressContext, Task> func) => await RunIfLogLevelAsync(lvl, async () => await AnsiConsole.Progress().StartAsync(func));
@@ -32,13 +35,5 @@ namespace DotNet.Basics.Cli.Logging
             if (IsEnabled(lvl))
                 await func();
         }
-
-        public bool IsEnabled(LogLevel logLevel) => logLevel >= MinimumLogLevel;
-
-        public void Log<TState>(LogLevel lvl, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
-        {
-            _logger.Log(lvl, formatter.Invoke(state, exception), exception);
-        }
-        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
     }
 }
