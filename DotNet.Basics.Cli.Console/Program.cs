@@ -6,11 +6,11 @@ namespace DotNet.Basics.Cli.Console
     {
         static async Task<int> Main(string[] args)
         {
-            var host = new CliHostBuilder()
+            return await new CliHostBuilder()
                 .WithServices(s => s.AddSingleton<Greeter>())
-                .Build<TestCommand, TestCommandSettings>(isDefault: false);
-
-            return await host.RunAsync(args);
+                .WithCommand<TestCommand>(false)
+                .Build()
+                .RunAsync(args);
         }
     }
 }

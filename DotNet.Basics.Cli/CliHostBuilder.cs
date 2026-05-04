@@ -1,5 +1,4 @@
 ﻿using DotNet.Basics.Cli.Logging;
-using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -7,6 +6,7 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace DotNet.Basics.Cli
 {
@@ -14,6 +14,8 @@ namespace DotNet.Basics.Cli
     {
         private List<Action<IServiceCollection>> _configureServices = new();
         private Func<Exception, int> _globalExceptionHandling = DefaultGlobalExceptionHandling;
+        private List<Action<CommandApp>> _appActions = new();
+
         private static readonly ExceptionSettings _generalExceptionSettings = new ExceptionSettings
         {
             Format = ExceptionFormats.ShortenTypes | ExceptionFormats.ShortenMethods | ExceptionFormats.ShowLinks,
@@ -55,21 +57,34 @@ namespace DotNet.Basics.Cli
             _configureServices.Add(configure);
             return this;
         }
-        public CliHost Build<T>(bool isDefault = true, string? name = null) where T : CliCommand<CliCommandSettings>
+        public CliHostBuilder WithCommand<T>(bool isDefault = true, string? name = null) where T : class, ICommand
         {
-            return Build<T, CliCommandSettings>(isDefault, name);
+            name = (name ?? typeof(T).Name).RemoveSuffix("Command").ToLower();
+            return WithAppAction(app =>
+            {
+                app.Configure(ctx => ctx.AddCommand<T>(name));
+                if (isDefault)
+                    app.SetDefaultCommand<T>();
+            });
         }
-        public CliHost Build<T, TK>(bool isDefault = true, string? name = null) where T : CliCommand<TK> where TK : CliCommandSettings
+        public CliHostBuilder WithAppAction(Action<CommandApp> appAction)
         {
+            _appActions.Add(appAction);
+            return this;
+        }
+        public CliHost Build(Func<Type, bool>? commandFilter = null, Func<Type, bool>? settingsFilter = null, params Assembly[] assemblies)
+        {
+            if (assemblies.Length == 0)
+                assemblies = [Assembly.GetEntryAssembly()];
+            if (_appActions.Count == 0)
+                throw new ApplicationException("No commands added. Call WithCommand at least once");
+
             WithServices(services =>
             {
-                services.AddCommandsAndSettings<T>();
-                services.AddCommandsAndSettings<TK>();
+                services.AddCommandsAndSettings(assemblies, commandFilter, settingsFilter);
             });
             var app = InitApp();
-            app.app.Configure(c => c.AddCommand<T>((name ?? typeof(T).Name.RemoveSuffix("Command")).ToLower()));
-            if (isDefault)
-                app.app.SetDefaultCommand<T>();
+            _appActions.ForEach(a => a(app.app));
             return new CliHost(app.app, app.console, _globalExceptionHandling);
         }
         public CliHost Build(Action<IConfigurator> configureCommands)
