@@ -8,8 +8,8 @@ namespace DotNet.Basics.Diagnostics
         private static readonly EventId _emptyEventId = new EventId(0);
         private const string _successMarker = "✓";
 
-        public const string HighlightStart = "»";
-        public const string HighlightEnd = "«";
+        public const char HighlightStart = '»';
+        public const char HighlightEnd = '«';
 
         public static string Highlight(this string str)
         {

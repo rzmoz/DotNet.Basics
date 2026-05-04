@@ -28,7 +28,7 @@ namespace DotNet.Basics.Cli
             {
                 DevConsole.Ansi(console =>
                 {
-                    console.Write(new Text("Exit code:", new Style(Color.Blue)));
+                    console.Write(new Text("Exit code:", new Style(Color.White, null, Decoration.Dim)));
                     console.Write(" ");
                     console.Write(new Text(exitCode.ToString(), new Style(exitCode == 0 ? Color.Default : Color.Red)));
                 });

@@ -19,8 +19,8 @@ namespace DotNet.Basics.Cli
             Format = ExceptionFormats.ShortenTypes | ExceptionFormats.ShortenMethods | ExceptionFormats.ShowLinks,
             Style = new ExceptionStyle
             {
-                Exception = new Style(Color.White, Color.DarkRed),
-                Message = new Style(Color.Red),
+                Exception = new Style(Color.Red),
+                Message = new Style(Color.White),
                 LineNumber = new Style(Color.Blue),
             }
         };
@@ -29,8 +29,8 @@ namespace DotNet.Basics.Cli
             Format = ExceptionFormats.ShortenTypes | ExceptionFormats.ShortenMethods | ExceptionFormats.ShowLinks | ExceptionFormats.NoStackTrace,
             Style = new ExceptionStyle
             {
-                Exception = new Style(Color.White, Color.DarkRed),
-                Message = new Style(Color.Red),
+                Exception = new Style(Color.Red),
+                Message = new Style(Color.White),
                 LineNumber = new Style(Color.Blue),
             }
         };
