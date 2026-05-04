@@ -1,4 +1,5 @@
 ﻿using DotNet.Basics.Cli.Logging;
+using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
@@ -7,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Cli
 {
-    public class CliHost(CommandApp spectreApp, Func<Exception, int> globalExceptionHandling)
+    public class CliHost(CommandApp spectreApp, DevConsoleLogger console, Func<Exception, int> globalExceptionHandling)
     {
         public async Task<int> RunAsync(string[] args)
         {
             if (args.Any(a => a.EndsWith("-debug", StringComparison.OrdinalIgnoreCase)))
-                DevConsole.PauseForDebuggerAttach();
+                DevConsoleLogger.PauseForDebuggerAttach();
 
             var exitCode = int.MinValue;
 
@@ -26,7 +27,7 @@ namespace DotNet.Basics.Cli
             }
             finally
             {
-                DevConsole.Ansi(console =>
+                console.Ansi(LogLevel.Debug, console =>
                 {
                     console.Write(new Text("Exit code:", new Style(Color.White, null, Decoration.Dim)));
                     console.Write(" ");

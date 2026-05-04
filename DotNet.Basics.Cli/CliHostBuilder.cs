@@ -67,22 +67,23 @@ namespace DotNet.Basics.Cli
                 services.AddCommandsAndSettings<TK>();
             });
             var app = InitApp();
-            app.Configure(c => c.AddCommand<T>((name ?? typeof(T).Name.RemoveSuffix("Command")).ToLower()));
+            app.app.Configure(c => c.AddCommand<T>((name ?? typeof(T).Name.RemoveSuffix("Command")).ToLower()));
             if (isDefault)
-                app.SetDefaultCommand<T>();
-            return new CliHost(app, _globalExceptionHandling);
+                app.app.SetDefaultCommand<T>();
+            return new CliHost(app.app, app.console, _globalExceptionHandling);
         }
         public CliHost Build(Action<IConfigurator> configureCommands)
         {
             var app = InitApp();
-            app.Configure(c => configureCommands(c));
-            return new CliHost(app, _globalExceptionHandling);
+            app.app.Configure(c => configureCommands(c));
+            return new CliHost(app.app, app.console, _globalExceptionHandling);
         }
-        private CommandApp InitApp()
+        private (CommandApp app, DevConsoleLogger console) InitApp()
         {
             var services = serviceCollectionFactory?.Invoke() ?? new ServiceCollection();
-            var eventLogger = new EventLogger();
-            services.AddSingleton<ILogger>(eventLogger);
+            var console = new DevConsoleLogger();
+            services.AddSingleton(console);
+            services.AddSingleton<ILogger>(s => s.GetService<DevConsoleLogger>()!);
             _configureServices.ForEach(s => s.Invoke(services));
             var registrar = new TypeRegistrar(services);
             var app = new CommandApp(registrar);
@@ -92,9 +93,9 @@ namespace DotNet.Basics.Cli
                 c.Settings.StrictParsing = false;
                 c.Settings.ValidateExamples = true;
                 c.PropagateExceptions();
-                c.SetInterceptor(new DevConsoleInterceptor(eventLogger));
+                c.SetInterceptor(new DevConsoleInterceptor(console));
             });
-            return app;
+            return (app, console);
         }
     }
 }
