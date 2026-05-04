@@ -6,7 +6,6 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace DotNet.Basics.Cli
 {
@@ -50,15 +49,14 @@ namespace DotNet.Basics.Cli
             if (_appActions.Count == 0)
                 throw new ApplicationException("No commands added. Call WithCommand at least once");
             var app = InitApp();
-            _appActions.ForEach(a => a(app.app));
-            return new CliHost(app.app, app.console, _globalExceptionHandling);
+            _appActions.ForEach(a => a(app));
+            return new CliHost(app, _globalExceptionHandling);
         }
-        private (CommandApp app, DevConsoleLogger console) InitApp()
+        private CommandApp InitApp()
         {
             var services = serviceCollectionFactory?.Invoke() ?? new ServiceCollection();
-            var console = new DevConsoleLogger();
-            services.AddSingleton(console);
-            services.AddSingleton<ILogger>(s => s.GetService<DevConsoleLogger>()!);
+            services.AddSingleton(DevConsole.Console);
+            services.AddSingleton<ILogger>(s => s.GetService<DevConsole>()!);
             _configureServices.ForEach(s => s.Invoke(services));
             var registrar = new TypeRegistrar(services);
             var app = new CommandApp(registrar);
@@ -68,9 +66,9 @@ namespace DotNet.Basics.Cli
                 c.Settings.StrictParsing = false;
                 c.Settings.ValidateExamples = true;
                 c.PropagateExceptions();
-                c.SetInterceptor(new DevConsoleInterceptor(console));
+                c.SetInterceptor(new DevConsoleInterceptor(DevConsole.Console));
             });
-            return (app, console);
+            return app;
         }
 
         private static readonly ExceptionSettings _generalExceptionSettings = new ExceptionSettings
