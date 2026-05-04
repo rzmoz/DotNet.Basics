@@ -1,10 +1,10 @@
-﻿using DotNet.Basics.Collections;
-using DotNet.Basics.Diagnostics;
+﻿using DotNet.Basics.Diagnostics;
 using DotNet.Basics.Sys.Text;
 using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace DotNet.Basics.Cli.Logging
@@ -20,7 +20,8 @@ namespace DotNet.Basics.Cli.Logging
         {
             if (level >= MinimumLogLevel)
             {
-                GetTexts(level, message).ForEach(AnsiConsole.Write);
+                var texts = GetTexts(level, message).ToList();
+                texts.ForEach(AnsiConsole.Write);
                 AnsiConsole.Write(Text.NewLine);
                 AnsiConsole.Reset();
             }
@@ -31,28 +32,32 @@ namespace DotNet.Basics.Cli.Logging
         private static IEnumerable<Text> GetTexts(LogLevel level, string msg)
         {
             if (!_highlightRegex.Test(msg))
-                yield return new Text(msg, GetStyle(level, msg.IsSuccess()));
-
-            //has highlights
-            bool isInHighlight = false;
-            var currentText = new StringBuilder();
-            foreach (var @char in msg)
             {
-                if (@char == DiagnosticsExtensions.HighlightEnd || @char == DiagnosticsExtensions.HighlightStart)
-                {
-                    var highlighted = currentText.ToString();
-                    currentText = new StringBuilder();
-                    yield return new Text(highlighted, GetStyle(level, msg.IsSuccess(), isInHighlight));
-                    if (isInHighlight && @char == DiagnosticsExtensions.HighlightEnd)
-                        isInHighlight = false;
-                    else if (!isInHighlight && @char == DiagnosticsExtensions.HighlightStart)
-                        isInHighlight = true;
-                }
-                else
-                    currentText.Append(@char);
-
+                yield return new Text(msg, GetStyle(level, msg.IsSuccess()));
             }
-            yield return new Text(currentText.ToString(), GetStyle(level, msg.IsSuccess(), isInHighlight));
+            else
+            {
+                //has highlights
+                bool isInHighlight = false;
+                var currentText = new StringBuilder();
+
+                foreach (var @char in msg)
+                {
+                    if (@char == DiagnosticsExtensions.HighlightEnd || @char == DiagnosticsExtensions.HighlightStart)
+                    {
+                        var highlighted = currentText.ToString();
+                        currentText = new StringBuilder();
+                        yield return new Text(highlighted, GetStyle(level, msg.IsSuccess(), isInHighlight));
+                        if (isInHighlight && @char == DiagnosticsExtensions.HighlightEnd)
+                            isInHighlight = false;
+                        else if (!isInHighlight && @char == DiagnosticsExtensions.HighlightStart)
+                            isInHighlight = true;
+                    }
+                    else
+                        currentText.Append(@char);
+                }
+                yield return new Text(currentText.ToString(), GetStyle(level, msg.IsSuccess(), isInHighlight));
+            }
         }
 
 
