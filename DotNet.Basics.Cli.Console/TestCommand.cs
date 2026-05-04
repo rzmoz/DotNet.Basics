@@ -1,4 +1,6 @@
-﻿using DotNet.Basics.Cli.Logging;
+﻿using DotNet.Basics.Sys;
+using DotNet.Basics.Cli.Logging;
+using DotNet.Basics.Collections;
 using DotNet.Basics.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Spectre.Console;
@@ -10,15 +12,9 @@ namespace DotNet.Basics.Cli.Console
     {
         protected override async Task<int> ExecuteAsync(CommandContext context, TestCommandSettings settings, CancellationToken cancellationToken)
         {
-            log.Info(greeter.Greet(settings.Greetee));
-            /*
-            log.Trace($"Trace {"Trace".Highlight()} lalalalalalala");
-            log.Debug($"Debug {"Debug".Highlight()} lalalalalalala");
-            log.Info($"Info {"Info".Highlight()} lalalalalalala");
-            log.Success($"Success {"Success".Highlight()} lalalalalalala");
-            log.Warn($"Warn {"Warn".Highlight()} lalalalalalala");
-            log.Error($"Error {"Error".Highlight()} lalalalalalala");
-            log.Critical($"Critical {"Critical".Highlight()} lalalalalalala");
+            Enum.GetValues<LogLevel>().ForEach(lvl => log.L0G(lvl, greeter.Greet(settings.Greetee)));//wo highlight
+            Enum.GetValues<LogLevel>().ForEach(lvl => log.L0G(lvl, $"{lvl.ToName()}{lvl.ToName().Highlight()} lalalalalalala")); //w highlight
+
             log.Write(new BarChart()
                 .AddItem("Apple", 12, Color.Green)
                 .AddItem("Orange", 8, Color.Orange1)
@@ -32,7 +28,7 @@ namespace DotNet.Basics.Cli.Console
                 await Task.Delay(500);
                 ctx.Status("Almost done...");
                 await Task.Delay(500);
-            });*/
+            });
             throw new IOException("This is a test exception");
         }
     }

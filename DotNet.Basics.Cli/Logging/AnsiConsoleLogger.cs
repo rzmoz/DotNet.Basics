@@ -9,11 +9,11 @@ using System.Text;
 
 namespace DotNet.Basics.Cli.Logging
 {
-    public class AnsiConsoleLogger : IConsoleLogger
+    public class AnsiConsoleLogger(ConsoleStyleTheme? theme = null) : IConsoleLogger
     {
         private static SysRegex _highlightRegex = @$"{DiagnosticsExtensions.HighlightStart}(?<highlight>.+?){DiagnosticsExtensions.HighlightEnd}";
 
-
+        public ConsoleStyleTheme Theme { get; set; } = theme ?? new DefaultDarkTheme();
         public LogLevel MinimumLogLevel { get; set; } = LogLevel.Information;
 
         public void Log(LogLevel level, string message, Exception? e)
@@ -29,17 +29,18 @@ namespace DotNet.Basics.Cli.Logging
                 AnsiConsole.WriteException(e);
         }
 
-        private static IEnumerable<Text> GetTexts(LogLevel level, string msg)
+        private IReadOnlyList<Text> GetTexts(LogLevel level, string msg)
         {
             if (!_highlightRegex.Test(msg))
             {
-                yield return new Text(msg, GetStyle(level, msg.IsSuccess()));
+                return [new Text(msg, Theme.GetStyle(level, msg.IsSuccess()))];
             }
             else
             {
                 //has highlights
                 bool isInHighlight = false;
                 var currentText = new StringBuilder();
+                var texts = new List<Text>();
 
                 foreach (var @char in msg)
                 {
@@ -47,7 +48,7 @@ namespace DotNet.Basics.Cli.Logging
                     {
                         var highlighted = currentText.ToString();
                         currentText = new StringBuilder();
-                        yield return new Text(highlighted, GetStyle(level, msg.IsSuccess(), isInHighlight));
+                        texts.Add(new Text(highlighted, Theme.GetStyle(level, msg.IsSuccess(), isInHighlight)));
                         if (isInHighlight && @char == DiagnosticsExtensions.HighlightEnd)
                             isInHighlight = false;
                         else if (!isInHighlight && @char == DiagnosticsExtensions.HighlightStart)
@@ -56,48 +57,9 @@ namespace DotNet.Basics.Cli.Logging
                     else
                         currentText.Append(@char);
                 }
-                yield return new Text(currentText.ToString(), GetStyle(level, msg.IsSuccess(), isInHighlight));
+                texts.Add(new Text(currentText.ToString(), Theme.GetStyle(level, msg.IsSuccess(), isInHighlight)));
+                return texts;
             }
-        }
-
-
-        private static Style GetStyle(LogLevel level, bool isSuccess = false, bool isHighlight = false)
-        {
-            return isHighlight ? GetHighlightStyle(level, isSuccess) : GetDefaultStyle(level, isSuccess);
-        }
-
-        private static Style GetDefaultStyle(LogLevel level, bool isSuccess = false)
-        {
-            if (isSuccess)
-                return new Style(Color.Green, null, Decoration.Dim);
-
-            return level switch
-            {
-                LogLevel.Trace => new Style(Color.Gray, null, Decoration.Dim),
-                LogLevel.Debug => new Style(Color.DarkCyan, null, Decoration.Dim),
-                LogLevel.Information => new Style(Color.White, null, Decoration.Dim),
-                LogLevel.Warning => new Style(Color.Yellow),
-                LogLevel.Error => new Style(Color.Red),
-                LogLevel.Critical => new Style(Color.White, Color.DarkRed),
-                _ => new Style()
-            };
-        }
-
-        private static Style GetHighlightStyle(LogLevel level, bool isSuccess = false)
-        {
-            if (isSuccess)
-                return new Style(Color.Green);
-
-            return level switch
-            {
-                LogLevel.Trace => new Style(Color.Gray),
-                LogLevel.Debug => new Style(Color.DarkCyan),
-                LogLevel.Information => new Style(Color.Cyan),
-                LogLevel.Warning => new Style(Color.Orange1),
-                LogLevel.Error => new Style(Color.LightCoral),
-                LogLevel.Critical => new Style(Color.White, Color.DarkRed),
-                _ => new Style()
-            };
         }
     }
 }
