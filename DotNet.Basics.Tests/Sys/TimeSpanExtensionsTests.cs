@@ -7,6 +7,22 @@ namespace DotNet.Basics.Tests.Sys
 {
     public class TimeSpanExtensionsTests
     {
+        [Theory]
+        [InlineData("100ms","less than 1 second")]
+        [InlineData("37499000t", "3,7 secs")]
+        [InlineData("37500000t", "3,8 secs")]
+        [InlineData("37999000t", "3,8 secs")]
+        [InlineData("38000000t", "3,8 secs")]
+        [InlineData("3038000000t", "5 mins and 3 secs")]
+        [InlineData("111038000000t", "3 hrs and 5 mins")]
+        [InlineData("6159038000000t", "7 days and 3 hrs")]
+        public void ToReadable(string ts, string expected)
+        {
+            var result = ts.ToTimeSpan().ToReadable();
+            result.Should().Be(expected);
+        }
+
+
         [Fact]
         public void ToTimeSpan_MilliSeconds_IsParsed()
         {

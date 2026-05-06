@@ -10,6 +10,16 @@ namespace DotNet.Basics.Sys
 
         private const string _formatExceptionText = @"Input must be in format {time}{unit} where time is an integer and unit is ms|s|m|h|d|t. Was: ";
 
+        public static string ToReadable(this TimeSpan ts)
+        {
+            if (ts < 1.Seconds()) return "less than 1 second";
+            if (ts < 1.Minutes()) return $"{Math.Round(ts.TotalSeconds, 1)} secs";
+            if (ts < 1.Hours()) return $"{(int)Math.Floor(ts.TotalMinutes)} mins and {ts.Seconds} secs";
+            if (ts < 24.Hours()) return $"{(int)Math.Floor(ts.TotalHours)} hrs and {ts.Minutes} mins";
+            return $"{(int)Math.Floor(ts.TotalDays)} days and {ts.Hours} hrs";
+        }
+
+
         /// <summary>
         /// input must be in format [time][unit] where time is an integer and unit is 
         /// ms = milliseconds
@@ -34,23 +44,23 @@ namespace DotNet.Basics.Sys
             if (!match.Success || match.Groups.Count != 3)
                 throw new FormatException(_formatExceptionText + input);
 
-            var number = int.Parse(match.Groups[1].Value);
+            var number = long.Parse(match.Groups[1].Value);
             var unit = match.Groups[2].Value.ToLower();
 
             switch (unit)
             {
                 case "ms":
-                    return number.MilliSeconds();
+                    return TimeSpan.FromMilliseconds(number);
                 case "s":
-                    return number.Seconds();
+                    return TimeSpan.FromSeconds(number);
                 case "m":
-                    return number.Minutes();
+                    return TimeSpan.FromMinutes(number);
                 case "h":
-                    return number.Hours();
+                    return TimeSpan.FromHours(number);
                 case "d":
-                    return number.Days();
+                    return TimeSpan.FromDays(number);
                 case "t":
-                    return number.Ticks();
+                    return TimeSpan.FromTicks(number);
                 default:
                     throw new FormatException(_formatExceptionText + input);
             }

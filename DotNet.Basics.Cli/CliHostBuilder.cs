@@ -6,19 +6,33 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace DotNet.Basics.Cli
 {
-    public class CliHostBuilder(Func<IServiceCollection>? serviceCollectionFactory = null)
+    public class CliHostBuilder
     {
         private List<Action<IServiceCollection>> _configureServices = new();
-        private Func<Exception, int> _globalExceptionHandling = DefaultGlobalExceptionHandling;
+        private Action<Exception?> _defaultExceptionHandling;
+        private Action<Exception?> _spectreExceptionHandling;
         private List<Action<CommandApp>> _appActions = new();
+        private readonly Func<IServiceCollection>? _serviceCollectionFactory;
 
-
-        public CliHostBuilder WithGlobalExceptionHandling(Func<Exception, int> globalExceptionHandling)
+        public CliHostBuilder(Func<IServiceCollection>? serviceCollectionFactory = null)
         {
-            _globalExceptionHandling = globalExceptionHandling ?? throw new ArgumentNullException(nameof(globalExceptionHandling));
+            _defaultExceptionHandling = DefaultExceptionHandling;
+            _spectreExceptionHandling = SpectreExceptionHandling;
+            _serviceCollectionFactory = serviceCollectionFactory;
+        }
+
+        public CliHostBuilder WithDefaultExceptionHandling(Action<Exception?> exceptionHandling)
+        {
+            _defaultExceptionHandling = exceptionHandling ?? throw new ArgumentNullException(nameof(exceptionHandling));
+            return this;
+        }
+        public CliHostBuilder WithSpectreExceptionHandling(Action<Exception?> exceptionHandling)
+        {
+            _spectreExceptionHandling = exceptionHandling ?? throw new ArgumentNullException(nameof(exceptionHandling));
             return this;
         }
 
@@ -48,13 +62,25 @@ namespace DotNet.Basics.Cli
         {
             if (_appActions.Count == 0)
                 throw new ApplicationException("No commands added. Call WithCommand at least once");
+
+            var appInfo = new CliInfo
+            {
+                ApplicationName = Assembly.GetEntryAssembly()?.GetName().Name ?? string.Empty,
+                ApplicationVersion = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? string.Empty
+            };
+
             var app = InitApp();
+            app.Configure(c =>
+            {
+                c.SetApplicationName(appInfo.ApplicationName);
+                c.SetApplicationVersion(appInfo.ApplicationVersion);
+            });
             _appActions.ForEach(a => a(app));
-            return new CliHost(app, _globalExceptionHandling);
+            return new CliHost(app, DefaultGlobalExceptionHandling, appInfo);
         }
         private CommandApp InitApp()
         {
-            var services = serviceCollectionFactory?.Invoke() ?? new ServiceCollection();
+            var services = _serviceCollectionFactory?.Invoke() ?? new ServiceCollection();
             services.AddSingleton(DevConsole.Console);
             services.AddSingleton<ILogger>(s => s.GetService<DevConsole>()!);
             _configureServices.ForEach(s => s.Invoke(services));
@@ -71,7 +97,31 @@ namespace DotNet.Basics.Cli
             return app;
         }
 
-        private static readonly ExceptionSettings _generalExceptionSettings = new ExceptionSettings
+        protected virtual int DefaultGlobalExceptionHandling(Exception? e)
+        {
+            if (e?.GetType().Namespace?.StartsWith(typeof(IAnsiConsole).Namespace!) ?? false)
+                _spectreExceptionHandling(e);
+            else
+                _defaultExceptionHandling(e);
+            if (int.TryParse(e?.GetType().GetProperty("ExitCode")?.GetValue(e)?.ToString(), out int result))
+                return result;
+            return -1337;
+        }
+
+        private void SpectreExceptionHandling(Exception? e)
+        {
+            if (e == null)
+                return;
+            DevConsole.Console.ForceWriteLine(($"Error in args:", DevConsole.Console.Theme.GetStyle(LogLevel.Critical)), ($" {e.Message}", DevConsole.Console.Theme.GetStyle(LogLevel.Error)));
+        }
+        private void DefaultExceptionHandling(Exception? e)
+        {
+            if (e == null)
+                return;
+            AnsiConsole.WriteException(e, GeneralExceptionSettings);
+        }
+
+        protected virtual ExceptionSettings GeneralExceptionSettings { get; } = new ExceptionSettings
         {
             Format = ExceptionFormats.ShortenTypes | ExceptionFormats.ShortenMethods | ExceptionFormats.ShowLinks,
             Style = new ExceptionStyle
@@ -81,24 +131,5 @@ namespace DotNet.Basics.Cli
                 LineNumber = new Style(Color.Blue),
             }
         };
-        private static readonly ExceptionSettings _cliSpectreExceptionSettings = new ExceptionSettings
-        {
-            Format = ExceptionFormats.ShortenTypes | ExceptionFormats.ShortenMethods | ExceptionFormats.ShowLinks | ExceptionFormats.NoStackTrace,
-            Style = new ExceptionStyle
-            {
-                Exception = new Style(Color.Red),
-                Message = new Style(Color.White),
-                LineNumber = new Style(Color.Blue),
-            }
-        };
-
-        private static int DefaultGlobalExceptionHandling(Exception e)
-        {
-            var isSpectraException = e.GetType().Namespace?.StartsWith(typeof(IAnsiConsole).Namespace!) ?? false;
-            AnsiConsole.WriteException(e, isSpectraException ? _cliSpectreExceptionSettings : _generalExceptionSettings);
-            if (int.TryParse(e.GetType().GetProperty("ExitCode")?.GetValue(e)?.ToString(), out int result))
-                return result;
-            return -1337;
-        }
     }
 }

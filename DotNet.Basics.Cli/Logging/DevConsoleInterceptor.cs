@@ -7,8 +7,16 @@ namespace DotNet.Basics.Cli.Logging
     {
         public void Intercept(CommandContext context, CommandSettings settings)
         {
-            if (settings is CliCommandSettings cliSettings)            
-                console.MinimumLogLevel = cliSettings.Verbose ? LogLevel.Trace : cliSettings.LogLevel;
+            if (settings is CliCommandSettings cliSettings)
+            {
+                if (cliSettings.Verbose)
+                    console.MinimumLogLevel = LogLevel.Trace;
+                else if (cliSettings.Debug)
+                    console.MinimumLogLevel = LogLevel.Debug;
+                else
+                    console.MinimumLogLevel = cliSettings.LogLevel;
+            }
+
         }
     }
 }

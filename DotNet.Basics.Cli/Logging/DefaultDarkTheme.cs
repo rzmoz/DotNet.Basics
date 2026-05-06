@@ -9,8 +9,8 @@ namespace DotNet.Basics.Cli.Logging
         public static readonly ConsoleStyleSet Primary = new()
         {
             Trace = new Style(Color.Gray, null, Decoration.Dim),
-            Debug = new Style(Color.DarkCyan, null, Decoration.Dim),
-            Info = new Style(Color.LightSlateGrey),
+            Debug = new Style(Color.Gray),
+            Info = new Style(Color.DarkCyan),
             Success = new Style(Color.Green),
             Warning = new Style(Color.Yellow),
             Error = new Style(Color.Red),
@@ -20,8 +20,8 @@ namespace DotNet.Basics.Cli.Logging
         public static readonly ConsoleStyleSet Highlights = new()
         {
             Trace = new Style(Color.Gray),
-            Debug = new Style(Color.DarkCyan),
-            Info = new Style(Color.White),
+            Debug = new Style(Color.LightSlateGrey),
+            Info = new Style(Color.Cyan),
             Success = new Style(Color.GreenYellow),
             Warning = new Style(Color.Orange1),
             Error = new Style(Color.White),
