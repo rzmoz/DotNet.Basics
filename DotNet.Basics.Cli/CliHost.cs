@@ -46,7 +46,7 @@ namespace DotNet.Basics.Cli
                     {
                         e.Cancel = true;
                         cancellationTokenSource.Cancel();
-                        Console.WriteLine("Cancellation requested. Press CTRL+C again to force quit.");
+                        Console.WriteLine("\r\nCancellation requested. Press CTRL+C again to force quit.");
                     }
                 };
 

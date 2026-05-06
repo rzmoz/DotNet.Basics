@@ -38,7 +38,7 @@ namespace DotNet.Basics.Cli.Console
                 await Task.Delay(500);
                 ctx.Status("Almost done...");
                 await Task.Delay(500);
-            }, ct);
+            });
             throw new IOException("This is a test exception");
         }
     }

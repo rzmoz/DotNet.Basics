@@ -7,6 +7,7 @@ using Spectre.Console.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,13 +45,12 @@ namespace DotNet.Basics.Cli.Logging
         // ------- Spectre.Console ------- //
         public async Task ProgressAsync(string message, double maxValue, Func<ProgressTask, Task> func)
         {
-            await ProgressAsync(message, maxValue, null, func);
+            await ProgressAsync(message, maxValue, _ => { return _; }, func);
         }
-        public async Task ProgressAsync(string message, double maxValue, Func<Progress, Progress>? init, Func<ProgressTask, Task> func)
+        public async Task ProgressAsync(string message, double maxValue, Func<Progress, Progress> init, Func<ProgressTask, Task> func)
         {
             var progress = AnsiConsole.Progress().AutoRefresh(true).AutoClear(true);
-            if (init != null)
-                progress = init(progress);
+            progress = init(progress);
             await progress.StartAsync(async ctx =>
             {
                 var task = ctx.AddTask(message, maxValue: maxValue);
@@ -62,16 +62,26 @@ namespace DotNet.Basics.Cli.Logging
                 }
             });
         }
-        public async Task StatusAsync(string startMessage, Func<StatusContext, Task> func,CancellationToken cancellationToken)
+        public async Task StatusAsync(string startMessage, Func<StatusContext, Task> func)
         {
-            await StatusAsync(startMessage, null, func);
+            await StatusAsync(startMessage, _ => { return _; }, func);
         }
-        public async Task StatusAsync(string startMessage, Func<Status, Status>? init, Func<StatusContext, Task> func)
+        public async Task StatusAsync(string startMessage, Func<Status, Status> init, Func<StatusContext, Task> func)
         {
             var status = AnsiConsole.Status().AutoRefresh(true);
-            if (init != null)
-                status = init(status);
+            status = init(status);
             await status.StartAsync(startMessage, func);
+        }
+
+        public async Task LiveAsync(IRenderable renderable, Func<LiveDisplayContext, Task> func)
+        {
+            await LiveAsync(renderable, _ => { return _; }, func);
+        }
+        public async Task LiveAsync(IRenderable renderable, Func<LiveDisplay, LiveDisplay> init, Func<LiveDisplayContext, Task> func)
+        {
+            var live = AnsiConsole.Live(renderable).AutoClear(true);
+            live = init(live);
+            await live.StartAsync(func);
         }
 
         public void LogJson(string str, LogLevel lvl = LogLevel.Debug) => ForceWriteLine(str, Theme.GetStyle(lvl));
