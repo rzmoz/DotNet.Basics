@@ -1,21 +1,32 @@
 ﻿using DotNet.Basics.Collections;
 using DotNet.Basics.Diagnostics;
+using DotNet.Basics.Sys;
 using DotNet.Basics.Sys.Text;
 using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace DotNet.Basics.Cli.Logging
 {
     public class DevConsole : ILogger, IConsoleLogger
     {
+        [DllImport("User32.Dll", EntryPoint = "PostMessageA")]
+        private static extern bool PostMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
+
+        const int VK_RETURN = 0x0D;
+        const int WM_KEYDOWN = 0x100;
+
         // ------- ILogger section ------- //
         public bool IsEnabled(LogLevel lvl) => lvl >= MinimumLogLevel && lvl < LogLevel.None;
         public void Log<TState>(LogLevel lvl, EventId eventId, TState state, Exception? e, Func<TState, Exception?, string> formatter) => Log(lvl, formatter.Invoke(state, e), e);
@@ -24,7 +35,19 @@ namespace DotNet.Basics.Cli.Logging
         // ------- Dotnet.Basics section ------- //
         private static SysRegex _highlightRegex = @$"{DiagnosticsExtensions.HighlightStart}(?<highlight>.+?){DiagnosticsExtensions.HighlightEnd}";
         public static readonly DevConsole Console = new DevConsole { MinimumLogLevel = LogLevel.Trace };
-        public static void PauseForDebuggerAttach() => AnsiConsole.Prompt(new TextPrompt<string>($"Pausing to attach debugger <{Environment.ProcessId}>. [yellow]Press enter to continue[/]").AllowEmpty());
+        public static void PauseForDebuggerAttach()
+        {
+            PauseForDebuggerAttach(30.Seconds());
+        }
+
+        public static void PauseForDebuggerAttach(TimeSpan timeout)
+        {
+            AnsiConsole.Markup($"Pausing to attach debugger. [orange1]{Process.GetCurrentProcess().MainModule?.FileName.ToFile().Name ?? "???"}[/] <{Environment.ProcessId}>. [yellow]Press enter to continue[/]");
+            // Start Console.ReadLine asynchronously
+            Task<string> inputTask = Task.Factory.StartNew(() => System.Console.ReadLine() ?? string.Empty);
+            Task.WaitAny(new Task[] { inputTask }, timeout);
+        }
+
         public ConsoleStyleTheme Theme { get; set; } = new DefaultDarkTheme();
         public LogLevel MinimumLogLevel { get; set; }
 
