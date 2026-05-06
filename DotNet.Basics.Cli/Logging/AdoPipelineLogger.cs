@@ -7,22 +7,26 @@ namespace DotNet.Basics.Cli.Logging
     internal class AdoPipelineLogger : IConsoleLogger
     {
         private static readonly string _successPrefix = "##[section]";
+        public LogLevel MinimumLogLevel { get; set; } = LogLevel.Debug;
 
-        public LogLevel MinimumLogLevel { get; set; } = LogLevel.Information;
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+        public bool IsEnabled(LogLevel lvl) => lvl >= MinimumLogLevel && lvl < LogLevel.None;        
 
-        public void Log(LogLevel level, string message, Exception? e)
+        public void Log<TState>(LogLevel lvl, EventId eventId, TState state, Exception? e, Func<TState, Exception?, string> formatter)
         {
-            if (string.IsNullOrWhiteSpace(message))
+            var msg = formatter.Invoke(state, e);
+
+            if (string.IsNullOrWhiteSpace(msg))
                 return;
 
-            var adoPrefix = message.IsSuccess() ? _successPrefix : GetLogLevelPrefix(level);
+            var adoPrefix = msg.IsSuccess() ? _successPrefix : GetLogLevelPrefix(lvl);
 
             if (e != null)
             {
-                Console.Out.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
                 Console.Error.WriteLine($"{GetLogLevelPrefix(LogLevel.Error)}{e.Message}");
             }
-            Console.Out.WriteLine($"{adoPrefix}{message}");
+            Console.WriteLine($"{adoPrefix}{msg}");
         }
 
         private string GetLogLevelPrefix(LogLevel level)

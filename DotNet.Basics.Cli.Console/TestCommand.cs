@@ -1,14 +1,14 @@
 ﻿using DotNet.Basics.Sys;
-using DotNet.Basics.Cli.Logging;
 using DotNet.Basics.Collections;
 using DotNet.Basics.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using DotNet.Basics.Cli.Logging;
 
 namespace DotNet.Basics.Cli.Console
 {
-    public class TestCommand(DevConsole log, Greeter greeter) : CliCommand<TestCommandSettings>
+    public class TestCommand(ILogger log, Greeter greeter) : CliCommand<TestCommandSettings>
     {
         protected override async Task<int> ExecuteAsync(CommandContext context, TestCommandSettings settings, CancellationToken ct)
         {

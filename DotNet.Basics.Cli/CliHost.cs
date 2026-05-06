@@ -11,28 +11,20 @@ using System.Threading.Tasks;
 
 namespace DotNet.Basics.Cli
 {
-    public class CliHost(CommandApp spectreApp, Func<Exception?, int> globalExceptionHandling, CliInfo info)
+    public class CliHost(CommandApp spectreApp, Func<Exception?, int> globalExceptionHandling, CliInfo info, ILogger log)
     {
-        private static readonly string[] _attachDebuggerKeyWords = ["-d", "-debug"];
+        private static readonly string[] _attachDebuggerKeyWords = ["-p", "--pause"];
 
         private static readonly Style _exitCodeTextStyle = new Style(Color.White, null, Decoration.Dim);
         private Style GetExitCodeStyle(int exitCode) => new Style(exitCode == 0 ? Color.Default : Color.Red);
 
         public async Task<int> RunAsync(string[] args)
         {
-            return await RunAsync(args, 3.Seconds());
-        }
-
-        /// <param name="args">cli args</param>
-        /// <param name="forceQuitTimeout">First CTRL+C triggers cancellation token request - second CTRL+C forces quits</param>
-        /// <returns></returns>
-        public async Task<int> RunAsync(string[] args, TimeSpan forceQuitTimeout)
-        {
             if (args.Any(a => _attachDebuggerKeyWords.Any(kw => a.EndsWith(kw, StringComparison.OrdinalIgnoreCase))))
                 DevConsole.PauseForDebuggerAttach();
 
             var exitCode = int.MinValue;
-            DevConsole.Console.Log(LogLevel.Debug, $"Starting {info.ApplicationName.Highlight()} {"v".Highlight()}{info.ApplicationVersion.Highlight()}");
+            log.Debug($"Starting {info.ApplicationName.Highlight()} {"v".Highlight()}{info.ApplicationVersion.Highlight()}");
             var startTime = DateTime.Now;
             Exception? globalException = null;
             try
@@ -57,10 +49,10 @@ namespace DotNet.Basics.Cli
             {
                 globalException = e;
             }
-            DevConsole.Console.Log(LogLevel.Debug, $"{info.ApplicationName.Highlight()} finished in {(DateTime.Now - startTime).ToReadable().Highlight()}");
+            log.Debug($"{info.ApplicationName.Highlight()} finished in {(DateTime.Now - startTime).ToReadable().Highlight()}");
             if (globalException != null)
                 exitCode = globalExceptionHandling(globalException);
-            DevConsole.Console.ForceWrite(("Exit code: ", _exitCodeTextStyle), (exitCode.ToString(), GetExitCodeStyle(exitCode)));
+            log.ForceWrite(("Exit code: ", _exitCodeTextStyle), (exitCode.ToString(), GetExitCodeStyle(exitCode)));
             return exitCode;
         }
     }

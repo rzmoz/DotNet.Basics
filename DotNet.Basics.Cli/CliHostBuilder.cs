@@ -68,20 +68,20 @@ namespace DotNet.Basics.Cli
                 ApplicationName = Assembly.GetEntryAssembly()?.GetName().Name ?? string.Empty,
                 ApplicationVersion = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? string.Empty
             };
-
-            var app = InitApp();
+            var logger = new DevConsole();
+            var app = InitApp(logger);
             app.Configure(c =>
             {
                 c.SetApplicationName(appInfo.ApplicationName);
                 c.SetApplicationVersion(appInfo.ApplicationVersion);
             });
             _appActions.ForEach(a => a(app));
-            return new CliHost(app, DefaultGlobalExceptionHandling, appInfo);
+            return new CliHost(app, DefaultGlobalExceptionHandling, appInfo, logger);
         }
-        private CommandApp InitApp()
+        private CommandApp InitApp(DevConsole log)
         {
             var services = _serviceCollectionFactory?.Invoke() ?? new ServiceCollection();
-            services.AddSingleton(DevConsole.Console);
+            services.AddSingleton(log);
             services.AddSingleton<ILogger>(s => s.GetService<DevConsole>()!);
             _configureServices.ForEach(s => s.Invoke(services));
             var registrar = new TypeRegistrar(services);
@@ -92,7 +92,7 @@ namespace DotNet.Basics.Cli
                 c.Settings.StrictParsing = false;
                 c.Settings.ValidateExamples = true;
                 c.PropagateExceptions();
-                c.SetInterceptor(new DevConsoleInterceptor(DevConsole.Console));
+                c.SetInterceptor(new DevConsoleInterceptor(log));
             });
             return app;
         }
@@ -112,7 +112,9 @@ namespace DotNet.Basics.Cli
         {
             if (e == null)
                 return;
-            DevConsole.Console.ForceWriteLine(($"Error in args:", DevConsole.Console.Theme.GetStyle(LogLevel.Critical)), ($" {e.Message}", DevConsole.Console.Theme.GetStyle(LogLevel.Error)));
+            AnsiConsole.Write(new Text($"Error in args:", ANSIExtensions.Theme.GetStyle(LogLevel.Critical)));
+            AnsiConsole.Write(new Text($" {e.Message}", ANSIExtensions.Theme.GetStyle(LogLevel.Error)));
+            AnsiConsole.Write(Text.NewLine);
         }
         private void DefaultExceptionHandling(Exception? e)
         {
