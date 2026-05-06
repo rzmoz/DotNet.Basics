@@ -52,7 +52,8 @@ namespace DotNet.Basics.Cli
             log.Debug($"{info.ApplicationName.Highlight()} finished in {(DateTime.Now - startTime).ToReadable().Highlight()}");
             if (globalException != null)
                 exitCode = globalExceptionHandling(globalException);
-            log.ForceWrite(("Exit code: ", _exitCodeTextStyle), (exitCode.ToString(), GetExitCodeStyle(exitCode)));
+            if (DevConsole.Console.MinimumLogLevel <= LogLevel.Debug)
+                log.ForceWrite(("Exit code: ", _exitCodeTextStyle), (exitCode.ToString(), GetExitCodeStyle(exitCode)));
             return exitCode;
         }
     }

@@ -58,13 +58,13 @@ namespace DotNet.Basics.Cli.Logging
             await live.StartAsync(func);
         }
 
-        public static void ForceWriteJson(this ILogger log, object o, Func<JsonText, JsonText>? init = null)
+        public static void ForceWriteLineJson(this ILogger log, object o, Func<JsonText, JsonText>? init = null)
         {
-            log.ForceWriteJson(o.ToJson(), init);
+            log.ForceWriteLineJson(o.ToJson(), init);
         }
-        public static void ForceWriteJson(this ILogger log, string str, Func<JsonText, JsonText>? init = null)
+        public static void ForceWriteLineJson(this ILogger log, string str, Func<JsonText, JsonText>? init = null)
         {
-            log.ForceWrite(init?.Invoke(new JsonText(str)) ?? new JsonText(str));
+            log.ForceWriteLine(init?.Invoke(new JsonText(str)) ?? new JsonText(str));
         }
 
         /// <summary>
