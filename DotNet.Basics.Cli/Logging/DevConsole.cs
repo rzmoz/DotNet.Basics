@@ -38,7 +38,7 @@ namespace DotNet.Basics.Cli.Logging
 
 
         // ------- Dotnet.Basics section ------- //        
-        public static ILogger Console { get; } = new DevConsole();
+        public static IConsoleLogger Console { get; } = new DevConsole();
         public static TimeSpan PauseForDebuggerAttachTimeout { get; set; } = 30.Seconds();
         public static void PauseForDebuggerAttach() => PauseForDebuggerAttach(PauseForDebuggerAttachTimeout);
 
