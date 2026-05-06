@@ -62,7 +62,7 @@ namespace DotNet.Basics.Cli.Logging
                 }
             });
         }
-        public async Task StatusAsync(string startMessage, Func<StatusContext, Task> func)
+        public async Task StatusAsync(string startMessage, Func<StatusContext, Task> func,CancellationToken cancellationToken)
         {
             await StatusAsync(startMessage, null, func);
         }
@@ -73,6 +73,8 @@ namespace DotNet.Basics.Cli.Logging
                 status = init(status);
             await status.StartAsync(startMessage, func);
         }
+
+        public void LogJson(string str, LogLevel lvl = LogLevel.Debug) => ForceWriteLine(str, Theme.GetStyle(lvl));
 
         /// <summary>
         /// Outputs to console regardless of loglevel but in chosen loglevel color scheme

@@ -10,7 +10,7 @@ namespace DotNet.Basics.Cli.Console
 {
     public class TestCommand(DevConsole log, Greeter greeter) : CliCommand<TestCommandSettings>
     {
-        protected override async Task<int> ExecuteAsync(CommandContext context, TestCommandSettings settings, CancellationToken cancellationToken)
+        protected override async Task<int> ExecuteAsync(CommandContext context, TestCommandSettings settings, CancellationToken ct)
         {
             Enum.GetValues<LogLevel>().ForEach(lvl => log.L0G(lvl, greeter.Greet(settings.Greetee)));//wo highlight
             Enum.GetValues<LogLevel>().ForEach(lvl => log.L0G(lvl, $"{lvl.ToName()} {lvl.ToName().Highlight()} lalalalalalala")); //w highlight
@@ -21,14 +21,14 @@ namespace DotNet.Basics.Cli.Console
                 .AddItem("Banana", 5, Color.Yellow));
 
             var max = 99;
-            await log.ProgressAsync("Doing some work...", max, async task=>
+            await log.ProgressAsync("Doing some work...", max, async task =>
             {
                 var value = 0;
-                while(value < max)
+                while (value < max)
                 {
                     task.Value = value++;
                     await Task.Delay(5);
-                }                    
+                }
             });
 
             await log.StatusAsync("Doing some more work...", async ctx =>
@@ -38,7 +38,7 @@ namespace DotNet.Basics.Cli.Console
                 await Task.Delay(500);
                 ctx.Status("Almost done...");
                 await Task.Delay(500);
-            });
+            }, ct);
             throw new IOException("This is a test exception");
         }
     }

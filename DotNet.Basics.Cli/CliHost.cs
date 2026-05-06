@@ -13,13 +13,20 @@ namespace DotNet.Basics.Cli
 {
     public class CliHost(CommandApp spectreApp, Func<Exception?, int> globalExceptionHandling, CliInfo info)
     {
-
         private static readonly string[] _attachDebuggerKeyWords = ["-d", "-debug"];
 
         private static readonly Style _exitCodeTextStyle = new Style(Color.White, null, Decoration.Dim);
         private Style GetExitCodeStyle(int exitCode) => new Style(exitCode == 0 ? Color.Default : Color.Red);
 
         public async Task<int> RunAsync(string[] args)
+        {
+            return await RunAsync(args, 3.Seconds());
+        }
+
+        /// <param name="args">cli args</param>
+        /// <param name="forceQuitTimeout">First CTRL+C triggers cancellation token request - second CTRL+C forces quits</param>
+        /// <returns></returns>
+        public async Task<int> RunAsync(string[] args, TimeSpan forceQuitTimeout)
         {
             if (args.Any(a => _attachDebuggerKeyWords.Any(kw => a.EndsWith(kw, StringComparison.OrdinalIgnoreCase))))
                 DevConsole.PauseForDebuggerAttach();
@@ -35,10 +42,14 @@ namespace DotNet.Basics.Cli
                 //https://spectreconsole.net/cli/how-to/async-commands-and-cancellation
                 Console.CancelKeyPress += (_, e) =>
                 {
-                    e.Cancel = true;
-                    cancellationTokenSource.Cancel();
-                    Console.WriteLine("Cancellation requested...");
+                    if (!cancellationTokenSource.IsCancellationRequested) //first CTRL+C requests cancellation gracefully
+                    {
+                        e.Cancel = true;
+                        cancellationTokenSource.Cancel();
+                        Console.WriteLine("Cancellation requested. Press CTRL+C again to force quit.");
+                    }
                 };
+
                 exitCode = await spectreApp.RunAsync(args, cancellationTokenSource.Token);
 
             }
