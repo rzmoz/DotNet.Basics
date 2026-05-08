@@ -20,6 +20,8 @@ namespace DotNet.Basics.Cli.Console
                 .AddItem("Orange", 8, Color.Orange1)
                 .AddItem("Banana", 5, Color.Yellow));
 
+            await log.StatusRandomMessagesAsync(async => Task.Delay(5.Seconds()));
+
             var max = 99;
             await log.ProgressAsync("Doing some work...", max, async task =>
             {
