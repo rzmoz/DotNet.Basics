@@ -15,19 +15,80 @@ namespace DotNet.Basics.Cli.Logging
     // ------- Spectre.Console ------- //
     public static class ANSIExtensions
     {
+        private static readonly Func<Progress, Progress> _passThroughProgressFunc = _ => _;
+        private static readonly Func<Status, Status> _passThroughStatusFunc = _ => _;
+        private static readonly Func<LiveDisplay, LiveDisplay> _passThroughLiveDisplayFunc = _ => _;
+
+        public static string ProgressDefaultMessage { get; set; } = "Starting...";
+
         public static ConsoleStyleTheme Theme { get; set; } = new DefaultDarkTheme();
 
-        public static async Task ProgressAsync(this ILogger log, string message, double maxValue, Func<ProgressTask, Task> func)
+        // ------- Progress ------- //
+        public static void Progress(this ILogger _, string message, Action<ProgressTask> action)
         {
-            await log.ProgressAsync(message, maxValue, _ => { return _; }, func);
+            Progress(_, message, 0, _passThroughProgressFunc, action);
         }
-        public static async Task ProgressAsync(this ILogger log, string message, double maxValue, Func<Progress, Progress> init, Func<ProgressTask, Task> func)
+        public static void Progress(this ILogger _, double maxValue, Action<ProgressTask> action)
+        {
+            Progress(_, ProgressDefaultMessage, maxValue, _passThroughProgressFunc, action);
+        }
+        public static void Progress(this ILogger _, string message, double maxValue, Action<ProgressTask> action)
+        {
+            Progress(_, message, maxValue, _passThroughProgressFunc, action);
+        }
+        public static void Progress(this ILogger _, string message, Func<Progress, Progress> init, Action<ProgressTask> action)
+        {
+            Progress(_, message, 0, init, action);
+        }
+        public static void Progress(this ILogger _, double maxValue, Func<Progress, Progress> init, Action<ProgressTask> action)
+        {
+            Progress(_, ProgressDefaultMessage, maxValue, init, action);
+        }
+        public static void Progress(this ILogger _, string message, double maxValue, Func<Progress, Progress> init, Action<ProgressTask> action)
+        {
+            var progress = AnsiConsole.Progress().AutoRefresh(true).AutoClear(true);
+            progress = init(progress);
+            progress.Start(async ctx =>
+            {
+                var task = ctx.AddTask(message, maxValue: maxValue);
+                task.IsIndeterminate(maxValue <= 0);
+                var ct = new CancellationTokenSource();
+                while (!ctx.IsFinished && !ct.IsCancellationRequested)
+                {
+                    action(task);
+                    ct.Cancel();
+                }
+            });
+        }
+
+        public static async Task ProgressAsync(this ILogger _, string message, Func<ProgressTask, Task> func)
+        {
+            await ProgressAsync(_, message, 0, _passThroughProgressFunc, func);
+        }
+        public static async Task ProgressAsync(this ILogger _, double maxValue, Func<ProgressTask, Task> func)
+        {
+            await ProgressAsync(_, ProgressDefaultMessage, maxValue, _passThroughProgressFunc, func);
+        }
+        public static async Task ProgressAsync(this ILogger _, string message, double maxValue, Func<ProgressTask, Task> func)
+        {
+            await ProgressAsync(_, message, maxValue, _passThroughProgressFunc, func);
+        }
+        public static async Task ProgressAsync(this ILogger _, string message, Func<Progress, Progress> init, Func<ProgressTask, Task> func)
+        {
+            await ProgressAsync(_, message, 0, init, func);
+        }
+        public static async Task ProgressAsync(this ILogger _, double maxValue, Func<Progress, Progress> init, Func<ProgressTask, Task> func)
+        {
+            await ProgressAsync(_, ProgressDefaultMessage, maxValue, init, func);
+        }
+        public static async Task ProgressAsync(this ILogger _, string message, double maxValue, Func<Progress, Progress> init, Func<ProgressTask, Task> func)
         {
             var progress = AnsiConsole.Progress().AutoRefresh(true).AutoClear(true);
             progress = init(progress);
             await progress.StartAsync(async ctx =>
             {
                 var task = ctx.AddTask(message, maxValue: maxValue);
+                task.IsIndeterminate(maxValue <= 0);
                 var ct = new CancellationTokenSource();
                 while (!ctx.IsFinished && !ct.IsCancellationRequested)
                 {
@@ -36,28 +97,54 @@ namespace DotNet.Basics.Cli.Logging
                 }
             });
         }
-        public static async Task StatusAsync(this ILogger log, string startMessage, Func<StatusContext, Task> func)
+
+        // ------- Status ------- //
+        public static void Status(this ILogger _, string startMessage, Action<StatusContext> action)
         {
-            await log.StatusAsync(startMessage, _ => { return _; }, func);
+            Status(_, startMessage, _passThroughStatusFunc, action);
         }
-        public static async Task StatusAsync(this ILogger log, string startMessage, Func<Status, Status> init, Func<StatusContext, Task> func)
+        public static void Status(this ILogger _, string startMessage, Func<Status, Status> init, Action<StatusContext> action)
+        {
+            var status = AnsiConsole.Status().AutoRefresh(true);
+            status = init(status);
+            status.Start(startMessage, action);
+        }
+
+        public static async Task StatusAsync(this ILogger _, string startMessage, Func<StatusContext, Task> func)
+        {
+            await StatusAsync(_, startMessage, _passThroughStatusFunc, func);
+        }
+        public static async Task StatusAsync(this ILogger _, string startMessage, Func<Status, Status> init, Func<StatusContext, Task> func)
         {
             var status = AnsiConsole.Status().AutoRefresh(true);
             status = init(status);
             await status.StartAsync(startMessage, func);
         }
 
-        public static async Task LiveAsync(this ILogger log, IRenderable renderable, Func<LiveDisplayContext, Task> func)
+        // ------- Live ------- //
+        public static void Live(this ILogger _, IRenderable renderable, Action<LiveDisplayContext> action)
         {
-            await log.LiveAsync(renderable, _ => { return _; }, func);
+            Live(_, renderable, _passThroughLiveDisplayFunc, action);
         }
-        public static async Task LiveAsync(this ILogger log, IRenderable renderable, Func<LiveDisplay, LiveDisplay> init, Func<LiveDisplayContext, Task> func)
+        public static void Live(this ILogger _, IRenderable renderable, Func<LiveDisplay, LiveDisplay> init, Action<LiveDisplayContext> action)
+        {
+            var live = AnsiConsole.Live(renderable).AutoClear(true);
+            live = init(live);
+            live.Start(action);
+        }
+
+        public static async Task LiveAsync(this ILogger _, IRenderable renderable, Func<LiveDisplayContext, Task> func)
+        {
+            await LiveAsync(_, renderable, _ => { return _; }, func);
+        }
+        public static async Task LiveAsync(this ILogger _, IRenderable renderable, Func<LiveDisplay, LiveDisplay> init, Func<LiveDisplayContext, Task> func)
         {
             var live = AnsiConsole.Live(renderable).AutoClear(true);
             live = init(live);
             await live.StartAsync(func);
         }
 
+        // ------- Force Write ------- //
         public static void ForceWriteLineJson(this ILogger log, object o, Func<JsonText, JsonText>? init = null)
         {
             log.ForceWriteLineJson(o.ToJson(), init);
