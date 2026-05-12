@@ -18,7 +18,7 @@ namespace DotNet.Basics.Cli
         private static readonly Style _exitCodeTextStyle = new Style(Color.White, null, Decoration.Dim);
         private Style GetExitCodeStyle(int exitCode) => new Style(exitCode == 0 ? Color.Default : Color.Red);
 
-        public async Task<int> RunAsync(string[] args)
+        public async Task<int> RunAsync(string[] args, CancellationToken cancellationToken = default)
         {
             if (args.Any(a => _attachDebuggerKeyWords.Any(kw => a.EndsWith(kw, StringComparison.OrdinalIgnoreCase))))
                 DevConsole.PauseForDebuggerAttach();
@@ -29,7 +29,7 @@ namespace DotNet.Basics.Cli
             Exception? globalException = null;
             try
             {
-                var cancellationTokenSource = new CancellationTokenSource();
+                using var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
                 //https://spectreconsole.net/cli/how-to/async-commands-and-cancellation
                 Console.CancelKeyPress += (_, e) =>
@@ -42,7 +42,7 @@ namespace DotNet.Basics.Cli
                     }
                 };
 
-                exitCode = await spectreApp.RunAsync(args, cancellationTokenSource.Token);
+                exitCode = await spectreApp.RunAsync(args, cancellationTokenSource.Token).ConfigureAwait(false);
 
             }
             catch (Exception e)

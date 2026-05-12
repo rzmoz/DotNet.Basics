@@ -12,7 +12,7 @@ namespace DotNet.Basics.Sys
 {
     public abstract class PathInfo
     {
-        private static readonly SysRegex _windowsRootPathRegex = @"^[a-zA-X]:";
+        private static readonly SysRegex _windowsRootPathRegex = @"^[a-zA-Z]:";
         private const string _uriSchemePattern = @"^([a-zA-Z]+://)";
         public const char Slash = '/';
 
@@ -75,7 +75,7 @@ namespace DotNet.Basics.Sys
 
         [JsonIgnore][IgnoreDataMember] public DirPath Directory => PathType == PathType.File ? Parent ?? ".." : (DirPath)this;
 
-        public IReadOnlyCollection<string> Segments;
+        public IReadOnlyCollection<string> Segments { get; }
 
         public static List<string> Tokenize(ICollection<string> segments)
         {

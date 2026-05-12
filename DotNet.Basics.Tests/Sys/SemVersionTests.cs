@@ -57,11 +57,11 @@ namespace DotNet.Basics.Tests.Sys
         {
             var semVer = new SemVersion(_fullSemver20String);
             var before = semVer.SemVer20String;
-            //act
-            semVer.Metadata = "Something.else";
+            //act — records are immutable; use `with` to produce a copy with updated metadata
+            var updated = semVer with { Metadata = "Something.else" };
 
             //assert
-            semVer.SemVer20String.Should().NotBe(before);
+            updated.SemVer20String.Should().NotBe(before);
 
         }
         [Fact]
@@ -71,10 +71,10 @@ namespace DotNet.Basics.Tests.Sys
             var semVer = new SemVersion(1, 1, 1);
 
             //act
-            semVer.Metadata += metadata;
+            var updated = semVer with { Metadata = semVer.Metadata + metadata };
 
             //assert
-            semVer.SemVer20String.Should().Be($"1.1.1+{metadata}");
+            updated.SemVer20String.Should().Be($"1.1.1+{metadata}");
         }
 
         [Fact]

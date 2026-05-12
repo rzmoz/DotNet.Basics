@@ -8,7 +8,7 @@ namespace DotNet.Basics.Tasks.Repeating
 {
     public class RepeaterTaskRunner
     {
-        public async Task<bool> RunAsync(ManagedTask<EventArgs>? task, Func<Exception?, Task<bool>> untilPredicate, RepeatOptions? options = null)
+        public async Task<bool> RunAsync(ManagedTask<EventArgs>? task, Func<Exception?, Task<bool>> untilPredicate, RepeatOptions? options = null, CancellationToken cancellationToken = default)
         {
             if (task == null)
                 return false;
@@ -28,10 +28,12 @@ namespace DotNet.Basics.Tasks.Repeating
             {
                 do
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     Exception? exceptionInLastLoop = null;
                     try
                     {
-                        await task.RunAsync(EventArgs.Empty).ConfigureAwait(false);
+                        await task.RunAsync(EventArgs.Empty, cancellationToken).ConfigureAwait(false);
                     }
                     catch (Exception e)
                     {
@@ -67,7 +69,7 @@ namespace DotNet.Basics.Tasks.Repeating
 
                     RetryPingBack(options);
 
-                    await Task.Delay(options.RetryDelay).ConfigureAwait(false);
+                    await Task.Delay(options.RetryDelay, cancellationToken).ConfigureAwait(false);
 
                 } while (true);
             }

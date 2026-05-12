@@ -3,35 +3,62 @@ using static System.String;
 
 namespace DotNet.Basics.Sys
 {
-    public class SemVersion(int major, int minor, int patch, SemVersionPreRelease? preRelease, string? metadata) : IComparable<SemVersion>
+    public record SemVersion : IComparable<SemVersion>, IComparable
     {
+        // Positional primary constructor — only the comparing fields. Metadata is `init` only.
+        public SemVersion(int Major, int Minor, int Patch, SemVersionPreRelease PreRelease)
+        {
+            this.Major = Major;
+            this.Minor = Minor;
+            this.Patch = Patch;
+            this.PreRelease = PreRelease;
+        }
+
+        public int Major { get; init; }
+        public int Minor { get; init; }
+        public int Patch { get; init; }
+        public SemVersionPreRelease PreRelease { get; init; }
+        public string Metadata { get; init; } = Empty;
+
         public SemVersion()
-            : this(Empty)
+            : this(0, 0, 0, new SemVersionPreRelease())
         { }
 
         public SemVersion(object? semVer)
             : this(semVer?.ToString())
         { }
+
         public SemVersion(string? semVer)
-        : this(Parse(semVer ?? "0.0.0"))
-        { }
-        public SemVersion(SemVersion semVer)
-            : this(semVer.Major, semVer.Minor, semVer.Patch, semVer.PreRelease, semVer.Metadata)
-        { }
+        {
+            var parsed = ParseInternal(semVer ?? "0.0.0");
+            Major = parsed.Major;
+            Minor = parsed.Minor;
+            Patch = parsed.Patch;
+            PreRelease = parsed.PreRelease;
+            Metadata = parsed.Metadata;
+        }
 
         public SemVersion(string? version, string? preRelease = null, string? metadata = null)
-            : this(Parse(version).Major, Parse(version).Minor, Parse(version).Patch, new SemVersionPreRelease(preRelease), metadata)
-        { }
+        {
+            var parsed = ParseInternal(version);
+            Major = parsed.Major;
+            Minor = parsed.Minor;
+            Patch = parsed.Patch;
+            PreRelease = new SemVersionPreRelease(preRelease);
+            Metadata = metadata ?? Empty;
+        }
 
         public SemVersion(int major, int minor, int patch, string? preRelease = null, string? metadata = null)
-        : this(major, minor, patch, new SemVersionPreRelease(preRelease), metadata)
-        { }
+            : this(major, minor, patch, new SemVersionPreRelease(preRelease))
+        {
+            Metadata = metadata ?? Empty;
+        }
 
-        public int Major { get; } = major;
-        public int Minor { get; } = minor;
-        public int Patch { get; } = patch;
-        public SemVersionPreRelease PreRelease { get; } = preRelease ?? new();
-        public string Metadata { get; set; } = metadata ?? Empty;
+        public SemVersion(int major, int minor, int patch, SemVersionPreRelease? preRelease, string? metadata)
+            : this(major, minor, patch, preRelease ?? new SemVersionPreRelease())
+        {
+            Metadata = metadata ?? Empty;
+        }
 
         public string FileVerString => $"{Major}.{Minor}.{Patch}";
 
@@ -39,10 +66,10 @@ namespace DotNet.Basics.Sys
         {
             get
             {
-                var semVer10String = FileVerString;
+                var s = FileVerString;
                 if (PreRelease.Any)
-                    semVer10String += $"{SemVersionLexer.PreReleaseSeparator}{PreRelease}";
-                return semVer10String;
+                    s += $"{SemVersionLexer.PreReleaseSeparator}{PreRelease}";
+                return s;
             }
         }
 
@@ -50,14 +77,21 @@ namespace DotNet.Basics.Sys
         {
             get
             {
-                var semVer20String = SemVer10String;
+                var s = SemVer10String;
                 if (IsNullOrWhiteSpace(Metadata) == false)
-                    semVer20String += $"{SemVersionLexer.MetadataSeparator}{Metadata.TrimStart(SemVersionLexer.MetadataSeparator)}";
-                return semVer20String;
+                    s += $"{SemVersionLexer.MetadataSeparator}{Metadata.TrimStart(SemVersionLexer.MetadataSeparator)}";
+                return s;
             }
         }
 
         public static SemVersion Parse(string? semVer = "0.0.0")
+        {
+            if (semVer == null)
+                return new SemVersion();
+            return ParseInternal(semVer);
+        }
+
+        private static SemVersion ParseInternal(string? semVer)
         {
             if (semVer == null)
                 return new SemVersion();
@@ -69,8 +103,8 @@ namespace DotNet.Basics.Sys
             var minor = int.Parse(tokens[1]);
             var patch = int.Parse(tokens[2]);
             var preRelease = new SemVersionPreRelease(tokens[3]);
-            var metaData = tokens[4];
-            return new SemVersion(major, minor, patch, preRelease, metaData);
+            var metadata = tokens[4];
+            return new SemVersion(major, minor, patch, preRelease) { Metadata = metadata };
         }
 
         public override string ToString()
@@ -78,67 +112,15 @@ namespace DotNet.Basics.Sys
             return SemVer20String;
         }
 
-        public static bool operator ==(SemVersion a, SemVersion b)
+        // SemVer 2.0 §10: build metadata MUST be ignored when determining equality.
+        // We override the record-generated equality to exclude Metadata.
+        public virtual bool Equals(SemVersion? other)
         {
-            return a.Major == b.Major &&
-                   a.Minor == b.Minor &&
-                   a.Patch == b.Patch &&
-                   a.PreRelease == b.PreRelease;
-        }
-        public static bool operator !=(SemVersion a, SemVersion b)
-        {
-            return !(a == b);
-        }
-        public static bool operator <(SemVersion a, SemVersion b)
-        {
-            if (a.Major < b.Major)
-                return true;
-            if (a.Major > b.Major)
-                return false;
-
-            if (a.Minor < b.Minor)
-                return true;
-            if (a.Minor > b.Minor)
-                return false;
-
-            if (a.Patch < b.Patch)
-                return true;
-            if (a.Patch > b.Patch)
-                return false;
-
-            return a.PreRelease < b.PreRelease;
-        }
-        public static bool operator >(SemVersion a, SemVersion b)
-        {
-            if (a.Major > b.Major)
-                return true;
-            if (a.Major < b.Major)
-                return false;
-
-            if (a.Minor > b.Minor)
-                return true;
-            if (a.Minor < b.Minor)
-                return false;
-
-            if (a.Patch > b.Patch)
-                return true;
-            if (a.Patch < b.Patch)
-                return false;
-
-            return a.PreRelease > b.PreRelease;
-        }
-
-        protected bool Equals(SemVersion other)
-        {
-            return Major == other.Major && Minor == other.Minor && Patch == other.Patch && string.Equals(PreRelease, other.PreRelease);
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((SemVersion)obj);
+            if (other is null) return false;
+            return Major == other.Major
+                   && Minor == other.Minor
+                   && Patch == other.Patch
+                   && PreRelease == other.PreRelease;
         }
 
         public override int GetHashCode()
@@ -153,22 +135,50 @@ namespace DotNet.Basics.Sys
             }
         }
 
-        public int CompareTo(SemVersion other)
+        public static bool operator <(SemVersion a, SemVersion b)
         {
-            if (this < other)
-                return -1;
-            if (this > other)
-                return 1;
+            if (a.Major < b.Major) return true;
+            if (a.Major > b.Major) return false;
+
+            if (a.Minor < b.Minor) return true;
+            if (a.Minor > b.Minor) return false;
+
+            if (a.Patch < b.Patch) return true;
+            if (a.Patch > b.Patch) return false;
+
+            return a.PreRelease < b.PreRelease;
+        }
+
+        public static bool operator >(SemVersion a, SemVersion b)
+        {
+            if (a.Major > b.Major) return true;
+            if (a.Major < b.Major) return false;
+
+            if (a.Minor > b.Minor) return true;
+            if (a.Minor < b.Minor) return false;
+
+            if (a.Patch > b.Patch) return true;
+            if (a.Patch < b.Patch) return false;
+
+            return a.PreRelease > b.PreRelease;
+        }
+
+        public int CompareTo(SemVersion? other)
+        {
+            if (other is null) return 1;
+            if (this < other) return -1;
+            if (this > other) return 1;
             return 0;
         }
 
-        public static implicit operator SemVersion(string s)
+        int IComparable.CompareTo(object? obj)
         {
-            return new SemVersion(s);
+            if (obj is null) return 1;
+            if (obj is SemVersion other) return CompareTo(other);
+            throw new ArgumentException($"Object must be of type {nameof(SemVersion)}", nameof(obj));
         }
-        public static implicit operator string(SemVersion v)
-        {
-            return v.SemVer20String;
-        }
+
+        public static implicit operator SemVersion(string s) => new(s);
+        public static implicit operator string(SemVersion v) => v.SemVer20String;
     }
 }

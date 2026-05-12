@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Sys;
 
@@ -19,7 +20,7 @@ namespace DotNet.Basics.Tasks
 
         public string Name { get; }
 
-        public abstract Task<int> RunAsync(object args);
+        public abstract Task<int> RunAsync(object args, CancellationToken cancellationToken = default);
 
         protected virtual void FireStarted(string taskName)
         {
@@ -66,18 +67,19 @@ namespace DotNet.Basics.Tasks
             })
         { }
 
-        public override async Task<int> RunAsync(object args)
+        public override async Task<int> RunAsync(object args, CancellationToken cancellationToken = default)
         {
-            return await RunAsync((T)args);
+            return await RunAsync((T)args, cancellationToken).ConfigureAwait(false);
         }
 
 
-        public async Task<int> RunAsync(T args)
+        public async Task<int> RunAsync(T args, CancellationToken cancellationToken = default)
         {
             FireStarted(Name);
             try
             {
-                var exitCode = await InnerRunAsync(args).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
+                var exitCode = await InnerRunAsync(args, cancellationToken).ConfigureAwait(false);
 
                 FireEnded(Name);
                 return exitCode;
@@ -88,9 +90,10 @@ namespace DotNet.Basics.Tasks
                 throw;
             }
         }
-        protected virtual async Task<int> InnerRunAsync(T args)
+        protected virtual async Task<int> InnerRunAsync(T args, CancellationToken cancellationToken = default)
         {
-            return await _task.Invoke(args);
+            cancellationToken.ThrowIfCancellationRequested();
+            return await _task.Invoke(args).ConfigureAwait(false);
         }
     }
 }

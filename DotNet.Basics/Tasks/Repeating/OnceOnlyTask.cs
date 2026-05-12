@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DotNet.Basics.Tasks.Repeating
@@ -6,7 +7,7 @@ namespace DotNet.Basics.Tasks.Repeating
     public class OnceOnlyTask
     {
         private Action _syncTask = () => { };
-        private Func<Task<int>> _asyncTask = () => Task.FromResult(-1);
+        private Func<CancellationToken, Task<int>> _asyncTask = _ => Task.FromResult(-1);
 
         public OnceOnlyTask(Action task)
         {
@@ -25,15 +26,16 @@ namespace DotNet.Basics.Tasks.Repeating
 
         public OnceOnlyTask(Func<Task<int>> asyncTask)
         {
-            _asyncTask = async () =>
+            _asyncTask = async ct =>
             {
                 try
                 {
+                    ct.ThrowIfCancellationRequested();
                     return await asyncTask().ConfigureAwait(false);
                 }
                 finally
                 {
-                    _asyncTask = () => Task.FromResult(0);
+                    _asyncTask = _ => Task.FromResult(0);
                 }
             };
         }
@@ -42,9 +44,9 @@ namespace DotNet.Basics.Tasks.Repeating
         {
             _syncTask();
         }
-        public Task<int> RunAsync()
+        public Task<int> RunAsync(CancellationToken cancellationToken = default)
         {
-            return _asyncTask();
+            return _asyncTask(cancellationToken);
         }
     }
 }

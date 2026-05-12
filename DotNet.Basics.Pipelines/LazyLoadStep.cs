@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Sys;
 using DotNet.Basics.Tasks;
@@ -36,12 +37,13 @@ namespace DotNet.Basics.Pipelines
             };
         }
 
-        protected override async Task<int> InnerRunAsync(T args)
+        protected override async Task<int> InnerRunAsync(T args, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var lazyLoadedTask = _loadTask();
             return lazyLoadedTask == null
                 ? throw new TaskNotResolvedFromServiceProviderException($"{typeof(TTask).FullName} in {Name}")
-                : await lazyLoadedTask.RunAsync(args);
+                : await lazyLoadedTask.RunAsync(args, cancellationToken).ConfigureAwait(false);
         }
     }
 }

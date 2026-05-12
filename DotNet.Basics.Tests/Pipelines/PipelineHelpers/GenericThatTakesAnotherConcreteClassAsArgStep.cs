@@ -9,7 +9,7 @@ namespace DotNet.Basics.Tests.Pipelines.PipelineHelpers
     {
         private ClassThatTakesAnAbstractClassAsCtorParam _argStepDependsOn = argStepDependsOn;
 
-        protected override Task<int> RunImpAsync(T args)
+        protected override Task<int> RunImpAsync(T args, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(0);
         }

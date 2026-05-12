@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Basics.Tasks;
 
@@ -12,7 +13,7 @@ namespace DotNet.Basics.Pipelines
         private readonly IServiceProvider _serviceProvider;
 
         private readonly ConcurrentQueue<ManagedTask<T>> _tasks = new();
-        private readonly Func<T, Task<int>> _innerRun;
+        private readonly Func<T, CancellationToken, Task<int>> _innerRun;
 
         public Pipeline(IServiceProvider serviceProvider, string? name = null, Invoke invoke = Invoke.Sequential)
             : base(name)
@@ -32,7 +33,7 @@ namespace DotNet.Basics.Pipelines
         }
 
         public IReadOnlyCollection<ManagedTask<T>> Tasks => _tasks.ToList();
-        
+
         public bool AssertLazyLoadSteps(ref string errorMessage)
         {
             return AssertLazyLoadSteps(Tasks, ref errorMessage);
@@ -116,23 +117,25 @@ namespace DotNet.Basics.Pipelines
             return block;
         }
 
-        protected override async Task<int> InnerRunAsync(T args)
+        protected override async Task<int> InnerRunAsync(T args, CancellationToken cancellationToken = default)
         {
-            return await _innerRun(args);
+            return await _innerRun(args, cancellationToken).ConfigureAwait(false);
         }
 
-        protected async Task<int> InnerParallelRunAsync(T args)
+        protected async Task<int> InnerParallelRunAsync(T args, CancellationToken cancellationToken)
         {
-            var tasks = Tasks.Select(task => task.RunAsync(args));
-            var results = await Task.WhenAll(tasks);
+            cancellationToken.ThrowIfCancellationRequested();
+            var tasks = Tasks.Select(task => task.RunAsync(args, cancellationToken));
+            var results = await Task.WhenAll(tasks).ConfigureAwait(false);
             return results.Select(i => i < 0 ? i * -1 : i).Sum();
         }
 
-        protected async Task<int> InnerSequentialRunAsync(T args)
+        protected async Task<int> InnerSequentialRunAsync(T args, CancellationToken cancellationToken)
         {
             foreach (var task in Tasks)
             {
-                var result = await task.RunAsync(args);
+                cancellationToken.ThrowIfCancellationRequested();
+                var result = await task.RunAsync(args, cancellationToken).ConfigureAwait(false);
                 if (result != 0)
                     return result;
             }
